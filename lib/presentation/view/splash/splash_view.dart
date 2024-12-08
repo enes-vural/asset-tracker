@@ -29,7 +29,7 @@ class _SplashViewState extends State<SplashView> {
     // MediaQuery getter for responsive design.
     final Size size = MediaQuery.of(context).size;
     return Scaffold(
-      body: CircleLogoWidget(radius: size.width / 4.0),
+      body: Center(child: CircleLogoWidget(radius: size.width / 4.0)),
     );
   }
 }
