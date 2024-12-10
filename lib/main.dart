@@ -22,7 +22,7 @@ class MyApp extends StatelessWidget {
       // Router configrated to app
       routerConfig: appRouter.config(),
       //title of app
-      title: 'Gold Exchance |',
+      title: 'Gold Exchance Pro',
       theme: ThemeData(
         appBarTheme: const AppBarTheme(
           centerTitle: true,
