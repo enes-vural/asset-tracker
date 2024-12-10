@@ -1,19 +1,19 @@
+import 'package:asset_tracker/core/config/theme/default_theme.dart';
+import 'package:asset_tracker/core/config/theme/extension/asset_extension.dart';
+import 'package:asset_tracker/core/config/theme/extension/responsive_extension.dart';
 import 'package:flutter/material.dart';
 
-class CircleLogoWidget extends StatelessWidget {
-  const CircleLogoWidget({
+class CircleMainLogoWidget extends StatelessWidget {
+  const CircleMainLogoWidget({
     super.key,
-    required this.radius,
   });
-
-  final double radius;
 
   @override
   Widget build(BuildContext context) {
     return CircleAvatar(
-      backgroundColor: Colors.transparent,
-      radius: radius,
-      child: Image.asset("assets/image/main_logo.png"),
+      backgroundColor: DefaultColorPalette.vanillaTranparent,
+      radius: ResponsiveSize(context).screenHeight.toSmall(),
+      child: Image.asset(AssetExtension.toPng(AssetExtension.mainLogo)),
     );
   }
 }

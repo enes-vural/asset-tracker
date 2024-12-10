@@ -1,15 +1,15 @@
+import 'package:asset_tracker/core/config/theme/extension/app_size_extension.dart';
+import 'package:asset_tracker/core/config/theme/extension/responsive_extension.dart';
 import 'package:flutter/material.dart';
-import 'package:google_fonts/google_fonts.dart';
+import '../../../../core/config/theme/style_theme.dart';
 
 class AuthSubmitWidget extends StatelessWidget {
   const AuthSubmitWidget({
     super.key,
-    required this.size,
     required this.label,
     required this.voidCallBack,
   });
 
-  final Size size;
   final String label;
   final VoidCallback? voidCallBack;
 
@@ -20,20 +20,23 @@ class AuthSubmitWidget extends StatelessWidget {
       child: Align(
         alignment: Alignment.center,
         child: Container(
-          height: size.height / 12.5,
-          width: size.width / 2.0,
-          decoration: BoxDecoration(
-            color: Colors.white,
-            border: Border.all(
-                color: const Color.fromARGB(255, 230, 178, 58), width: 2.0),
-            borderRadius: BorderRadius.circular(10),
+          // percent %8 height
+          height: ResponsiveSize(context).screenHeight.toCustom(8),
+          //percent %50 width
+          width: ResponsiveSize(context).screenWidth.toHalf(),
+          //burası değişecek
+          decoration: CustomDecoration.roundBox(
+            //container and border color can be null,
+            //it changes by container type so we set nullable type variable in here
+            Theme.of(context).primaryColor,
+            AppSize.smallBorderWidth,
+            null,
+            radius: AppSize.mediumRadius,
           ),
           child: Center(
             child: Text(
               label,
-              style: GoogleFonts.poppins(
-                  color: const Color.fromARGB(255, 230, 178, 58),
-                  fontSize: 16.0),
+              style: CustomTextStyle.goldColorPoppins(AppSize.mediumText),
             ),
           ),
         ),

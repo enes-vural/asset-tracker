@@ -1,10 +1,14 @@
+import 'package:asset_tracker/core/config/constants/string_constant.dart';
+import 'package:asset_tracker/core/widgets/custom_align.dart';
 import 'package:auto_route/annotations.dart';
 import 'package:flutter/material.dart';
-import 'package:google_fonts/google_fonts.dart';
-
-import '../widgets/circle_logo_widget.dart';
+import '../../../core/config/theme/style_theme.dart';
 import 'widget/auth_form_widget.dart';
 import 'widget/auth_submit_widget.dart';
+
+import '../../../core/config/theme/extension/app_size_extension.dart';
+import '../../../core/widgets/custom_padding.dart';
+import '../widgets/circle_logo_widget.dart';
 
 @RoutePage()
 class LoginView extends StatefulWidget {
@@ -19,30 +23,25 @@ class _LoginViewState extends State<LoginView> {
   Widget build(BuildContext context) {
     final size = MediaQuery.of(context).size;
     return Scaffold(
-      backgroundColor: Colors.white,
-      appBar: AppBar(title: appBarTitleWidget()),
-      body: Padding(
-        padding: const EdgeInsets.symmetric(horizontal: 16.0),
+      ///vanilla white background color by theme
+      backgroundColor: Theme.of(context).scaffoldBackgroundColor,
+      //appbar
+      appBar: AppBar(title: _appBarTitleWidget()),
+      //body
+      body: CustomPadding.horizontal(
+        //horizontal padding 16.0
+        padding: AppSize.largePadd,
         child: Column(
           mainAxisAlignment: MainAxisAlignment.spaceBetween,
           crossAxisAlignment: CrossAxisAlignment.start,
           children: [
-            authLogoWidget(size),
+            _authLogoWidget(size),
             signInTextWidget(),
-            AuthFormWidget(
-                size: size,
-                isObs: false,
-                label: "Email",
-                formController: null,
-                validaor: null),
-            AuthFormWidget(
-                size: size,
-                isObs: true,
-                label: "Password",
-                formController: null,
-                validaor: null),
-            forgotPasswordWidget(),
-            AuthSubmitWidget(size: size, label: "Sign In", voidCallBack: null),
+            AuthFormWidget.email(null, null),
+            AuthFormWidget.password(null, null),
+            _forgotPasswordWidget(),
+            const AuthSubmitWidget(
+                label: DefaultLocalStrings.signInText, voidCallBack: null),
             const Spacer(),
           ],
         ),
@@ -50,28 +49,32 @@ class _LoginViewState extends State<LoginView> {
     );
   }
 
-  Center authLogoWidget(Size size) {
-    return Center(
-      heightFactor: 1.2,
-      child: CircleLogoWidget(radius: size.width / 4.0),
+  Center _authLogoWidget(Size size) {
+    return const Center(
+      heightFactor: AppSize.defaultHeightFactor,
+      child: CircleMainLogoWidget(),
     );
   }
 
-  Align forgotPasswordWidget() {
-    return Align(
-      alignment: Alignment.centerRight,
-      child:
-          TextButton(onPressed: () {}, child: const Text("Forgot password ?")),
+  Align _forgotPasswordWidget() {
+    return CustomAlign.centerRight(
+      child: TextButton(
+          onPressed: () {},
+          child: Text(
+            DefaultLocalStrings.forgotText,
+            style: CustomTextStyle.blackColorPoppins(AppSize.smallText),
+          )),
     );
   }
 
-  Text appBarTitleWidget() {
+  Text _appBarTitleWidget() {
     return Text(
-      "Gold Exchance",
-      style: GoogleFonts.poppins(color: Colors.white),
+      DefaultLocalStrings.appTitle,
+      style: CustomTextStyle.whiteColorPoppins(AppSize.largeText),
     );
   }
 
   Text signInTextWidget() =>
-      const Text("Sign In", style: TextStyle(fontSize: 18.0));
+       Text(DefaultLocalStrings.signInText,
+      style: CustomTextStyle.whiteColorPoppins(AppSize.mediumText));
 }
