@@ -5,7 +5,7 @@ import 'package:flutter/material.dart';
 
 void main() {
   //TODO: System navigation bar color will change in initial
-  //TODO: Create ThemeData class for define colors and fonts.
+  //TODO: Theme data and color palette confused
   //TODO: Create Json File or String class for texts.
   runApp(const MyApp());
 }
