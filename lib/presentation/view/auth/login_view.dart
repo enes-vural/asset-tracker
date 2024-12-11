@@ -21,10 +21,11 @@ class LoginView extends StatefulWidget {
 class _LoginViewState extends State<LoginView> {
   @override
   Widget build(BuildContext context) {
-    final size = MediaQuery.of(context).size;
     return Scaffold(
       ///vanilla white background color by theme
       backgroundColor: Theme.of(context).scaffoldBackgroundColor,
+      //bunu her sayfada yapmak yerine base stfull widget olusutrulabilir
+      resizeToAvoidBottomInset: false,
       //appbar
       appBar: AppBar(title: _appBarTitleWidget()),
       //body
@@ -34,7 +35,7 @@ class _LoginViewState extends State<LoginView> {
           mainAxisAlignment: MainAxisAlignment.spaceBetween,
           crossAxisAlignment: CrossAxisAlignment.start,
           children: [
-            _authLogoWidget(size),
+            _authLogoWidget(),
             signInTextWidget(),
             const AuthFormWidget.email(
               emailController: null,
@@ -54,7 +55,7 @@ class _LoginViewState extends State<LoginView> {
     );
   }
 
-  Center _authLogoWidget(Size size) {
+  Center _authLogoWidget() {
     return const Center(
       heightFactor: AppSize.defaultHeightFactor,
       child: CircleMainLogoWidget(),

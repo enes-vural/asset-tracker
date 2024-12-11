@@ -5,10 +5,14 @@ final ThemeData defaultTheme = ThemeData(
   useMaterial3: true,
   textTheme: GoogleFonts.poppinsTextTheme(),
   scaffoldBackgroundColor: DefaultColorPalette.vanillaWhite,
+  
   colorScheme: defaultColorScheme,
   appBarTheme: const AppBarTheme(
     centerTitle: true,
     backgroundColor: DefaultColorPalette.primaryDarkBlue,
+  ),
+  snackBarTheme: SnackBarThemeData(
+    backgroundColor: defaultColorScheme.primary,
   ),
 );
 

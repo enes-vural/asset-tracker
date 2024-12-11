@@ -16,6 +16,7 @@ class MyApp extends StatelessWidget {
   Widget build(BuildContext context) {
     final appRouter = AppRouter();
     return MaterialApp.router(
+      
       //remove debug banner on top left
       debugShowCheckedModeBanner: false,
       // Router configrated to app

@@ -4,6 +4,8 @@ import 'package:flutter/material.dart';
 class CustomSizedBox extends SizedBox {
   const CustomSizedBox({super.key});
 
+  const CustomSizedBox.empty({super.key}) : super();
+
   const CustomSizedBox.smallGap({super.key}) : super(height: AppSize.smallPadd);
   const CustomSizedBox.mediumGap({super.key})
       : super(height: AppSize.mediumPadd);

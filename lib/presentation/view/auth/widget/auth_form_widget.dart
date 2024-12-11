@@ -1,7 +1,6 @@
 // ignore_for_file: use_key_in_widget_constructors
 
 import 'package:asset_tracker/core/config/constants/string_constant.dart';
-import 'package:asset_tracker/core/config/theme/extension/app_size_extension.dart';
 import 'package:asset_tracker/core/config/theme/extension/responsive_extension.dart';
 import 'package:asset_tracker/core/config/theme/style_theme.dart';
 import 'package:asset_tracker/core/widgets/custom_padding.dart';
