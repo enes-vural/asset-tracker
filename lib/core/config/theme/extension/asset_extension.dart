@@ -1,7 +1,6 @@
 extension AssetExtension on String {
-  static const mainLogo = "main_logo";
-
-  static String toPng(String asset) {
-    return "assets/image/$asset.png";
-  }
+  String toPng() => "assets/image/$this.png";
+  String toSvg() => "assets/image/$this.svg";
+  String toJpeg() => "assets/image$this.jpeg";
+  String toJpg() => "assets/image$this.jpg";
 }

@@ -1,3 +1,4 @@
+import 'package:asset_tracker/core/config/constants/asset_constant.dart';
 import 'package:asset_tracker/core/config/theme/default_theme.dart';
 import 'package:asset_tracker/core/config/theme/extension/asset_extension.dart';
 import 'package:asset_tracker/core/config/theme/extension/responsive_extension.dart';
@@ -13,7 +14,7 @@ class CircleMainLogoWidget extends StatelessWidget {
     return CircleAvatar(
       backgroundColor: DefaultColorPalette.vanillaTranparent,
       radius: ResponsiveSize(context).screenHeight.toSmall(),
-      child: Image.asset(AssetExtension.toPng(AssetExtension.mainLogo)),
+      child: Image.asset(AssetConstant.mainLogo.toPng()),
     );
   }
 }

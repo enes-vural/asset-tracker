@@ -1,4 +1,25 @@
 ///class set the sizes of Text Widgets.
+///* Text Size
+///* small Text 12.0
+///* med text 16.0
+///* large text 18.0
+///* xLarge text 24.0
+///* ------------------
+///* Padding
+///* ------------------
+///* defaultHeightFactor 1.2
+///* smallPadd 8.0
+///* mediumPadd 12.0
+///* largePadd 16.0
+///* hugePadd 24.0
+///* ------------------
+///* Border and Radius
+///* default border width 1.0
+///* smallBorderWidth 2.0
+///* mediumBorderWidth 3.0
+///* smallRadius 6.0
+///* mediumRadius 10.0
+///* largeRadius 12.0
 final class AppSize {
   ///*small 12.0
   static const double smallText = 12.0;
@@ -37,7 +58,10 @@ final class AppSize {
   static const double mediumBorderWidth = 3.0;
 
   // Radius //
+  ///6.0
   static const double smallRadius = 6.0;
+  ///10.0
   static const double mediumRadius = 10.0;
+  ///12.0
   static const double largeRadius = 12.0;
 }

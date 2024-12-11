@@ -28,9 +28,9 @@ class AuthSubmitWidget extends StatelessWidget {
           decoration: CustomDecoration.roundBox(
             //container and border color can be null,
             //it changes by container type so we set nullable type variable in here
-            Theme.of(context).primaryColor,
-            AppSize.smallBorderWidth,
-            null,
+            borderColor: Theme.of(context).primaryColor,
+            borderWidth: AppSize.smallBorderWidth,
+            containerColor: null,
             radius: AppSize.mediumRadius,
           ),
           child: Center(

@@ -3,16 +3,15 @@
 import 'package:flutter/material.dart';
 
 class CustomAlign extends Align {
-  final Widget widget;
-  final Alignment alignment;
+  ///default constracture
+  const CustomAlign({super.key, required super.child, required super.alignment})
+      : super();
 
-  const CustomAlign({super.key, required this.widget, required this.alignment})
-      : super(child: widget, alignment: alignment);
-  //super gerekliligi tartisilir mi
+  ///preset top center align constructure
+  const CustomAlign.topCenter({super.key, required Widget widget})
+      : super(child: widget, alignment: Alignment.topCenter);
 
-  factory CustomAlign.topCenter({required Widget child}) =>
-      CustomAlign(widget: child, alignment: Alignment.topCenter);
-
-  factory CustomAlign.centerRight({required Widget child}) =>
-      CustomAlign(widget: child, alignment: Alignment.centerRight);
+  ///preset center right align constructure
+  const CustomAlign.centerRight({super.key, required Widget widget})
+      : super(child: widget, alignment: Alignment.centerRight);
 }

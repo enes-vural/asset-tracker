@@ -28,41 +28,37 @@ final class CustomTextStyle {
   static TextStyle blackColorPoppins(double size) =>
       _basePoppinStyle(color: DefaultColorPalette.vanillaBlack, size: size);
 }
-
-final class CustomDecoration {
-  static roundBox(
-    Color? borderColor,
-    double? borderWidth,
-    Color? containerColor, {
-    required double radius,
-  }) {
-    return BoxDecoration(
-      color: containerColor,
-      borderRadius: BorderRadius.circular(radius),
-      border: Border.all(
-          color: borderColor ?? DefaultColorPalette.vanillaTranparent,
-          width: borderWidth ?? AppSize.defaultBorderWidth),
-    );
-  }
+/// Helper class for box decoration style in Containers.
+final class CustomDecoration extends BoxDecoration {
+  CustomDecoration.roundBox(
+      {required double radius,
+      required Color borderColor,
+      required Color? containerColor,
+      required double? borderWidth})
+      : super(
+          border: Border.all(
+              color: borderColor,
+              width: borderWidth ?? AppSize.defaultBorderWidth),
+          borderRadius: BorderRadius.circular(radius),
+          color: containerColor ?? DefaultColorPalette.vanillaTranparent,
+        );
 }
+///Helper Class for custom text form fields.
 
-final class CustomInputDecoration {
-  //base input decoration sets the label text and waits a border
-  static _baseInputDecoration(
-      {required String? label, required InputBorder border}) {
-    return InputDecoration(
-      label: Text(label ?? DefaultLocalStrings.emptyText),
-      border: border,
-    );
-  }
+final class CustomInputDecoration extends InputDecoration {
+  CustomInputDecoration.customRoundInput(
+      {required String? label, required double radius})
+      : super(
+            label: Text(label ?? DefaultLocalStrings.emptyText),
+            border: OutlineInputBorder(
+                borderRadius: BorderRadius.circular(radius)));
+
+  CustomInputDecoration.mediumRoundInput({required String? label})
+      : super(
+            label: Text(label ?? DefaultLocalStrings.emptyText),
+            border: OutlineInputBorder(
+                borderRadius: BorderRadius.circular(AppSize.mediumRadius)));
 
   //this methods fills the border design
 
-  static outlineRoundInput(String? label, {required double radius}) {
-    return _baseInputDecoration(
-        label: label,
-        border: OutlineInputBorder(
-          borderRadius: BorderRadius.circular(radius),
-        ));
-  }
 }

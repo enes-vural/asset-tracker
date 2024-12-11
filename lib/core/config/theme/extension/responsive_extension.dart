@@ -1,5 +1,10 @@
 import 'package:flutter/material.dart';
-
+///extension which help you to get percent for ResponsiveSize class
+///* toSmall => %10
+///* toMedium => %25
+///* toLarge => %30
+///* toHuge => %40
+///* toHalf => %50
 extension SizeConvert on double {
   // Small size percent 10
   double toSmall() => this * 0.1;
@@ -19,6 +24,7 @@ extension SizeConvert on double {
   double toCustom(double percent) => this * (percent / 100);
 }
 
+///Gets device screen size with MediaQuery
 extension ResponsiveSize on BuildContext {
   // Screen size properties
   Size get screenSize => MediaQuery.of(this).size;

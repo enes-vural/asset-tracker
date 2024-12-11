@@ -28,17 +28,22 @@ class _LoginViewState extends State<LoginView> {
       //appbar
       appBar: AppBar(title: _appBarTitleWidget()),
       //body
-      body: CustomPadding.horizontal(
-        //horizontal padding 16.0
-        padding: AppSize.largePadd,
-        child: Column(
+      // large a düzeltildi ekstra constructor içinde parametre verilmekten kaçınıldı
+      body: CustomPadding.largeHorizontal(
+        widget: Column(
           mainAxisAlignment: MainAxisAlignment.spaceBetween,
           crossAxisAlignment: CrossAxisAlignment.start,
           children: [
             _authLogoWidget(size),
             signInTextWidget(),
-            AuthFormWidget.email(null, null),
-            AuthFormWidget.password(null, null),
+            const AuthFormWidget.email(
+              emailController: null,
+              emailValidator: null,
+            ),
+            const AuthFormWidget.password(
+              passwordController: null,
+              passwordValidator: null,
+            ),
             _forgotPasswordWidget(),
             const AuthSubmitWidget(
                 label: DefaultLocalStrings.signInText, voidCallBack: null),
@@ -58,7 +63,7 @@ class _LoginViewState extends State<LoginView> {
 
   Align _forgotPasswordWidget() {
     return CustomAlign.centerRight(
-      child: TextButton(
+      widget: TextButton(
           onPressed: () {},
           child: Text(
             DefaultLocalStrings.forgotText,
