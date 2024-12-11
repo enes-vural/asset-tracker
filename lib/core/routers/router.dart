@@ -1,3 +1,4 @@
+import 'package:asset_tracker/core/config/constants/string_constant.dart';
 import 'package:auto_route/auto_route.dart';
 import 'package:flutter/cupertino.dart';
 
@@ -6,8 +7,8 @@ class Routers {
 
   static final Routers instance = Routers._();
 
-  static const String splashPath = "/default_splash";
-  static const String loginPath = "/app_login";
+  static const String splashPath = DefaultLocalStrings.splashRoute;
+  static const String loginPath = DefaultLocalStrings.loginRoute;
 
   void pushReplaceNamed(BuildContext context, String routePath) {
     AutoRouter.of(context).pushNamed(routePath);
