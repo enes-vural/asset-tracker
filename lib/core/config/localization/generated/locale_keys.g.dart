@@ -7,6 +7,11 @@ abstract class  LocaleKeys {
   static const auth_signIn = 'auth.signIn';
   static const auth_email = 'auth.email';
   static const auth_password = 'auth.password';
+  static const auth_validation_nonePassword = 'auth.validation.nonePassword';
+  static const auth_validation_weakPassword = 'auth.validation.weakPassword';
+  static const auth_validation_noneEmail = 'auth.validation.noneEmail';
+  static const auth_validation_weakEmail = 'auth.validation.weakEmail';
+  static const auth_validation = 'auth.validation';
   static const auth = 'auth';
 
 }

@@ -1,14 +1,20 @@
 {   
     "app":{
         "title":"Altın Al - Sat"
-
     },
 
     "auth":{
         "forgot":"Şifreni mi unuttun ?",
         "signIn":"Giriş Yap",
         "email":"Eposta",
-        "password":"Şifre"
+        "password":"Şifre",
+
+        "validation":{
+            "nonePassword":"Lütfen şifrenizi giriniz",
+            "weakPassword":"Şifre uzunluğunuz 6 dan kısa olmalıdır",
+            "noneEmail":"Lütfen eposta adresinizi giriniz",
+            "weakEmail":"Email adresiniz yanlış"
+        }
     }
 
 }
