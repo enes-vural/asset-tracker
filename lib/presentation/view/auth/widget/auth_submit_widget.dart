@@ -21,7 +21,7 @@ class AuthSubmitWidget extends StatelessWidget {
       child: CustomAlign.center(
         widget: Container(
           // percent %8 height
-          height: ResponsiveSize(context).screenHeight.toCustom(8),
+          height: ResponsiveSize(context).screenHeight.toPercent(8),
           //percent %50 width
           width: ResponsiveSize(context).screenWidth.toHalf(),
           //burası değişecek

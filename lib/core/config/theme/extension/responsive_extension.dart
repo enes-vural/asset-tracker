@@ -21,7 +21,7 @@ extension SizeConvert on double {
   double toHalf() => this * 0.50;
 
   /// Custom size for dynamic circumstances
-  double toCustom(double percent) => this * (percent / 100);
+  double toPercent(double percent) => this * (percent / 100);
 }
 
 ///Gets device screen size with MediaQuery

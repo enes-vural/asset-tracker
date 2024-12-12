@@ -48,7 +48,9 @@ class _LoginViewState extends State<LoginView> {
             ),
             _forgotPasswordWidget(),
             AuthSubmitWidget(
-                label: LocaleKeys.auth_signInText.tr(), voidCallBack: null),
+              label: LocaleKeys.auth_signIn.tr(),
+              voidCallBack: null,
+            ),
             const Spacer(),
           ],
         ),
@@ -68,7 +70,7 @@ class _LoginViewState extends State<LoginView> {
       widget: TextButton(
           onPressed: () {},
           child: Text(
-            LocaleKeys.auth_forgotText.tr(),
+            LocaleKeys.auth_forgot.tr(),
             style: CustomTextStyle.blackColorPoppins(AppSize.smallText),
           )),
     );
@@ -76,12 +78,12 @@ class _LoginViewState extends State<LoginView> {
 
   Text _appBarTitleWidget() {
     return Text(
-      LocaleKeys.app_appTitle.tr(),
+      LocaleKeys.app_title.tr(),
       style: CustomTextStyle.whiteColorPoppins(AppSize.largeText),
     );
   }
 
   Text signInTextWidget() =>
-       Text(LocaleKeys.auth_signInText.tr(),
+       Text(LocaleKeys.auth_signIn.tr(),
       style: CustomTextStyle.whiteColorPoppins(AppSize.mediumText));
 }

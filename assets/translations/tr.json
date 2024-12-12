@@ -1,14 +1,14 @@
 {   
     "app":{
-        "appTitle":"Altın Al-Sat"
+        "title":"Altın Al - Sat"
 
     },
 
     "auth":{
-        "forgotText":"Şifreni mi unuttun ?",
-        "signInText":"Giriş Yap",
-        "emailText":"E-posta",
-        "passwordText":"Şifre"
+        "forgot":"Şifreni mi unuttun ?",
+        "signIn":"Giriş Yap",
+        "email":"Eposta",
+        "password":"Şifre"
     }
 
 }

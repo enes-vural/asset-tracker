@@ -49,7 +49,7 @@ class MyApp extends StatelessWidget {
       // Router configrated to app
       routerConfig: appRouter.config(),
       //title of app
-      title: LocaleKeys.app_appTitle.tr(),
+      title: LocaleKeys.app_title.tr(),
       theme: defaultTheme,
     );
   }

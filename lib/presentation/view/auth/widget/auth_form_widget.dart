@@ -30,7 +30,7 @@ class AuthFormWidget extends StatelessWidget {
   }) : this(
           formController: emailController,
           isObs: false,
-          label: LocaleKeys.auth_emailText.tr(),
+          label: LocaleKeys.auth_email.tr(),
           validaor: emailValidator,
         );
 
@@ -40,7 +40,7 @@ class AuthFormWidget extends StatelessWidget {
   }) : this(
           formController: passwordController,
           isObs: true,
-          label: LocaleKeys.auth_passwordText.tr(),
+          label: LocaleKeys.auth_password.tr(),
           validaor: passwordValidator,
         );
 
