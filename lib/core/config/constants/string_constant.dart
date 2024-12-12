@@ -5,15 +5,6 @@ final class DefaultLocalStrings {
 
   static const emptyText = "";
 
-  //default app title
-  static const appTitle = "Gold Exchain";
-
-  //Login
-  static const forgotText = "Forgot Password ? ";
-  static const signInText = "Sign In";
-  static const emailText = "Email";
-  static const passwordText = "Password";
-
   //Router
   //dont localize here in future
   static const splashRoute = "/default_splash";

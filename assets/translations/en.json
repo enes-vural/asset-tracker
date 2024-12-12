@@ -1,0 +1,14 @@
+{   
+    "app":{
+        "appTitle":"Gold Exchain"
+
+    },
+
+    "auth":{
+        "forgotText":"Forgot Password ?",
+        "signInText":"Sign In",
+        "emailText":"Email",
+        "passwordText":"Password"
+    }
+
+}
