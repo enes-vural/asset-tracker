@@ -1,6 +1,7 @@
-import 'package:asset_tracker/core/config/constants/string_constant.dart';
+import 'package:asset_tracker/core/config/localization/generated/locale_keys.g.dart';
 import 'package:asset_tracker/data/model/auth/error/auth_error_state.dart';
 import 'package:asset_tracker/data/model/base/error/error_model.dart';
+import 'package:easy_localization/easy_localization.dart';
 
 //we wont use equatable in here because we have no logic to compare
 final class AuthErrorModel extends BaseErrorModel {
@@ -17,27 +18,23 @@ final class AuthErrorModel extends BaseErrorModel {
   String _fromErrorToModel(String error) {
     switch (error) {
       case (AuthErrorState.ACCOUNT_EXIST):
-        return "There is already account like that";
+        return LocaleKeys.auth_response_accountExist.tr();
       case (AuthErrorState.INVALID_CRED):
-        return "Your email or password is wrong.";
+        return LocaleKeys.auth_response_invalidCred.tr();
       case (AuthErrorState.NOT_FOUND):
-        return "The account not found";
+        return LocaleKeys.auth_response_notFound.tr();
       case (AuthErrorState.INVALID_EMAIL):
-        return "Invalid email";
+        return LocaleKeys.auth_response_invalidEmail.tr();
       case (AuthErrorState.REQUEST_QUOTA):
-        return "You attend too many request, please try later";
+        return LocaleKeys.auth_response_requestQuotaExceed.tr();
       case (AuthErrorState.TIMEOUT):
-        return "Over Timeout, try again";
+        return LocaleKeys.auth_response_timeout.tr();
       case (AuthErrorState.USER_DISABLED):
-        return "This account is no longer available ";
+        return LocaleKeys.auth_response_userDisabled.tr();
       case (AuthErrorState.WRONG_PASSWORD):
-        return "Invalid password";
-      //firebase tarafından olmayan sistemsel hatalarda GENERAL_ERR kullanilacagi
-      //icin default a düşmek istemiyoruz.
-      case (AuthErrorState.GENERAL_ERR):
-        return "Error has been occurred";
+        return LocaleKeys.auth_response_wrongPassword.tr();
       default:
-        return DefaultLocalStrings.emptyText;
+        return LocaleKeys.auth_response_generalErr.tr();
     }
   }
 
