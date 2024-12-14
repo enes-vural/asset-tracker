@@ -19,7 +19,7 @@ class AuthSubmitWidget extends StatelessWidget {
     return GestureDetector(
       onTap: () => voidCallBack,
       child: CustomAlign.center(
-        widget: Container(
+        child: Container(
           // percent %8 height
           height: ResponsiveSize(context).screenHeight.toPercent(8),
           //percent %50 width
