@@ -9,5 +9,6 @@ final class DefaultLocalStrings {
   //dont localize here in future
   static const splashRoute = "/default_splash";
   static const loginRoute = "/app_login";
+  static const homeRoute = "/home";
   static const replaceInRouteName = "View,Route";
 }

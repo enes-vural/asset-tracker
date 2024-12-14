@@ -16,7 +16,7 @@ mixin ValidatorMixin {
 
   String? checkPassword(String? text) {
     return text != null && text.isNotEmpty
-        ? text.length > 6
+        ? text.length >= 6
             ? null
             : LocaleKeys.auth_validation_weakPassword.tr()
         : LocaleKeys.auth_validation_nonePassword.tr();

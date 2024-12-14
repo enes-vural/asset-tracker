@@ -1,4 +1,5 @@
 import 'package:asset_tracker/core/config/constants/global/fom_keys.dart';
+import 'package:asset_tracker/core/mixins/validation_mixin.dart';
 import 'package:asset_tracker/core/routers/router.dart';
 import 'package:asset_tracker/core/widgets/custom_align.dart';
 import 'package:asset_tracker/injection.dart';
@@ -24,7 +25,7 @@ class LoginView extends ConsumerStatefulWidget {
   ConsumerState<ConsumerStatefulWidget> createState() => _LoginViewState();
 }
 
-class _LoginViewState extends ConsumerState<LoginView> {
+class _LoginViewState extends ConsumerState<LoginView> with ValidatorMixin {
   @override
   Widget build(BuildContext context) {
     //bridge to viewModel :)
@@ -51,21 +52,17 @@ class _LoginViewState extends ConsumerState<LoginView> {
               signInTextWidget(),
               AuthFormWidget.email(
                 emailController: authViewModel.emailController,
-                emailValidator: null,
+                emailValidator: checkEmail,
               ),
               AuthFormWidget.password(
                 passwordController: authViewModel.passwordController,
-                passwordValidator: null,
+                passwordValidator: checkPassword,
               ),
               _forgotPasswordWidget(),
               AuthSubmitWidget(
                 label: LocaleKeys.auth_signIn.tr(),
-                voidCallBack: () {
-                  authViewModel.signInUser(
-                      context,
-                      () => Routers.instance
-                          .pushReplaceNamed(context, Routers.splashPath));
-                },
+                voidCallBack: () => submit(authViewModel, context),
+                
               ),
               const Spacer(),
             ],
@@ -73,6 +70,11 @@ class _LoginViewState extends ConsumerState<LoginView> {
         ),
       ),
     );
+  }
+
+  void submit(AuthViewModel authViewModel, BuildContext context) {
+    authViewModel.signInUser(context,
+        () => Routers.instance.pushReplaceNamed(context, Routers.homePath));
   }
 
   Center _authLogoWidget() {

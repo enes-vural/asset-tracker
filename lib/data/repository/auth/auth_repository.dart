@@ -21,7 +21,7 @@ class AuthRepository implements IAuthRepository {
     try {
       UserCredential? userResponse = await authService.signInUser(entity);
 
-      if (userResponse?.credential != null) {
+      if (userResponse?.user?.uid != null) {
         final UserLoginResponseModel userModel = UserLoginResponseModel(
             token: userResponse!.credential?.token.toString() ??
                 DefaultLocalStrings.emptyText);
