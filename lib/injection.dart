@@ -6,6 +6,9 @@ import 'package:asset_tracker/domain/usecase/auth/auth_use_case.dart';
 import 'package:asset_tracker/presentation/view_model/auth/auth_view_model.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 
+//Riverpod ref.watch() ile sadece gerektiği ve değiştiği yerde çağırdığı için aslında bir nevi
+//lazy injection görevi görüyor.
+
 final authServiceProvider = Provider<AuthService>((ref) {
   return AuthService();
 });
