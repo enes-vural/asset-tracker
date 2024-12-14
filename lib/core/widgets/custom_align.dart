@@ -14,4 +14,7 @@ class CustomAlign extends Align {
   ///preset center right align constructure
   const CustomAlign.centerRight({super.key, required Widget widget})
       : super(child: widget, alignment: Alignment.centerRight);
+  ///preset center right align constructure
+  const CustomAlign.center({super.key, required Widget widget})
+      : super(child: widget, alignment: Alignment.center);
 }

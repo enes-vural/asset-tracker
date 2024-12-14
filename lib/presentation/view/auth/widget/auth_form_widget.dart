@@ -1,11 +1,13 @@
 // ignore_for_file: use_key_in_widget_constructors
 
-import 'package:asset_tracker/core/config/constants/string_constant.dart';
-import 'package:asset_tracker/core/config/theme/extension/app_size_extension.dart';
+
 import 'package:asset_tracker/core/config/theme/extension/responsive_extension.dart';
 import 'package:asset_tracker/core/config/theme/style_theme.dart';
 import 'package:asset_tracker/core/widgets/custom_padding.dart';
+import 'package:easy_localization/easy_localization.dart';
 import 'package:flutter/material.dart';
+
+import '../../../../core/config/localization/generated/locale_keys.g.dart';
 
 class AuthFormWidget extends StatelessWidget {
   const AuthFormWidget({
@@ -22,23 +24,23 @@ class AuthFormWidget extends StatelessWidget {
   final bool isObs;
 
 
-  const AuthFormWidget.email({
+  AuthFormWidget.email({
     required TextEditingController? emailController,
     required FormFieldValidator<String>? emailValidator,
   }) : this(
           formController: emailController,
           isObs: false,
-          label: DefaultLocalStrings.emailText,
+          label: LocaleKeys.auth_email.tr(),
           validaor: emailValidator,
         );
 
-  const AuthFormWidget.password({
+  AuthFormWidget.password({
     required TextEditingController? passwordController,
     required FormFieldValidator<String>? passwordValidator,
   }) : this(
           formController: passwordController,
           isObs: true,
-          label: DefaultLocalStrings.passwordText,
+          label: LocaleKeys.auth_password.tr(),
           validaor: passwordValidator,
         );
 

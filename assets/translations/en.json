@@ -1,0 +1,22 @@
+{   
+    "app":{
+        "title":"Gold Exchain"
+
+    },
+
+    "auth":{
+        "forgot":"Forgot Password ?",
+        "signIn":"Sign In",
+        "email":"Email",
+        "password":"Password",
+
+        "validation":{
+            "nonePassword":"Please enter your password",
+            "weakPassword":"Password must be at least 6 characters",
+            "noneEmail":"Please enter your email address",
+            "weakEmail":"Please enter a valid email address"
+        }
+    
+    }
+
+}

@@ -1,5 +1,6 @@
 import 'package:asset_tracker/core/config/theme/extension/app_size_extension.dart';
 import 'package:asset_tracker/core/config/theme/extension/responsive_extension.dart';
+import 'package:asset_tracker/core/widgets/custom_align.dart';
 import 'package:flutter/material.dart';
 import '../../../../core/config/theme/style_theme.dart';
 
@@ -17,11 +18,10 @@ class AuthSubmitWidget extends StatelessWidget {
   Widget build(BuildContext context) {
     return GestureDetector(
       onTap: () => voidCallBack,
-      child: Align(
-        alignment: Alignment.center,
-        child: Container(
+      child: CustomAlign.center(
+        widget: Container(
           // percent %8 height
-          height: ResponsiveSize(context).screenHeight.toCustom(8),
+          height: ResponsiveSize(context).screenHeight.toPercent(8),
           //percent %50 width
           width: ResponsiveSize(context).screenWidth.toHalf(),
           //burası değişecek
