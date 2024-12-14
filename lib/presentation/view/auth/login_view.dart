@@ -67,7 +67,7 @@ class _LoginViewState extends State<LoginView> {
 
   Align _forgotPasswordWidget() {
     return CustomAlign.centerRight(
-      widget: TextButton(
+      child: TextButton(
           onPressed: () {},
           child: Text(
             LocaleKeys.auth_forgot.tr(),

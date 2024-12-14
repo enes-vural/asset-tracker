@@ -8,13 +8,30 @@ class CustomAlign extends Align {
       : super();
 
   ///preset top center align constructure
-  const CustomAlign.topCenter({super.key, required Widget widget})
-      : super(child: widget, alignment: Alignment.topCenter);
+  const CustomAlign.topCenter({super.key, required Widget child})
+      : super(child: child, alignment: Alignment.topCenter);
 
-  ///preset center right align constructure
-  const CustomAlign.centerRight({super.key, required Widget widget})
-      : super(child: widget, alignment: Alignment.centerRight);
-  ///preset center right align constructure
-  const CustomAlign.center({super.key, required Widget widget})
-      : super(child: widget, alignment: Alignment.center);
+  const CustomAlign.topLeft({super.key, required Widget child})
+      : super(child: child, alignment: Alignment.topLeft);
+
+  const CustomAlign.topRight({super.key, required Widget child})
+      : super(child: child, alignment: Alignment.topRight);
+
+  const CustomAlign.center({super.key, required Widget child})
+      : super(child: child, alignment: Alignment.center);
+
+  const CustomAlign.centerLeft({super.key, required Widget child})
+      : super(child: child, alignment: Alignment.centerLeft);
+
+  const CustomAlign.centerRight({super.key, required Widget child})
+      : super(child: child, alignment: Alignment.centerRight);
+
+  const CustomAlign.bottomCenter({super.key, required Widget child})
+      : super(child: child, alignment: Alignment.bottomCenter);
+
+  const CustomAlign.bottomRight({super.key, required Widget child})
+      : super(child: child, alignment: Alignment.bottomRight);
+
+  const CustomAlign.bottomLeft({super.key, required Widget child})
+      : super(child: child, alignment: Alignment.bottomLeft);
 }
