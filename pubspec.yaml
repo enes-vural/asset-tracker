@@ -4,7 +4,7 @@ description: "Gold Exchance"
 # Remove this line if you wish to publish to pub.dev
 publish_to: 'none' 
 
-version: 1.0.0+2
+version: 1.0.0+3
 
 environment:
   sdk: ^3.5.4
@@ -21,18 +21,23 @@ dependencies:
   #UI
   cupertino_icons: ^1.0.8
   google_fonts: ^6.2.1
+
+  #Localization
   easy_localization: ^3.0.7
 
+  #firebase
+  firebase_core: ^3.8.1
+  firebase_auth: ^5.3.4
+  dartz: ^0.10.1
 
-
-
+  #state management solution
+  flutter_riverpod: ^2.6.1
 
 dev_dependencies:
 
   #generator packages
   build_runner: ^2.4.13
   auto_route_generator: ^9.0.0
-
 
   flutter_test:
     sdk: flutter
@@ -47,7 +52,6 @@ flutter:
   assets:
     - assets/image/
     - assets/translations/
-
 
   # fonts:
   #   - family: Schyler

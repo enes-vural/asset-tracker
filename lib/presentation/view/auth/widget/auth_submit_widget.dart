@@ -12,12 +12,14 @@ class AuthSubmitWidget extends StatelessWidget {
   });
 
   final String label;
-  final VoidCallback? voidCallBack;
+  final VoidCallback voidCallBack;
 
   @override
   Widget build(BuildContext context) {
     return GestureDetector(
-      onTap: () => voidCallBack,
+      onTap: () {
+        voidCallBack();
+      },
       child: CustomAlign.center(
         child: Container(
           // percent %8 height
