@@ -1,5 +1,7 @@
-
 ///Auth Error Types
+///
+//Default String Constants sınıfından farklı bir sınıf olarak tanımladım burasınını
+//
 final class AuthErrorState {
   static const String ACCOUNT_EXIST =
       "account-exists-with-different-credential";
@@ -11,5 +13,4 @@ final class AuthErrorState {
   static const String INVALID_CRED = "invalid-credential";
   static const String TIMEOUT = "timeout";
   static const String GENERAL_ERR = "general-err";
-
 }
