@@ -11,7 +11,7 @@ import 'package:firebase_auth/firebase_auth.dart';
 import 'package:dartz/dartz.dart';
 
 class AuthRepository implements IAuthRepository {
-  final AuthService authService;
+  final FirebaseAuthService authService;
 
   AuthRepository({required this.authService});
 

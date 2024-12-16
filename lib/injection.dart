@@ -9,8 +9,8 @@ import 'package:flutter_riverpod/flutter_riverpod.dart';
 //Riverpod ref.watch() ile sadece gerektiği ve değiştiği yerde çağırdığı için aslında bir nevi
 //lazy injection görevi görüyor.
 
-final authServiceProvider = Provider<AuthService>((ref) {
-  return AuthService();
+final authServiceProvider = Provider<FirebaseAuthService>((ref) {
+  return FirebaseAuthService();
 });
 
 final authRepositoryProvider = Provider<AuthRepository>((ref) {
