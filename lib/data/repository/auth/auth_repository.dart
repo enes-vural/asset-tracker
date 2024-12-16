@@ -35,7 +35,7 @@ class AuthRepository implements IAuthRepository {
         //let's return => => =>
       } else {
         return Left(AuthErrorEntity.fromModel(
-            AuthErrorModel(errorCode: AuthErrorState.INVALID_CRED)));
+            const AuthErrorModel(errorCode: AuthErrorState.INVALID_CRED)));
       }
 
       //
@@ -51,7 +51,7 @@ class AuthRepository implements IAuthRepository {
       //check general errors
       //convert it to entity before return
       return Left(AuthErrorEntity.fromModel(
-          AuthErrorModel(errorCode: AuthErrorState.GENERAL_ERR)
+          const AuthErrorModel(errorCode: AuthErrorState.GENERAL_ERR)
               .toErrorModel()));
       //
     }
