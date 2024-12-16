@@ -35,7 +35,7 @@ class AuthRepository implements IAuthRepository {
         //let's return => => =>
       } else {
         return Left(AuthErrorEntity.fromModel(
-            const AuthErrorModel(errorCode: AuthErrorState.INVALID_CRED)));
+            AuthErrorModel(errorCode: AuthErrorState.INVALID_CRED.value)));
       }
 
       //
@@ -45,14 +45,14 @@ class AuthRepository implements IAuthRepository {
       //check firebase errors
       //convert it to entity before return
       return Left(AuthErrorEntity.fromModel(
-          AuthErrorModel(errorCode: error.code).toErrorModel()));
+          AuthErrorModel.toErrorModel(error.code)));
       //
     } catch (e) {
       //check general errors
       //convert it to entity before return
+      //aksi durumda direkt general error ver
       return Left(AuthErrorEntity.fromModel(
-          const AuthErrorModel(errorCode: AuthErrorState.GENERAL_ERR)
-              .toErrorModel()));
+          AuthErrorModel.toErrorModel(AuthErrorState.GENERAL_ERR.value)));
       //
     }
   }

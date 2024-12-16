@@ -10,30 +10,36 @@ final class AuthErrorModel extends BaseErrorModel {
   final String errorCode;
   const AuthErrorModel({super.message, required this.errorCode});
 
-  AuthErrorModel toErrorModel() {
-    //burada gelen hata kodundan error mesajımızı oluşturuyoruz.
-    String message = _fromErrorToModel(errorCode);
-    //gelen hatayı mesaja çevirip nesneyi tekrar türetiyoruz
-    return AuthErrorModel(errorCode: errorCode).copyWith(message: message);
-  }
+  factory AuthErrorModel.toErrorModel(String errorCode) {
+    //gelen hata mesajından AuthErrorState i almaya çalışıyor
+    final AuthErrorState errorState = AuthErrorState.values.firstWhere(
+        (state) => state.value == errorCode,
+        orElse: () => AuthErrorState.GENERAL_ERR);
+    //errorState belirlendikten sonra localize edilmiş hata mesajını almka için _fromErrorToModel çağırılıyor.
 
-  String _fromErrorToModel(String error) {
+    //burada gelen hata kodundan error mesajımızı oluşturuyoruz.
+    String message = _fromErrorToModel(errorState);
+    //gelen hatayı mesaja çevirip nesneyi tekrar türetiyoruz
+    return AuthErrorModel(errorCode: errorCode, message: message);
+  }
+  //static ama '_' ile erişilemiyor factory methodu uygulanabilsin diye ekledim
+  static String _fromErrorToModel(AuthErrorState? error) {
     switch (error) {
-      case (AuthErrorState.ACCOUNT_EXIST):
+      case AuthErrorState.ACCOUNT_EXIST:
         return LocaleKeys.auth_response_accountExist.tr();
-      case (AuthErrorState.INVALID_CRED):
+      case AuthErrorState.INVALID_CRED:
         return LocaleKeys.auth_response_invalidCred.tr();
-      case (AuthErrorState.NOT_FOUND):
+      case AuthErrorState.NOT_FOUND:
         return LocaleKeys.auth_response_notFound.tr();
-      case (AuthErrorState.INVALID_EMAIL):
+      case AuthErrorState.INVALID_EMAIL:
         return LocaleKeys.auth_response_invalidEmail.tr();
-      case (AuthErrorState.REQUEST_QUOTA):
+      case AuthErrorState.REQUEST_QUOTA:
         return LocaleKeys.auth_response_requestQuotaExceed.tr();
-      case (AuthErrorState.TIMEOUT):
+      case AuthErrorState.TIMEOUT:
         return LocaleKeys.auth_response_timeout.tr();
-      case (AuthErrorState.USER_DISABLED):
+      case AuthErrorState.USER_DISABLED:
         return LocaleKeys.auth_response_userDisabled.tr();
-      case (AuthErrorState.WRONG_PASSWORD):
+      case AuthErrorState.WRONG_PASSWORD:
         return LocaleKeys.auth_response_wrongPassword.tr();
       default:
         return LocaleKeys.auth_response_generalErr.tr();
