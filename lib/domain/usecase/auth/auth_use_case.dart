@@ -8,7 +8,7 @@ import '../../entities/auth/user_login_response_entity.dart';
 class SignInUseCase implements BaseUseCase {
   final IAuthRepository _authRepository;
 
-  SignInUseCase(this._authRepository);
+  const SignInUseCase(this._authRepository);
 
   @override
   Future<Either<AuthErrorEntity, UserLoginResponseEntity>> call(params) async {

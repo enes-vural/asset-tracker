@@ -61,7 +61,7 @@ class _LoginViewState extends ConsumerState<LoginView> with ValidatorMixin {
               _forgotPasswordWidget(),
               AuthSubmitWidget(
                 label: LocaleKeys.auth_signIn.tr(),
-                voidCallBack: () => submit(authViewModel, context),
+                voidCallBack: () => _submit(authViewModel, context),
                 
               ),
               const Spacer(),
@@ -72,7 +72,7 @@ class _LoginViewState extends ConsumerState<LoginView> with ValidatorMixin {
     );
   }
 
-  void submit(AuthViewModel authViewModel, BuildContext context) {
+  void _submit(AuthViewModel authViewModel, BuildContext context) {
     authViewModel.signInUser(context,
         () => Routers.instance.pushReplaceNamed(context, Routers.homePath));
   }

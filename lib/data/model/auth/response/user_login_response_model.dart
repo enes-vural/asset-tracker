@@ -3,5 +3,5 @@
 final class UserLoginResponseModel {
   final String token;
 
-  UserLoginResponseModel({required this.token});
+  const UserLoginResponseModel({required this.token});
 }

@@ -1,5 +1,5 @@
 class BaseErrorModel {
   final String? message;
 
-  BaseErrorModel({required this.message});
+  const BaseErrorModel({required this.message});
 }

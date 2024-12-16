@@ -8,7 +8,7 @@ import 'package:flutter/material.dart';
 @immutable
 final class AuthErrorModel extends BaseErrorModel {
   final String errorCode;
-  AuthErrorModel({super.message, required this.errorCode});
+  const AuthErrorModel({super.message, required this.errorCode});
 
   AuthErrorModel toErrorModel() {
     //burada gelen hata kodundan error mesajımızı oluşturuyoruz.
