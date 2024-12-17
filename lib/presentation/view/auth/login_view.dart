@@ -49,7 +49,7 @@ class _LoginViewState extends ConsumerState<LoginView> with ValidatorMixin {
             crossAxisAlignment: CrossAxisAlignment.start,
             children: [
               _authLogoWidget(),
-              signInTextWidget(),
+              _signInTextWidget(),
               AuthFormWidget.email(
                 emailController: authViewModel.emailController,
                 emailValidator: checkEmail,
@@ -102,6 +102,6 @@ class _LoginViewState extends ConsumerState<LoginView> with ValidatorMixin {
     );
   }
 
-  Text signInTextWidget() => Text(LocaleKeys.auth_signIn.tr(),
+  Text _signInTextWidget() => Text(LocaleKeys.auth_signIn.tr(),
       style: CustomTextStyle.whiteColorPoppins(AppSize.mediumText));
 }
