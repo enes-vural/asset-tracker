@@ -10,10 +10,18 @@ import 'package:asset_tracker/domain/repository/auth/iauth_repository.dart';
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:dartz/dartz.dart';
 
-class AuthRepository implements IAuthRepository {
+
+/*class GoogleAuthRepository implements IAuthRepository{
+  @override
+  Future<Either<AuthErrorEntity, UserLoginResponseEntity>> signIn(UserLoginEntity entity) {
+    throw UnimplementedError();
+  }
+}*/
+
+class FirebaseAuthRepository implements IAuthRepository {
   final FirebaseAuthService authService;
 
-  AuthRepository({required this.authService});
+  FirebaseAuthRepository({required this.authService});
 
   @override
   Future<Either<AuthErrorEntity, UserLoginResponseEntity>> signIn(
