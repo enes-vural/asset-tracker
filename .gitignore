@@ -23,8 +23,10 @@ migrate_working_dir/
 #needless build ignore
 pubspec.lock
 Podfile.lock
-/ios/
-macos/
+ios
+linux/
+web/
+/windows/
 
 #Secure API content ignore
 /android/app/google-services.json
