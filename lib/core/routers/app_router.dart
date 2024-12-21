@@ -17,5 +17,10 @@ class AppRouter extends RootStackRouter {
           path: DefaultLocalStrings.loginRoute,
           page: LoginRoute.page,
         ),
+        // - Home (Menu View)
+        AutoRoute(
+          path: DefaultLocalStrings.homeRoute,
+          page: HomeRoute.page,
+        ),
       ];
 }
