@@ -2,6 +2,7 @@
 
 import 'package:asset_tracker/data/repository/auth/auth_repository.dart';
 import 'package:asset_tracker/data/service/remote/auth/auth_service.dart';
+import 'package:asset_tracker/data/service/remote/auth/iauth_service.dart';
 import 'package:asset_tracker/domain/usecase/auth/auth_use_case.dart';
 import 'package:asset_tracker/presentation/view_model/auth/auth_view_model.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
@@ -11,11 +12,11 @@ import 'package:flutter_riverpod/flutter_riverpod.dart';
 
 //bağımlılığı olmayan en dış service katmanın bileşenini riverpod ile aktif etmek yerine direkt olarak instance olarak aldık
 
-final authServiceInstance = FirebaseAuthService();
+final IAuthService authServiceInstance = FirebaseAuthService();
 
 
-final authRepositoryProvider = Provider<AuthRepository>((ref) {
-  return AuthRepository(authService: authServiceInstance);
+final authRepositoryProvider = Provider<FirebaseAuthRepository>((ref) {
+  return FirebaseAuthRepository(authService: authServiceInstance);
 });
 
 final signInUseCaseProvider = Provider<SignInUseCase>((ref) {
@@ -27,3 +28,4 @@ final authViewModelProvider = ChangeNotifierProvider<AuthViewModel>((ref) {
   final _signInUseCaseProvider = ref.watch(signInUseCaseProvider);
   return AuthViewModel(signInUseCase: _signInUseCaseProvider);
 });
+
