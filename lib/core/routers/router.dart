@@ -9,6 +9,7 @@ class Routers {
 
   static const String splashPath = DefaultLocalStrings.splashRoute;
   static const String loginPath = DefaultLocalStrings.loginRoute;
+  static const String homePath = DefaultLocalStrings.homeRoute;
 
   void pushReplaceNamed(BuildContext context, String routePath) {
     AutoRouter.of(context).pushNamed(routePath);

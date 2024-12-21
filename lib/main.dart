@@ -6,11 +6,10 @@ import 'package:asset_tracker/core/routers/app_router.dart';
 import 'package:asset_tracker/core/config/localization/generated/locale_keys.g.dart';
 import 'package:easy_localization/easy_localization.dart';
 import 'package:flutter/material.dart';
+import 'package:flutter_riverpod/flutter_riverpod.dart';
 
 void main() async {
-  //TODO: System navigation bar color will change in initial
-  //TODO: Theme data and color palette confused
-  //TODO: Create Json File or String class for texts.
+  //TODO: System navigation bar color will change in initial!
 
   //Application Init here !
   //--------------------
@@ -37,20 +36,22 @@ class MyApp extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     final appRouter = AppRouter();
-    return MaterialApp.router(
-      //----------------------------------
-      //Localization setup in Material App
-      localizationsDelegates: LocalizationManager().delegates(context),
-      supportedLocales: LocalizationManager().supportedLocales(context),
-      locale: LocalizationManager().locale(context),
-      //----------------------------------
-      //remove debug banner on top left
-      debugShowCheckedModeBanner: false,
-      // Router configrated to app
-      routerConfig: appRouter.config(),
-      //title of app
-      title: LocaleKeys.app_title.tr(),
-      theme: defaultTheme,
+    return ProviderScope(
+      child: MaterialApp.router(
+        //---------------------------------- b
+        //Localization setup in Material App
+        localizationsDelegates: LocalizationManager().delegates(context),
+        supportedLocales: LocalizationManager().supportedLocales(context),
+        locale: LocalizationManager().locale(context),
+        //----------------------------------
+        //remove debug banner on top left
+        debugShowCheckedModeBanner: false,
+        // Router configrated to app
+        routerConfig: appRouter.config(),
+        //title of app
+        title: LocaleKeys.app_title.tr(),
+        theme: defaultTheme,
+      ),
     );
   }
 }

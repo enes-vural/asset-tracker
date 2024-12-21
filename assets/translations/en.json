@@ -15,8 +15,18 @@
             "weakPassword":"Password must be at least 6 characters",
             "noneEmail":"Please enter your email address",
             "weakEmail":"Please enter a valid email address"
+        },
+        "response":{
+            "accountExist":"There is already account like that",
+            "invalidCred":"Your email or password is wrong",
+            "notFound":"The account is not found",
+            "invalidEmail":"Invalid email",
+            "requestQuotaExceed":"You attend too many request, please again try later",
+            "timeout":"Over Timeout, try again",
+            "userDisabled":"This account is no longer available",
+            "wrongPassword":"Invalid password",
+            "generalErr":"Error has been occurred"
         }
-    
     }
 
 }

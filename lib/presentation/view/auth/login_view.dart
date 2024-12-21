@@ -1,8 +1,14 @@
+import 'package:asset_tracker/core/config/constants/global/fom_keys.dart';
+import 'package:asset_tracker/core/mixins/validation_mixin.dart';
+import 'package:asset_tracker/core/routers/router.dart';
 import 'package:asset_tracker/core/widgets/custom_align.dart';
-import 'package:asset_tracker/core/config/localization/generated/locale_keys.g.dart';
+import 'package:asset_tracker/injection.dart';
 import 'package:auto_route/annotations.dart';
 import 'package:easy_localization/easy_localization.dart';
 import 'package:flutter/material.dart';
+import 'package:flutter_riverpod/flutter_riverpod.dart';
+import '../../../core/config/localization/generated/locale_keys.g.dart';
+import '../../view_model/auth/auth_view_model.dart';
 import 'widget/auth_form_widget.dart';
 import 'widget/auth_submit_widget.dart';
 
@@ -12,16 +18,19 @@ import '../../../core/widgets/custom_padding.dart';
 import '../widgets/circle_logo_widget.dart';
 
 @RoutePage()
-class LoginView extends StatefulWidget {
+class LoginView extends ConsumerStatefulWidget {
   const LoginView({super.key});
 
   @override
-  State<LoginView> createState() => _LoginViewState();
+  ConsumerState<ConsumerStatefulWidget> createState() => _LoginViewState();
 }
 
-class _LoginViewState extends State<LoginView> {
+class _LoginViewState extends ConsumerState<LoginView> with ValidatorMixin {
   @override
   Widget build(BuildContext context) {
+    //bridge to viewModel :)
+    final AuthViewModel authViewModel = ref.watch(authViewModelProvider);
+    //
     return Scaffold(
       ///vanilla white background color by theme
       backgroundColor: Theme.of(context).scaffoldBackgroundColor,
@@ -32,30 +41,40 @@ class _LoginViewState extends State<LoginView> {
       //body
       // large a düzeltildi ekstra constructor içinde parametre verilmekten kaçınıldı
       body: CustomPadding.largeHorizontal(
-        widget: Column(
-          mainAxisAlignment: MainAxisAlignment.spaceBetween,
-          crossAxisAlignment: CrossAxisAlignment.start,
-          children: [
-            _authLogoWidget(),
-            signInTextWidget(),
-            AuthFormWidget.email(
-              emailController: null,
-              emailValidator: null,
-            ),
-            AuthFormWidget.password(
-              passwordController: null,
-              passwordValidator: null,
-            ),
-            _forgotPasswordWidget(),
-            AuthSubmitWidget(
-              label: LocaleKeys.auth_signIn.tr(),
-              voidCallBack: null,
-            ),
-            const Spacer(),
-          ],
+        widget: Form(
+          key: GlobalFormKeys.loginFormsKey,
+          autovalidateMode: AutovalidateMode.always,
+          child: Column(
+            mainAxisAlignment: MainAxisAlignment.spaceBetween,
+            crossAxisAlignment: CrossAxisAlignment.start,
+            children: [
+              _authLogoWidget(),
+              _signInTextWidget(),
+              AuthFormWidget.email(
+                emailController: authViewModel.emailController,
+                emailValidator: checkEmail,
+              ),
+              AuthFormWidget.password(
+                passwordController: authViewModel.passwordController,
+                passwordValidator: checkPassword,
+              ),
+              _forgotPasswordWidget(),
+              AuthSubmitWidget(
+                label: LocaleKeys.auth_signIn.tr(),
+                voidCallBack: () => _submit(authViewModel, context),
+                
+              ),
+              const Spacer(),
+            ],
+          ),
         ),
       ),
     );
+  }
+
+  void _submit(AuthViewModel authViewModel, BuildContext context) {
+    authViewModel.signInUser(context,
+        () => Routers.instance.pushReplaceNamed(context, Routers.homePath));
   }
 
   Center _authLogoWidget() {
@@ -67,7 +86,7 @@ class _LoginViewState extends State<LoginView> {
 
   Align _forgotPasswordWidget() {
     return CustomAlign.centerRight(
-      widget: TextButton(
+      child: TextButton(
           onPressed: () {},
           child: Text(
             LocaleKeys.auth_forgot.tr(),
@@ -83,7 +102,6 @@ class _LoginViewState extends State<LoginView> {
     );
   }
 
-  Text signInTextWidget() =>
-       Text(LocaleKeys.auth_signIn.tr(),
+  Text _signInTextWidget() => Text(LocaleKeys.auth_signIn.tr(),
       style: CustomTextStyle.whiteColorPoppins(AppSize.mediumText));
 }

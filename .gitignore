@@ -16,8 +16,20 @@ migrate_working_dir/
 *.iws
 .idea/
 
+#needles ios configs ignore
 /ios/Podfile
 /macos/Podfile
+
+#needless build ignore
+pubspec.lock
+Podfile.lock
+/ios/
+macos/
+
+#Secure API content ignore
+/android/app/google-services.json
+firebase.json
+firebase_options.dart
 
 
 

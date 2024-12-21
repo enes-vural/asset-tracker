@@ -14,6 +14,18 @@
             "weakPassword":"Şifre uzunluğunuz 6 dan kısa olmalıdır",
             "noneEmail":"Lütfen eposta adresinizi giriniz",
             "weakEmail":"Email adresiniz yanlış"
+        },
+
+        "response":{
+            "accountExist":"Böyle bir kullanıcı var",
+            "invalidCred":"Email veya şifreniz yanlış",
+            "notFound":"Böyle bir kullanıcı bulunamadı",
+            "invalidEmail":"Geçersiz email",
+            "requestQuotaExceed":"Çok fazla istekte bulundunuz, sonra tekrar deneyiniz",
+            "timeout":"Zaman aşımı, lütfen tekrar deneyin",
+            "userDisabled":"Bu hesap erişilemez",
+            "wrongPassword":"Geçersiz şifre",
+            "generalErr":"Bir hata oluştu"
         }
     }
 
