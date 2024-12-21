@@ -2,7 +2,7 @@ import 'package:asset_tracker/core/config/constants/string_constant.dart';
 import 'package:asset_tracker/data/model/auth/error/auth_error_state.dart';
 import 'package:asset_tracker/data/model/auth/error/auth_response_model.dart';
 import 'package:asset_tracker/data/model/auth/response/user_login_response_model.dart';
-import 'package:asset_tracker/data/service/remote/auth/auth_service.dart';
+import 'package:asset_tracker/data/service/remote/auth/iauth_service.dart';
 import 'package:asset_tracker/domain/entities/auth/error/auth_error_entity.dart';
 import 'package:asset_tracker/domain/entities/auth/user_login_entity.dart';
 import 'package:asset_tracker/domain/entities/auth/user_login_response_entity.dart';
@@ -16,10 +16,10 @@ import 'package:dartz/dartz.dart';
   Future<Either<AuthErrorEntity, UserLoginResponseEntity>> signIn(UserLoginEntity entity) {
     throw UnimplementedError();
   }
-}*/
+}*/ 
 
 class FirebaseAuthRepository implements IAuthRepository {
-  final FirebaseAuthService authService;
+  final IAuthService authService;
 
   FirebaseAuthRepository({required this.authService});
 
@@ -33,7 +33,7 @@ class FirebaseAuthRepository implements IAuthRepository {
         final UserLoginResponseModel userModel = UserLoginResponseModel(
             token: userResponse!.credential?.token.toString() ??
                 DefaultLocalStrings.emptyText);
-
+                
         UserLoginResponseEntity userEntity =
             UserLoginResponseEntity.fromModel(userModel);
         return Right(userEntity);
