@@ -32,6 +32,9 @@ dependencies:
 
   #state management solution
   flutter_riverpod: ^2.6.1
+  envied: ^1.0.0
+  envied_generator: ^1.0.0
+  web_socket: ^0.1.6
 
 dev_dependencies:
 

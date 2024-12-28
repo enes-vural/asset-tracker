@@ -32,6 +32,7 @@ web/
 /android/app/google-services.json
 firebase.json
 firebase_options.dart
+developer.env
 
 
 
