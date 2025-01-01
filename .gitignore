@@ -5,11 +5,9 @@
 *.swp
 .DS_Store
 .atom/
-.build/
 .buildlog/
 .history
 .svn/
-.swiftpm/
 migrate_working_dir/
 
 # IntelliJ related
@@ -27,7 +25,7 @@ pubspec.lock
 Podfile.lock
 ios
 linux/
-web/
+
 /windows/
 
 #Secure API content ignore
