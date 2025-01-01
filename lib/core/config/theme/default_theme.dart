@@ -43,5 +43,6 @@ final class DefaultColorPalette {
   ///default white color in material 3
   static const Color vanillaWhite = Colors.white;
   static const Color vanillaBlack = Colors.black;
+  static const Color vanillaGreen = Colors.green;
   static const Color vanillaTranparent = Colors.transparent;
 }

@@ -23,9 +23,13 @@
 final class AppSize {
   ///*small 12.0
   static const double smallText = 12.0;
+  
+  ///*small v2.0 size: 14.0
+  static const double smallText2 = 14.0;
 
   ///*medium 16.0
   static const double mediumText = 16.0;
+
 
   ///large 18.0
   static const double largeText = 18.0;
@@ -60,8 +64,10 @@ final class AppSize {
   // Radius //
   ///6.0
   static const double smallRadius = 6.0;
+
   ///10.0
   static const double mediumRadius = 10.0;
+
   ///12.0
   static const double largeRadius = 12.0;
 }
