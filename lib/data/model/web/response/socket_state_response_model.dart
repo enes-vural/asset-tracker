@@ -4,6 +4,17 @@ enum SocketStateEnum {
   DISCONNECTED,
   ERROR,
 }
+//enumlar ortak dosyaya taşınabilir.
+enum SocketActionEnum {
+  REQUEST('40'),
+  RESEND('42'),
+  REFRESH('2'),
+  INIT_DATA('0'),
+  DISCONNECT('-1');
+
+  final String value;
+  const SocketActionEnum(this.value);
+}
 
 class SocketStateResponseModel {
   final String message;

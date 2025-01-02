@@ -29,6 +29,7 @@
         }
     },
     "home": {
+        "socketConnectionInit":"Socket'e bağlanılıyor.",
         "buy": "Alış",
         "sell": "Satış",
         "balance": "Bakiye",
