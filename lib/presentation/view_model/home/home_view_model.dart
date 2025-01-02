@@ -1,5 +1,10 @@
+import 'package:asset_tracker/core/helpers/snackbar.dart';
 import 'package:asset_tracker/domain/usecase/web/web_use_case.dart';
+import 'package:dartz/dartz.dart';
 import 'package:flutter/material.dart';
+
+import '../../../data/model/web/response/socket_state_response_model.dart';
+import '../../../domain/entities/web/error/socket_error_entity.dart';
 
 class HomeViewModel extends ChangeNotifier {
   GetSocketStreamUseCase getSocketStreamUseCase;
@@ -9,15 +14,22 @@ class HomeViewModel extends ChangeNotifier {
   Future<void> getData() async {
     final data = await getSocketStreamUseCase.call(null);
     debugPrint(data.toString());
-    data.fold((failure) => print(failure.message), (success) {
-      debugPrint("Connection STATE : " + success.state.toString());
+    data.fold((failure) => debugPrint(failure.message), (success) {
+      debugPrint("Connection STATE : ${success.state}");
     });
   }
 
-  Future<void> getErrorStream() async {
-    final data = getSocketStreamUseCase.getErrorStream();
+  Future<void> getErrorStream({required BuildContext parentContext}) async {
+    final Stream<Either<SocketErrorEntity, SocketStateResponseModel>>? data =
+        getSocketStreamUseCase.getErrorStream();
     data?.listen((event) {
-      debugPrint("ENES HATA : : " + event.toString());
+
+      event.fold((failure) {
+        EasySnackBar.show(parentContext, failure.message);
+      }, (success) {
+        debugPrint("Connection STATE : ${success.state}");
+        debugPrint("Connection STATE : ${success.message}");
+      });
     });
   }
 

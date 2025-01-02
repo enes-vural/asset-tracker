@@ -22,12 +22,17 @@ class HomeView extends ConsumerStatefulWidget {
 
 class _HomeViewState extends ConsumerState<HomeView> {
   //async function to call data
-  void callData() async => await ref.read(homeViewModelProvider).getData();
+  Future<void> callData() async =>
+      await ref.read(homeViewModelProvider).getData();
+  Future<void> getErrorStream() async => await ref
+      .read(homeViewModelProvider)
+      .getErrorStream(parentContext: context);
 
   @override
   void initState() {
     //initialize all streams when page starts
     callData();
+    getErrorStream();
     super.initState();
   }
 
