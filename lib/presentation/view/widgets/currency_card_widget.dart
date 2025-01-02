@@ -31,25 +31,38 @@ class CurrencyCardWidget extends StatelessWidget {
         child: Row(
           mainAxisAlignment: MainAxisAlignment.spaceAround,
           children: [
-            Text(
-              "\t${currency.name}",
-              textAlign: TextAlign.start,
-              style: CustomTextStyle.blackColorPoppins(AppSize.mediumText),
+            _currencyCardTextWidget(
+              _currencyTextLabel,
+              CustomTextStyle.blackColorPoppins(AppSize.mediumText),
             ),
-            Text(
-              "${LocaleKeys.home_buy.tr()}: ${currency.alis}",
-              textAlign: TextAlign.center,
-              style: CustomTextStyle.redColorPoppins(AppSize.smallText2),
-            ),
-            Text(
-              "${LocaleKeys.home_sell.tr()}: ${currency.satis}",
-              textAlign: TextAlign.end,
-              style: CustomTextStyle.greenColorPoppins(AppSize.smallText2),
-              overflow: TextOverflow.ellipsis,
-            ),
+            _currencyCardTextWidget(_buyTextLabel,
+                CustomTextStyle.redColorPoppins(AppSize.smallText2)),
+            _currencyCardTextWidget(_sellTextLabel,
+                CustomTextStyle.greenColorPoppins(AppSize.smallText2))
           ],
         ),
       )),
+    );
+  }
+
+  ///"USD" 
+  String get _currencyTextLabel => "\t${currency.name}";
+
+  ///"ALIŞ : 8.0000"
+  String get _buyTextLabel => "${LocaleKeys.home_buy.tr()}: ${currency.alis}";
+
+  ///"SATIŞ : 8.0000"
+  String get _sellTextLabel =>
+      "${LocaleKeys.home_sell.tr()}: ${currency.satis}";
+
+  ///Text widget for currency card
+  Text _currencyCardTextWidget(
+      String currencyLabel, TextStyle customTextStyle) {
+    return Text(
+      currencyLabel,
+      textAlign: TextAlign.start,
+      style: customTextStyle,
+      overflow: TextOverflow.ellipsis,
     );
   }
 }
