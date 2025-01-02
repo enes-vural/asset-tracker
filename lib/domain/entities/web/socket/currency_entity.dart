@@ -11,7 +11,7 @@ class CurrencyEntity {
   final String dusuk;
   final String yuksek;
   final String kapanis;
-  CurrencyEntity({
+  const CurrencyEntity({
     required this.code,
     required this.alis,
     required this.satis,
