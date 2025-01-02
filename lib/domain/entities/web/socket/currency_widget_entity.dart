@@ -8,7 +8,7 @@ class CurrencyWidgetEntity {
   String alis;
   String satis;
   final CurrencyEntity entity;
-
+  //final kullanılmayan yerlerden dolayı const eklenmedi
   CurrencyWidgetEntity({
     this.name,
     required this.code,
