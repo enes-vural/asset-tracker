@@ -23,6 +23,7 @@ abstract class  LocaleKeys {
   static const auth_response_generalErr = 'auth.response.generalErr';
   static const auth_response = 'auth.response';
   static const auth = 'auth';
+  static const home_socketConnectionInit = 'home.socketConnectionInit';
   static const home_buy = 'home.buy';
   static const home_sell = 'home.sell';
   static const home_balance = 'home.balance';

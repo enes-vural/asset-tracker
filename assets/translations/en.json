@@ -29,6 +29,7 @@
         }
     },
         "home": {
+          "socketConnectionInit":"Connection to socket",
           "buy": "Buy",
           "sell": "Sell",
           "balance": "Balance",

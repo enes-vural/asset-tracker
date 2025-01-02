@@ -1,8 +1,11 @@
 import 'dart:async';
 import 'dart:convert';
 import 'dart:io';
+import 'package:asset_tracker/core/config/constants/global/general_constants.dart';
+import 'package:asset_tracker/core/config/localization/generated/locale_keys.g.dart';
 import 'package:asset_tracker/data/model/web/response/socket_state_response_model.dart';
 import 'package:asset_tracker/data/service/remote/web/iweb_socket_service.dart';
+import 'package:easy_localization/easy_localization.dart';
 import 'package:flutter/material.dart';
 import '../../../../env/envied.dart';
 import '../../../model/web/error/socket_error_model.dart';
@@ -20,8 +23,13 @@ class WebSocketService implements IWebSocketService {
   @override
   Future<void> connectSocket() async {
     try {
-      errorController.add(const SocketErrorModel(
-          message: "Connection to socket", state: SocketStateEnum.INIT));
+
+      errorController.add(SocketErrorModel(
+          message: LocaleKeys.home_socketConnectionInit.tr(),
+          state: SocketStateEnum.INIT));
+      //error state yenileniyor init durumuna geçiyor
+      //ek olarak connection done olunca errorState yenilenebilir ama basit düzeyde
+      //sadece error dinlediğimiz için şu an gerek yok.
       socket ??= await WebSocket.connect(Env.setup().socketApi);
       await _listenSocket();
     } catch (error) {
@@ -48,32 +56,34 @@ class WebSocketService implements IWebSocketService {
     if (socket != null) {
       socket!.listen(
         (event) {
-          final data = event.toString();
-
+          final String data = event.toString();
           //--------------------------------------
-          if (data.startsWith('0')) {
+          //ilk data geldiği zaman
+          if (data.startsWith(SocketActionEnum.INIT_DATA.value)) {
             debugPrint("Inital Call");
-            socket!.add('40');
+            socket!.add(SocketActionEnum.REQUEST.value);
             debugPrint(data);
-          } else if (data == '2') {
+          }
+          //refresh durumu gerektiği zaman
+          else if (data == SocketActionEnum.REFRESH.value) {
             debugPrint("Refresh...");
-            socket!.add('40');
-          } else if (data.substring(0, 2) == '42') {
-            debugPrint(data.substring(19, event.toString().length - 1));
-            final jsonData =
-                jsonDecode(data.substring(19, event.toString().length - 1))
-                    as Map<String, dynamic>;
+            socket!.add(SocketActionEnum.REQUEST.value);
+          }
+          //resend durumu gerektiği zaman
+          else if (_checkJsonFirstIndex(event) ==
+              SocketActionEnum.RESEND.value) {
+            debugPrint(_jsonDecodeSocketData(event).toString());
+            final jsonData = _jsonDecodeSocketData(event);
             controller.add(jsonData);
           }
         },
         onError: (err) async {
           _handleSocketError(err);
-
           debugPrint("ERROR OCCURRED : $err");
           await reconnect();
         },
         onDone: () async {
-          debugPrint("DONE DONE DONE");
+          debugPrint("\nDONE");
           await reconnect();
         },
         cancelOnError: true,
@@ -92,7 +102,7 @@ class WebSocketService implements IWebSocketService {
     await socket?.close();
     socket = null;
     await Future.delayed(
-        const Duration(seconds: 3)); // Bir süre bekleyip yeniden bağlan
+        const Duration(seconds: GeneralConstants.delayBetweenReconnect));
     await connectSocket();
   }
 
@@ -104,3 +114,12 @@ class WebSocketService implements IWebSocketService {
   }
 }
 //test@gmail.com
+
+//şimdilik dynamic kalabilir
+int _socketParsedLength(dynamic event) => event.toString().length - 1;
+
+dynamic _jsonDecodeSocketData(dynamic event) => jsonDecode(event.substring(
+    GeneralConstants.socketJsonInitialIndex, _socketParsedLength(event)));
+
+String _checkJsonFirstIndex(dynamic event) =>
+    event.toString().substring(0, GeneralConstants.socketFirstDoubleIndexJson);
