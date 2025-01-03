@@ -27,6 +27,14 @@ final class CustomTextStyle {
 
   static TextStyle blackColorPoppins(double size) =>
       _basePoppinStyle(color: DefaultColorPalette.vanillaBlack, size: size);
+
+  static TextStyle redColorPoppins(double size) =>
+      _basePoppinStyle(color: DefaultColorPalette.errorRed, size: size);
+
+  static TextStyle greenColorPoppins(double size) =>
+      _basePoppinStyle(color: DefaultColorPalette.vanillaGreen, size: size);
+      
+
 }
 /// Helper class for box decoration style in Containers.
 final class CustomDecoration extends BoxDecoration {
