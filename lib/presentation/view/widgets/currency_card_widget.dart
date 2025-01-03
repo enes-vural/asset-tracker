@@ -46,9 +46,9 @@ class CurrencyCardWidget extends StatelessWidget {
   }
 
   TextStyle setTextStyle(dynamic parameter) {
-    return currency.dir.alisDir == CurrencyDirectionEnum.UP.value
+    return parameter == CurrencyDirectionEnum.UP.value
         ? CustomTextStyle.greenColorPoppins(AppSize.smallText2)
-        : currency.dir.alisDir == CurrencyDirectionEnum.DOWN.value
+        : parameter == CurrencyDirectionEnum.DOWN.value
             ? CustomTextStyle.redColorPoppins(AppSize.smallText2)
             : CustomTextStyle.blackColorPoppins(AppSize.smallText2);
   }
@@ -75,3 +75,6 @@ class CurrencyCardWidget extends StatelessWidget {
     );
   }
 }
+
+
+//test@gmail.com
