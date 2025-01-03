@@ -36,14 +36,23 @@ class CurrencyCardWidget extends StatelessWidget {
               CustomTextStyle.blackColorPoppins(AppSize.mediumText),
             ),
             _currencyCardTextWidget(_buyTextLabel,
-                CustomTextStyle.redColorPoppins(AppSize.smallText2)),
+                setTextStyle(currency.dir.alisDir)),
             _currencyCardTextWidget(_sellTextLabel,
-                CustomTextStyle.greenColorPoppins(AppSize.smallText2))
+                setTextStyle(currency.dir.satisDir))
           ],
         ),
       )),
     );
   }
+
+  TextStyle setTextStyle(dynamic parameter) {
+    return currency.dir.alisDir == CurrencyDirectionEnum.UP.value
+        ? CustomTextStyle.greenColorPoppins(AppSize.smallText2)
+        : currency.dir.alisDir == CurrencyDirectionEnum.DOWN.value
+            ? CustomTextStyle.redColorPoppins(AppSize.smallText2)
+            : CustomTextStyle.blackColorPoppins(AppSize.smallText2);
+  }
+  
 
   ///"USD" 
   String get _currencyTextLabel => "\t${currency.name}";

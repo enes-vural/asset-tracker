@@ -10,7 +10,9 @@ class AppRouter extends RootStackRouter {
         AutoRoute(
           path: DefaultLocalStrings.splashRoute,
           page: SplashRoute.page,
-          initial: true,
+            //initial: true,
+            initial: true
+
         ),
         // - Auth (Login View)
         AutoRoute(
@@ -21,7 +23,7 @@ class AppRouter extends RootStackRouter {
         AutoRoute(
           path: DefaultLocalStrings.homeRoute,
           page: HomeRoute.page,
-          //   initial: true
+//            initial: true
         ),
       ];
 }
