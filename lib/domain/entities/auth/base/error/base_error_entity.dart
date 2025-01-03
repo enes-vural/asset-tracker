@@ -1,5 +1,5 @@
 class BaseErrorEntity {
   final String message;
 
-  BaseErrorEntity({required this.message});
+  const BaseErrorEntity({required this.message});
 }

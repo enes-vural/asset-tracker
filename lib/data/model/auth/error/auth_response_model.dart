@@ -1,4 +1,4 @@
-import 'package:asset_tracker/data/model/auth/error/auth_error_extension.dart';
+import 'package:asset_tracker/core/config/theme/extension/auth_error_extension.dart';
 import 'package:asset_tracker/data/model/auth/error/auth_error_state.dart';
 import 'package:asset_tracker/data/model/base/error/error_model.dart';
 import 'package:flutter/material.dart';
