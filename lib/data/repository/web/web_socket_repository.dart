@@ -53,7 +53,7 @@ class WebSocketRepository implements IWebSocketRepository {
           final index = _currencyEntities
               .indexWhere((entity) => entity.code == currencyEntity.code);
 
-          if (index == -1) {
+          if (index == int.parse(SocketActionEnum.NOT_IN_LIST.value)) {
             // Entity listede yoksa, yeni öğeyi ekle
             _currencyEntities.add(currencyEntity);
             debugPrint("New currency added: ${currencyEntity.code}");

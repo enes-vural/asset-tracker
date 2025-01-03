@@ -1,4 +1,5 @@
 import 'package:asset_tracker/core/config/theme/extension/currency_widget_title_extension.dart';
+import 'package:asset_tracker/data/model/web/direction_model.dart';
 import 'package:asset_tracker/domain/entities/web/socket/currency_entity.dart';
 
 class CurrencyWidgetEntity {
@@ -7,6 +8,7 @@ class CurrencyWidgetEntity {
   String code;
   String alis;
   String satis;
+  Direction dir;
   final CurrencyEntity entity;
   //final kullanılmayan yerlerden dolayı const eklenmedi
   CurrencyWidgetEntity({
@@ -15,6 +17,7 @@ class CurrencyWidgetEntity {
     required this.alis,
     required this.satis,
     required this.entity,
+    required this.dir,
   });
 
   factory CurrencyWidgetEntity.fromCurrency(CurrencyEntity entity) {
@@ -25,8 +28,18 @@ class CurrencyWidgetEntity {
       alis: entity.alis,
       satis: entity.satis,
       entity: entity,
+      dir: entity.dir,
     );
   }
+}
+
+enum CurrencyDirectionEnum {
+  UP('up'),
+  DOWN('down'),
+  NONE('none');
+
+  final String value;
+  const CurrencyDirectionEnum(this.value);
 }
 
 String setCurrencyLabel(String currencyCode) {

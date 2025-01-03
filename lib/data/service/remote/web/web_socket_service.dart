@@ -78,6 +78,7 @@ class WebSocketService implements IWebSocketService {
           }
         },
         onError: (err) async {
+          //cancelOnError true olduğu için buraya düşmeyecek ama yine de yazıldı
           _handleSocketError(err);
           debugPrint("ERROR OCCURRED : $err");
           await reconnect();
