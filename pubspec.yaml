@@ -35,6 +35,8 @@ dependencies:
   envied: ^1.0.0
   envied_generator: ^1.0.0
   web_socket: ^0.1.6
+  test: ^1.25.8
+  mockito: ^5.4.5
 
 dev_dependencies:
 
