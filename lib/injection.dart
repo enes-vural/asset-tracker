@@ -11,6 +11,7 @@ import 'package:asset_tracker/domain/usecase/auth/auth_use_case.dart';
 import 'package:asset_tracker/domain/usecase/web/web_use_case.dart';
 import 'package:asset_tracker/presentation/view_model/auth/auth_view_model.dart';
 import 'package:asset_tracker/presentation/view_model/home/home_view_model.dart';
+import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 
 //Riverpod ref.watch() ile sadece gerektiği ve değiştiği yerde çağırdığı için aslında bir nevi
@@ -18,7 +19,9 @@ import 'package:flutter_riverpod/flutter_riverpod.dart';
 
 //bağımlılığı olmayan en dış service katmanın bileşenini riverpod ile aktif etmek yerine direkt olarak instance olarak aldık
 
-final IAuthService authServiceInstance = FirebaseAuthService();
+final IAuthService authServiceInstance =
+    FirebaseAuthService(authService: FirebaseAuth.instance);
+    
 final IWebSocketService webSocketService = WebSocketService();
 
 final authRepositoryProvider = Provider<FirebaseAuthRepository>((ref) {
