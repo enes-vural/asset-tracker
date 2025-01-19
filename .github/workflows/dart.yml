@@ -27,7 +27,7 @@ jobs:
 
       # Kod formatını kontrol eder (opsiyonel)
       - name: Verify formatting
-        run: flutter format --set-exit-if-changed .
+        run: flutter pub run dart_style:format --dry-run --set-exit-if-changed .
 
       # Kod analizini yapar
       - name: Analyze project source
