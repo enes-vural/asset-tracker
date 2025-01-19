@@ -10,13 +10,12 @@ import 'package:asset_tracker/domain/repository/auth/iauth_repository.dart';
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:dartz/dartz.dart';
 
-
 /*class GoogleAuthRepository implements IAuthRepository{
   @override
   Future<Either<AuthErrorEntity, UserLoginResponseEntity>> signIn(UserLoginEntity entity) {
     throw UnimplementedError();
   }
-}*/ 
+}*/
 
 class FirebaseAuthRepository implements IAuthRepository {
   final IAuthService authService;
@@ -30,10 +29,11 @@ class FirebaseAuthRepository implements IAuthRepository {
       UserCredential? userResponse = await authService.signInUser(entity);
 
       if (userResponse?.user?.uid != null) {
+        final String? token = await userResponse?.user?.getIdToken();
         final UserLoginResponseModel userModel = UserLoginResponseModel(
-            token: userResponse!.credential?.token.toString() ??
+            token: token ??
                 DefaultLocalStrings.emptyText);
-                
+
         UserLoginResponseEntity userEntity =
             UserLoginResponseEntity.fromModel(userModel);
         return Right(userEntity);
@@ -52,8 +52,8 @@ class FirebaseAuthRepository implements IAuthRepository {
     } on FirebaseException catch (error) {
       //check firebase errors
       //convert it to entity before return
-      return Left(AuthErrorEntity.fromModel(
-          AuthErrorModel.toErrorModel(error.code)));
+      return Left(
+          AuthErrorEntity.fromModel(AuthErrorModel.toErrorModel(error.code)));
       //
     } catch (e) {
       //check general errors
