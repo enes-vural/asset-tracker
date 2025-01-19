@@ -1,0 +1,35 @@
+name: Flutter CI
+
+on:
+  push:
+    branches: [ "main" ]
+  pull_request:
+    branches: [ "main" ]
+
+jobs:
+  test:
+    runs-on: ubuntu-latest
+
+    steps:
+      - uses: actions/checkout@v4
+
+      # Flutter SDK kurulumunu yapar
+      - uses: subosito/flutter-action@v2
+        with:
+          flutter-version: stable
+
+      # Bağımlılıkları yükler
+      - name: Install dependencies
+        run: flutter pub get
+
+      # Kod formatını kontrol eder (opsiyonel)
+      - name: Verify formatting
+        run: flutter format --set-exit-if-changed .
+
+      # Kod analizini yapar
+      - name: Analyze project source
+        run: flutter analyze
+
+      # Testleri çalıştırır
+      - name: Run tests
+        run: flutter test
