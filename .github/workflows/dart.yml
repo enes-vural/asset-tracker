@@ -46,7 +46,13 @@ jobs:
       # Kod formatını kontrol eder (opsiyonel)
       #- name: Verify formatting
         #run: flutter pub run dart_style:format --dry-run --set-exit-if-changed .
+    
+      - name: Create a temporary firebase_options.dart
+        run: |
+          echo "// Temporary firebase_options.dart for CI/CD" > lib/core/config/init/firebase_options.dart
 
+
+      
       # Kod analizini yapar
       - name: Analyze project source
         run: flutter analyze
