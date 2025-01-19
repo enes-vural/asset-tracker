@@ -16,14 +16,32 @@ jobs:
       # Flutter SDK kurulumunu yapar
       - uses: subosito/flutter-action@v2
         with:
-          flutter-version: '3.27.2'   
-          channel: 'stable'         
-          architecture: 'x64'        
-          cache: true   
-
+          flutter-version: '3.27.2'
+          channel: 'stable'
+          architecture: 'x64'
+          cache: true
+   
+      # Cache Flutter SDK
+      - name: Cache Flutter SDK
+        uses: actions/cache@v4
+        with:
+          path: /opt/hostedtoolcache/flutter
+          key: flutter-sdk-${{ runner.os }}-flutter-${{ steps.flutter-action.outputs.cache-key }}
+          restore-keys: |
+            flutter-sdk-${{ runner.os }}-flutter-
+      
       # Bağımlılıkları yükler
       - name: Install dependencies
         run: flutter pub get
+
+      # Cache Pub packages
+      - name: Cache Pub packages
+        uses: actions/cache@v4
+        with:
+          path: /home/runner/.pub-cache
+          key: pub-cache-${{ runner.os }}-flutter-${{ steps.flutter-action.outputs.cache-key }}-${{ hashFiles('pubspec.yaml') }}
+          restore-keys: |
+            pub-cache-${{ runner.os }}-flutter-
 
       # Kod formatını kontrol eder (opsiyonel)
       - name: Verify formatting
