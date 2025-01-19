@@ -55,7 +55,8 @@ void main() {
 
       expect(signInResult, isA<Right<void, UserLoginResponseEntity>>());
       signInResult.fold(
-          (l) => null, (right) => expect(right.token, "success-token"));
+          (_) => fail("Expected Right but got left"),
+          (right) => expect(right.token, "success-token"));
     });
 
     test("Authentication Repository Failed (User not found) Test", () async {
@@ -68,6 +69,8 @@ void main() {
           await authRepo.signIn(TestConstants.successLoginEntity);
 
       expect(signInResult, isA<Left<AuthErrorEntity, void>>());
+      
     });
+    
   });
 }

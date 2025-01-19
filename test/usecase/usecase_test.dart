@@ -29,7 +29,8 @@ void main() {
 
       expect(result, isA<Right<void, UserLoginResponseEntity>>());
       result.fold(
-          (_) => null, (succcess) => expect(succcess.token, "success-token"));
+          (_) => fail("Expected Right but got Left"),
+          (succcess) => expect(succcess.token, "success-token"));
     });
 
     test("Sign In Use Case Failed", () async {
@@ -41,7 +42,8 @@ void main() {
 
       expect(result, isA<Left<AuthErrorEntity, void>>());
       result.fold(
-          (failure) => expect(failure.message, "User not found"), (_) => null);
+          (testDone) => expect(testDone.message, "User not found"),
+          (_) => fail("Expected Left but got Right"));
       // Assert
     });
   });
