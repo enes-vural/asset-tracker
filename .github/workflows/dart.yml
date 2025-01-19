@@ -16,7 +16,10 @@ jobs:
       # Flutter SDK kurulumunu yapar
       - uses: subosito/flutter-action@v2
         with:
-          flutter-version: stable
+          flutter-version: '3.27.2'   
+          channel: 'stable'         
+          architecture: 'x64'        
+          cache: true   
 
       # Bağımlılıkları yükler
       - name: Install dependencies
