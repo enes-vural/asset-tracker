@@ -49,7 +49,7 @@ jobs:
     
       - name: Create a temporary firebase_options.dart
         run: |
-          echo "// Temporary firebase_options.dart for CI/CD" > lib/core/config/init/firebase_options.dart
+          echo "// Temporary firebase_options.dart for CI/CD" > lib/firebase_options.dart
 
 
       
