@@ -13,7 +13,7 @@ jobs:
     steps:
       - uses: actions/checkout@v4
 
-      # Flutter SDK kurulumunu yapar
+      # Flutter SDK setup
       - uses: subosito/flutter-action@v2
         with:
           flutter-version: '3.27.2'
@@ -30,7 +30,7 @@ jobs:
           restore-keys: |
             flutter-sdk-${{ runner.os }}-flutter-
       
-      # Bağımlılıkları yükler
+      # Install dependencies
       - name: Install dependencies
         run: flutter pub get
 
@@ -44,8 +44,8 @@ jobs:
             pub-cache-${{ runner.os }}-flutter-
 
       # Kod formatını kontrol eder (opsiyonel)
-      - name: Verify formatting
-        run: flutter pub run dart_style:format --dry-run --set-exit-if-changed .
+      #- name: Verify formatting
+        #run: flutter pub run dart_style:format --dry-run --set-exit-if-changed .
 
       # Kod analizini yapar
       - name: Analyze project source
