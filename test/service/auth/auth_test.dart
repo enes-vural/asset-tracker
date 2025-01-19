@@ -5,6 +5,7 @@ import 'package:mockito/mockito.dart';
 import 'package:test/test.dart';
 
 import '../../shared/auth_service_shared.dart';
+import '../../shared/constants/test_constants.dart';
 
 final class MockValidationMixin extends Mock implements ValidatorMixin {}
 
@@ -36,7 +37,7 @@ void main() {
       final mockUser = mockAuthHelper.user;
 
       mockAuthHelper.whenSuccessLogin(
-          mockAuthHelper.correctEmail, mockAuthHelper.correctPassword);
+          TestConstants.correctEmail, TestConstants.correctPassword);
 
       when(mockAuthHelper.user.uid).thenReturn("test-uid-passes");
 
@@ -62,7 +63,7 @@ void main() {
 
     test("Login Failed Test (Invalid Credentials)", () async {
       mockAuthHelper.whenFailedLogin(
-          mockAuthHelper.wrongEmail, mockAuthHelper.wrongPassword);
+          TestConstants.wrongEmail, TestConstants.wrongPassword);
 
       expect(
           () async => await firebaseAuthService.signInUser(
@@ -74,15 +75,15 @@ void main() {
     test("Email Validation Test", () {
       //burada type
 
-      when(mockValidationMixin.checkEmail(mockAuthHelper.wrongEmail))
+      when(mockValidationMixin.checkEmail(TestConstants.wrongEmail))
           .thenReturn("Invalid-Email");
       when(mockValidationMixin.checkEmail("")).thenReturn("Empty-Email");
 
       final wrongEmailResult =
-          mockValidationMixin.checkEmail(mockAuthHelper.wrongEmail);
+          mockValidationMixin.checkEmail(TestConstants.wrongEmail);
       final emptyEmailResult = mockValidationMixin.checkEmail("");
       final correctEmailResult =
-          mockValidationMixin.checkEmail(mockAuthHelper.correctEmail);
+          mockValidationMixin.checkEmail(TestConstants.correctEmail);
 
       verifyNever(mockAuthHelper.mockFirebaseAuth.signInWithEmailAndPassword(
         email: anyNamed("email"),
@@ -97,16 +98,16 @@ void main() {
     });
 
     test("Password Validation Test", () {
-      when(mockValidationMixin.checkPassword(mockAuthHelper.wrongPassword))
+      when(mockValidationMixin.checkPassword(TestConstants.wrongPassword))
           .thenReturn("Weak-Password");
       when(mockValidationMixin.checkPassword("")).thenReturn("Empty-Password");
 
       final wrongPasswordResult =
-          mockValidationMixin.checkPassword(mockAuthHelper.wrongPassword);
+          mockValidationMixin.checkPassword(TestConstants.wrongPassword);
 
       final emptyPasswordResult = mockValidationMixin.checkPassword("");
       final correctPasswordResult =
-          mockValidationMixin.checkPassword(mockAuthHelper.correctPassword);
+          mockValidationMixin.checkPassword(TestConstants.correctPassword);
 
       verifyNever(mockAuthHelper.mockFirebaseAuth.signInWithEmailAndPassword(
         email: anyNamed("email"),

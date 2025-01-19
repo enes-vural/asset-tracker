@@ -6,10 +6,7 @@ import 'auth_service_shared.mocks.dart';
 
 @GenerateMocks([FirebaseAuth, User, UserCredential])
 class MockAuthHelper {
-  final String wrongEmail = "wrongemail@.com";
-  final String correctEmail = "correct@gmail.com";
-  final String wrongPassword = "123";
-  final String correctPassword = "123456";
+
 
   MockFirebaseAuth mockFirebaseAuth = MockFirebaseAuth();
   late MockUser _mockUser;
