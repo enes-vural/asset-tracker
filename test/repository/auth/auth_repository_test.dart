@@ -6,6 +6,7 @@ import 'package:asset_tracker/domain/entities/auth/user_login_entity.dart';
 import 'package:asset_tracker/domain/entities/auth/user_login_response_entity.dart';
 import 'package:asset_tracker/domain/repository/auth/iauth_repository.dart';
 import 'package:dartz/dartz.dart';
+import 'package:easy_localization/easy_localization.dart';
 import 'package:mockito/mockito.dart';
 import 'package:test/test.dart';
 
@@ -15,6 +16,10 @@ void main() {
   late MockAuthHelper mockAuthHelper;
   late IAuthService firebaseAuthService;
   late IAuthRepository authRepo;
+
+  setUpAll(() {
+    EasyLocalization.logger.enableLevels = [];
+  });
 
   setUp(() {
     mockAuthHelper = MockAuthHelper();
