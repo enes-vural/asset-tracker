@@ -1,4 +1,5 @@
-import 'package:asset_tracker/core/config/constants/global/fom_keys.dart';
+import 'package:asset_tracker/core/config/constants/global/key/fom_keys.dart';
+import 'package:asset_tracker/core/config/constants/global/key/widget_keys.dart';
 import 'package:asset_tracker/core/mixins/validation_mixin.dart';
 import 'package:asset_tracker/core/routers/router.dart';
 import 'package:asset_tracker/core/widgets/custom_align.dart';
@@ -48,13 +49,19 @@ class _LoginViewState extends ConsumerState<LoginView> with ValidatorMixin {
             mainAxisAlignment: MainAxisAlignment.spaceBetween,
             crossAxisAlignment: CrossAxisAlignment.start,
             children: [
+              Text(
+                key: Key("123"),
+                "123",
+              ),
               _authLogoWidget(),
               _signInTextWidget(),
               AuthFormWidget.email(
+                key: WidgetKeys.loginEmailTextFieldKey,
                 emailController: authViewModel.emailController,
                 emailValidator: checkEmail,
               ),
               AuthFormWidget.password(
+                key: WidgetKeys.loginPasswordTextFieldKey,
                 passwordController: authViewModel.passwordController,
                 passwordValidator: checkPassword,
               ),
