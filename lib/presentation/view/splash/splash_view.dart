@@ -1,5 +1,6 @@
 // ignore_for_file: no_leading_underscores_for_local_identifiers
 
+import 'package:asset_tracker/core/config/constants/global/key/widget_keys.dart';
 import 'package:asset_tracker/core/routers/router.dart';
 import 'package:asset_tracker/presentation/view/widgets/circle_logo_widget.dart';
 import 'package:auto_route/annotations.dart';
@@ -33,7 +34,10 @@ class _SplashViewState extends State<SplashView> {
       //dark blue for splash background color
       backgroundColor: Theme.of(context).colorScheme.onPrimary,
       //default body
-      body: const Center(child: CircleMainLogoWidget()),
+      body: const Center(
+          child: CircleMainLogoWidget(
+        key: WidgetKeys.splashLogoKey,
+      )),
     );
   }
 }
