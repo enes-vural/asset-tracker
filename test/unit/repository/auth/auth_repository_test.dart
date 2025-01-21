@@ -39,10 +39,8 @@ void main() {
   });
 
   group("Authentication Repository (Data)", () {
-
     test("Authentication Repository Success Test", () async {
-      mockAuthHelper.whenSuccessLogin(
-          TestConstants.successLoginEntity.userName,
+      mockAuthHelper.whenSuccessLogin(TestConstants.successLoginEntity.userName,
           TestConstants.successLoginEntity.password);
 
       when(mockAuthHelper.userCreds.user).thenReturn(mockAuthHelper.user);
@@ -54,14 +52,12 @@ void main() {
           await authRepo.signIn(TestConstants.successLoginEntity);
 
       expect(signInResult, isA<Right<void, UserLoginResponseEntity>>());
-      signInResult.fold(
-          (_) => fail("Expected Right but got left"),
+      signInResult.fold((_) => fail("Expected Right but got left"),
           (right) => expect(right.token, "success-token"));
     });
 
     test("Authentication Repository Failed (User not found) Test", () async {
-      mockAuthHelper.whenFailedLogin(
-          TestConstants.successLoginEntity.userName,
+      mockAuthHelper.whenFailedLogin(TestConstants.successLoginEntity.userName,
           TestConstants.successLoginEntity.password);
       when(mockAuthHelper.userCreds.user?.uid).thenReturn(null);
 
@@ -69,8 +65,6 @@ void main() {
           await authRepo.signIn(TestConstants.successLoginEntity);
 
       expect(signInResult, isA<Left<AuthErrorEntity, void>>());
-      
     });
-    
   });
 }
