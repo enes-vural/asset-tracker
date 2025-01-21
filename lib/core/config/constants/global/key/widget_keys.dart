@@ -1,6 +1,8 @@
 import 'package:flutter/material.dart';
 
 final class WidgetKeys {
+  const WidgetKeys._();
+
   /// Splash View ///
   static const ValueKey splashLogoKey = ValueKey("splash_logo_widget");
   //-----------------
