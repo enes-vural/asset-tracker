@@ -28,8 +28,7 @@ void main() {
       final result = await signInUseCase.call(TestConstants.successLoginEntity);
 
       expect(result, isA<Right<void, UserLoginResponseEntity>>());
-      result.fold(
-          (_) => fail("Expected Right but got Left"),
+      result.fold((_) => fail("Expected Right but got Left"),
           (succcess) => expect(succcess.token, "success-token"));
     });
 
@@ -41,8 +40,7 @@ void main() {
       final result = await signInUseCase.call(TestConstants.failureLoginEntity);
 
       expect(result, isA<Left<AuthErrorEntity, void>>());
-      result.fold(
-          (testDone) => expect(testDone.message, "User not found"),
+      result.fold((testDone) => expect(testDone.message, "User not found"),
           (_) => fail("Expected Left but got Right"));
       // Assert
     });

@@ -47,7 +47,7 @@ void main() {
 
       final loginResult = await firebaseAuthService.signInUser(
           const UserLoginEntity(
-          userName: "test@gmail.com", password: "123456"));
+              userName: "test@gmail.com", password: "123456"));
 
       final user = loginResult?.user;
 
@@ -89,12 +89,10 @@ void main() {
         email: anyNamed("email"),
         password: anyNamed("password"),
       ));
-      
+
       expect(wrongEmailResult, "Invalid-Email");
       expect(emptyEmailResult, "Empty-Email");
       expect(correctEmailResult, null);
-
-
     });
 
     test("Password Validation Test", () {
@@ -113,7 +111,7 @@ void main() {
         email: anyNamed("email"),
         password: anyNamed("password"),
       ));
-      
+
       expect(wrongPasswordResult, "Weak-Password");
       expect(emptyPasswordResult, "Empty-Password");
       expect(correctPasswordResult, null);
