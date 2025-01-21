@@ -25,9 +25,11 @@ class AuthFormWidget extends StatelessWidget {
 
 
   AuthFormWidget.email({
+    Key? key,
     required TextEditingController? emailController,
     required FormFieldValidator<String>? emailValidator,
   }) : this(
+          key: key,
           formController: emailController,
           isObs: false,
           label: LocaleKeys.auth_email.tr(),
@@ -35,9 +37,11 @@ class AuthFormWidget extends StatelessWidget {
         );
 
   AuthFormWidget.password({
+    Key? key,
     required TextEditingController? passwordController,
     required FormFieldValidator<String>? passwordValidator,
   }) : this(
+          key: key,
           formController: passwordController,
           isObs: true,
           label: LocaleKeys.auth_password.tr(),

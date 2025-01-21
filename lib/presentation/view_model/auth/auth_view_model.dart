@@ -1,4 +1,4 @@
-import 'package:asset_tracker/core/config/constants/global/fom_keys.dart';
+import 'package:asset_tracker/core/config/constants/global/key/fom_keys.dart';
 import 'package:asset_tracker/core/config/constants/string_constant.dart';
 import 'package:asset_tracker/core/helpers/snackbar.dart';
 import 'package:asset_tracker/domain/entities/auth/user_login_entity.dart';
