@@ -49,10 +49,6 @@ class _LoginViewState extends ConsumerState<LoginView> with ValidatorMixin {
             mainAxisAlignment: MainAxisAlignment.spaceBetween,
             crossAxisAlignment: CrossAxisAlignment.start,
             children: [
-              Text(
-                key: Key("123"),
-                "123",
-              ),
               _authLogoWidget(),
               _signInTextWidget(),
               AuthFormWidget.email(
@@ -67,9 +63,9 @@ class _LoginViewState extends ConsumerState<LoginView> with ValidatorMixin {
               ),
               _forgotPasswordWidget(),
               AuthSubmitWidget(
+                key: WidgetKeys.loginSubmitButtonKey,
                 label: LocaleKeys.auth_signIn.tr(),
                 voidCallBack: () => _submit(authViewModel, context),
-                
               ),
               const Spacer(),
             ],
@@ -87,7 +83,9 @@ class _LoginViewState extends ConsumerState<LoginView> with ValidatorMixin {
   Center _authLogoWidget() {
     return const Center(
       heightFactor: AppSize.defaultHeightFactor,
-      child: CircleMainLogoWidget(),
+      child: CircleMainLogoWidget(
+        key: WidgetKeys.loginAppLogoKey,
+      ),
     );
   }
 
@@ -109,6 +107,8 @@ class _LoginViewState extends ConsumerState<LoginView> with ValidatorMixin {
     );
   }
 
-  Text _signInTextWidget() => Text(LocaleKeys.auth_signIn.tr(),
+  Text _signInTextWidget() => Text(
+      key: WidgetKeys.loginSignInTextKey,
+      LocaleKeys.auth_signIn.tr(),
       style: CustomTextStyle.whiteColorPoppins(AppSize.mediumText));
 }
