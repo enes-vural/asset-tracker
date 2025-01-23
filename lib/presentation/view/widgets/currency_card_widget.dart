@@ -1,4 +1,5 @@
 import 'package:asset_tracker/core/config/theme/extension/responsive_extension.dart';
+import 'package:asset_tracker/core/widgets/custom_sized_box.dart';
 import 'package:easy_localization/easy_localization.dart';
 import 'package:flutter/material.dart';
 
@@ -20,7 +21,7 @@ class CurrencyCardWidget extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return CustomPadding.mediumTop(
-      widget: InkWell(
+      widget: GestureDetector(
           child: Container(
         height: ResponsiveSize(context).screenHeight.toPercent(8),
         decoration: CustomDecoration.roundBox(
@@ -33,71 +34,84 @@ class CurrencyCardWidget extends StatelessWidget {
           mainAxisAlignment: MainAxisAlignment.start,
           crossAxisAlignment: CrossAxisAlignment.start,
           children: [
-            Expanded(
-              flex: 6,
-              child: Row(
-                mainAxisAlignment: MainAxisAlignment.start,
-                children: [
-                  CustomPadding.smallHorizontal(
-                    widget: CircleAvatar(
-                      radius: 22.0,
-                      child: Image.asset(
-                        currency.getCurrencyIcon(),
-                        fit: BoxFit.cover,
-                      ),
-                    ),
-                  ),
-                  const SizedBox(width: 5.0),
-                  Column(
-                    mainAxisAlignment: MainAxisAlignment.center,
-                    crossAxisAlignment: CrossAxisAlignment.start,
-                    children: [
-                      Text(
-                        currency.name.toString(),
-                        style: CustomTextStyle.blackColorBoldPoppins(14.0),
-                        overflow: TextOverflow.clip,
-                      ),
-                      Text(
-                        currency.code.toString(),
-                        style: CustomTextStyle.blackColorPoppins(12.0),
-                        overflow: TextOverflow.clip,
-                      )
-                    ],
-                  )
-                ],
-              ),
-            ),
-            Expanded(
-              flex: 3,
-              child: Container(
-                  child: Column(
-                mainAxisAlignment: MainAxisAlignment.center,
-                crossAxisAlignment: CrossAxisAlignment.center,
-                children: [
-                  Text(
-                    "Satış Fiyatı",
-                    style: CustomTextStyle.blackColorPoppins(12.0),
-                  ),
-                  Text(
-                    currency.satis.toString(),
-                    style: CustomTextStyle.blackColorBoldPoppins(14.0),
-                  ),
-                ],
-              )),
-            ),
-            Expanded(
-              flex: 2,
-              child: Center(
-                child: setIcon(currency.dir.satisDir),
-              ),
-            ),
+            _currencyInfoWidget(),
+            _currencyPriceWidget(),
+            _currencyDirectionWidget(),
           ],
         ),
       )),
     );
   }
 
-  Icon setIcon(dynamic parameter) {
+  Expanded _currencyDirectionWidget() {
+    return Expanded(
+      flex: 2,
+      child: Center(
+        child: _setIcon(currency.dir.satisDir),
+      ),
+    );
+  }
+
+  Expanded _currencyPriceWidget() {
+    return Expanded(
+      flex: 3,
+      child: SizedBox(
+          child: Column(
+        mainAxisAlignment: MainAxisAlignment.center,
+        crossAxisAlignment: CrossAxisAlignment.center,
+        children: [
+          Text(
+            LocaleKeys.home_sell.tr(),
+            style: CustomTextStyle.blackColorPoppins(AppSize.smallText),
+          ),
+          Text(
+            currency.satis.toString(),
+            style: CustomTextStyle.blackColorBoldPoppins(AppSize.small2Text),
+          ),
+        ],
+      )),
+    );
+  }
+
+  Expanded _currencyInfoWidget() {
+    return Expanded(
+      flex: 6,
+      child: Row(
+        mainAxisAlignment: MainAxisAlignment.start,
+        children: [
+          CustomPadding.smallHorizontal(
+            widget: CircleAvatar(
+              radius: AppSize.hugeRadius,
+              child: Image.asset(
+                currency.getCurrencyIcon(),
+                fit: BoxFit.cover,
+              ),
+            ),
+          ),
+          const CustomSizedBox.smallGap(),
+          Column(
+            mainAxisAlignment: MainAxisAlignment.center,
+            crossAxisAlignment: CrossAxisAlignment.start,
+            children: [
+              Text(
+                currency.name.toString(),
+                style:
+                    CustomTextStyle.blackColorBoldPoppins(AppSize.smallText2),
+                overflow: TextOverflow.clip,
+              ),
+              Text(
+                currency.code.toString(),
+                style: CustomTextStyle.blackColorPoppins(AppSize.smallText),
+                overflow: TextOverflow.clip,
+              )
+            ],
+          )
+        ],
+      ),
+    );
+  }
+
+  Icon _setIcon(dynamic parameter) {
     return parameter == CurrencyDirectionEnum.UP.value
         ? const Icon(Icons.arrow_upward,
             color: DefaultColorPalette.vanillaGreen)
@@ -109,8 +123,4 @@ class CurrencyCardWidget extends StatelessWidget {
                 color: DefaultColorPalette.grey400,
               );
   }
-
 }
-
-
-//test@gmail.com

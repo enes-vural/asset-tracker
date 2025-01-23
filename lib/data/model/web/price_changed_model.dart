@@ -1,5 +1,4 @@
 import 'package:asset_tracker/data/model/web/meta_model.dart';
-import 'package:flutter/material.dart';
 import 'currency_model.dart';
 
 class PriceChangedDataModel {
@@ -20,6 +19,4 @@ class PriceChangedDataModel {
       meta: Meta.fromJson(json['meta']),
     );
   }
-
-
 }
