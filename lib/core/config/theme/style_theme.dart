@@ -27,6 +27,12 @@ final class CustomTextStyle {
 
   static TextStyle blackColorPoppins(double size) =>
       _basePoppinStyle(color: DefaultColorPalette.vanillaBlack, size: size);
+  
+  static TextStyle blackColorBoldPoppins(double size) => GoogleFonts.poppins(
+        fontWeight: FontWeight.bold,
+        color: DefaultColorPalette.vanillaBlack,
+        fontSize: size,
+      );
 
   static TextStyle redColorPoppins(double size) =>
       _basePoppinStyle(color: DefaultColorPalette.errorRed, size: size);

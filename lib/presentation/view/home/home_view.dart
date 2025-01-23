@@ -1,5 +1,6 @@
 import 'package:asset_tracker/core/config/localization/generated/locale_keys.g.dart';
 import 'package:asset_tracker/core/config/theme/extension/responsive_extension.dart';
+import 'package:asset_tracker/core/config/theme/style_theme.dart';
 import 'package:asset_tracker/core/widgets/custom_padding.dart';
 import 'package:asset_tracker/domain/entities/web/socket/currency_entity.dart';
 import 'package:asset_tracker/domain/entities/web/socket/currency_widget_entity.dart';
@@ -42,44 +43,78 @@ class _HomeViewState extends ConsumerState<HomeView> {
   Widget build(BuildContext context) {
     final HomeViewModel viewModel = ref.watch(homeViewModelProvider);
     return Scaffold(
-      appBar: AppBar(title: Text(LocaleKeys.app_title.tr())),
+      backgroundColor: Colors.grey.shade100,
+      appBar: AppBar(
+        backgroundColor: Colors.grey.shade100,
+        title: Text(LocaleKeys.app_title.tr()),
+        shadowColor: Colors.black,
+        elevation: 5,
+      ),
       body: Center(
         child: TextButton(
           onPressed: () {},
           child: CustomPadding.largeHorizontal(
-            widget: SizedBox(
-              height: ResponsiveSize(context).screenHeight.toPercent(75),
-              width: ResponsiveSize(context).screenWidth,
-              child: StreamBuilder(
-                stream: viewModel.getStream(),
-                builder: (context, snapshot) {
-                  //show circular progess bar while waiting for data
-                  if (snapshot.connectionState == ConnectionState.waiting) {
-                    return const Center(child: CircularProgressIndicator());
-                  }
+            widget: Column(
+              children: [
+                TextFormField(
+                  decoration: InputDecoration(
+                    suffixIcon: Icon(
+                      Icons.search,
+                      color: Colors.grey.shade500,
+                    ),
+                    hintText: "Search",
+                    hintStyle: CustomTextStyle.blackColorPoppins(16),
+                    enabledBorder: OutlineInputBorder(
+                      borderRadius: BorderRadius.circular(10),
+                      borderSide: BorderSide(
+                        color: Colors.grey.shade500,
+                        style: BorderStyle.solid,
+                      ),
+                    ),
+                    focusedBorder: OutlineInputBorder(
+                      borderRadius: BorderRadius.circular(10),
+                      borderSide: BorderSide(
+                          color: Colors.grey.shade500,
+                          style: BorderStyle.solid),
+                    ),
+                  ),
+                ),
+                SizedBox(
+                  height: ResponsiveSize(context).screenHeight.toPercent(75),
+                  width: ResponsiveSize(context).screenWidth,
+                  child: StreamBuilder(
+                    stream: viewModel.getStream(),
+                    builder: (context, snapshot) {
+                      //show circular progess bar while waiting for data
+                      if (snapshot.connectionState == ConnectionState.waiting) {
+                        return const Center(child: CircularProgressIndicator());
+                      }
 
-                  if (snapshot.connectionState == ConnectionState.active) {
-                    // If stream is active and data is available
-                    if (snapshot.hasData) {
-                      List<CurrencyEntity> data = snapshot.data;
+                      if (snapshot.connectionState == ConnectionState.active) {
+                        // If stream is active and data is available
+                        if (snapshot.hasData) {
+                          List<CurrencyEntity> data = snapshot.data;
 
-                      return ListView.builder(
-                        itemCount: data.length, // Adjust based on data
-                        itemBuilder: (context, index) {
-                          CurrencyWidgetEntity currency =
-                              CurrencyWidgetEntity.fromCurrency(data[index]);
-                          return CurrencyCardWidget(currency: currency);
-                        },
-                      );
-                    } else {
-                      // No data available yet, but stream is active
+                          return ListView.builder(
+                            itemCount: data.length, // Adjust based on data
+                            itemBuilder: (context, index) {
+                              CurrencyWidgetEntity currency =
+                                  CurrencyWidgetEntity.fromCurrency(
+                                      data[index]);
+                              return CurrencyCardWidget(currency: currency);
+                            },
+                          );
+                        } else {
+                          // No data available yet, but stream is active
+                          return loadingTextWidget();
+                        }
+                      }
+                      //default state
                       return loadingTextWidget();
-                    }
-                  }
-                  //default state
-                  return loadingTextWidget();
-                },
-              ),
+                    },
+                  ),
+                ),
+              ],
             ),
           ),
         ),
