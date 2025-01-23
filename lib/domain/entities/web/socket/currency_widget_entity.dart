@@ -4,7 +4,7 @@ import 'package:asset_tracker/domain/entities/web/socket/currency_entity.dart';
 
 class CurrencyWidgetEntity {
   // final String name;
-  String? name;
+  String name;
   String code;
   String alis;
   String satis;
@@ -12,7 +12,7 @@ class CurrencyWidgetEntity {
   final CurrencyEntity entity;
   //final kullanılmayan yerlerden dolayı const eklenmedi
   CurrencyWidgetEntity({
-    this.name,
+    required this.name,
     required this.code,
     required this.alis,
     required this.satis,
@@ -26,10 +26,64 @@ class CurrencyWidgetEntity {
       name: label,
       code: entity.code,
       alis: entity.alis,
-      satis: entity.satis,
+      // 8825.25956 tarzındaki satış değerlerini => 8825.25 şeklinde düzenlemek için
+      satis: entity.satis.contains('.')
+          ? entity.satis.length - entity.satis.indexOf('.') > 3
+              ? entity.satis.substring(0, entity.satis.indexOf('.') + 3) +
+                  _currenyType(entity.code)
+              : entity.satis + _currenyType(entity.code)
+          : entity.satis + _currenyType(entity.code),
       entity: entity,
       dir: entity.dir,
     );
+  }
+
+  getCurrencyIcon() {
+    const String basePath = "assets/image/currency/";
+    if (_currencyContains('GOLD')) {
+      return "${basePath}gold_coin.png";
+    } else if (_currencyContains("gbp")) {
+      return "${basePath}gbp_coin.png";
+    } else if (_currencyContains("chf_coin.png")) {
+    } else if (_currencyContains("AUD")) {
+      return "${basePath}aud_coin.png";
+    } else if (_currencyContains("XAU")) {
+      return "${basePath}xau_coin.png";
+    } else if (_currencyContains("SEK") || _currencyContains("DKK")) {
+      return "${basePath}sek_coin.png";
+    } else if (_currencyContains("NOK")) {
+      return "${basePath}nok_coin.png";
+    } else if (_currencyContains("JPY")) {
+      return "${basePath}jpy_coin.png";
+    } else if (_currencyContains("Silver") || _currencyContains("XAG")) {
+      return "${basePath}silver_coin.png";
+    } else if (_currencyContains("XPT")) {
+      return "${basePath}xpt_coin.png";
+    } else if (_currencyContains("SAR")) {
+      return "${basePath}sar_coin.png";
+    } else if (_currencyContains("GBP")) {
+      return "${basePath}gbp_coin.png";
+    } else if (_currencyContains("CAD")) {
+      return "${basePath}cad_coin.png";
+    } else if (_currencyContains('USD')) {
+      return "${basePath}usd_coin.png";
+    } else if (_currencyContains("EUR")) {
+      return "${basePath}euro_coin.png";
+    } else {
+      return "${basePath}default_coin.png";
+    }
+  }
+
+  bool _currencyContains(String value) {
+    return name.contains(value);
+  }
+
+  static String _currenyType(String code) {
+    return code.contains("USD")
+        ? "\t\$"
+        : code.contains("EUR")
+            ? "\t€"
+            : "\t₺";
   }
 }
 

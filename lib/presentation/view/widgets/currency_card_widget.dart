@@ -22,58 +22,94 @@ class CurrencyCardWidget extends StatelessWidget {
     return CustomPadding.mediumTop(
       widget: InkWell(
           child: Container(
-        height: ResponsiveSize(context).screenHeight.toPercent(6.5),
+        height: ResponsiveSize(context).screenHeight.toPercent(8),
         decoration: CustomDecoration.roundBox(
-            radius: AppSize.mediumRadius,
-            borderColor: DefaultColorPalette.vanillaBlack,
-            containerColor: DefaultColorPalette.vanillaTranparent,
-            borderWidth: AppSize.defaultBorderWidth),
+          radius: AppSize.mediumRadius,
+          borderColor: DefaultColorPalette.vanillaWhite,
+          containerColor: DefaultColorPalette.vanillaWhite,
+          borderWidth: AppSize.defaultBorderWidth,
+        ),
         child: Row(
-          mainAxisAlignment: MainAxisAlignment.spaceAround,
+          mainAxisAlignment: MainAxisAlignment.start,
+          crossAxisAlignment: CrossAxisAlignment.start,
           children: [
-            _currencyCardTextWidget(
-              _currencyTextLabel,
-              CustomTextStyle.blackColorPoppins(AppSize.mediumText),
+            Expanded(
+              flex: 6,
+              child: Row(
+                mainAxisAlignment: MainAxisAlignment.start,
+                children: [
+                  CustomPadding.smallHorizontal(
+                    widget: CircleAvatar(
+                      radius: 22.0,
+                      child: Image.asset(
+                        currency.getCurrencyIcon(),
+                        fit: BoxFit.cover,
+                      ),
+                    ),
+                  ),
+                  const SizedBox(width: 5.0),
+                  Column(
+                    mainAxisAlignment: MainAxisAlignment.center,
+                    crossAxisAlignment: CrossAxisAlignment.start,
+                    children: [
+                      Text(
+                        currency.name.toString(),
+                        style: CustomTextStyle.blackColorBoldPoppins(14.0),
+                        overflow: TextOverflow.clip,
+                      ),
+                      Text(
+                        currency.code.toString(),
+                        style: CustomTextStyle.blackColorPoppins(12.0),
+                        overflow: TextOverflow.clip,
+                      )
+                    ],
+                  )
+                ],
+              ),
             ),
-            _currencyCardTextWidget(_buyTextLabel,
-                setTextStyle(currency.dir.alisDir)),
-            _currencyCardTextWidget(_sellTextLabel,
-                setTextStyle(currency.dir.satisDir))
+            Expanded(
+              flex: 3,
+              child: Container(
+                  child: Column(
+                mainAxisAlignment: MainAxisAlignment.center,
+                crossAxisAlignment: CrossAxisAlignment.center,
+                children: [
+                  Text(
+                    "Satış Fiyatı",
+                    style: CustomTextStyle.blackColorPoppins(12.0),
+                  ),
+                  Text(
+                    currency.satis.toString(),
+                    style: CustomTextStyle.blackColorBoldPoppins(14.0),
+                  ),
+                ],
+              )),
+            ),
+            Expanded(
+              flex: 2,
+              child: Center(
+                child: setIcon(currency.dir.satisDir),
+              ),
+            ),
           ],
         ),
       )),
     );
   }
 
-  TextStyle setTextStyle(dynamic parameter) {
+  Icon setIcon(dynamic parameter) {
     return parameter == CurrencyDirectionEnum.UP.value
-        ? CustomTextStyle.greenColorPoppins(AppSize.smallText2)
+        ? const Icon(Icons.arrow_upward,
+            color: DefaultColorPalette.vanillaGreen)
         : parameter == CurrencyDirectionEnum.DOWN.value
-            ? CustomTextStyle.redColorPoppins(AppSize.smallText2)
-            : CustomTextStyle.blackColorPoppins(AppSize.smallText2);
+            ? const Icon(Icons.arrow_downward,
+                color: DefaultColorPalette.errorRed)
+            : Icon(
+                Icons.exposure_zero_outlined,
+                color: DefaultColorPalette.grey400,
+              );
   }
-  
 
-  ///"USD" 
-  String get _currencyTextLabel => "\t${currency.name}";
-
-  ///"ALIŞ : 8.0000"
-  String get _buyTextLabel => "${LocaleKeys.home_buy.tr()}: ${currency.alis}";
-
-  ///"SATIŞ : 8.0000"
-  String get _sellTextLabel =>
-      "${LocaleKeys.home_sell.tr()}: ${currency.satis}";
-
-  ///Text widget for currency card
-  Text _currencyCardTextWidget(
-      String currencyLabel, TextStyle customTextStyle) {
-    return Text(
-      currencyLabel,
-      textAlign: TextAlign.start,
-      style: customTextStyle,
-      overflow: TextOverflow.ellipsis,
-    );
-  }
 }
 
 
