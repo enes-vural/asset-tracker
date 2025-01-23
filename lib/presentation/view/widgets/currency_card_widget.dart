@@ -1,4 +1,5 @@
 import 'package:asset_tracker/core/config/theme/extension/responsive_extension.dart';
+import 'package:asset_tracker/core/widgets/custom_sized_box.dart';
 import 'package:easy_localization/easy_localization.dart';
 import 'package:flutter/material.dart';
 
@@ -20,61 +21,106 @@ class CurrencyCardWidget extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return CustomPadding.mediumTop(
-      widget: InkWell(
+      widget: GestureDetector(
           child: Container(
-        height: ResponsiveSize(context).screenHeight.toPercent(6.5),
+        height: ResponsiveSize(context).screenHeight.toPercent(8),
         decoration: CustomDecoration.roundBox(
-            radius: AppSize.mediumRadius,
-            borderColor: DefaultColorPalette.vanillaBlack,
-            containerColor: DefaultColorPalette.vanillaTranparent,
-            borderWidth: AppSize.defaultBorderWidth),
+          radius: AppSize.mediumRadius,
+          borderColor: DefaultColorPalette.vanillaWhite,
+          containerColor: DefaultColorPalette.vanillaWhite,
+          borderWidth: AppSize.defaultBorderWidth,
+        ),
         child: Row(
-          mainAxisAlignment: MainAxisAlignment.spaceAround,
+          mainAxisAlignment: MainAxisAlignment.start,
+          crossAxisAlignment: CrossAxisAlignment.start,
           children: [
-            _currencyCardTextWidget(
-              _currencyTextLabel,
-              CustomTextStyle.blackColorPoppins(AppSize.mediumText),
-            ),
-            _currencyCardTextWidget(_buyTextLabel,
-                setTextStyle(currency.dir.alisDir)),
-            _currencyCardTextWidget(_sellTextLabel,
-                setTextStyle(currency.dir.satisDir))
+            _currencyInfoWidget(),
+            _currencyPriceWidget(),
+            _currencyDirectionWidget(),
           ],
         ),
       )),
     );
   }
 
-  TextStyle setTextStyle(dynamic parameter) {
-    return parameter == CurrencyDirectionEnum.UP.value
-        ? CustomTextStyle.greenColorPoppins(AppSize.smallText2)
-        : parameter == CurrencyDirectionEnum.DOWN.value
-            ? CustomTextStyle.redColorPoppins(AppSize.smallText2)
-            : CustomTextStyle.blackColorPoppins(AppSize.smallText2);
-  }
-  
-
-  ///"USD" 
-  String get _currencyTextLabel => "\t${currency.name}";
-
-  ///"ALIŞ : 8.0000"
-  String get _buyTextLabel => "${LocaleKeys.home_buy.tr()}: ${currency.alis}";
-
-  ///"SATIŞ : 8.0000"
-  String get _sellTextLabel =>
-      "${LocaleKeys.home_sell.tr()}: ${currency.satis}";
-
-  ///Text widget for currency card
-  Text _currencyCardTextWidget(
-      String currencyLabel, TextStyle customTextStyle) {
-    return Text(
-      currencyLabel,
-      textAlign: TextAlign.start,
-      style: customTextStyle,
-      overflow: TextOverflow.ellipsis,
+  Expanded _currencyDirectionWidget() {
+    return Expanded(
+      flex: 2,
+      child: Center(
+        child: _setIcon(currency.dir.satisDir),
+      ),
     );
   }
+
+  Expanded _currencyPriceWidget() {
+    return Expanded(
+      flex: 3,
+      child: SizedBox(
+          child: Column(
+        mainAxisAlignment: MainAxisAlignment.center,
+        crossAxisAlignment: CrossAxisAlignment.center,
+        children: [
+          Text(
+            LocaleKeys.home_sell.tr(),
+            style: CustomTextStyle.blackColorPoppins(AppSize.smallText),
+          ),
+          Text(
+            currency.satis.toString(),
+            style: CustomTextStyle.blackColorBoldPoppins(AppSize.small2Text),
+          ),
+        ],
+      )),
+    );
+  }
+
+  Expanded _currencyInfoWidget() {
+    return Expanded(
+      flex: 6,
+      child: Row(
+        mainAxisAlignment: MainAxisAlignment.start,
+        children: [
+          CustomPadding.smallHorizontal(
+            widget: CircleAvatar(
+              radius: AppSize.hugeRadius,
+              child: Image.asset(
+                currency.getCurrencyIcon(),
+                fit: BoxFit.cover,
+              ),
+            ),
+          ),
+          const CustomSizedBox.smallGap(),
+          Column(
+            mainAxisAlignment: MainAxisAlignment.center,
+            crossAxisAlignment: CrossAxisAlignment.start,
+            children: [
+              Text(
+                currency.name.toString(),
+                style:
+                    CustomTextStyle.blackColorBoldPoppins(AppSize.smallText2),
+                overflow: TextOverflow.clip,
+              ),
+              Text(
+                currency.code.toString(),
+                style: CustomTextStyle.blackColorPoppins(AppSize.smallText),
+                overflow: TextOverflow.clip,
+              )
+            ],
+          )
+        ],
+      ),
+    );
+  }
+
+  Icon _setIcon(dynamic parameter) {
+    return parameter == CurrencyDirectionEnum.UP.value
+        ? const Icon(Icons.arrow_upward,
+            color: DefaultColorPalette.vanillaGreen)
+        : parameter == CurrencyDirectionEnum.DOWN.value
+            ? const Icon(Icons.arrow_downward,
+                color: DefaultColorPalette.errorRed)
+            : Icon(
+                Icons.exposure_zero_outlined,
+                color: DefaultColorPalette.grey400,
+              );
+  }
 }
-
-
-//test@gmail.com

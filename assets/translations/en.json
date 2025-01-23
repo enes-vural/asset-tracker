@@ -29,9 +29,10 @@
         }
     },
         "home": {
+          "search":"Search",
           "socketConnectionInit":"Connection to socket",
           "buy": "Buy",
-          "sell": "Sell",
+          "sell": "Selling Price",
           "balance": "Balance",
           "history": "History",
           "error":"An error has been occurred",
@@ -71,9 +72,9 @@
             "chftry": "CHF/TRY",
             "kulcealtin": "Gold Bullion",
             "xauxag": "XAU/XAG",
-            "ceyrek_yeni": "Quarter Gold New",
+            "ceyrek_yeni": "Quart Gold New",
             "cadtry": "CAD/TRY",
-            "ceyrek_eski": "Quarter Gold Old",
+            "ceyrek_eski": "Quart Gold Old",
             "sartry": "SAR/TRY",
             "yarim_yeni": "Half Gold New",
             "yarim_eski": "Half Gold Old",
@@ -87,7 +88,31 @@
             "plntry": "PLN/TRY",
             "huftry": "HUF/TRY",
             "zartry": "ZAR/TRY"
+        },
+        "searchItems":{
+            "gold":"Gold",
+            "silver":"Silver",
+            "platinum":"Platinum",
+            "palladium":"Palladium",
+            "usd":"USD",
+            "eur":"EUR",
+            "try":"TRY",
+            "aud":"AUD",
+            "gbp":"GBP",
+            "chf":"CHF",
+            "cad":"CAD",
+            "nok":"NOK",
+            "sar":"SAR",
+            "jpy":"JPY",
+            "sek":"SEK",
+            "dkk":"DKK",
+            "pln":"PLN",
+            "huf":"HUF",
+            "xpt":"XPT",
+            "xag":"xag",
+            "xau":"xau"
         }
+        
     }
 
 }
