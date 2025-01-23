@@ -29,9 +29,10 @@
         }
     },
     "home": {
+        "search":"Ara",
         "socketConnectionInit":"Socket'e bağlanılıyor.",
         "buy": "Alış",
-        "sell": "Satış",
+        "sell": "Satış Fiyatı",
         "balance": "Bakiye",
         "history": "Geçmiş",
         "error":"Bir hata oluştu",
@@ -87,6 +88,30 @@
         "huftry": "HUF/TRY",
         "sektry": "SEK/TRY",
         "zartry": "ZAR/TRY"
+        },
+
+        "searchItems":{
+            "gold":"Altın",
+            "silver":"Gümüş",
+            "platinum":"Platin",
+            "palladium":"Paladyum",
+            "usd":"USD",
+            "eur":"EUR",
+            "try":"TRY",
+            "aud":"AUD",
+            "gbp":"GBP",
+            "chf":"CHF",
+            "cad":"CAD",
+            "nok":"NOK",
+            "sar":"SAR",
+            "jpy":"JPY",
+            "sek":"SEK",
+            "dkk":"DKK",
+            "pln":"PLN",
+            "huf":"HUF",
+            "xpt":"XPT",
+            "xag":"xag",
+            "xau":"xau"
         }
         
     }

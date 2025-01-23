@@ -1,6 +1,9 @@
+import 'package:asset_tracker/core/config/localization/generated/locale_keys.g.dart';
+import 'package:asset_tracker/core/config/theme/extension/asset_extension.dart';
 import 'package:asset_tracker/core/config/theme/extension/currency_widget_title_extension.dart';
 import 'package:asset_tracker/data/model/web/direction_model.dart';
 import 'package:asset_tracker/domain/entities/web/socket/currency_entity.dart';
+import 'package:easy_localization/easy_localization.dart';
 
 class CurrencyWidgetEntity {
   // final String name;
@@ -39,49 +42,50 @@ class CurrencyWidgetEntity {
   }
 
   getCurrencyIcon() {
-    const String basePath = "assets/image/currency/";
-    if (_currencyContains('GOLD')) {
-      return "${basePath}gold_coin.png";
-    } else if (_currencyContains("gbp")) {
-      return "${basePath}gbp_coin.png";
-    } else if (_currencyContains("chf_coin.png")) {
-    } else if (_currencyContains("AUD")) {
-      return "${basePath}aud_coin.png";
-    } else if (_currencyContains("XAU")) {
-      return "${basePath}xau_coin.png";
-    } else if (_currencyContains("SEK") || _currencyContains("DKK")) {
-      return "${basePath}sek_coin.png";
-    } else if (_currencyContains("NOK")) {
-      return "${basePath}nok_coin.png";
-    } else if (_currencyContains("JPY")) {
-      return "${basePath}jpy_coin.png";
-    } else if (_currencyContains("Silver") || _currencyContains("XAG")) {
-      return "${basePath}silver_coin.png";
-    } else if (_currencyContains("XPT")) {
-      return "${basePath}xpt_coin.png";
-    } else if (_currencyContains("SAR")) {
-      return "${basePath}sar_coin.png";
-    } else if (_currencyContains("GBP")) {
-      return "${basePath}gbp_coin.png";
-    } else if (_currencyContains("CAD")) {
-      return "${basePath}cad_coin.png";
-    } else if (_currencyContains('USD')) {
-      return "${basePath}usd_coin.png";
-    } else if (_currencyContains("EUR")) {
-      return "${basePath}euro_coin.png";
+    if (_currencyContains(LocaleKeys.home_searchItems_gold.tr())) {
+      return "gold_coin".toCurrencyPng();
+    } else if (_currencyContains(LocaleKeys.home_searchItems_chf.tr())) {
+      return "chf_coin".toCurrencyPng();
+    } else if (_currencyContains(LocaleKeys.home_searchItems_aud.tr())) {
+      return "aud_coin".toCurrencyPng();
+    } else if (_currencyContains(LocaleKeys.home_searchItems_xau.tr())) {
+      return "xau_coin".toCurrencyPng();
+    } else if (_currencyContains(LocaleKeys.home_searchItems_sek.tr()) ||
+        _currencyContains(LocaleKeys.home_searchItems_dkk.tr())) {
+      return "sek_coin".toCurrencyPng();
+    } else if (_currencyContains(LocaleKeys.home_searchItems_nok.tr())) {
+      return "nok_coin".toCurrencyPng();
+    } else if (_currencyContains(LocaleKeys.home_searchItems_jpy.tr())) {
+      return "jpy_coin".toCurrencyPng();
+    } else if (_currencyContains(LocaleKeys.home_searchItems_silver.tr()) ||
+        _currencyContains(LocaleKeys.home_searchItems_xag.tr())) {
+      return "silver_coin".toCurrencyPng();
+    } else if (_currencyContains(LocaleKeys.home_searchItems_xpt.tr())) {
+      return "xpt_coin".toCurrencyPng();
+    } else if (_currencyContains(LocaleKeys.home_searchItems_sar.tr())) {
+      return "sar_coin".toCurrencyPng();
+    } else if (_currencyContains(LocaleKeys.home_searchItems_gbp.tr())) {
+      return "gbp_coin".toCurrencyPng();
+    } else if (_currencyContains(LocaleKeys.home_searchItems_cad.tr())) {
+      return "cad_coin".toCurrencyPng();
+    } else if (_currencyContains(LocaleKeys.home_searchItems_usd.tr())) {
+      return "usd_coin".toCurrencyPng();
+    } else if (_currencyContains(LocaleKeys.home_searchItems_eur.tr())) {
+      return "euro_coin".toCurrencyPng();
     } else {
-      return "${basePath}default_coin.png";
+      return "default_coin".toCurrencyPng();
+     
     }
   }
 
   bool _currencyContains(String value) {
-    return name.contains(value);
+    return name.toLowerCase().contains(value.toLowerCase());
   }
 
   static String _currenyType(String code) {
-    return code.contains("USD")
+    return code.contains(LocaleKeys.home_searchItems_usd.tr())
         ? "\t\$"
-        : code.contains("EUR")
+        : code.contains(LocaleKeys.home_searchItems_eur.tr())
             ? "\t€"
             : "\t₺";
   }
