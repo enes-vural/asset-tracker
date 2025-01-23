@@ -1,9 +1,11 @@
 import 'package:asset_tracker/core/config/localization/generated/locale_keys.g.dart';
+import 'package:asset_tracker/core/config/theme/default_theme.dart';
 import 'package:asset_tracker/core/config/theme/extension/responsive_extension.dart';
 import 'package:asset_tracker/core/widgets/custom_padding.dart';
 import 'package:asset_tracker/domain/entities/web/socket/currency_entity.dart';
 import 'package:asset_tracker/domain/entities/web/socket/currency_widget_entity.dart';
 import 'package:asset_tracker/injection.dart';
+import 'package:asset_tracker/presentation/view/widgets/search_form_widget.dart';
 import 'package:asset_tracker/presentation/view_model/home/home_view_model.dart';
 import 'package:auto_route/annotations.dart';
 import 'package:easy_localization/easy_localization.dart';
@@ -24,6 +26,7 @@ class _HomeViewState extends ConsumerState<HomeView> {
   //async function to call data
   Future<void> callData() async =>
       await ref.read(homeViewModelProvider).getData();
+
   Future<void> getErrorStream() async => await ref
       .read(homeViewModelProvider)
       .getErrorStream(parentContext: context);
@@ -42,72 +45,74 @@ class _HomeViewState extends ConsumerState<HomeView> {
   Widget build(BuildContext context) {
     final HomeViewModel viewModel = ref.watch(homeViewModelProvider);
     return Scaffold(
-      appBar: AppBar(title: Text(LocaleKeys.app_title.tr())),
+      backgroundColor: DefaultColorPalette.grey100,
+      appBar: AppBar(
+        backgroundColor: DefaultColorPalette.grey100,
+        title: Text(LocaleKeys.app_title.tr()),
+        shadowColor: Colors.black,
+        elevation: 5,
+      ),
       body: Center(
-        child: TextButton(
-          onPressed: () {},
+        
           child: CustomPadding.largeHorizontal(
-            widget: SizedBox(
-              height: ResponsiveSize(context).screenHeight.toPercent(75),
-              width: ResponsiveSize(context).screenWidth,
-              child: StreamBuilder(
-                stream: viewModel.getStream(),
-                builder: (context, snapshot) {
-                  //show circular progess bar while waiting for data
-                  if (snapshot.connectionState == ConnectionState.waiting) {
-                    return const Center(child: CircularProgressIndicator());
-                  }
+            widget: Column(
+              children: [
+              CustomPadding.mediumTop(
+                widget: SearchBarWidget(
+                  searchBarController: viewModel.searchBarController,
+                ),
+                ),
+                SizedBox(
+                  height: ResponsiveSize(context).screenHeight.toPercent(75),
+                  width: ResponsiveSize(context).screenWidth,
+                  child: StreamBuilder(
+                    stream: viewModel.getStream(),
+                    builder: (context, snapshot) {
+                    //Bir daha ek provider ile klavyenin girdisi ile buildi her tuş girişinde tetiklemek yerine
+                    //her 2 saniyede bir zaten bu field stream socket ten dolayı yenileniyor.
+                    //o zaman direkt olarak klavye filterini de burada yaparak
+                    //tasaruf yapabiliriz.
 
-                  if (snapshot.connectionState == ConnectionState.active) {
-                    // If stream is active and data is available
-                    if (snapshot.hasData) {
-                      List<CurrencyEntity> data = snapshot.data;
+                      //show circular progess bar while waiting for data
+                      if (snapshot.connectionState == ConnectionState.waiting) {
+                        return const Center(child: CircularProgressIndicator());
+                      }
 
-                      return ListView.builder(
-                        itemCount: data.length, // Adjust based on data
-                        itemBuilder: (context, index) {
-                          CurrencyWidgetEntity currency =
-                              CurrencyWidgetEntity.fromCurrency(data[index]);
-                          return CurrencyCardWidget(currency: currency);
-                        },
-                      );
-                    } else {
-                      // No data available yet, but stream is active
+                      if (snapshot.connectionState == ConnectionState.active) {
+                        // If stream is active and data is available
+                        if (snapshot.hasData) {
+                        List<CurrencyEntity>? data =
+                            viewModel.filterCurrencyData(snapshot.data);
+
+                          return ListView.builder(
+                          //primary: false,
+
+                            itemCount: data.length, // Adjust based on data
+                            itemBuilder: (context, index) {
+                              CurrencyWidgetEntity currency =
+                                  CurrencyWidgetEntity.fromCurrency(
+                                      data[index]);
+                            return CurrencyCardWidget(currency: currency);
+                            },
+                          );
+                        } else {
+                          // No data available yet, but stream is active
+                          return loadingTextWidget();
+                        }
+                      }
+                      //default state
                       return loadingTextWidget();
-                    }
-                  }
-                  //default state
-                  return loadingTextWidget();
-                },
-              ),
+                    },
+                  ),
+                ),
+              ],
             ),
           ),
         ),
-      ),
+      
     );
   }
 
   Center loadingTextWidget() => Center(child: Text(LocaleKeys.home_wait.tr()));
 }
 
-
-/*
-TODO: We will inspect here before remove so it should be stay here :)
--------------------
-  if (snapshot.connectionState == ConnectionState.done) {
-    // If the stream is done and no data was received
-    if (snapshot.hasData) {
-      var data = snapshot.data;
-      return ListView.builder(
-        itemCount: data.length,
-        itemBuilder: (context, index) {
-          var item = data[index];
-          return Text("Currency: ${item}");
-        },
-      );
-    } else {
-      return Center(child: Text('No Data Available'));
-    }
-  }
--------------------
-*/

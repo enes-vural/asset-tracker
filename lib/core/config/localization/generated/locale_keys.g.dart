@@ -23,6 +23,7 @@ abstract class  LocaleKeys {
   static const auth_response_generalErr = 'auth.response.generalErr';
   static const auth_response = 'auth.response';
   static const auth = 'auth';
+  static const home_search = 'home.search';
   static const home_socketConnectionInit = 'home.socketConnectionInit';
   static const home_buy = 'home.buy';
   static const home_sell = 'home.sell';
@@ -81,6 +82,28 @@ abstract class  LocaleKeys {
   static const home_widget_sektry = 'home.widget.sektry';
   static const home_widget_zartry = 'home.widget.zartry';
   static const home_widget = 'home.widget';
+  static const home_searchItems_gold = 'home.searchItems.gold';
+  static const home_searchItems_silver = 'home.searchItems.silver';
+  static const home_searchItems_platinum = 'home.searchItems.platinum';
+  static const home_searchItems_palladium = 'home.searchItems.palladium';
+  static const home_searchItems_usd = 'home.searchItems.usd';
+  static const home_searchItems_eur = 'home.searchItems.eur';
+  static const home_searchItems_try = 'home.searchItems.try';
+  static const home_searchItems_aud = 'home.searchItems.aud';
+  static const home_searchItems_gbp = 'home.searchItems.gbp';
+  static const home_searchItems_chf = 'home.searchItems.chf';
+  static const home_searchItems_cad = 'home.searchItems.cad';
+  static const home_searchItems_nok = 'home.searchItems.nok';
+  static const home_searchItems_sar = 'home.searchItems.sar';
+  static const home_searchItems_jpy = 'home.searchItems.jpy';
+  static const home_searchItems_sek = 'home.searchItems.sek';
+  static const home_searchItems_dkk = 'home.searchItems.dkk';
+  static const home_searchItems_pln = 'home.searchItems.pln';
+  static const home_searchItems_huf = 'home.searchItems.huf';
+  static const home_searchItems_xpt = 'home.searchItems.xpt';
+  static const home_searchItems_xag = 'home.searchItems.xag';
+  static const home_searchItems_xau = 'home.searchItems.xau';
+  static const home_searchItems = 'home.searchItems';
   static const home = 'home';
 
 }

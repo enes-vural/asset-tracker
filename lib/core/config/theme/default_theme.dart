@@ -5,7 +5,6 @@ final ThemeData defaultTheme = ThemeData(
   useMaterial3: true,
   textTheme: GoogleFonts.poppinsTextTheme(),
   scaffoldBackgroundColor: DefaultColorPalette.vanillaWhite,
-  
   colorScheme: defaultColorScheme,
   appBarTheme: const AppBarTheme(
     centerTitle: true,
@@ -39,6 +38,10 @@ final class DefaultColorPalette {
 
   ///dark red
   static const Color errorRed = Color.fromARGB(130, 244, 67, 54);
+
+  static Color grey100 = Colors.grey.shade100;
+  static Color grey400 = Colors.grey.shade400;
+  static Color grey500 = Colors.grey.shade500;
 
   ///default white color in material 3
   static const Color vanillaWhite = Colors.white;
