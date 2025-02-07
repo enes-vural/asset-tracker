@@ -1,5 +1,5 @@
 import 'package:asset_tracker/core/mixins/validation_mixin.dart';
-import 'package:asset_tracker/data/service/remote/auth/auth_service.dart';
+import 'package:asset_tracker/data/service/remote/auth/firebase_auth_service.dart';
 import 'package:asset_tracker/domain/entities/auth/user_login_entity.dart';
 import 'package:mockito/mockito.dart';
 import 'package:test/test.dart';

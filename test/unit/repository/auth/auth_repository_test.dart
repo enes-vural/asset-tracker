@@ -1,6 +1,6 @@
 import 'package:asset_tracker/data/repository/auth/auth_repository.dart';
-import 'package:asset_tracker/data/service/remote/auth/auth_service.dart';
-import 'package:asset_tracker/data/service/remote/auth/iauth_service.dart';
+import 'package:asset_tracker/data/service/remote/auth/firebase_auth_service.dart';
+import 'package:asset_tracker/data/service/remote/auth/ifirebase_auth_service.dart';
 import 'package:asset_tracker/domain/entities/auth/error/auth_error_entity.dart';
 import 'package:asset_tracker/domain/entities/auth/user_login_response_entity.dart';
 import 'package:asset_tracker/domain/repository/auth/iauth_repository.dart';
@@ -14,7 +14,7 @@ import '../../shared/constants/test_constants.dart';
 
 void main() {
   late MockAuthHelper mockAuthHelper;
-  late IAuthService firebaseAuthService;
+  late IFirebaseAuthService firebaseAuthService;
   late IAuthRepository authRepo;
 
   setUpAll(() {
