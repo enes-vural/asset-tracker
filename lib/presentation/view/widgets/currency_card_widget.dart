@@ -9,8 +9,9 @@ import '../../../core/config/theme/extension/app_size_extension.dart';
 import '../../../core/config/theme/style_theme.dart';
 import '../../../core/widgets/custom_padding.dart';
 import '../../../domain/entities/web/socket/currency_widget_entity.dart';
+import '../../../core/mixins/get_currency_icon_mixin.dart';
 
-class CurrencyCardWidget extends StatelessWidget {
+class CurrencyCardWidget extends StatelessWidget with GetCurrencyIconMixin {
   const CurrencyCardWidget({
     super.key,
     required this.currency,
@@ -83,7 +84,7 @@ class CurrencyCardWidget extends StatelessWidget {
             widget: CircleAvatar(
               radius: AppSize.hugeRadius,
               child: Image.asset(
-                currency.getCurrencyIcon(),
+                getCurrencyIcon(currency.name),
                 fit: BoxFit.cover,
               ),
             ),
@@ -111,16 +112,16 @@ class CurrencyCardWidget extends StatelessWidget {
     );
   }
 
-  Icon _setIcon(dynamic parameter) {
-    return parameter == CurrencyDirectionEnum.UP.value
-        ? const Icon(Icons.arrow_upward,
-            color: DefaultColorPalette.vanillaGreen)
-        : parameter == CurrencyDirectionEnum.DOWN.value
-            ? const Icon(Icons.arrow_downward,
-                color: DefaultColorPalette.errorRed)
-            : Icon(
-                Icons.exposure_zero_outlined,
-                color: DefaultColorPalette.grey400,
-              );
+  Icon _setIcon(String directionValue) {
+    if (directionValue == CurrencyDirectionEnum.UP.value) {
+      return const Icon(Icons.arrow_upward,
+          color: DefaultColorPalette.vanillaGreen);
+    } else if (directionValue == CurrencyDirectionEnum.DOWN.value) {
+      return const Icon(Icons.arrow_downward,
+          color: DefaultColorPalette.errorRed);
+    } else {
+      return Icon(Icons.exposure_zero_outlined,
+          color: DefaultColorPalette.grey400);
+    }
   }
 }
