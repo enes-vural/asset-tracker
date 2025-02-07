@@ -9,7 +9,8 @@ import 'package:firebase_auth/firebase_auth.dart';
 //farklı durumlarda UserCred yerine uid ve token parametreleri içeren
 //CustomAuthModel sınıfı da oluşturabilir.
 
-abstract interface class IMockAuthService implements IAuthService {
+abstract interface class IMockAuthService
+    implements IAuthService<UserCredential> {
   @override
   Future<UserCredential>? signInUser(UserLoginEntity entity);
 }
