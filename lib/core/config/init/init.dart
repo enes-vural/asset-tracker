@@ -12,9 +12,6 @@ final class AppInit {
     await Firebase.initializeApp(
       options: DefaultFirebaseOptions.currentPlatform,
     );
-    Env.setup(); //Envied Initialize
-
-
-    
+    Env.setup(); //Envied Initialize 
   }
 }

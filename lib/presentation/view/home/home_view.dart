@@ -53,66 +53,54 @@ class _HomeViewState extends ConsumerState<HomeView> {
         elevation: 5,
       ),
       body: Center(
-        
-          child: CustomPadding.largeHorizontal(
-            widget: Column(
-              children: [
+        child: CustomPadding.largeHorizontal(
+          widget: Column(
+            children: [
               CustomPadding.mediumTop(
                 widget: SearchBarWidget(
                   searchBarController: viewModel.searchBarController,
                 ),
-                ),
-                SizedBox(
-                  height: ResponsiveSize(context).screenHeight.toPercent(75),
-                  width: ResponsiveSize(context).screenWidth,
-                  child: StreamBuilder(
-                    stream: viewModel.getStream(),
-                    builder: (context, snapshot) {
+              ),
+              SizedBox(
+                height: ResponsiveSize(context).screenHeight.toPercent(75),
+                width: ResponsiveSize(context).screenWidth,
+                child: StreamBuilder(
+                  stream: viewModel.getStream(),
+                  builder: (context, snapshot) {
                     //Bir daha ek provider ile klavyenin girdisi ile buildi her tuş girişinde tetiklemek yerine
                     //her 2 saniyede bir zaten bu field stream socket ten dolayı yenileniyor.
                     //o zaman direkt olarak klavye filterini de burada yaparak
                     //tasaruf yapabiliriz.
+                    if (snapshot.connectionState != ConnectionState.active) {
+                      return loadingIndicatorWidget();
+                    }
 
-                      //show circular progess bar while waiting for data
-                      if (snapshot.connectionState == ConnectionState.waiting) {
-                        return const Center(child: CircularProgressIndicator());
-                      }
-
-                      if (snapshot.connectionState == ConnectionState.active) {
-                        // If stream is active and data is available
-                        if (snapshot.hasData) {
-                        List<CurrencyEntity>? data =
-                            viewModel.filterCurrencyData(snapshot.data);
-
-                          return ListView.builder(
-                          //primary: false,
-
-                            itemCount: data.length, // Adjust based on data
-                            itemBuilder: (context, index) {
-                              CurrencyWidgetEntity currency =
-                                  CurrencyWidgetEntity.fromCurrency(
-                                      data[index]);
-                            return CurrencyCardWidget(currency: currency);
-                            },
-                          );
-                        } else {
-                          // No data available yet, but stream is active
-                          return loadingTextWidget();
-                        }
-                      }
-                      //default state
+                    if (!snapshot.hasData) {
                       return loadingTextWidget();
-                    },
-                  ),
+                    }
+
+                    List<CurrencyEntity>? data =
+                        viewModel.filterCurrencyData(snapshot.data);
+
+                    return ListView.builder(
+                      itemCount: data.length,
+                      itemBuilder: (context, index) {
+                        CurrencyWidgetEntity currency =
+                            CurrencyWidgetEntity.fromCurrency(data[index]);
+                        return CurrencyCardWidget(currency: currency);
+                      },
+                    );
+                  },
                 ),
-              ],
-            ),
+              ),
+            ],
           ),
         ),
-      
+      ),
     );
   }
 
   Center loadingTextWidget() => Center(child: Text(LocaleKeys.home_wait.tr()));
+  Center loadingIndicatorWidget() =>
+      const Center(child: CircularProgressIndicator());
 }
-
