@@ -1,6 +1,7 @@
 import 'package:asset_tracker/core/config/constants/string_constant.dart';
 import 'package:asset_tracker/data/model/auth/error/auth_error_state.dart';
 import 'package:asset_tracker/data/model/auth/error/auth_response_model.dart';
+import 'package:asset_tracker/data/model/auth/iauth_user_model.dart';
 import 'package:asset_tracker/data/model/auth/response/user_login_response_model.dart';
 import 'package:asset_tracker/data/service/remote/auth/iauth_service.dart';
 import 'package:asset_tracker/domain/entities/auth/error/auth_error_entity.dart';
@@ -26,10 +27,11 @@ class FirebaseAuthRepository implements IAuthRepository {
   Future<Either<AuthErrorEntity, UserLoginResponseEntity>> signIn(
       UserLoginEntity entity) async {
     try {
-      UserCredential? userResponse = await authService.signInUser(entity);
+      IAuthenticationUserModel? userResponse =
+          await authService.signInUser(entity);
 
-      if (userResponse?.user?.uid != null) {
-        final String? token = await userResponse?.user?.getIdToken();
+      if (userResponse?.uid != null) {
+        final String? token = userResponse?.idToken;
         final UserLoginResponseModel userModel = UserLoginResponseModel(
             token: token ??
                 DefaultLocalStrings.emptyText);
