@@ -1,5 +1,4 @@
 import 'package:asset_tracker/core/config/localization/generated/locale_keys.g.dart';
-import 'package:asset_tracker/core/config/theme/extension/asset_extension.dart';
 import 'package:asset_tracker/core/config/theme/extension/currency_widget_title_extension.dart';
 import 'package:asset_tracker/data/model/web/direction_model.dart';
 import 'package:asset_tracker/domain/entities/web/socket/currency_entity.dart';
@@ -41,53 +40,14 @@ class CurrencyWidgetEntity {
     );
   }
 
-  getCurrencyIcon() {
-    if (_currencyContains(LocaleKeys.home_searchItems_gold.tr())) {
-      return "gold_coin".toCurrencyPng();
-    } else if (_currencyContains(LocaleKeys.home_searchItems_chf.tr())) {
-      return "chf_coin".toCurrencyPng();
-    } else if (_currencyContains(LocaleKeys.home_searchItems_aud.tr())) {
-      return "aud_coin".toCurrencyPng();
-    } else if (_currencyContains(LocaleKeys.home_searchItems_xau.tr())) {
-      return "xau_coin".toCurrencyPng();
-    } else if (_currencyContains(LocaleKeys.home_searchItems_sek.tr()) ||
-        _currencyContains(LocaleKeys.home_searchItems_dkk.tr())) {
-      return "sek_coin".toCurrencyPng();
-    } else if (_currencyContains(LocaleKeys.home_searchItems_nok.tr())) {
-      return "nok_coin".toCurrencyPng();
-    } else if (_currencyContains(LocaleKeys.home_searchItems_jpy.tr())) {
-      return "jpy_coin".toCurrencyPng();
-    } else if (_currencyContains(LocaleKeys.home_searchItems_silver.tr()) ||
-        _currencyContains(LocaleKeys.home_searchItems_xag.tr())) {
-      return "silver_coin".toCurrencyPng();
-    } else if (_currencyContains(LocaleKeys.home_searchItems_xpt.tr())) {
-      return "xpt_coin".toCurrencyPng();
-    } else if (_currencyContains(LocaleKeys.home_searchItems_sar.tr())) {
-      return "sar_coin".toCurrencyPng();
-    } else if (_currencyContains(LocaleKeys.home_searchItems_gbp.tr())) {
-      return "gbp_coin".toCurrencyPng();
-    } else if (_currencyContains(LocaleKeys.home_searchItems_cad.tr())) {
-      return "cad_coin".toCurrencyPng();
-    } else if (_currencyContains(LocaleKeys.home_searchItems_usd.tr())) {
-      return "usd_coin".toCurrencyPng();
-    } else if (_currencyContains(LocaleKeys.home_searchItems_eur.tr())) {
-      return "euro_coin".toCurrencyPng();
-    } else {
-      return "default_coin".toCurrencyPng();
-     
-    }
-  }
-
-  bool _currencyContains(String value) {
-    return name.toLowerCase().contains(value.toLowerCase());
-  }
-
   static String _currenyType(String code) {
-    return code.contains(LocaleKeys.home_searchItems_usd.tr())
-        ? "\t\$"
-        : code.contains(LocaleKeys.home_searchItems_eur.tr())
-            ? "\t€"
-            : "\t₺";
+    if (code.contains(LocaleKeys.home_searchItems_usd.tr())) {
+      return "\t\$";
+    } else if (code.contains(LocaleKeys.home_searchItems_eur.tr())) {
+      return "\t€";
+    } else {
+      return "\t₺";
+    }
   }
 }
 

@@ -14,6 +14,13 @@ extension GetAuthErrorType on String {
 extension ConvertAuthErrorType on AuthErrorState {
   ///errorCode Enum Type ına göre içindeki değeri (Localize edilmiş hata mesajını alıyor)
   String fromErrorToModel() {
+    //TODO:
+    //BU EXTENSION DAHIL BU TYPE KALKACAK
+    //HİYEARŞİK ENUM YAPISI KURULARAK
+    //ENUMLER ÇİFT PARAMETRE ALACAK
+    //OTOMATIK OLARAK GELEN DATANIN AÇIKLAMASI LOCALIZE ŞEKLİNDE EKLENECEK
+    //EKSTRA BİR EXTENSION İLE BU DURUM KULLANILMAYACAK
+    //TODO:
     switch (this) {
       case AuthErrorState.ACCOUNT_EXIST:
         return LocaleKeys.auth_response_accountExist.tr();

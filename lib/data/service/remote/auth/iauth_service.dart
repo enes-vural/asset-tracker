@@ -1,7 +1,7 @@
-import 'package:firebase_auth/firebase_auth.dart';
+import 'package:asset_tracker/domain/entities/auth/user_login_entity.dart';
 
-import '../../../../domain/entities/auth/user_login_entity.dart';
-
-abstract interface class IAuthService {
-  Future<UserCredential>? signInUser(UserLoginEntity entity);
+//Tüm Servislerin toplandığı çatı görebi gören bir imza sınıfı.
+abstract interface class IAuthService<T> {
+  Future<T>? signInUser(UserLoginEntity entity);
+  
 }
