@@ -30,10 +30,12 @@ final IWebSocketService webSocketService = WebSocketService();
 
 //-----------------------------------------------
 //We changed the service provider with mock service in repository layer.
+//burası açıldığı anda mock service ile authentication işlemlerini yapacak.
 final authRepositoryProvider = Provider<FirebaseAuthRepository>((ref) {
   return FirebaseAuthRepository(authService: mockAuthServiceInstance);
 });
 
+//Burası açıldığı anda Firebase ile authentication işlemlerini yapacak.
 // final authRepositoryProvider = Provider<FirebaseAuthRepository>((ref) {
 //   return FirebaseAuthRepository(authService: authServiceInstance);
 // });
