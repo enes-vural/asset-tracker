@@ -18,10 +18,6 @@ class FirebaseAuthService implements IFirebaseAuthService {
   Future<FirebaseAuthUser> _combineUserData(UserCredential creds) async {
     final getIdToken = await creds.user?.getIdToken();
     return FirebaseAuthUser(
-      displayName: creds.user?.displayName,
-      email: creds.user?.email,
-      uid: creds.user?.uid,
-      emailVerified: creds.user?.emailVerified,
       user: creds.user,
       idToken: getIdToken,
     );

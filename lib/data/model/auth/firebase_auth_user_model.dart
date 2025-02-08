@@ -3,23 +3,17 @@ import 'package:firebase_auth/firebase_auth.dart';
 
 class FirebaseAuthUser implements IAuthenticationUserModel {
   @override
-  final String? displayName;
+  String? get displayName => user?.displayName;
   @override
-  final String? email;
+  String? get email => user?.email;
   @override
-  final String? uid;
+  String? get uid => user?.uid;
   @override
-  final bool? emailVerified;
+  bool? get emailVerified => user?.emailVerified;
   @override
   final String? idToken;
 
   final User? user;
 
-  const FirebaseAuthUser(
-      {required this.displayName,
-      required this.email,
-      required this.uid,
-      required this.emailVerified,
-      required this.user,
-      required this.idToken});
+  const FirebaseAuthUser({required this.user, required this.idToken});
 }
