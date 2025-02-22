@@ -1,6 +1,8 @@
 import 'package:asset_tracker/core/config/localization/generated/locale_keys.g.dart';
 import 'package:asset_tracker/core/config/theme/default_theme.dart';
 import 'package:asset_tracker/core/config/theme/extension/responsive_extension.dart';
+import 'package:asset_tracker/core/routers/app_router.gr.dart';
+import 'package:asset_tracker/core/routers/router.dart';
 import 'package:asset_tracker/core/widgets/custom_padding.dart';
 import 'package:asset_tracker/domain/entities/web/socket/currency_entity.dart';
 import 'package:asset_tracker/domain/entities/web/socket/currency_widget_entity.dart';
@@ -9,6 +11,7 @@ import 'package:asset_tracker/presentation/view/widgets/search_form_widget.dart'
 import 'package:asset_tracker/presentation/view_model/home/home_view_model.dart';
 import 'package:auto_route/annotations.dart';
 import 'package:easy_localization/easy_localization.dart';
+import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 
@@ -51,6 +54,12 @@ class _HomeViewState extends ConsumerState<HomeView> {
         title: Text(LocaleKeys.app_title.tr()),
         shadowColor: Colors.black,
         elevation: 5,
+        actions: [
+          IconButton(
+            onPressed: () {},
+            icon: const Icon(Icons.wallet),
+          ),
+        ],
       ),
       body: Center(
         child: CustomPadding.largeHorizontal(
@@ -87,7 +96,14 @@ class _HomeViewState extends ConsumerState<HomeView> {
                       itemBuilder: (context, index) {
                         CurrencyWidgetEntity currency =
                             CurrencyWidgetEntity.fromCurrency(data[index]);
-                        return CurrencyCardWidget(currency: currency);
+                        return CurrencyCardWidget(
+                          currency: currency,
+                          onTap: () {
+                            print("Clicked on me");
+                            Routers.instance.pushWithInfo(context,
+                                TradeRoute(currecyCode: currency.code));
+                          },
+                        );
                       },
                     );
                   },

@@ -10,6 +10,8 @@ final class DefaultLocalStrings {
   static const splashRoute = "/default_splash";
   static const loginRoute = "/app_login";
   static const homeRoute = "/home";
+  //trade route can be child path from home route.
+  static const tradeRoute = "/trade/:currency";
   static const replaceInRouteName = "View,Route";
 
 

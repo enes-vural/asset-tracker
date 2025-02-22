@@ -10,8 +10,13 @@ class Routers {
   static const String splashPath = DefaultLocalStrings.splashRoute;
   static const String loginPath = DefaultLocalStrings.loginRoute;
   static const String homePath = DefaultLocalStrings.homeRoute;
+  static const String tradePath = DefaultLocalStrings.tradeRoute;
 
   void pushReplaceNamed(BuildContext context, String routePath) {
     AutoRouter.of(context).pushNamed(routePath);
+  }
+
+  void pushWithInfo<T>(BuildContext context, PageRouteInfo route) {
+    AutoRouter.of(context).push(route);
   }
 }

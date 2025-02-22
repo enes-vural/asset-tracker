@@ -5,6 +5,7 @@ import 'package:easy_localization/easy_localization.dart';
 
 mixin ValidatorMixin {
   final _emailRegex = RegExpConstant.emailCheckRegExp;
+  final _numberRegex = RegExpConstant.onlyNumbers;
   final _passwordLength = GeneralConstants.maxPasswordLength;
   //E-mail de olması gereken karakterleri RegExp ile belirttik.
   /// @ işaretinden sonra karakter ve . bulunması vb.
@@ -15,6 +16,7 @@ mixin ValidatorMixin {
             : LocaleKeys.auth_validation_weakEmail.tr()
         : LocaleKeys.auth_validation_noneEmail.tr();
   }
+
   ///Password null durumunu kontrol ediyor eğer değilse sonraki kontrolünde
   ///text uzunluğunu GeneralConstants sınıfından aldığımız maxPasswordLength ile kontrol ediyor
   ///her şey tamam ise null döndürüp validasyionu tamamlıyor.
@@ -24,5 +26,23 @@ mixin ValidatorMixin {
             ? null
             : LocaleKeys.auth_validation_weakPassword.tr()
         : LocaleKeys.auth_validation_nonePassword.tr();
+  }
+
+  String? checkAmount(String? text) {
+    if (text == null || text.isEmpty) {
+      return "Burası boş olamaz";
+    }
+    try {
+      if (double.tryParse(text) == null) {
+        return "Geçerli bir sayı giriniz";
+      }
+    } catch (e) {
+      return "Geçerli bir sayı giriniz";
+    }
+
+    if (!_numberRegex.hasMatch(text)) {
+      return "Hatalı format";
+    }
+    return null;
   }
 }
