@@ -24,7 +24,7 @@ class _SplashViewState extends State<SplashView> {
     //Automatically pushes to splash screen after 3 second.
     //The mounted avoids from lifecycle crash during wait.
     Future.delayed(const Duration(seconds: _splashDuration)).then((_) => mounted
-        ? Routers.instance.pushReplaceNamed(context, Routers.loginPath)
+        ? Routers.instance.pushReplaceNamed(context, Routers.homePath)
         : null);
   }
 

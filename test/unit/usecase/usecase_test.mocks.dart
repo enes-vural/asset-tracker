@@ -14,7 +14,6 @@ import 'package:asset_tracker/domain/entities/auth/user_login_entity.dart'
     as _i8;
 import 'package:asset_tracker/domain/entities/auth/user_login_response_entity.dart'
     as _i7;
-import 'package:asset_tracker/domain/usecase/auth/auth_use_case.dart' as _i9;
 import 'package:dartz/dartz.dart' as _i3;
 import 'package:mockito/mockito.dart' as _i1;
 
@@ -32,7 +31,8 @@ import 'package:mockito/mockito.dart' as _i1;
 // ignore_for_file: camel_case_types
 // ignore_for_file: subtype_of_sealed_class
 
-class _FakeIAuthService_0 extends _i1.SmartFake implements _i2.IAuthService {
+class _FakeIAuthService_0<T> extends _i1.SmartFake
+    implements _i2.IAuthService<T> {
   _FakeIAuthService_0(
     Object parent,
     Invocation parentInvocation,
@@ -62,13 +62,13 @@ class MockFirebaseAuthRepository extends _i1.Mock
   }
 
   @override
-  _i2.IAuthService get authService => (super.noSuchMethod(
+  _i2.IAuthService<dynamic> get authService => (super.noSuchMethod(
         Invocation.getter(#authService),
-        returnValue: _FakeIAuthService_0(
+        returnValue: _FakeIAuthService_0<dynamic>(
           this,
           Invocation.getter(#authService),
         ),
-      ) as _i2.IAuthService);
+      ) as _i2.IAuthService<dynamic>);
 
   @override
   _i5.Future<_i3.Either<_i6.AuthErrorEntity, _i7.UserLoginResponseEntity>>
@@ -89,34 +89,4 @@ class MockFirebaseAuthRepository extends _i1.Mock
             )),
           ) as _i5.Future<
               _i3.Either<_i6.AuthErrorEntity, _i7.UserLoginResponseEntity>>);
-}
-
-/// A class which mocks [SignInUseCase].
-///
-/// See the documentation for Mockito's code generation for more information.
-class MockSignInUseCase extends _i1.Mock implements _i9.SignInUseCase {
-  MockSignInUseCase() {
-    _i1.throwOnMissingStub(this);
-  }
-
-  @override
-  _i5.Future<_i3.Either<_i6.AuthErrorEntity, _i7.UserLoginResponseEntity>> call(
-          dynamic params) =>
-      (super.noSuchMethod(
-        Invocation.method(
-          #call,
-          [params],
-        ),
-        returnValue: _i5.Future<
-                _i3.Either<_i6.AuthErrorEntity,
-                    _i7.UserLoginResponseEntity>>.value(
-            _FakeEither_1<_i6.AuthErrorEntity, _i7.UserLoginResponseEntity>(
-          this,
-          Invocation.method(
-            #call,
-            [params],
-          ),
-        )),
-      ) as _i5.Future<
-          _i3.Either<_i6.AuthErrorEntity, _i7.UserLoginResponseEntity>>);
 }

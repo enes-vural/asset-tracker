@@ -15,14 +15,17 @@ class CurrencyCardWidget extends StatelessWidget with GetCurrencyIconMixin {
   const CurrencyCardWidget({
     super.key,
     required this.currency,
+    required this.onTap,
   });
 
   final CurrencyWidgetEntity currency;
+  final VoidCallback? onTap;
 
   @override
   Widget build(BuildContext context) {
     return CustomPadding.mediumTop(
-      widget: GestureDetector(
+      widget: InkWell(
+          onTap: onTap,
           child: Container(
         height: ResponsiveSize(context).screenHeight.toPercent(8),
         decoration: CustomDecoration.roundBox(
