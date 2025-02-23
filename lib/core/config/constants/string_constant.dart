@@ -15,6 +15,11 @@ final class DefaultLocalStrings {
   static const replaceInRouteName = "View,Route";
 
 
+  static const currency = "currency";
+  static const amount = "amount";
+  static const price = "price";
+  
+
   static const goldCoin = "gold_coin";
   static const chfCoin = "chf_coin";
   static const audCoin = "aud_coin";

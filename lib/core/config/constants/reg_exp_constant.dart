@@ -1,5 +1,6 @@
 class RegExpConstant {
   static final RegExp emailCheckRegExp = RegExp(r'^[^@\s]+@[^@\s]+\.[^@\s]+$');
-  static final RegExp onlyNumbers = RegExp(r'^\d+$');
+static final RegExp onlyNumbersAndDot = RegExp(r'^\d+(\.\d+)?$');
+
 
 }

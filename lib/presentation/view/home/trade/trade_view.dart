@@ -1,4 +1,6 @@
 import 'package:asset_tracker/core/config/constants/global/key/fom_keys.dart';
+import 'package:asset_tracker/core/config/constants/string_constant.dart';
+import 'package:asset_tracker/core/config/localization/generated/locale_keys.g.dart';
 import 'package:asset_tracker/core/config/theme/default_theme.dart';
 import 'package:asset_tracker/core/mixins/validation_mixin.dart';
 import 'package:asset_tracker/core/widgets/custom_align.dart';
@@ -7,6 +9,7 @@ import 'package:asset_tracker/core/widgets/custom_sized_box.dart';
 import 'package:asset_tracker/injection.dart';
 import 'package:asset_tracker/presentation/common/custom_form_field.dart';
 import 'package:auto_route/annotations.dart';
+import 'package:easy_localization/easy_localization.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 
@@ -28,6 +31,9 @@ class _TradeViewState extends ConsumerState<TradeView> with ValidatorMixin {
     //we automatically set the selected currency to that currency
     WidgetsBinding.instance.addPostFrameCallback((timeStamp) {
       ref.read(tradeViewModelProvider).getCurrencyList(ref);
+      ref
+          .read(tradeViewModelProvider)
+          .changeSelectedCurrency(widget.currecyCode);
     });
   }
 
@@ -36,29 +42,29 @@ class _TradeViewState extends ConsumerState<TradeView> with ValidatorMixin {
     final viewModel = ref.watch(tradeViewModelProvider);
     return Scaffold(
       backgroundColor: DefaultColorPalette.grey100,
-      appBar: AppBar(
-        title: Text(widget.currecyCode),
-      ),
+      appBar: AppBar(),
       body: Form(
         key: GlobalFormKeys.tradeFormKey,
-        autovalidateMode: AutovalidateMode.always,
+        autovalidateMode: AutovalidateMode.onUserInteraction,
         child: CustomPadding.hugeHorizontal(
           widget: Column(
             children: [
               const CustomSizedBox.largeGap(),
               CustomFormField.countForm(
-                label: 'Buy amount',
+                label: LocaleKeys.trade_buyAmount.tr(),
+                //
+                // 'Buy amount',
                 controller: viewModel.amountController,
-                validator: checkAmount,
-                type: TextInputType.number,
+                validator: (value) => checkAmount(value, false),
+                type: TextInputType.text,
                 icon: Icons.numbers,
               ),
               const CustomSizedBox.smallGap(),
               CustomFormField.countForm(
-                label: 'Buy price per one',
+                label: LocaleKeys.trade_buyPrice.tr(),
                 controller: viewModel.priceController,
-                validator: checkAmount,
-                type: TextInputType.number,
+                validator: (value) => checkAmount(value, true),
+                type: TextInputType.text,
                 icon: Icons.attach_money_rounded,
               ),
               const CustomSizedBox.smallGap(),
@@ -94,8 +100,8 @@ class _TradeViewState extends ConsumerState<TradeView> with ValidatorMixin {
                           firstDate: DateTime(2000),
                           lastDate: DateTime.now(),
                           initialDate: viewModel.selectedDate,
-                          confirmText: "Done",
-                          cancelText: "Cancel",
+                          confirmText: LocaleKeys.trade_buy.tr(),
+                          cancelText: LocaleKeys.trade_cancel.tr(),
                         ).then((DateTime? newDate) {
                           viewModel.changeSelectedDate(newDate);
                         });
@@ -110,7 +116,7 @@ class _TradeViewState extends ConsumerState<TradeView> with ValidatorMixin {
                   await viewModel.buyCurrency(ref: ref, context: context);
                   //Firestore business we will add here
                 },
-                child: const Text("BUY"),
+                child: Text(LocaleKeys.trade_buy.tr()),
               ),
             ],
           ),
@@ -121,6 +127,8 @@ class _TradeViewState extends ConsumerState<TradeView> with ValidatorMixin {
 
   Text dropdownHintTextWidget() {
     return Text(
-        widget.currecyCode == "" ? "Select Currency" : widget.currecyCode);
+        widget.currecyCode == DefaultLocalStrings.emptyText
+        ? LocaleKeys.trade_selectCurrecy.tr()
+        : widget.currecyCode);
   }
 }
