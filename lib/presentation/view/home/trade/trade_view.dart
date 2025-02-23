@@ -7,7 +7,10 @@ import 'package:asset_tracker/core/widgets/custom_align.dart';
 import 'package:asset_tracker/core/widgets/custom_padding.dart';
 import 'package:asset_tracker/core/widgets/custom_sized_box.dart';
 import 'package:asset_tracker/injection.dart';
+import 'package:asset_tracker/presentation/common/custom_datepicker_widget.dart';
+import 'package:asset_tracker/presentation/common/custom_dropdown_widget.dart';
 import 'package:asset_tracker/presentation/common/custom_form_field.dart';
+import 'package:asset_tracker/presentation/view_model/home/trade/trade_view_model.dart';
 import 'package:auto_route/annotations.dart';
 import 'package:easy_localization/easy_localization.dart';
 import 'package:flutter/material.dart';
@@ -52,8 +55,6 @@ class _TradeViewState extends ConsumerState<TradeView> with ValidatorMixin {
               const CustomSizedBox.largeGap(),
               CustomFormField.countForm(
                 label: LocaleKeys.trade_buyAmount.tr(),
-                //
-                // 'Buy amount',
                 controller: viewModel.amountController,
                 validator: (value) => checkAmount(value, false),
                 type: TextInputType.text,
@@ -72,56 +73,38 @@ class _TradeViewState extends ConsumerState<TradeView> with ValidatorMixin {
                 child: Row(
                   mainAxisAlignment: MainAxisAlignment.spaceBetween,
                   children: [
-                    DropdownButton(
-                      borderRadius: BorderRadius.circular(10),
-                      icon: const Icon(
-                        Icons.attach_money,
-                        color: DefaultColorPalette.vanillaGreen,
-                      ),
-                      hint: dropdownHintTextWidget(),
-                      //Focus Node
-                      dropdownColor: Colors.white,
-                      items: viewModel
-                          .getCurrencyList(ref)
-                          .map((e) => DropdownMenuItem(
-                                value: e.code,
-                                child: Text(e.code),
-                              ))
-                          .toList(),
-                      onChanged: (String? newValue) {
-                        viewModel.changeSelectedCurrency(newValue);
-                      },
-                      value: viewModel.selectedCurrency,
-                    ),
-                    ElevatedButton(
-                      onPressed: () {
-                        showDatePicker(
-                          context: context,
-                          firstDate: DateTime(2000),
-                          lastDate: DateTime.now(),
-                          initialDate: viewModel.selectedDate,
-                          confirmText: LocaleKeys.trade_buy.tr(),
-                          cancelText: LocaleKeys.trade_cancel.tr(),
-                        ).then((DateTime? newDate) {
-                          viewModel.changeSelectedDate(newDate);
-                        });
-                      },
-                      child: const Icon(Icons.calendar_today),
-                    ),
+                    dropDownWidget(viewModel),
+                    customDatePickerWidget(viewModel),
                   ],
                 ),
               ),
-              ElevatedButton(
-                onPressed: () async {
-                  await viewModel.buyCurrency(ref: ref, context: context);
-                  //Firestore business we will add here
-                },
-                child: Text(LocaleKeys.trade_buy.tr()),
-              ),
+              buyCurrencyWidget(viewModel, context),
             ],
           ),
         ),
       ),
+    );
+  }
+
+  CustomDatePickerWidget customDatePickerWidget(TradeViewModel viewModel) =>
+      CustomDatePickerWidget(viewModel: viewModel);
+
+  CustomDropDownWidget<dynamic> dropDownWidget(TradeViewModel viewModel) {
+    return CustomDropDownWidget(
+      pageCurrency: widget.currecyCode,
+      viewModel: viewModel,
+      ref: ref,
+    );
+  }
+
+  ElevatedButton buyCurrencyWidget(
+      TradeViewModel viewModel, BuildContext context) {
+    return ElevatedButton(
+      onPressed: () async {
+        await viewModel.buyCurrency(ref: ref, context: context);
+        //Firestore business we will add here
+      },
+      child: Text(LocaleKeys.trade_buy.tr()),
     );
   }
 

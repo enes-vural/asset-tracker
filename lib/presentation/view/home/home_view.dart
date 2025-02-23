@@ -1,3 +1,4 @@
+import 'package:asset_tracker/core/config/constants/string_constant.dart';
 import 'package:asset_tracker/core/config/localization/generated/locale_keys.g.dart';
 import 'package:asset_tracker/core/config/theme/default_theme.dart';
 import 'package:asset_tracker/core/config/theme/extension/responsive_extension.dart';
@@ -11,7 +12,6 @@ import 'package:asset_tracker/presentation/view/widgets/search_form_widget.dart'
 import 'package:asset_tracker/presentation/view_model/home/home_view_model.dart';
 import 'package:auto_route/annotations.dart';
 import 'package:easy_localization/easy_localization.dart';
-import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 
@@ -29,6 +29,7 @@ class _HomeViewState extends ConsumerState<HomeView> {
   //async function to call data
   Future<void> callData() async =>
       await ref.read(homeViewModelProvider).getData();
+  
 
   Future<void> getErrorStream() async => await ref
       .read(homeViewModelProvider)
@@ -42,8 +43,6 @@ class _HomeViewState extends ConsumerState<HomeView> {
     super.initState();
   }
 
-  //TODO: Dispose method need for discard stream after navigate to another page
-
   @override
   Widget build(BuildContext context) {
     final HomeViewModel viewModel = ref.watch(homeViewModelProvider);
@@ -52,25 +51,12 @@ class _HomeViewState extends ConsumerState<HomeView> {
       appBar: AppBar(
         backgroundColor: DefaultColorPalette.grey100,
         title: Text(LocaleKeys.app_title.tr()),
-        shadowColor: Colors.black,
+        shadowColor: DefaultColorPalette.vanillaBlack,
         elevation: 5,
-
-        leading:
-            IconButton(onPressed: () {}, icon: const Icon(Icons.exit_to_app)),
+        leading: exitAppIconButton(),
         actions: [
-          IconButton(
-            onPressed: () {
-              Routers.instance.pushWithInfo(
-                context,
-                TradeRoute(currecyCode: ""),
-              );
-            },
-            icon: const Icon(Icons.attach_money),
-          ),
-          IconButton(
-            onPressed: () {},
-            icon: const Icon(Icons.wallet),
-          ),
+          pushTradePageIconButton(context),
+          pushWalletIconButton(),
         ],
       ),
       body: Center(
@@ -111,7 +97,6 @@ class _HomeViewState extends ConsumerState<HomeView> {
                         return CurrencyCardWidget(
                           currency: currency,
                           onTap: () {
-                            debugPrint("Clicked on me");
                             Routers.instance.pushWithInfo(context,
                                 TradeRoute(currecyCode: currency.code));
                           },
@@ -125,6 +110,28 @@ class _HomeViewState extends ConsumerState<HomeView> {
           ),
         ),
       ),
+    );
+  }
+
+  IconButton exitAppIconButton() =>
+      IconButton(onPressed: () {}, icon: const Icon(Icons.exit_to_app));
+
+  IconButton pushWalletIconButton() {
+    return IconButton(
+      onPressed: () {},
+      icon: const Icon(Icons.wallet),
+    );
+  }
+
+  IconButton pushTradePageIconButton(BuildContext context) {
+    return IconButton(
+      onPressed: () {
+        Routers.instance.pushWithInfo(
+          context,
+          TradeRoute(currecyCode: DefaultLocalStrings.emptyText),
+        );
+      },
+      icon: const Icon(Icons.attach_money),
     );
   }
 
