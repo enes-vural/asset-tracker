@@ -54,7 +54,19 @@ class _HomeViewState extends ConsumerState<HomeView> {
         title: Text(LocaleKeys.app_title.tr()),
         shadowColor: Colors.black,
         elevation: 5,
+
+        leading:
+            IconButton(onPressed: () {}, icon: const Icon(Icons.exit_to_app)),
         actions: [
+          IconButton(
+            onPressed: () {
+              Routers.instance.pushWithInfo(
+                context,
+                TradeRoute(currecyCode: ""),
+              );
+            },
+            icon: const Icon(Icons.attach_money),
+          ),
           IconButton(
             onPressed: () {},
             icon: const Icon(Icons.wallet),
