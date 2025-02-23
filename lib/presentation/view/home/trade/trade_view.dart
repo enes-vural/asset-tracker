@@ -1,5 +1,7 @@
 import 'package:asset_tracker/core/config/constants/global/key/fom_keys.dart';
 import 'package:asset_tracker/core/mixins/validation_mixin.dart';
+import 'package:asset_tracker/core/widgets/custom_align.dart';
+import 'package:asset_tracker/core/widgets/custom_padding.dart';
 import 'package:asset_tracker/core/widgets/custom_sized_box.dart';
 import 'package:asset_tracker/domain/entities/web/socket/currency_widget_entity.dart';
 import 'package:asset_tracker/injection.dart';
@@ -30,37 +32,44 @@ class _TradeViewState extends ConsumerState<TradeView> with ValidatorMixin {
       body: Form(
         key: GlobalFormKeys.tradeFormKey,
         autovalidateMode: AutovalidateMode.always,
-        child: Column(
-          children: [
-            CustomFormField(
-              label: 'Amount',
-              isObs: false,
-              formController: viewModel.amountController,
-              validaor: checkAmount,
-            ),
-            const CustomSizedBox.mediumGap(),
-            CustomFormField(
-              label: 'Buy Price',
-              isObs: false,
-              formController: viewModel.priceController,
-              validaor: checkAmount,
-            ),
-            ElevatedButton(
-              onPressed: () {
-                showDatePicker(
-                    context: context,
-                    firstDate: DateTime(2000),
-                    lastDate: DateTime.now());
-              },
-              child: const Text("Select Date"),
-            ),
-            ElevatedButton(
-              onPressed: () {
-                //Firestore business we will add here
-              },
-              child: const Text("Add"),
-            ),
-          ],
+        child: CustomPadding.hugeHorizontal(
+          widget: Column(
+            children: [
+              const CustomSizedBox.largeGap(),
+              CustomFormField(
+                label: 'Amount',
+                isObs: false,
+                formController: viewModel.amountController,
+                validaor: checkAmount,
+                type: TextInputType.number,
+              ),
+              const CustomSizedBox.smallGap(),
+              CustomFormField.countForm(
+                label: 'Buy Price',
+                controller: viewModel.priceController,
+                validator: checkAmount,
+                type: TextInputType.number,
+              ),
+              const CustomSizedBox.smallGap(),
+              CustomAlign.centerRight(
+                child: ElevatedButton(
+                  onPressed: () {
+                    showDatePicker(
+                        context: context,
+                        firstDate: DateTime(2000),
+                        lastDate: DateTime.now());
+                  },
+                  child: const Icon(Icons.calendar_today),
+                ),
+              ),
+              ElevatedButton(
+                onPressed: () {
+                  //Firestore business we will add here
+                },
+                child: const Text("BUY"),
+              ),
+            ],
+          ),
         ),
       ),
     );
