@@ -7,8 +7,7 @@ import 'package:asset_tracker/core/widgets/custom_padding.dart';
 import 'package:easy_localization/easy_localization.dart';
 import 'package:flutter/material.dart';
 
-import '../../../../core/config/localization/generated/locale_keys.g.dart';
-
+import 'package:asset_tracker/core/config/localization/generated/locale_keys.g.dart';
 class AuthFormWidget extends StatelessWidget {
   const AuthFormWidget({
     super.key,

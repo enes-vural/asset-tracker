@@ -28,6 +28,25 @@
             "generalErr":"Error has been occurred"
         }
     },
+    "trade":{
+        "fillAllFields":"Please fill all fields",
+        "invalidAmount":"Invalid amount",
+        "invalidPrice":"Invalid price",
+        "invalidType":"Invalid type",
+        "invalidDate":"Invalid Date",
+        "invalidBalance":"Insufficient balance",
+        "relogin":"Please re-login to buy currency",
+        "success":"Currency {currency} bought {amount} succesfully per {price}",
+        "buyAmount":"Buy Amount",
+        "buyPrice":"Buy price per one",
+        "buy":"Buy",
+        "done":"Done",
+        "cancel":"Cancel",
+        "selectCurrecy":"Select Currency",
+        "userIdNull":"User id is null",
+        "nullAssetCodes":"Unexpected error has been occurred please try again later."
+
+    },
         "home": {
           "search":"Search",
           "socketConnectionInit":"Connection to socket",

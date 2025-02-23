@@ -111,7 +111,7 @@ class _HomeViewState extends ConsumerState<HomeView> {
                         return CurrencyCardWidget(
                           currency: currency,
                           onTap: () {
-                            print("Clicked on me");
+                            debugPrint("Clicked on me");
                             Routers.instance.pushWithInfo(context,
                                 TradeRoute(currecyCode: currency.code));
                           },

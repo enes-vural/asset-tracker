@@ -1,3 +1,4 @@
+import 'package:asset_tracker/core/config/localization/generated/locale_keys.g.dart';
 import 'package:asset_tracker/data/model/database/error/database_error_model.dart';
 import 'package:asset_tracker/data/model/database/request/buy_currency_model.dart';
 import 'package:asset_tracker/data/model/database/response/asset_code_model.dart';
@@ -6,6 +7,8 @@ import 'package:asset_tracker/domain/entities/database/enttiy/buy_currency_entit
 import 'package:asset_tracker/domain/entities/database/error/database_error_entity.dart';
 import 'package:asset_tracker/domain/repository/database/firestore/ifirestore_repository.dart';
 import 'package:dartz/dartz.dart';
+import 'package:easy_localization/easy_localization.dart';
+import 'package:flutter/material.dart';
 
 class FirestoreRepository implements IFirestoreRepository {
   final IFirestoreService firestoreService;
@@ -17,8 +20,8 @@ class FirestoreRepository implements IFirestoreRepository {
       getAssetCodes() async {
     final currencyCodeList = await firestoreService.getAssetCodes();
     //we setted our default empty error
-    const DatabaseErrorEntity emptyError = DatabaseErrorEntity(
-        message: "asset codes not available [developer error line 27]");
+    DatabaseErrorEntity emptyError =
+        DatabaseErrorEntity(message: LocaleKeys.trade_nullAssetCodes.tr());
 
     return currencyCodeList.fold(
       (DatabaseErrorModel failure) {
@@ -27,7 +30,8 @@ class FirestoreRepository implements IFirestoreRepository {
       (List<AssetCodeModel> success) {
         //the error statement if value was empty
         if (success.isEmpty) {
-          return const Left(emptyError);
+          debugPrint("Asset codes are empty ERROR: Line 27: DEVELOPER ERROR");
+          return Left(emptyError);
         }
 
         //another cases we will return the success value

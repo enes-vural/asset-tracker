@@ -5,7 +5,7 @@ import 'package:easy_localization/easy_localization.dart';
 
 mixin ValidatorMixin {
   final _emailRegex = RegExpConstant.emailCheckRegExp;
-  final _numberRegex = RegExpConstant.onlyNumbers;
+  final _numberRegex = RegExpConstant.onlyNumbersAndDot;
   final _passwordLength = GeneralConstants.maxPasswordLength;
   //E-mail de olması gereken karakterleri RegExp ile belirttik.
   /// @ işaretinden sonra karakter ve . bulunması vb.
@@ -28,20 +28,27 @@ mixin ValidatorMixin {
         : LocaleKeys.auth_validation_nonePassword.tr();
   }
 
-  String? checkAmount(String? text) {
+  String? checkAmount(String? text, bool isPrice) {
+    //isPrice true ise fiyat kontrolü yapılır
+    //isPrice false ise miktar kontrolü yapılır
+
     if (text == null || text.isEmpty) {
-      return "Burası boş olamaz";
+      return LocaleKeys.trade_fillAllFields.tr();
     }
     try {
       if (double.tryParse(text) == null) {
-        return "Geçerli bir sayı giriniz";
+        return isPrice
+            ? LocaleKeys.trade_invalidPrice.tr()
+            : LocaleKeys.trade_invalidAmount.tr();
       }
     } catch (e) {
-      return "Geçerli bir sayı giriniz";
+      return isPrice
+          ? LocaleKeys.trade_invalidPrice.tr()
+          : LocaleKeys.trade_invalidAmount.tr();
     }
 
     if (!_numberRegex.hasMatch(text)) {
-      return "Hatalı format";
+      return LocaleKeys.trade_invalidType.tr();
     }
     return null;
   }
