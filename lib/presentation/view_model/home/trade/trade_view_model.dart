@@ -10,8 +10,10 @@ import 'package:flutter/cupertino.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 
 class TradeViewModel extends ChangeNotifier {
-  String? selectedCurrency;
+  TextEditingController amountController = TextEditingController();
+  TextEditingController priceController = TextEditingController();
 
+  String? selectedCurrency;
   DateTime? selectedDate;
 
   void changeSelectedDate(DateTime? newDate) {
@@ -29,9 +31,6 @@ class TradeViewModel extends ChangeNotifier {
     selectedCurrency = newValue;
     notifyListeners();
   }
-
-  TextEditingController amountController = TextEditingController();
-  TextEditingController priceController = TextEditingController();
 
   List<AssetCodeModel> getCurrencyList(WidgetRef ref) =>
       ref.read(appGlobalProvider.notifier).assetCodes;
@@ -90,6 +89,7 @@ class TradeViewModel extends ChangeNotifier {
       );
       amountController.clear();
       priceController.clear();
+      notifyListeners();
     });
   }
 }

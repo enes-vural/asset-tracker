@@ -8,4 +8,10 @@ abstract interface class IWebSocketRepository {
 
   Stream? get stream;
   Stream<Either<SocketErrorEntity, SocketStateResponseModel>>? get errorStream;
+
+  StreamController? get errorController;
+
+  StreamController? get controller;
+
+  Future<void> closeStream();
 }
