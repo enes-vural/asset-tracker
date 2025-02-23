@@ -11,6 +11,7 @@ class CustomFormField extends StatelessWidget {
     required this.formController,
     required this.validaor,
     this.type = TextInputType.text,
+    this.icon,
   });
 
   final String label;
@@ -18,6 +19,7 @@ class CustomFormField extends StatelessWidget {
   final FormFieldValidator<String>? validaor;
   final bool isObs;
   final TextInputType type;
+  final IconData? icon;
 
   const CustomFormField.countForm({
     Key? key,
@@ -25,16 +27,16 @@ class CustomFormField extends StatelessWidget {
     required FormFieldValidator<String>? validator,
     required String label,
     required TextInputType type,
+    IconData? icon,
   }) : this(
           key: key,
           formController: controller,
           isObs: false,
-          label: 'Asset Count',
+          label: label,
           validaor: validator,
           type: type,
+          icon: icon,
         );
-
-    
 
   @override
   Widget build(BuildContext context) {
@@ -46,7 +48,8 @@ class CustomFormField extends StatelessWidget {
           obscureText: isObs,
           controller: formController,
           validator: validaor,
-          decoration: CustomInputDecoration.mediumRoundInput(label: label),
+          decoration:
+              CustomInputDecoration.mediumRoundInput(label: label, icon: icon),
         ),
       ),
     );

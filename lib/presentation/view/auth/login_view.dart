@@ -76,7 +76,7 @@ class _LoginViewState extends ConsumerState<LoginView> with ValidatorMixin {
   }
 
   void _submit(AuthViewModel authViewModel, BuildContext context) {
-    authViewModel.signInUser(context,
+    authViewModel.signInUser(ref, context,
         () => Routers.instance.pushReplaceNamed(context, Routers.homePath));
   }
 

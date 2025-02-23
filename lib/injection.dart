@@ -11,13 +11,15 @@ import 'package:asset_tracker/data/service/remote/web/iweb_socket_service.dart';
 import 'package:asset_tracker/data/service/remote/web/web_socket_service.dart';
 import 'package:asset_tracker/domain/repository/web/iweb_socket_repository.dart';
 import 'package:asset_tracker/domain/usecase/auth/auth_use_case.dart';
-import 'package:asset_tracker/domain/usecase/database/database_use_case.dart';
+import 'package:asset_tracker/domain/usecase/database/buy_currency_use_case.dart';
+import 'package:asset_tracker/domain/usecase/database/get_currency_code_use_case.dart';
 import 'package:asset_tracker/domain/usecase/web/web_use_case.dart';
 import 'package:asset_tracker/presentation/view_model/auth/auth_view_model.dart';
 import 'package:asset_tracker/presentation/view_model/home/home_view_model.dart';
 import 'package:asset_tracker/presentation/view_model/home/trade/trade_view_model.dart';
 import 'package:asset_tracker/presentation/view_model/splash/splash_view_model.dart';
 import 'package:asset_tracker/provider/app_global_provider.dart';
+import 'package:asset_tracker/provider/auth_global_provider.dart';
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:firebase_auth/firebase_auth.dart';
 //import 'package:firebase_auth/firebase_auth.dart';
@@ -25,6 +27,10 @@ import 'package:flutter_riverpod/flutter_riverpod.dart';
 
 final appGlobalProvider = ChangeNotifierProvider<AppGlobalProvider>((ref) {
   return AppGlobalProvider();
+});
+
+final authGlobalProvider = ChangeNotifierProvider<AuthGlobalProvider>((ref) {
+  return AuthGlobalProvider();
 });
 
 
@@ -69,9 +75,19 @@ final firestoreRepositoryProvider = Provider<FirestoreRepository>((ref) {
   return FirestoreRepository(firestoreService: firestoreService);
 });
 
+//------------------ USE CASE PROVIDERS ------------------
+
 final getAssetCodesUseCaseProvider = Provider<GetCurrencyCodeUseCase>((ref) {
   final _firestoreRepository = ref.watch(firestoreRepositoryProvider);
   return GetCurrencyCodeUseCase(firestoreRepository: _firestoreRepository);
+});
+
+//multiple usage of same repository instance,.
+//make here single one shared instance.
+
+final buyCurrencyUseCaseProvider = Provider<BuyCurrencyUseCase>((ref) {
+  final _firestoreRepository = ref.watch(firestoreRepositoryProvider);
+  return BuyCurrencyUseCase(firestoreRepository: _firestoreRepository);
 });
 
 final signInUseCaseProvider = Provider<SignInUseCase>((ref) {
@@ -83,6 +99,8 @@ final getSocketStreamUseCaseProvider = Provider<GetSocketStreamUseCase>((ref) {
   final _webRepository = ref.watch(webRepositoryProvider);
   return GetSocketStreamUseCase(_webRepository);
 });
+
+//------------------ VIEW MODEL PROVIDERS ------------------
 
 final authViewModelProvider = ChangeNotifierProvider<AuthViewModel>((ref) {
   final _signInUseCaseProvider = ref.watch(signInUseCaseProvider);
@@ -98,7 +116,7 @@ final homeViewModelProvider = ChangeNotifierProvider<HomeViewModel>((ref) {
   return HomeViewModel(getSocketStreamUseCase: socketUseCase);
 });
 
-final tradeViewModelProvider = Provider<TradeViewModel>((ref) {
+final tradeViewModelProvider = ChangeNotifierProvider<TradeViewModel>((ref) {
   return TradeViewModel();
 });
 //test@gmail.com

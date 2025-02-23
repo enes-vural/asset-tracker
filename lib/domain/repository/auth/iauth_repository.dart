@@ -7,4 +7,6 @@ import '../../entities/auth/user_login_response_entity.dart';
 abstract interface class IAuthRepository {
   Future<Either<AuthErrorEntity, UserLoginResponseEntity>> signIn(
       UserLoginEntity entity);
+
+  String? getUserId();
 }
