@@ -8,7 +8,7 @@ import 'package:auto_route/annotations.dart';
 import 'package:easy_localization/easy_localization.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
-import '../../../core/config/localization/generated/locale_keys.g.dart';
+import 'package:asset_tracker/core/config/localization/generated/locale_keys.g.dart';
 import '../../view_model/auth/auth_view_model.dart';
 import 'widget/auth_form_widget.dart';
 import 'widget/auth_submit_widget.dart';
@@ -76,7 +76,7 @@ class _LoginViewState extends ConsumerState<LoginView> with ValidatorMixin {
   }
 
   void _submit(AuthViewModel authViewModel, BuildContext context) {
-    authViewModel.signInUser(context,
+    authViewModel.signInUser(ref, context,
         () => Routers.instance.pushReplaceNamed(context, Routers.homePath));
   }
 

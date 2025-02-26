@@ -23,4 +23,9 @@ class MockAuthService implements IMockAuthService {
         displayName: "Test User",
         idToken: "Test-User-ID-Token_SUCCESS");
   }
+
+  @override
+  String? getUserId() {
+    return "mock-user-id";
+  }
 }

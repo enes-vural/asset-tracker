@@ -93,10 +93,18 @@ class WebSocketService implements IWebSocketService {
   }
 
   @override
-  Stream<Map<String, dynamic>> get stream => controller.stream;
+  Stream<Map<String, dynamic>> get stream =>
+      controller.stream.asBroadcastStream();
 
   @override
-  Stream<SocketErrorModel> get errorStream => errorController.stream;
+  StreamController get getController => controller;
+
+  @override
+  StreamController get getErrorController => errorController;
+
+  @override
+  Stream<SocketErrorModel> get errorStream =>
+      errorController.stream.asBroadcastStream();
 
   Future<void> reconnect() async {
     debugPrint("Reconnecting...");

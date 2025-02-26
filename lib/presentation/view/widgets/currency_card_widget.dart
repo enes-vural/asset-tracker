@@ -3,7 +3,7 @@ import 'package:asset_tracker/core/widgets/custom_sized_box.dart';
 import 'package:easy_localization/easy_localization.dart';
 import 'package:flutter/material.dart';
 
-import '../../../core/config/localization/generated/locale_keys.g.dart';
+import 'package:asset_tracker/core/config/localization/generated/locale_keys.g.dart';
 import '../../../core/config/theme/default_theme.dart';
 import '../../../core/config/theme/extension/app_size_extension.dart';
 import '../../../core/config/theme/style_theme.dart';
@@ -15,14 +15,17 @@ class CurrencyCardWidget extends StatelessWidget with GetCurrencyIconMixin {
   const CurrencyCardWidget({
     super.key,
     required this.currency,
+    required this.onTap,
   });
 
   final CurrencyWidgetEntity currency;
+  final VoidCallback? onTap;
 
   @override
   Widget build(BuildContext context) {
     return CustomPadding.mediumTop(
-      widget: GestureDetector(
+      widget: InkWell(
+          onTap: onTap,
           child: Container(
         height: ResponsiveSize(context).screenHeight.toPercent(8),
         decoration: CustomDecoration.roundBox(
