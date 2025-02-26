@@ -66,4 +66,10 @@ class FirebaseAuthRepository implements IAuthRepository {
       //
     }
   }
+
+
+  @override
+  String? getUserId() {
+    return authService.getUserId();
+  }
 }

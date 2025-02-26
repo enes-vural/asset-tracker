@@ -67,9 +67,11 @@ final class CustomInputDecoration extends InputDecoration {
             border: OutlineInputBorder(
                 borderRadius: BorderRadius.circular(radius)));
 
-  CustomInputDecoration.mediumRoundInput({required String? label})
+  CustomInputDecoration.mediumRoundInput(
+      {required String? label, IconData? icon})
       : super(
             label: Text(label ?? DefaultLocalStrings.emptyText),
+            icon: icon != null ? Icon(icon) : null,
             border: OutlineInputBorder(
                 borderRadius: BorderRadius.circular(AppSize.mediumRadius)));
 

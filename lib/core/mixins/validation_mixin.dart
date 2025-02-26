@@ -5,6 +5,7 @@ import 'package:easy_localization/easy_localization.dart';
 
 mixin ValidatorMixin {
   final _emailRegex = RegExpConstant.emailCheckRegExp;
+  final _numberRegex = RegExpConstant.onlyNumbersAndDot;
   final _passwordLength = GeneralConstants.maxPasswordLength;
   //E-mail de olması gereken karakterleri RegExp ile belirttik.
   /// @ işaretinden sonra karakter ve . bulunması vb.
@@ -15,6 +16,7 @@ mixin ValidatorMixin {
             : LocaleKeys.auth_validation_weakEmail.tr()
         : LocaleKeys.auth_validation_noneEmail.tr();
   }
+
   ///Password null durumunu kontrol ediyor eğer değilse sonraki kontrolünde
   ///text uzunluğunu GeneralConstants sınıfından aldığımız maxPasswordLength ile kontrol ediyor
   ///her şey tamam ise null döndürüp validasyionu tamamlıyor.
@@ -24,5 +26,30 @@ mixin ValidatorMixin {
             ? null
             : LocaleKeys.auth_validation_weakPassword.tr()
         : LocaleKeys.auth_validation_nonePassword.tr();
+  }
+
+  String? checkAmount(String? text, bool isPrice) {
+    //isPrice true ise fiyat kontrolü yapılır
+    //isPrice false ise miktar kontrolü yapılır
+
+    if (text == null || text.isEmpty) {
+      return LocaleKeys.trade_fillAllFields.tr();
+    }
+    try {
+      if (double.tryParse(text) == null) {
+        return isPrice
+            ? LocaleKeys.trade_invalidPrice.tr()
+            : LocaleKeys.trade_invalidAmount.tr();
+      }
+    } catch (e) {
+      return isPrice
+          ? LocaleKeys.trade_invalidPrice.tr()
+          : LocaleKeys.trade_invalidAmount.tr();
+    }
+
+    if (!_numberRegex.hasMatch(text)) {
+      return LocaleKeys.trade_invalidType.tr();
+    }
+    return null;
   }
 }

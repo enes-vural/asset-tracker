@@ -1,3 +1,6 @@
+import 'dart:async';
+
+import 'package:asset_tracker/core/config/theme/extension/currency_widget_title_extension.dart';
 import 'package:asset_tracker/core/helpers/snackbar.dart';
 import 'package:asset_tracker/domain/entities/web/socket/currency_entity.dart';
 import 'package:asset_tracker/domain/usecase/web/web_use_case.dart';
@@ -14,12 +17,24 @@ class HomeViewModel extends ChangeNotifier {
 
   final TextEditingController searchBarController = TextEditingController();
 
+  Stream? stream;
+
+  StreamController? dataStreamController;
+
   Future<void> getData() async {
+    //if stream is already open, we don't need to open it again
+    if (dataStreamController?.stream != null) {
+      return;
+    }
+
     final data = await getSocketStreamUseCase.call(null);
     debugPrint(data.toString());
     data.fold((failure) => debugPrint(failure.message), (success) {
       debugPrint("Connection STATE : ${success.state}");
     });
+
+    dataStreamController = getSocketStreamUseCase.controller;
+    notifyListeners();
   }
 
   Future<void> getErrorStream({required BuildContext parentContext}) async {
@@ -39,11 +54,14 @@ class HomeViewModel extends ChangeNotifier {
     String searchedCurrency = searchBarController.text;
     //filter the list via controller's value
     if (searchedCurrency.isNotEmpty) {
-      final filteredData = data
-          .where((element) => element.code
-              .toLowerCase()
-              .contains(searchedCurrency.toLowerCase()))
-          .toList();
+      final filteredData = data.where((CurrencyEntity element) {
+        return element.code
+                .toLowerCase()
+                .contains(searchedCurrency.toLowerCase()) ||
+            setCurrencyLabel(element.code)
+                .toLowerCase()
+                .contains(searchedCurrency.toLowerCase());
+      }).toList();
 
       debugPrint("Filtered Data : ${filteredData.length}");
       return filteredData;
@@ -52,10 +70,7 @@ class HomeViewModel extends ChangeNotifier {
     return data;
   }
 
-  Stream<dynamic>? getStream() {
-    return getSocketStreamUseCase.getDataStream();
-  }
+  Stream? getStream() => dataStreamController?.stream.asBroadcastStream();
 
   // we will get stream after ensure connection is done !
 }
-//test@gmail.com

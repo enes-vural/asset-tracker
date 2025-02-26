@@ -28,6 +28,25 @@
             "generalErr":"Bir hata oluştu"
         }
     },
+    "trade":{
+        "fillAllFields":"Tüm alanları doldurunuz.",
+        "invalidAmount":"Geçersiz miktar",
+        "invalidPrice":"Geçersiz fiyat",
+        "invalidDate":"Geçersiz tarih",
+        "invalidType":"Geçersiz tip",
+        "invalidBalance":"Yetersiz bakiye",
+        "relogin":"Lütfen satın almak için tekrar giriş yapınız",
+        "success": "{price} fiyatından {amount} tane {currency} satın alındı,",
+        "buyAmount":"Miktar",
+        "buyPrice":"Birim fiyat",
+        "buy":"Satın Al",
+        "done":"Tamam",
+        "cancel":"İptal",
+        "selectCurrecy":"Para birimi seçiniz",
+        "userIdNull":"Kullanıcı id'si boş",
+        "nullAssetCodes":"Beklenmeyen bir hata oluştu lütfen daha sonra tekrar deneyiniz."
+
+    },
     "home": {
         "search":"Ara",
         "socketConnectionInit":"Socket'e bağlanılıyor.",

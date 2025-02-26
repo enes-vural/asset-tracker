@@ -1,5 +1,4 @@
 import 'package:asset_tracker/core/config/localization/generated/locale_keys.g.dart';
-
 import 'model/auth_test_cases_model.dart';
 
 final class AuthTestConstants {

@@ -29,11 +29,12 @@ class WebSocketRepository implements IWebSocketRepository {
     try {
       _controller = StreamController.broadcast();
       _errorController = StreamController.broadcast();
+
       socketService.errorStream.listen(
         (SocketErrorModel model) {
           model.state == SocketStateEnum.ERROR
-              ? _errorController!.add(Left(SocketErrorEntity.fromModel(model)))
-              : _errorController!.add(Right(
+              ? _errorController?.add(Left(SocketErrorEntity.fromModel(model)))
+              : _errorController?.add(Right(
                   SocketStateResponseModel(
                       model.message ?? DefaultLocalStrings.emptyText,
                       model.state),
@@ -86,19 +87,25 @@ class WebSocketRepository implements IWebSocketRepository {
     _controller.add(json);
   }
   */
-
-  void closeStream() async {
+  @override
+  Future<void> closeStream() async {
     await socketService.closeSocket();
-    _controller?.close();
+    //_controller?.close();
   }
 
   //repoların streamleri
   @override
-  Stream? get stream => _controller?.stream;
+  Stream? get stream => _controller?.stream.asBroadcastStream();
+
+  @override
+  StreamController? get errorController => _errorController;
+
+  @override
+  StreamController? get controller => _controller;
 
   @override
   Stream<Either<SocketErrorEntity, SocketStateResponseModel>>?
-      get errorStream => _errorController?.stream;
+      get errorStream => _errorController?.stream.asBroadcastStream();
 }
 
 //test@gmail.com

@@ -1,3 +1,5 @@
+import 'dart:async';
+
 import 'package:asset_tracker/data/model/web/response/socket_state_response_model.dart';
 import 'package:asset_tracker/domain/entities/auth/base/error/base_error_entity.dart';
 import 'package:asset_tracker/domain/usecase/base/base_use_case.dart';
@@ -16,11 +18,20 @@ class GetSocketStreamUseCase implements BaseUseCase {
   }
 
   Stream<dynamic>? getDataStream() {
-    return _webRepository.stream;
+    return _webRepository.stream?.asBroadcastStream();
   }
 
   Stream<Either<SocketErrorEntity, SocketStateResponseModel>>?
       getErrorStream() {
     return _webRepository.errorStream;
   }
+
+  Future<void> closeSocket() async {
+    await _webRepository.closeStream();
+  }
+
+  StreamController? get controller => _webRepository.controller;
+
+  StreamController? get errorController => _webRepository.errorController;
+
 }

@@ -8,6 +8,10 @@ abstract interface class IWebSocketService {
   Stream<Map<String, dynamic>> get stream;
 
   Stream<SocketErrorModel> get errorStream;
+
+  StreamController get getController;
+
+  StreamController get getErrorController;
   //şimdilik dnyamic olarak kalabilir sonrasında değişecek
 
   Future<void> connectSocket();
