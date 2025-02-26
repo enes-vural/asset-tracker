@@ -25,10 +25,9 @@ class CustomDropDownWidget<T> extends StatelessWidget {
     return DropdownButton(
       borderRadius: BorderRadius.circular(AppSize.mediumRadius),
       icon: const CustomIcon.dollarIcon(),
-      hint: customDropDownHintTextWidget(),
-      //TODO: research the focus node
+      hint: _customDropDownHintTextWidget(),
       dropdownColor: DefaultColorPalette.vanillaWhite,
-      items: getCurrencyListAsDMenuItem(),
+      items: _getCurrencyListAsDMenuItem(),
       onChanged: (String? newValue) {
         viewModel.changeSelectedCurrency(newValue);
       },
@@ -36,7 +35,7 @@ class CustomDropDownWidget<T> extends StatelessWidget {
     );
   }
 
-  List<DropdownMenuItem<String>> getCurrencyListAsDMenuItem() {
+  List<DropdownMenuItem<String>> _getCurrencyListAsDMenuItem() {
     return viewModel
         .getCurrencyList(ref)
         .map((e) => DropdownMenuItem(
@@ -46,7 +45,7 @@ class CustomDropDownWidget<T> extends StatelessWidget {
         .toList();
   }
 
-  Text customDropDownHintTextWidget() {
+  Text _customDropDownHintTextWidget() {
     return Text(
         pageCurrency != null && pageCurrency == DefaultLocalStrings.emptyText
             ? LocaleKeys.trade_selectCurrecy.tr()

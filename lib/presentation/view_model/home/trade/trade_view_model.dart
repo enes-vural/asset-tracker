@@ -42,8 +42,8 @@ class TradeViewModel extends ChangeNotifier {
       return;
     }
 
-    final amount = double.parse(amountController.text);
-    final price = double.parse(priceController.text);
+    final amount = double.tryParse(amountController.text) ?? 0.0;
+    final price = double.tryParse(priceController.text) ?? 0.0;
     final currency = selectedCurrency;
     final date = selectedDate;
     final currentUserId = ref.read(authGlobalProvider).currentUserId;
