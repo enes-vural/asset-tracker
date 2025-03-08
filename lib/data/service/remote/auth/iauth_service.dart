@@ -5,4 +5,6 @@ abstract interface class IAuthService<T> {
   Future<T>? signInUser(UserLoginEntity entity);
 
   String? getUserId();
+
+  Stream getUserStateChanges();
 }

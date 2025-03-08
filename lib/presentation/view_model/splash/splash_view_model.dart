@@ -12,20 +12,47 @@ class SplashViewModel extends ChangeNotifier {
     notifyListeners();
   }
 
-  Future<void> init(WidgetRef ref) async {
-    await ref.read(appGlobalProvider.notifier).getCurrencyList(ref).then((_) {
-      if (ref.read(appGlobalProvider).assetCodes.isNotEmpty) {
-        debugPrint("All data loaded");
-        setIsLoading(false);
-        return;
-      } else {
-        debugPrint("Data is empty");
-        setIsLoading(true);
-      }
-    });
+  Future<void> init(WidgetRef ref, BuildContext context) async {
+    final results = await Future.wait(
+      [
+        ref.read(authGlobalProvider.notifier).getCurrentUserStream.first,
+        ref.read(appGlobalProvider.notifier).getCurrencyList(ref),
+      ],
+    );
+    final String? uid = results[0] as String;
+    final _ = results[1];
+
+    if (_checkUserLoggedIn(uid) && _checkAssetCodesLoaded(ref)) {
+      setIsLoading(false);
+      debugPrint("User is logged in and all data loaded");
+      _canUserNavigateHome(context, replace: true);
+    } else {
+      setIsLoading(false);
+      debugPrint("User is not logged in or data not loaded");
+    }
   }
 
-  void navigateToLogin(BuildContext context) {
-    Routers.instance.pushReplaceNamed(context, Routers.loginPath);
+  bool _checkUserLoggedIn(String? uid) {
+    if (uid != null && uid.isNotEmpty) {
+      debugPrint("User is logged in");
+      return true;
+    }
+    return false;
+  }
+
+  bool _checkAssetCodesLoaded(WidgetRef ref) {
+    if (ref.read(appGlobalProvider.notifier).assetCodes.isNotEmpty) {
+      debugPrint("All data loaded");
+      return true;
+    }
+    return false;
+  }
+
+  void _canUserNavigateHome(BuildContext context, {bool replace = false}) {
+    if (replace) {
+      Routers.instance.pushReplaceNamed(context, Routers.homePath);
+    } else {
+      Routers.instance.pushReplaceNamed(context, Routers.loginPath);
+    }
   }
 }

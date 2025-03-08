@@ -20,6 +20,11 @@ class FirebaseAuthService implements IFirebaseAuthService {
     return authService.currentUser?.uid;
   }
 
+  @override
+  Stream getUserStateChanges() {
+    return authService.authStateChanges();
+  }
+
   Future<FirebaseAuthUser> _combineUserData(UserCredential creds) async {
     final getIdToken = await creds.user?.getIdToken();
     return FirebaseAuthUser(
