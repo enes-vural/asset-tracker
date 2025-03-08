@@ -34,7 +34,6 @@ class AuthViewModel extends ChangeNotifier {
     result.fold(
       (failure) => EasySnackBar.show(context, failure.message),
       (success) {
-        ref.read(authGlobalProvider.notifier).setCurrentUserId(ref);
         onLoginSuccess();
       },
     );

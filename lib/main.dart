@@ -37,6 +37,7 @@ class MyApp extends StatelessWidget {
   Widget build(BuildContext context) {
     final appRouter = AppRouter();
     return ProviderScope(
+
       child: MaterialApp.router(
         //---------------------------------- b
         //Localization setup in Material App
@@ -53,5 +54,7 @@ class MyApp extends StatelessWidget {
         theme: defaultTheme,
       ),
     );
+  
   }
+  
 }

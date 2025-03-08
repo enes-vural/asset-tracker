@@ -30,9 +30,8 @@ final appGlobalProvider = ChangeNotifierProvider<AppGlobalProvider>((ref) {
 });
 
 final authGlobalProvider = ChangeNotifierProvider<AuthGlobalProvider>((ref) {
-  return AuthGlobalProvider();
+  return AuthGlobalProvider(ref);
 });
-
 
 //Riverpod ref.watch() ile sadece gerektiği ve değiştiği yerde çağırdığı için aslında bir nevi
 //lazy injection görevi görüyor.
@@ -69,7 +68,6 @@ final authRepositoryProvider = Provider<FirebaseAuthRepository>((ref) {
 final webRepositoryProvider = Provider<IWebSocketRepository>((ref) {
   return WebSocketRepository(socketService: webSocketService);
 });
-
 
 final firestoreRepositoryProvider = Provider<FirestoreRepository>((ref) {
   return FirestoreRepository(firestoreService: firestoreService);
