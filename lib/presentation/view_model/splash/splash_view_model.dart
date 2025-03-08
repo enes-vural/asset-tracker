@@ -1,5 +1,6 @@
 import 'package:asset_tracker/core/routers/router.dart';
 import 'package:asset_tracker/injection.dart';
+import 'package:asset_tracker/provider/auth_global_provider.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 
@@ -9,7 +10,7 @@ class SplashViewModel extends ChangeNotifier {
 
   void setIsLoading(bool value) {
     _isLoading = value;
-    notifyListeners();
+    //notifyListeners();
   }
 
   Future<void> init(WidgetRef ref, BuildContext context) async {
@@ -19,7 +20,7 @@ class SplashViewModel extends ChangeNotifier {
         ref.read(appGlobalProvider.notifier).getCurrencyList(ref),
       ],
     );
-    final String? uid = results[0] as String;
+    final String uid = results[0] as String;
     final _ = results[1];
 
     if (_checkUserLoggedIn(uid) && _checkAssetCodesLoaded(ref)) {
@@ -29,6 +30,7 @@ class SplashViewModel extends ChangeNotifier {
     } else {
       setIsLoading(false);
       debugPrint("User is not logged in or data not loaded");
+      _canUserNavigateHome(context, replace: false);
     }
   }
 

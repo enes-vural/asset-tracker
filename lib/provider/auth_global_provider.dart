@@ -9,23 +9,23 @@ class AuthGlobalProvider extends ChangeNotifier {
   StreamSubscription? _authSubscription;
   final StreamController<String?> _currentUserIdStream =
       StreamController.broadcast();
-  String? currentUserId;
+  String? _currentUserId;
 
   AuthGlobalProvider(Ref ref) {
-    _initCurrentUser(ref);
+    initCurrentUser(ref);
   }
 
-  void _initCurrentUser(Ref ref) {
+  void initCurrentUser(Ref ref) {
     _authSubscription =
         ref.read(authRepositoryProvider).getUserStateChanges().listen((event) {
       _currentUserIdStream.add(event?.uid);
-      currentUserId = event?.uid;
+      _currentUserId = event?.uid;
       notifyListeners();
     });
   }
 
   Stream<String?> get getCurrentUserStream => _currentUserIdStream.stream;
-  String? get getCurrentUserId => currentUserId;
+  String? get getCurrentUserId => _currentUserId;
 
   @override
   void dispose() {
