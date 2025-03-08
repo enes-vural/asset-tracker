@@ -46,7 +46,7 @@ class TradeViewModel extends ChangeNotifier {
     final price = double.tryParse(priceController.text) ?? 0.0;
     final currency = selectedCurrency;
     final date = selectedDate;
-    final currentUserId = ref.read(authGlobalProvider).currentUserId;
+    final currentUserId = ref.read(authGlobalProvider).getCurrentUserId;
 
     if (currency == null) {
       EasySnackBar.show(context, LocaleKeys.trade_invalidType.tr());

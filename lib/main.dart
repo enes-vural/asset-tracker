@@ -30,12 +30,12 @@ void main() async {
   ));
 }
 
+final appRouter = AppRouter();
 class MyApp extends StatelessWidget {
   const MyApp({super.key});
 
   @override
   Widget build(BuildContext context) {
-    final appRouter = AppRouter();
     return ProviderScope(
 
       child: MaterialApp.router(
