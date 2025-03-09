@@ -2,10 +2,14 @@ import 'dart:async';
 
 import 'package:asset_tracker/core/config/theme/extension/currency_widget_title_extension.dart';
 import 'package:asset_tracker/core/helpers/snackbar.dart';
+import 'package:asset_tracker/core/routers/app_router.gr.dart';
+import 'package:asset_tracker/core/routers/router.dart' show Routers;
 import 'package:asset_tracker/domain/entities/web/socket/currency_entity.dart';
 import 'package:asset_tracker/domain/usecase/web/web_use_case.dart';
+import 'package:asset_tracker/injection.dart';
 import 'package:dartz/dartz.dart';
 import 'package:flutter/material.dart';
+import 'package:flutter_riverpod/flutter_riverpod.dart';
 
 import '../../../data/model/web/response/socket_state_response_model.dart';
 import '../../../domain/entities/web/error/socket_error_entity.dart';
@@ -17,11 +21,19 @@ class HomeViewModel extends ChangeNotifier {
 
   final TextEditingController searchBarController = TextEditingController();
 
-  Stream? stream;
-
   StreamController? dataStreamController;
+  Stream? socketDataStream;
 
-  Future<void> getData() async {
+  final StreamController<String> _searchBarStreamController =
+      StreamController<String>();
+
+  initHomeView() {
+    searchBarController.addListener(() {
+      _searchBarStreamController.add(searchBarController.text);
+    });
+  }
+
+  Future<void> getData(WidgetRef ref) async {
     //if stream is already open, we don't need to open it again
     if (dataStreamController?.stream != null) {
       return;
@@ -34,6 +46,9 @@ class HomeViewModel extends ChangeNotifier {
     });
 
     dataStreamController = getSocketStreamUseCase.controller;
+    socketDataStream = dataStreamController?.stream.asBroadcastStream();
+
+    ref.read(appGlobalProvider.notifier).updateSocketCurrency(socketDataStream);
     notifyListeners();
   }
 
@@ -50,11 +65,10 @@ class HomeViewModel extends ChangeNotifier {
     });
   }
 
-  List<CurrencyEntity> filterCurrencyData(List<CurrencyEntity> data) {
-    String searchedCurrency = searchBarController.text;
+  filterCurrencyData(List<CurrencyEntity>? data, String searchedCurrency) {
     //filter the list via controller's value
-    if (searchedCurrency.isNotEmpty) {
-      final filteredData = data.where((CurrencyEntity element) {
+    if (searchedCurrency.isNotEmpty && searchedCurrency != "") {
+      final filteredData = data?.where((CurrencyEntity element) {
         return element.code
                 .toLowerCase()
                 .contains(searchedCurrency.toLowerCase()) ||
@@ -63,14 +77,17 @@ class HomeViewModel extends ChangeNotifier {
                 .contains(searchedCurrency.toLowerCase());
       }).toList();
 
-      debugPrint("Filtered Data : ${filteredData.length}");
       return filteredData;
-      //TODO: filtered data tarafında Unit test yazılabilir.
     }
     return data;
   }
 
-  Stream? getStream() => dataStreamController?.stream.asBroadcastStream();
+  void routeTradePage(BuildContext context, CurrencyEntity currency) {
+    Routers.instance
+        .pushWithInfo(context, TradeRoute(currecyCode: currency.code));
+  }
 
+  Stream? get searchBarStreamController => _searchBarStreamController.stream;
+  Stream get getEmptyStream => const Stream.empty(broadcast: true);
   // we will get stream after ensure connection is done !
 }
