@@ -2,6 +2,7 @@ import 'package:asset_tracker/core/config/constants/string_constant.dart';
 import 'package:asset_tracker/core/config/localization/generated/locale_keys.g.dart';
 import 'package:asset_tracker/core/config/theme/default_theme.dart';
 import 'package:asset_tracker/core/config/theme/extension/responsive_extension.dart';
+import 'package:asset_tracker/core/config/theme/style_theme.dart';
 import 'package:asset_tracker/core/routers/app_router.gr.dart';
 import 'package:asset_tracker/core/routers/router.dart';
 import 'package:asset_tracker/core/widgets/custom_padding.dart';
@@ -9,6 +10,9 @@ import 'package:asset_tracker/core/widgets/custom_sized_box.dart';
 import 'package:asset_tracker/domain/entities/web/socket/currency_entity.dart';
 import 'package:asset_tracker/domain/entities/web/socket/currency_widget_entity.dart';
 import 'package:asset_tracker/injection.dart';
+import 'package:asset_tracker/presentation/view/widgets/custom_card_widget.dart';
+import 'package:asset_tracker/presentation/view/widgets/home_view_search_field_widget.dart';
+import 'package:asset_tracker/presentation/view/widgets/home_view_swap_button_widget.dart';
 import 'package:asset_tracker/presentation/view/widgets/search_form_widget.dart';
 import 'package:asset_tracker/presentation/view_model/home/home_view_model.dart';
 import 'package:auto_route/annotations.dart';
@@ -87,8 +91,7 @@ class _HomeViewState extends ConsumerState<HomeView> {
           child: Icon(Icons.person),
         ),
         actions: [
-          pushTradePageIconButton(context),
-          pushWalletIconButton(),
+          exitAppIconButton(),
         ],
       ),
       body: Stack(
@@ -100,44 +103,10 @@ class _HomeViewState extends ConsumerState<HomeView> {
                 crossAxisAlignment: CrossAxisAlignment.start,
                 mainAxisAlignment: MainAxisAlignment.start,
                 children: [
-                  Text(
-                    ref
-                            .read(authGlobalProvider.notifier)
-                            .getCurrentUser
-                            ?.email
-                            .toString() ??
-                        "asfsaf",
-                    style: const TextStyle(
-                      color: Colors.black,
-                      fontSize: 15,
-                      fontWeight: FontWeight.bold,
-                    ),
-                  ),
+                  _userEmailTextWidget(),
                   const CustomSizedBox.hugeGap(),
-                  Text.rich(
-                    TextSpan(
-                      children: [
-                        TextSpan(
-                          text: "₺${null}",
-                          style: TextStyle(fontSize: 32, color: Colors.black),
-                        ),
-                        TextSpan(
-                          text: ".${null}",
-                          style: TextStyle(
-                              fontSize: 32, color: DefaultColorPalette.grey400),
-                        ),
-                      ],
-                    ),
-                  ),
-                  Row(
-                    children: [
-                      Icon(
-                        Icons.arrow_drop_up,
-                        color: DefaultColorPalette.vanillaGreen,
-                      ),
-                      Text("${null}%"),
-                    ],
-                  ),
+                  _balanceTextWidget(),
+                  _balanceProfitTextWidget(),
                   const CustomSizedBox.hugeGap(),
                   Row(
                     children: [
@@ -155,76 +124,64 @@ class _HomeViewState extends ConsumerState<HomeView> {
                   const CustomSizedBox.smallGap(),
                   exporeAssetsText(),
                   currencies(context, viewModel),
+                  const CustomSizedBox.hugeGap(),
+                  
                 ],
               ),
             ),
           ),
           Positioned(
             bottom: 30,
-            left: 20, // Ekranın soluna hizalama
+            left: 20, 
             child: Row(
               children: [
-                // Sol taraf arama çubuğu
-                Container(
-                  width: MediaQuery.of(context).size.width /
-                      2, // Ekranın yarısı kadar genişlik
-                  padding: const EdgeInsets.symmetric(horizontal: 16.0),
-                  decoration: BoxDecoration(
-                    borderRadius: BorderRadius.circular(25),
-                    color:
-                        Colors.white.withOpacity(0.9), // Hafif transparan beyaz
-                    boxShadow: [
-                      BoxShadow(
-                        color: Colors.black.withOpacity(0.2),
-                        blurRadius: 10.0,
-                        offset: Offset(0, 4), // Alt tarafa doğru gölge
-                      ),
-                    ],
-                  ),
-                  child: TextField(
-                    controller: viewModel.searchBarController,
-                    decoration: InputDecoration(
-                      border: InputBorder.none,
-                      hintText: "Search Assets...",
-                      hintStyle: TextStyle(color: Colors.grey.shade600),
-                      prefixIcon:
-                          Icon(Icons.search, color: Colors.grey.shade600),
-                    ),
-                  ),
-                ),
-                const SizedBox(
-                    width:
-                        20), // Arama çubuğu ve ikinci container arasında boşluk
-                // Sağ tarafta başka bir container
-                Container(
-                  width: MediaQuery.of(context).size.width / 3 - 20,
-                  padding: const EdgeInsets.symmetric(horizontal: 16.0),
-                  decoration: BoxDecoration(
-                    borderRadius: BorderRadius.circular(25),
-                    color: Colors.purple.shade200
-                        .withOpacity(1), // Hafif transparan beyaz
-                    boxShadow: [
-                      BoxShadow(
-                        color: Colors.red.withOpacity(0.2),
-                        blurRadius: 10.0,
-                        offset: Offset(0, 4), // Alt tarafa doğru gölge
-                      ),
-                    ],
-                  ),
-                  child: Center(
-                    child: SizedBox(
-                      height: 50,
-                      child: Center(
-                        child: Text(
-                          "SWAP",
-                          style: TextStyle(color: Colors.white, fontSize: 16),
-                        ),
-                      ),
-                    ),
-                  ),
-                ),
+                HomeViewSearchFieldWidget(viewModel: viewModel),
+                const CustomSizedBox.mediumWidth(),
+                const HomeViewSwapButtonWidget(),
               ],
             ),
+          ),
+        ],
+      ),
+    );
+  }
+
+  Text _userEmailTextWidget() {
+    return Text(
+      ref.read(authGlobalProvider.notifier).getCurrentUser?.email.toString() ??
+          DefaultLocalStrings.emptyText,
+      style: const TextStyle(
+        color: Colors.black,
+        fontSize: 15,
+        fontWeight: FontWeight.bold,
+      ),
+    );
+  }
+
+  Row _balanceProfitTextWidget() {
+    return const Row(
+      children: [
+        Icon(
+          Icons.arrow_drop_up,
+          color: DefaultColorPalette.vanillaGreen,
+        ),
+        Text("${null}%"),
+      ],
+    );
+  }
+
+  Text _balanceTextWidget() {
+    return Text.rich(
+      TextSpan(
+        children: [
+          TextSpan(
+            text: "₺${null}",
+            style: CustomTextStyle.balanceTextStyle(false),
+            
+          ),
+          TextSpan(
+            text: ".${null}",
+            style: CustomTextStyle.balanceTextStyle(true),
           ),
         ],
       ),
@@ -250,10 +207,10 @@ class _HomeViewState extends ConsumerState<HomeView> {
           cardTexts.length,
           (index) {
             if (index < currentIndex) {
-              return const SizedBox(); // Önceki kartları gizle
+              return const SizedBox(); 
             }
             return Positioned(
-              top: -index * 12.0, // Kartların hafif üst üste görünmesi için
+              top: -index * 12.0, 
               child: Dismissible(
                 key: UniqueKey(),
                 direction: DismissDirection.horizontal,
@@ -344,7 +301,7 @@ class _HomeViewState extends ConsumerState<HomeView> {
       onPressed: () {},
       icon: Icon(
         Icons.exit_to_app,
-        color: DefaultColorPalette.grey100,
+        color: DefaultColorPalette.grey500,
       ));
 
   IconButton pushWalletIconButton() {
@@ -375,97 +332,4 @@ class _HomeViewState extends ConsumerState<HomeView> {
   Center loadingTextWidget() => Center(child: Text(LocaleKeys.home_wait.tr()));
   Center loadingIndicatorWidget() =>
       const Center(child: CircularProgressIndicator());
-}
-
-class CustomCardWidget extends StatelessWidget {
-  final String title;
-  final String description;
-
-  CustomCardWidget({
-    required this.title,
-    required this.description,
-  });
-
-  @override
-  Widget build(BuildContext context) {
-    return Card(
-      elevation: 1,
-      margin: EdgeInsets.zero, // Card'ın kenar boşluğunun sıfırlanması
-      shape: RoundedRectangleBorder(
-        borderRadius: BorderRadius.circular(10),
-      ),
-      child: SizedBox(
-        child: CustomPadding.smallHorizontal(
-          widget: SizedBox(
-            width: ResponsiveSize(context).screenWidth.toPercent(90),
-            height: 125,
-            child: CustomPadding.mediumAll(
-              widget: Row(
-                mainAxisSize: MainAxisSize.min,
-                mainAxisAlignment: MainAxisAlignment.center,
-                crossAxisAlignment: CrossAxisAlignment.center,
-                children: [
-                  Container(
-                    height: 45,
-                    width: 45,
-                    decoration: BoxDecoration(
-                      borderRadius: BorderRadius.circular(10),
-                      color: Colors.purple.shade50,
-                    ),
-                    child: Icon(
-                      Icons.attach_money_rounded,
-                      color: Colors.purple.shade400,
-                    ),
-                  ),
-                  const CustomSizedBox.smallWidth(),
-                  Expanded(
-                    child: Column(
-                      crossAxisAlignment: CrossAxisAlignment.start,
-                      mainAxisAlignment: MainAxisAlignment.center,
-                      children: [
-                        Row(
-                          mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                          children: [
-                            Text(
-                              title,
-                              style: const TextStyle(
-                                color: Colors.black,
-                                fontSize: 16,
-                                fontWeight: FontWeight.w600,
-                              ),
-                            ),
-                            Text(
-                              "Swipe",
-                              style: TextStyle(
-                                  fontWeight: FontWeight.w100,
-                                  color: Colors.grey.shade500),
-                            ),
-                          ],
-                        ),
-                        Padding(
-                          padding: const EdgeInsets.only(right: 32.0),
-                          child: ConstrainedBox(
-                            constraints: BoxConstraints(maxWidth: 300),
-                            child: Text(
-                              description,
-                              softWrap: true,
-                              style: const TextStyle(
-                                color: Colors.black,
-                                fontSize: 12,
-                                fontWeight: FontWeight.w400,
-                              ),
-                            ),
-                          ),
-                        ),
-                      ],
-                    ),
-                  ),
-                ],
-              ),
-            ),
-          ),
-        ),
-      ),
-    );
-  }
 }
