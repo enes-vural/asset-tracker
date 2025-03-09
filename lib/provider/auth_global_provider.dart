@@ -5,7 +5,7 @@ import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 
 class AuthGlobalProvider extends ChangeNotifier {
-  FirebaseAuthUser? user;
+  FirebaseAuthUser? _currentUser;
   StreamSubscription? _authSubscription;
   final StreamController<String?> _currentUserIdStream =
       StreamController.broadcast();
@@ -20,13 +20,14 @@ class AuthGlobalProvider extends ChangeNotifier {
         ref.read(authRepositoryProvider).getUserStateChanges().listen((event) {
       _currentUserIdStream.add(event?.uid);
       _currentUserId = event?.uid;
+      _currentUser = FirebaseAuthUser(user: event, idToken: null);
       notifyListeners();
     });
   }
 
   Stream<String?> get getCurrentUserStream => _currentUserIdStream.stream;
   String? get getCurrentUserId => _currentUserId;
-
+  FirebaseAuthUser? get getCurrentUser => _currentUser;
   @override
   void dispose() {
     _authSubscription?.cancel();
