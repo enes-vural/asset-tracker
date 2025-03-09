@@ -22,6 +22,10 @@ class CustomPadding extends Padding {
   const CustomPadding.hugeAll({super.key, required Widget widget})
       : super(padding: const CustomEdgeInstets.hugeAll(), child: widget);
 
+  /// all 32.0
+  const CustomPadding.xHugeAll({super.key, required Widget widget})
+      : super(padding: const EdgeInsets.all(32.0), child: widget);
+
   /// ONLY TOP -----------------
   const CustomPadding.smallTop({super.key, required Widget widget})
       : super(padding: const CustomEdgeInstets.smallTop(), child: widget);
