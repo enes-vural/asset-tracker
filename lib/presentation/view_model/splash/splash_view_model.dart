@@ -1,6 +1,5 @@
 import 'package:asset_tracker/core/routers/router.dart';
 import 'package:asset_tracker/injection.dart';
-import 'package:asset_tracker/provider/auth_global_provider.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 

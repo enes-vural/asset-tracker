@@ -14,7 +14,8 @@ import 'package:auto_route/annotations.dart';
 import 'package:easy_localization/easy_localization.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
-
+import 'package:multiple_stream_builder/multiple_stream_builder.dart';
+import 'package:rxdart/rxdart.dart';
 import '../widgets/currency_card_widget.dart';
 
 @RoutePage()
@@ -28,16 +29,19 @@ class HomeView extends ConsumerStatefulWidget {
 class _HomeViewState extends ConsumerState<HomeView> {
   //async function to call data
   Future<void> callData() async =>
-      await ref.read(homeViewModelProvider).getData();
-  
+      await ref.read(homeViewModelProvider).getData(ref);
 
   Future<void> getErrorStream() async => await ref
       .read(homeViewModelProvider)
       .getErrorStream(parentContext: context);
 
+  void initHomeView() =>
+      ref.read(homeViewModelProvider.notifier).initHomeView();
+
   @override
   void initState() {
     //initialize all streams when page starts
+    initHomeView();
     callData();
     getErrorStream();
     super.initState();
@@ -46,6 +50,7 @@ class _HomeViewState extends ConsumerState<HomeView> {
   @override
   Widget build(BuildContext context) {
     final HomeViewModel viewModel = ref.watch(homeViewModelProvider);
+
     return Scaffold(
       backgroundColor: DefaultColorPalette.grey100,
       appBar: AppBar(
@@ -66,39 +71,48 @@ class _HomeViewState extends ConsumerState<HomeView> {
               CustomPadding.mediumTop(
                 widget: SearchBarWidget(
                   searchBarController: viewModel.searchBarController,
+                  onChangedFn: null,
                 ),
               ),
               SizedBox(
                 height: ResponsiveSize(context).screenHeight.toPercent(75),
                 width: ResponsiveSize(context).screenWidth,
-                child: StreamBuilder(
-                  stream: viewModel.getStream(),
-                  builder: (context, snapshot) {
-                    //Bir daha ek provider ile klavyenin girdisi ile buildi her tuş girişinde tetiklemek yerine
-                    //her 2 saniyede bir zaten bu field stream socket ten dolayı yenileniyor.
-                    //o zaman direkt olarak klavye filterini de burada yaparak
-                    //tasaruf yapabiliriz.
-                    if (snapshot.connectionState != ConnectionState.active) {
+                child: StreamBuilder2(
+                  streams: StreamTuple2(
+                      ref.read(appGlobalProvider.notifier).getDataStream ??
+                          viewModel.getEmptyStream,
+                      viewModel.searchBarStreamController ??
+                          viewModel.getEmptyStream),
+                  initialData: InitialDataTuple2(null, null),
+                  builder: (context, snapshots) {
+                    // Stream henüz aktif değilse veya veriler yoksa, loading widget'ı göster
+                    if (snapshots.snapshot1.connectionState !=
+                        ConnectionState.active) {
                       return loadingIndicatorWidget();
                     }
 
-                    if (!snapshot.hasData) {
+                    if (!snapshots.snapshot1.hasData ||
+                        snapshots.snapshot1.data?[0] == null) {
                       return loadingTextWidget();
                     }
 
-                    List<CurrencyEntity>? data =
-                        viewModel.filterCurrencyData(snapshot.data);
+                    List<CurrencyEntity>? data = snapshots.snapshot1.data;
+                    data = viewModel.filterCurrencyData(
+                        data,
+                        snapshots.snapshot2.data ??
+                            DefaultLocalStrings.emptyText);
+                    // İkinci stream'in verisini al (Search bar'dan gelen veri)
 
+                    // Güncellenmiş verileri kullanarak listview'i render et
                     return ListView.builder(
-                      itemCount: data.length,
+                      itemCount: data?.length ?? 0,
                       itemBuilder: (context, index) {
                         CurrencyWidgetEntity currency =
-                            CurrencyWidgetEntity.fromCurrency(data[index]);
+                            CurrencyWidgetEntity.fromCurrency(data![index]);
                         return CurrencyCardWidget(
                           currency: currency,
                           onTap: () {
-                            Routers.instance.pushWithInfo(context,
-                                TradeRoute(currecyCode: currency.code));
+                            viewModel.routeTradePage(context, currency.entity);
                           },
                         );
                       },
