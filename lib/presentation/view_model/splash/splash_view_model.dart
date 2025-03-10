@@ -1,4 +1,8 @@
+// ignore_for_file: use_build_context_synchronously
+
 import 'package:asset_tracker/core/routers/router.dart';
+import 'package:asset_tracker/domain/entities/database/enttiy/usar_data_entity.dart';
+import 'package:asset_tracker/domain/entities/database/enttiy/user_uid_entity.dart';
 import 'package:asset_tracker/injection.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
@@ -24,6 +28,15 @@ class SplashViewModel extends ChangeNotifier {
 
     if (_checkUserLoggedIn(uid) && _checkAssetCodesLoaded(ref)) {
       setIsLoading(false);
+      final data = await ref
+          .read(getUserDataUseCaseProvider)
+          .call(UserUidEntity(userId: uid));
+      //TODO: Documention needed
+      data.fold(
+        (l) => debugPrint("Error getting user data"),
+        (UserDataEntity success) =>
+            ref.read(appGlobalProvider.notifier).updateUserData(success),
+      );
       debugPrint("User is logged in and all data loaded");
       _canUserNavigateHome(context, replace: true);
     } else {
