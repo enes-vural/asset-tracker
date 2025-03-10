@@ -15,6 +15,7 @@ import 'package:asset_tracker/presentation/view/widgets/home_view_search_field_w
 import 'package:asset_tracker/presentation/view/widgets/home_view_swap_button_widget.dart';
 import 'package:asset_tracker/presentation/view/widgets/search_form_widget.dart';
 import 'package:asset_tracker/presentation/view_model/home/home_view_model.dart';
+import 'package:asset_tracker/provider/app_global_provider.dart';
 import 'package:auto_route/annotations.dart';
 import 'package:easy_localization/easy_localization.dart';
 import 'package:flutter/material.dart';
@@ -78,7 +79,7 @@ class _HomeViewState extends ConsumerState<HomeView> {
   @override
   Widget build(BuildContext context) {
     final HomeViewModel viewModel = ref.watch(homeViewModelProvider);
-
+    final appGlobal = ref.watch(appGlobalProvider.notifier);
     return Scaffold(
       backgroundColor: DefaultColorPalette.grey100,
       appBar: AppBar(
@@ -105,7 +106,7 @@ class _HomeViewState extends ConsumerState<HomeView> {
                 children: [
                   _userEmailTextWidget(),
                   const CustomSizedBox.hugeGap(),
-                  _balanceTextWidget(),
+                  _balanceTextWidget(appGlobal.getUserData?.balance.toString()),
                   _balanceProfitTextWidget(),
                   const CustomSizedBox.hugeGap(),
                   Row(
@@ -170,17 +171,19 @@ class _HomeViewState extends ConsumerState<HomeView> {
     );
   }
 
-  Text _balanceTextWidget() {
+  Text _balanceTextWidget(String? balance) {
+    String money = balance?.split(".")[0] ?? "0.00";
+    String? moneyFraction = balance?.split(".")[1];
     return Text.rich(
       TextSpan(
         children: [
           TextSpan(
-            text: "₺${null}",
+            text: "₺$money",
             style: CustomTextStyle.balanceTextStyle(false),
             
           ),
           TextSpan(
-            text: ".${null}",
+            text: ".$moneyFraction",
             style: CustomTextStyle.balanceTextStyle(true),
           ),
         ],

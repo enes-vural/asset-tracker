@@ -1,9 +1,14 @@
 import 'package:asset_tracker/core/config/localization/generated/locale_keys.g.dart';
 import 'package:asset_tracker/data/model/database/error/database_error_model.dart';
 import 'package:asset_tracker/data/model/database/request/buy_currency_model.dart';
+import 'package:asset_tracker/data/model/database/request/user_uid_model.dart';
 import 'package:asset_tracker/data/model/database/response/asset_code_model.dart';
+import 'package:asset_tracker/data/model/database/response/user_data_model.dart';
+import 'package:asset_tracker/data/model/user_currency_data_model.dart';
 import 'package:asset_tracker/data/service/remote/database/firestore/ifirestore_service.dart';
 import 'package:asset_tracker/domain/entities/database/enttiy/buy_currency_entity.dart';
+import 'package:asset_tracker/domain/entities/database/enttiy/usar_data_entity.dart';
+import 'package:asset_tracker/domain/entities/database/enttiy/user_uid_entity.dart';
 import 'package:asset_tracker/domain/entities/database/error/database_error_entity.dart';
 import 'package:asset_tracker/domain/repository/database/firestore/ifirestore_repository.dart';
 import 'package:dartz/dartz.dart';
@@ -51,5 +56,37 @@ class FirestoreRepository implements IFirestoreRepository {
     }, (success) {
       return Right(BuyCurrencyEntity.fromModel(success));
     });
+  }
+
+  @override
+  Future<Either<DatabaseErrorEntity, UserDataEntity>> getUserData(
+      UserUidEntity model) async {
+    double totalBalance = 0.00;
+    UserDataModel userDataModel = UserDataModel(
+        currencyList: [], uid: model.userId, balance: totalBalance);
+
+    final dataRequest =
+        await firestoreService.getUserData(UserUidModel.fromEnttiy(model));
+    //try catch
+    return dataRequest.fold(
+      (failure) {
+        return Left(DatabaseErrorEntity.fromModel(failure));
+      },
+      (data) {
+        for (var data in data.docs) {
+          debugPrint("Data: ${data.data()}");
+
+          userDataModel.currencyList
+              .add(UserCurrencyDataModel.fromJson(data.data()));
+        }
+
+        for (var currency in userDataModel.currencyList) {
+          totalBalance += currency.total;
+        }
+        userDataModel.balance = totalBalance;
+
+        return Right(UserDataEntity.fromModel(userDataModel));
+      },
+    );
   }
 }

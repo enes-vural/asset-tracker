@@ -3,7 +3,6 @@ import 'package:asset_tracker/core/config/constants/string_constant.dart';
 import 'package:asset_tracker/core/helpers/snackbar.dart';
 import 'package:asset_tracker/domain/entities/auth/user_login_entity.dart';
 import 'package:asset_tracker/domain/usecase/auth/auth_use_case.dart';
-import 'package:asset_tracker/injection.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 

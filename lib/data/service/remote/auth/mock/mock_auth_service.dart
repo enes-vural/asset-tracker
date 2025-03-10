@@ -1,7 +1,6 @@
 import 'package:asset_tracker/data/model/auth/mock_auth_user_model.dart';
 import 'package:asset_tracker/data/service/remote/auth/mock/imock_auth_service.dart';
 import 'package:asset_tracker/domain/entities/auth/user_login_entity.dart';
-import 'package:firebase_auth/firebase_auth.dart';
 
 //MockAuthService sınıfı IAuthService sınıfını implemente eder.
 //Otomatik olarak 1 saniye sonra gerekli parametreleri içeren mock sınıfını döndürür.
