@@ -28,4 +28,9 @@ class MockAuthService implements IMockAuthService {
   String? getUserId() {
     return "mock-user-id";
   }
+
+  @override
+  Stream getUserStateChanges() {
+    throw const Stream.empty();
+  }
 }

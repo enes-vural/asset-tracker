@@ -18,20 +18,18 @@ class SplashView extends ConsumerStatefulWidget {
 
 class _SplashViewState extends ConsumerState<SplashView> {
   Future<void> initalize() async =>
-      await ref.read(splashViewModelProvider.notifier).init(ref);
+      await ref.read(splashViewModelProvider.notifier).init(ref, context);
 
   @override
   void initState() {
     super.initState();
-    initalize();
+    WidgetsBinding.instance.addPostFrameCallback((_) {
+      initalize();
+    });
   }
 
   @override
   Widget build(BuildContext context) {
-    final viewModel = ref.watch(splashViewModelProvider);
-    if (!viewModel.isLoading) {
-      viewModel.navigateToLogin(context);
-    }
     return Scaffold(
       //dark blue for splash background color
       backgroundColor: Theme.of(context).colorScheme.onPrimary,

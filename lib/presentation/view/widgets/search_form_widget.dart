@@ -9,14 +9,17 @@ class SearchBarWidget extends StatelessWidget {
   const SearchBarWidget({
     super.key,
     required this.searchBarController,
+    required this.onChangedFn,
   });
 
   final TextEditingController searchBarController;
+  final ValueChanged<String>? onChangedFn;
 
   @override
   Widget build(BuildContext context) {
     return TextFormField(
         controller: searchBarController,
+        onChanged: onChangedFn,
         decoration: InputDecoration(
           fillColor: DefaultColorPalette.vanillaWhite,
           filled: true,

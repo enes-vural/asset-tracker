@@ -13,5 +13,7 @@ final class AppInit {
       options: DefaultFirebaseOptions.currentPlatform,
     );
     Env.setup(); //Envied Initialize 
+
+    
   }
 }

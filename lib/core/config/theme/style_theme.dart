@@ -19,6 +19,12 @@ final class CustomTextStyle {
     return GoogleFonts.poppins(color: color, fontSize: size);
   }
 
+  static TextStyle balanceTextStyle(bool isLight) => _baseStyle(
+      color: isLight
+          ? DefaultColorPalette.grey400
+          : DefaultColorPalette.vanillaBlack,
+      size: 32);
+
   static TextStyle goldColorPoppins(double size) =>
       _basePoppinStyle(color: defaultTheme.primaryColor, size: size);
 
