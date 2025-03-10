@@ -5,11 +5,13 @@ final class UserDataEntity {
   final String userId;
   final List<UserCurrencyEntityModel> currencyList;
   final double balance;
+  final double? profit;
 
   const UserDataEntity({
     required this.userId,
     required this.currencyList,
     required this.balance,
+    this.profit = 0.00,
   });
 
   factory UserDataEntity.fromModel(UserDataModel model) {
@@ -19,6 +21,20 @@ final class UserDataEntity {
           .map((e) => UserCurrencyEntityModel.fromModel(e))
           .toList(),
       balance: model.balance,
+    );
+  }
+
+  UserDataEntity copyWith({
+    List<UserCurrencyEntityModel>? currencyList,
+    String? uid,
+    double? balance,
+    double? profit,
+  }) {
+    return UserDataEntity(
+      currencyList: currencyList ?? this.currencyList,
+      userId: uid ?? this.userId,
+      balance: balance ?? this.balance,
+      profit: profit ?? this.profit,
     );
   }
 }
