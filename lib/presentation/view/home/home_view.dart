@@ -87,6 +87,7 @@ class _HomeViewState extends ConsumerState<HomeView> {
         backgroundColor: DefaultColorPalette.grey100,
         shadowColor: DefaultColorPalette.vanillaBlack,
         elevation: 0,
+        scrolledUnderElevation: 0,
         leading: const CircleAvatar(
           backgroundColor: Colors.transparent,
           child: Icon(Icons.person),
@@ -301,7 +302,13 @@ Text _balanceTextWidget(String? balance) {
 
           List<CurrencyEntity>? data = snapshots.snapshot1.data;
           WidgetsBinding.instance.addPostFrameCallback((_) {
-            viewModel.calculateProfitBalance(ref, data);
+            //the reason why we dont give param as data instead of snapshots.snapshot1.data is that
+            //you can not call providers during build
+            //so we calculate profit after widget build
+            //and our data is changing below with our filter chars.
+            //so we need to calculate profit after data is filtered
+            //if we directly use calculateProfitBalance(data) it will fetch filtered data by keyboard and miscalculate profit.
+            viewModel.calculateProfitBalance(ref, snapshots.snapshot1.data);
           });
 
           data = viewModel.filterCurrencyData(
