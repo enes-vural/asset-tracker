@@ -107,7 +107,24 @@ class _HomeViewState extends ConsumerState<HomeView> {
                   _userEmailTextWidget(),
                   const CustomSizedBox.hugeGap(),
                   _balanceTextWidget(appGlobal.getUserData?.balance.toString()),
-                  _balanceProfitTextWidget(),
+                  _balanceProfitTextWidget(ref, false),
+                  // StreamBuilder(
+                  //     stream: appGlobal.getDataStream,
+                  //     builder: (context, snapshot) {
+                  //       if (snapshot.connectionState !=
+                  //           ConnectionState.active) {
+                  //         return _balanceProfitTextWidget(ref, true);
+                  //       }
+
+                  //       if (!snapshot.hasData) {
+                  //         return _balanceProfitTextWidget(ref, true);
+                  //       }
+                  //       //user alım yaptıktan sonra data tekrar yenilenmeli global provider tekrar tetiklenecek unutma
+                  //       List<CurrencyEntity>? data = snapshot.data;
+
+                  //       viewModel.calculateProfitBalance(ref, data);
+                  //       return _balanceProfitTextWidget(ref, true);
+                  //     }),
                   const CustomSizedBox.hugeGap(),
                   Row(
                     children: [
@@ -124,16 +141,15 @@ class _HomeViewState extends ConsumerState<HomeView> {
                   CardWidgets(),
                   const CustomSizedBox.smallGap(),
                   exporeAssetsText(),
-                  currencies(context, viewModel),
+                  currencies(context, viewModel, appGlobal),
                   const CustomSizedBox.hugeGap(),
-                  
                 ],
               ),
             ),
           ),
           Positioned(
             bottom: 30,
-            left: 20, 
+            left: 20,
             child: Row(
               children: [
                 HomeViewSearchFieldWidget(viewModel: viewModel),
@@ -159,37 +175,53 @@ class _HomeViewState extends ConsumerState<HomeView> {
     );
   }
 
-  Row _balanceProfitTextWidget() {
-    return const Row(
+  Row _balanceProfitTextWidget(WidgetRef ref, bool isLoading) {
+    return Row(
       children: [
-        Icon(
+        const Icon(
           Icons.arrow_drop_up,
           color: DefaultColorPalette.vanillaGreen,
         ),
-        Text("${null}%"),
+        isLoading
+            ? const Text("0.00%")
+            : Text(
+                "${ref.watch(appGlobalProvider.notifier).getUserData?.profit}%"),
       ],
     );
   }
 
-  Text _balanceTextWidget(String? balance) {
-    String money = balance?.split(".")[0] ?? "0.00";
-    String? moneyFraction = balance?.split(".")[1];
+Text _balanceTextWidget(String? balance) {
+    if (balance == null || balance.isEmpty) balance = "0.00";
+
+    // Ondalık ayırma
+    List<String> parts = balance.split(".");
+    String wholePart = parts[0]; // Tam sayı kısmı
+    String fractionPart = parts.length > 1 ? parts[1] : "00"; // Küsurat kısmı
+
+    // Küsurat kısmını 3 karakterle sınırlandır
+    fractionPart =
+        fractionPart.length > 2 ? fractionPart.substring(0, 2) : fractionPart;
+
+    // Üçerli bölüp noktalama
+    String formattedWholePart = wholePart.replaceAllMapped(
+        RegExp(r'(\d)(?=(\d{3})+(?!\d))'), (Match match) => '${match[1]}.');
+
     return Text.rich(
       TextSpan(
         children: [
           TextSpan(
-            text: "₺$money",
+            text: "₺$formattedWholePart",
             style: CustomTextStyle.balanceTextStyle(false),
-            
           ),
           TextSpan(
-            text: ".$moneyFraction",
+            text: ",$fractionPart",
             style: CustomTextStyle.balanceTextStyle(true),
           ),
         ],
       ),
     );
   }
+
 
   Text exporeAssetsText() {
     return Text(
@@ -210,10 +242,10 @@ class _HomeViewState extends ConsumerState<HomeView> {
           cardTexts.length,
           (index) {
             if (index < currentIndex) {
-              return const SizedBox(); 
+              return const SizedBox();
             }
             return Positioned(
-              top: -index * 12.0, 
+              top: -index * 12.0,
               child: Dismissible(
                 key: UniqueKey(),
                 direction: DismissDirection.horizontal,
@@ -246,14 +278,14 @@ class _HomeViewState extends ConsumerState<HomeView> {
     );
   }
 
-  SizedBox currencies(BuildContext context, HomeViewModel viewModel) {
+  SizedBox currencies(
+      BuildContext context, HomeViewModel viewModel, appGlobal) {
     return SizedBox(
       height: ResponsiveSize(context).screenHeight.toPercent(50),
       width: ResponsiveSize(context).screenWidth,
       child: StreamBuilder2(
         streams: StreamTuple2(
-            ref.read(appGlobalProvider.notifier).getDataStream ??
-                viewModel.getEmptyStream,
+            appGlobal.getDataStream ?? viewModel.getEmptyStream,
             viewModel.searchBarStreamController ?? viewModel.getEmptyStream),
         initialData: InitialDataTuple2(null, null),
         builder: (context, snapshots) {
@@ -268,6 +300,10 @@ class _HomeViewState extends ConsumerState<HomeView> {
           }
 
           List<CurrencyEntity>? data = snapshots.snapshot1.data;
+          WidgetsBinding.instance.addPostFrameCallback((_) {
+            viewModel.calculateProfitBalance(ref, data);
+          });
+
           data = viewModel.filterCurrencyData(
               data, snapshots.snapshot2.data ?? DefaultLocalStrings.emptyText);
           // İkinci stream'in verisini al (Search bar'dan gelen veri)

@@ -4,6 +4,8 @@ import 'package:asset_tracker/core/config/theme/extension/currency_widget_title_
 import 'package:asset_tracker/core/helpers/snackbar.dart';
 import 'package:asset_tracker/core/routers/app_router.gr.dart';
 import 'package:asset_tracker/core/routers/router.dart' show Routers;
+import 'package:asset_tracker/domain/entities/database/enttiy/usar_data_entity.dart';
+import 'package:asset_tracker/domain/entities/database/enttiy/user_currency_entity_model.dart';
 import 'package:asset_tracker/domain/entities/web/socket/currency_entity.dart';
 import 'package:asset_tracker/domain/usecase/web/web_use_case.dart';
 import 'package:asset_tracker/injection.dart';
@@ -50,6 +52,42 @@ class HomeViewModel extends ChangeNotifier {
 
     ref.read(appGlobalProvider.notifier).updateSocketCurrency(socketDataStream);
     notifyListeners();
+  }
+
+  calculateProfitBalance(WidgetRef ref, List<CurrencyEntity>? globalAssets) {
+    final UserDataEntity? userData =
+        ref.read(appGlobalProvider.notifier).getUserData;
+    List<UserCurrencyEntityModel> userCurrencyList =
+        userData?.currencyList ?? [];
+
+    double userBalance = userData?.balance ?? 0.00;
+    double newBalance = 0;
+
+    double totalProfit = 0.00;
+
+    CurrencyEntity? currency;
+
+    userCurrencyList.forEach((element) {
+      try {
+        currency = globalAssets?.firstWhere(
+          (elementCurrency) => elementCurrency.code == element.currencyCode,
+        );
+      } catch (e) {
+        currency = null;
+      }
+
+      if (currency != null) {
+        newBalance += (double.parse(currency!.satis) * element.amount);
+      }
+    });
+
+    totalProfit = newBalance * userBalance / 100;
+
+    if (userData != null) {
+      ref.read(appGlobalProvider.notifier).updateUserData(
+          userData.copyWith(balance: newBalance, profit: totalProfit));
+      notifyListeners();
+    }
   }
 
   Future<void> getErrorStream({required BuildContext parentContext}) async {
