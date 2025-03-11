@@ -34,6 +34,8 @@ final class FirestoreService implements IFirestoreService {
           .doc(model.userId)
           .collection(FirestoreConstants.assetsCollection)
           .doc(model.currency)
+          .collection(model.currency)
+          .doc(model.date.toString())
           .set(model.toJson())
           .then((_) {
         return Right(model);
@@ -61,6 +63,56 @@ final class FirestoreService implements IFirestoreService {
     } catch (e) {
       return Left(DatabaseErrorModel(message: e.toString()));
     }
+  }
+
+  @override
+  Future<List<Map<String, dynamic>?>> getUserAssets(
+    UserUidModel model,
+  ) async {
+    List<Map<String, dynamic>?> assetDataList = [];
+    try {
+      final assetPath = await instance
+          .collection(FirestoreConstants.usersCollection)
+          .doc(model.userId)
+          .collection(FirestoreConstants.assetsCollection)
+          .get();
+
+      for (var assetDoc in assetPath.docs) {
+        final currencyName = assetDoc.id;
+
+        final datePath = instance
+            .collection(FirestoreConstants.usersCollection)
+            .doc(model.userId)
+            .collection(FirestoreConstants.assetsCollection)
+            .doc(currencyName)
+            .collection(currencyName);
+        //içeri giriyor hata collectionları alması lazım
+
+        List<Timestamp> dateList = [];
+
+        final dataData = await datePath.get();
+        dataData.docs.forEach((element) {
+          debugPrint(element.data().toString());
+          dateList.add(element.data()['date']);
+        });
+
+        for (var date in dateList) {
+          final data = await instance
+              .collection(FirestoreConstants.usersCollection)
+              .doc(model.userId)
+              .collection(FirestoreConstants.assetsCollection)
+              .doc(currencyName)
+              .collection(currencyName)
+              .doc(date.toDate().toString())
+              .get();
+
+          assetDataList.add(data.data());
+        }
+      }
+    } catch (e) {
+      debugPrint(e.toString());
+    }
+    return assetDataList;
   }
 
   @override

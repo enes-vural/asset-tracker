@@ -111,24 +111,7 @@ class _HomeViewState extends ConsumerState<HomeView> {
                       .getUserData
                       ?.latestBalance
                       .toString()),
-                  _balanceProfitTextWidget(ref, false),
-                  // StreamBuilder(
-                  //     stream: appGlobal.getDataStream,
-                  //     builder: (context, snapshot) {
-                  //       if (snapshot.connectionState !=
-                  //           ConnectionState.active) {
-                  //         return _balanceProfitTextWidget(ref, true);
-                  //       }
-
-                  //       if (!snapshot.hasData) {
-                  //         return _balanceProfitTextWidget(ref, true);
-                  //       }
-                  //       //user alım yaptıktan sonra data tekrar yenilenmeli global provider tekrar tetiklenecek unutma
-                  //       List<CurrencyEntity>? data = snapshot.data;
-
-                  //       viewModel.calculateProfitBalance(ref, data);
-                  //       return _balanceProfitTextWidget(ref, true);
-                  //     }),
+                  BalanceProfitTextWidget(),
                   const CustomSizedBox.hugeGap(),
                   Row(
                     children: [
@@ -179,22 +162,7 @@ class _HomeViewState extends ConsumerState<HomeView> {
     );
   }
 
-  Row _balanceProfitTextWidget(WidgetRef ref, bool isLoading) {
-    return Row(
-      children: [
-        const Icon(
-          Icons.arrow_drop_up,
-          color: DefaultColorPalette.vanillaGreen,
-        ),
-        isLoading
-            ? const Text("0.00%")
-            : Text(
-                "${ref.watch(appGlobalProvider.notifier).getUserData?.profit}%"),
-      ],
-    );
-  }
-
-Text _balanceTextWidget(String? balance) {
+  Text _balanceTextWidget(String? balance) {
     if (balance == null || balance.isEmpty) balance = "0.00";
 
     // Ondalık ayırma
@@ -225,7 +193,6 @@ Text _balanceTextWidget(String? balance) {
       ),
     );
   }
-
 
   Text exporeAssetsText() {
     return Text(
@@ -381,4 +348,37 @@ Text _balanceTextWidget(String? balance) {
   Center loadingTextWidget() => Center(child: Text(LocaleKeys.home_wait.tr()));
   Center loadingIndicatorWidget() =>
       const Center(child: CircularProgressIndicator());
+}
+
+class BalanceProfitTextWidget extends ConsumerWidget {
+  const BalanceProfitTextWidget({super.key});
+
+  @override
+  Widget build(BuildContext context, WidgetRef ref) {
+    double? profitPercent =
+        ref.watch(appGlobalProvider.notifier).getUserData?.profit;
+
+    bool isNegative() {
+      if (profitPercent.toString().contains("-")) {
+        return true;
+      }
+      return false;
+    }
+
+    return Row(
+      children: [
+        isNegative()
+            ? const Icon(
+                Icons.arrow_drop_down,
+                color: DefaultColorPalette.errorRed,
+              )
+            : const Icon(
+                Icons.arrow_drop_up,
+                color: DefaultColorPalette.vanillaGreen,
+              ),
+        Text(
+            "${ref.watch(appGlobalProvider.notifier).getUserData?.profit?.toStringAsFixed(2)}%"),
+      ],
+    );
+  }
 }

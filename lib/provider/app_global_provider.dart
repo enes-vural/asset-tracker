@@ -34,7 +34,7 @@ class AppGlobalProvider extends ChangeNotifier {
 
   _listenData() {
     _dataStream?.listen((event) {
-      print("Data Stream : $event");
+      debugPrint("Data Stream : $event");
     });
   }
 

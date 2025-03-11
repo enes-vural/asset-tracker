@@ -19,4 +19,8 @@ abstract interface class IDatabaseService {
   //TODO:
   Future<Either<DatabaseErrorModel, QuerySnapshot<Map<String, dynamic>>>>
       getUserData(UserUidModel model);
+
+  Future<List<Map<String, dynamic>?>?> getUserAssets(
+    UserUidModel model,
+  );
 }
