@@ -29,6 +29,14 @@ final class FirestoreService implements IFirestoreService {
       //arka arkaya satın alımlarda üstüne eklenmesi gerekecek bunu düzenle yoksa
       //TODO:
       //her seferinde eski değer yerine yeni bir değer oluşturacak.
+
+      await instance
+          .collection(FirestoreConstants.usersCollection)
+          .doc(model.userId)
+          .collection(FirestoreConstants.assetsCollection)
+          .doc(model.currency)
+          .set({"currencyName": model.currency});
+
       return await instance
           .collection(FirestoreConstants.usersCollection)
           .doc(model.userId)
@@ -77,7 +85,11 @@ final class FirestoreService implements IFirestoreService {
           .collection(FirestoreConstants.assetsCollection)
           .get();
 
+      String originPath = assetPath.docs.toString();
+      debugPrint(originPath.toString());
+
       for (var assetDoc in assetPath.docs) {
+        print(assetPath.docs.toString());
         final currencyName = assetDoc.id;
 
         final datePath = instance
@@ -90,8 +102,9 @@ final class FirestoreService implements IFirestoreService {
 
         List<Timestamp> dateList = [];
 
-        final dataData = await datePath.get();
-        dataData.docs.forEach((element) {
+        final dateData = await datePath.get();
+
+        dateData.docs.forEach((element) {
           debugPrint(element.data().toString());
           dateList.add(element.data()['date']);
         });
