@@ -107,7 +107,7 @@ class TradeViewModel extends ChangeNotifier {
         (newUserData) {
           userData = newUserData;
           ref.read(appGlobalProvider.notifier).updateUserData(
-              userData!.copyWith(latestBalance: newUserData.balance));
+              newUserData.copyWith());
         },
       );
 

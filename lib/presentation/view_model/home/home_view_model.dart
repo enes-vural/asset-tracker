@@ -86,7 +86,7 @@ class HomeViewModel extends ChangeNotifier {
       }
     });
 
-    totalProfit = ((newBalance * 100) / userBalance);
+    totalProfit = 100 - ((newBalance * 100) / userBalance);
     print("NEW BALANCE");
     print("NEW BALANCE");
     print(newBalance);

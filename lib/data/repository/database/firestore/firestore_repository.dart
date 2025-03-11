@@ -67,9 +67,6 @@ class FirestoreRepository implements IFirestoreRepository {
         currencyList: [], uid: model.userId, balance: totalBalance);
 
     try {
-      final dataRequest =
-          await firestoreService.getUserData(UserUidModel.fromEnttiy(model));
-
       final userAssetsData =
           await firestoreService.getUserAssets(UserUidModel.fromEnttiy(model));
 
