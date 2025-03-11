@@ -15,7 +15,6 @@ import 'package:asset_tracker/presentation/view/widgets/home_view_search_field_w
 import 'package:asset_tracker/presentation/view/widgets/home_view_swap_button_widget.dart';
 import 'package:asset_tracker/presentation/view/widgets/search_form_widget.dart';
 import 'package:asset_tracker/presentation/view_model/home/home_view_model.dart';
-import 'package:asset_tracker/provider/app_global_provider.dart';
 import 'package:auto_route/annotations.dart';
 import 'package:easy_localization/easy_localization.dart';
 import 'package:flutter/material.dart';
@@ -107,7 +106,11 @@ class _HomeViewState extends ConsumerState<HomeView> {
                 children: [
                   _userEmailTextWidget(),
                   const CustomSizedBox.hugeGap(),
-                  _balanceTextWidget(appGlobal.getUserData?.balance.toString()),
+                  _balanceTextWidget(ref
+                      .watch(appGlobalProvider.notifier)
+                      .getUserData
+                      ?.latestBalance
+                      .toString()),
                   _balanceProfitTextWidget(ref, false),
                   // StreamBuilder(
                   //     stream: appGlobal.getDataStream,

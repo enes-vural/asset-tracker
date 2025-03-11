@@ -26,6 +26,9 @@ class HomeViewModel extends ChangeNotifier {
   StreamController? dataStreamController;
   Stream? socketDataStream;
 
+  double? newBalance;
+  double? totalProfit;
+
   final StreamController<String> _searchBarStreamController =
       StreamController<String>();
 
@@ -56,14 +59,13 @@ class HomeViewModel extends ChangeNotifier {
 
   calculateProfitBalance(WidgetRef ref, List<CurrencyEntity>? globalAssets) {
     final UserDataEntity? userData =
-        ref.read(appGlobalProvider.notifier).getUserData;
+        ref.watch(appGlobalProvider.notifier).getUserData;
+
     List<UserCurrencyEntityModel> userCurrencyList =
         userData?.currencyList ?? [];
 
     double userBalance = userData?.balance ?? 0.00;
-    double newBalance = 0;
-
-    double totalProfit = 0.00;
+    double newBalance = userBalance;
 
     CurrencyEntity? currency;
 
@@ -76,16 +78,19 @@ class HomeViewModel extends ChangeNotifier {
         currency = null;
       }
 
-      if (currency != null) {
-        newBalance += (double.parse(currency!.satis) * element.amount);
+      if (currency?.code != null) {
+        double oldPrice = element.price * element.amount;
+        double newPrice = double.parse(currency!.satis) * element.amount;
+        double latestPrice = newPrice - oldPrice;
+        newBalance += latestPrice;
       }
     });
 
-    totalProfit = newBalance * userBalance / 100;
+    totalProfit = ((newBalance * 100) / userBalance);
 
     if (userData != null) {
       ref.read(appGlobalProvider.notifier).updateUserData(
-          userData.copyWith(balance: newBalance, profit: totalProfit));
+          userData.copyWith(profit: totalProfit, latestBalance: newBalance));
       notifyListeners();
     }
   }

@@ -5,12 +5,14 @@ final class UserDataEntity {
   final String userId;
   final List<UserCurrencyEntityModel> currencyList;
   final double balance;
+  final double? latestBalance;
   final double? profit;
 
   const UserDataEntity({
     required this.userId,
     required this.currencyList,
     required this.balance,
+    this.latestBalance = 0.00,
     this.profit = 0.00,
   });
 
@@ -29,12 +31,14 @@ final class UserDataEntity {
     String? uid,
     double? balance,
     double? profit,
+    double? latestBalance,
   }) {
     return UserDataEntity(
       currencyList: currencyList ?? this.currencyList,
       userId: uid ?? this.userId,
       balance: balance ?? this.balance,
       profit: profit ?? this.profit,
+      latestBalance: latestBalance ?? this.latestBalance,
     );
   }
 }
