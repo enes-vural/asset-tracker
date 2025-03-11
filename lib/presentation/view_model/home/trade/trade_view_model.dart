@@ -5,6 +5,7 @@ import 'package:asset_tracker/core/helpers/snackbar.dart';
 import 'package:asset_tracker/data/model/database/response/asset_code_model.dart';
 import 'package:asset_tracker/domain/entities/database/enttiy/buy_currency_entity.dart';
 import 'package:asset_tracker/domain/entities/database/enttiy/usar_data_entity.dart';
+import 'package:asset_tracker/domain/entities/database/enttiy/user_uid_entity.dart';
 import 'package:asset_tracker/injection.dart';
 import 'package:easy_localization/easy_localization.dart';
 import 'package:flutter/cupertino.dart';
@@ -32,6 +33,7 @@ class TradeViewModel extends ChangeNotifier {
     selectedCurrency = newValue;
     notifyListeners();
   }
+
 //tamam
   List<AssetCodeModel> getCurrencyList(WidgetRef ref) =>
       ref.read(appGlobalProvider.notifier).assetCodes;
@@ -77,7 +79,7 @@ class TradeViewModel extends ChangeNotifier {
 
     request.fold((failure) {
       EasySnackBar.show(context, failure.message);
-    }, (success) {
+    }, (success) async {
       EasySnackBar.show(
         context,
         LocaleKeys.trade_success.tr(
@@ -90,11 +92,25 @@ class TradeViewModel extends ChangeNotifier {
       );
       UserDataEntity? userData =
           ref.watch(appGlobalProvider.notifier).getUserData;
-      if (userData != null) {
-        ref.read(appGlobalProvider.notifier).updateUserData(userData.copyWith(
-              balance: userData.balance + (success.amount * success.price),
-            ));
-      }
+
+      //alım satım durumlaında bizden kaynaklı olan veya olmayan bir durumdan
+      //dolayı işlem başarılı zannedilirse ve kullanıcı bilgileri güncellenmezse
+      //direkt olarak son bakiye hesaplamalarını provider üzerinden yönetiyoruz
+      //ama bu durumlara karşıda bir güvenlik önlemi olarak kullanıcı bilgilerini
+      //her işlem sonrasında database den çekerek güncelliyoruz.
+      final latestUserData = await ref
+          .read(getUserDataUseCaseProvider)
+          .call(UserUidEntity(userId: currentUserId));
+
+      latestUserData.fold(
+        (l) {},
+        (newUserData) {
+          userData = newUserData;
+          ref.read(appGlobalProvider.notifier).updateUserData(
+              userData!.copyWith(latestBalance: newUserData.balance));
+        },
+      );
+
       amountController.clear();
       priceController.clear();
       notifyListeners();

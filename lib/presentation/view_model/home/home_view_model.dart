@@ -87,6 +87,12 @@ class HomeViewModel extends ChangeNotifier {
     });
 
     totalProfit = ((newBalance * 100) / userBalance);
+    print("NEW BALANCE");
+    print("NEW BALANCE");
+    print(newBalance);
+    print("USER BALANCE");
+    print("USER BALANCE");
+    print(userBalance);
 
     if (userData != null) {
       ref.read(appGlobalProvider.notifier).updateUserData(

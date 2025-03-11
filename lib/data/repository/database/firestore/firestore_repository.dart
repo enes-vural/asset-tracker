@@ -11,6 +11,7 @@ import 'package:asset_tracker/domain/entities/database/enttiy/usar_data_entity.d
 import 'package:asset_tracker/domain/entities/database/enttiy/user_uid_entity.dart';
 import 'package:asset_tracker/domain/entities/database/error/database_error_entity.dart';
 import 'package:asset_tracker/domain/repository/database/firestore/ifirestore_repository.dart';
+import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:dartz/dartz.dart';
 import 'package:easy_localization/easy_localization.dart';
 import 'package:flutter/material.dart';
@@ -65,28 +66,34 @@ class FirestoreRepository implements IFirestoreRepository {
     UserDataModel userDataModel = UserDataModel(
         currencyList: [], uid: model.userId, balance: totalBalance);
 
-    final dataRequest =
-        await firestoreService.getUserData(UserUidModel.fromEnttiy(model));
-    //try catch
-    return dataRequest.fold(
-      (failure) {
-        return Left(DatabaseErrorEntity.fromModel(failure));
-      },
-      (data) {
-        for (var data in data.docs) {
-          debugPrint("Data: ${data.data()}");
+    try {
+      final dataRequest =
+          await firestoreService.getUserData(UserUidModel.fromEnttiy(model));
 
+      final userAssetsData =
+          await firestoreService.getUserAssets(UserUidModel.fromEnttiy(model));
+
+      if (userAssetsData == null || userAssetsData.isEmpty) {
+        return const Left(
+            DatabaseErrorEntity(message: "User assets data is null"));
+      }
+
+      for (var dataIndex in userAssetsData) {
+        debugPrint("User assets data: ${dataIndex.toString()}");
+        if (dataIndex != null) {
           userDataModel.currencyList
-              .add(UserCurrencyDataModel.fromJson(data.data()));
+              .add(UserCurrencyDataModel.fromJson(dataIndex));
         }
+      }
 
-        for (var currency in userDataModel.currencyList) {
-          totalBalance += currency.total;
-        }
-        userDataModel.balance = totalBalance;
+      for (var currency in userDataModel.currencyList) {
+        totalBalance += currency.total;
+      }
+      userDataModel.balance = totalBalance;
 
-        return Right(UserDataEntity.fromModel(userDataModel));
-      },
-    );
+      return Right(UserDataEntity.fromModel(userDataModel));
+    } catch (e) {
+      return Left(DatabaseErrorEntity(message: e.toString()));
+    }
   }
 }
