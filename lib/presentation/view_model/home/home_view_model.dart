@@ -87,12 +87,6 @@ class HomeViewModel extends ChangeNotifier {
     });
 
     totalProfit = 100 - ((newBalance * 100) / userBalance);
-    print("NEW BALANCE");
-    print("NEW BALANCE");
-    print(newBalance);
-    print("USER BALANCE");
-    print("USER BALANCE");
-    print(userBalance);
 
     if (userData != null) {
       ref.read(appGlobalProvider.notifier).updateUserData(
@@ -114,6 +108,8 @@ class HomeViewModel extends ChangeNotifier {
     });
   }
 
+  swapToTradePage() {}
+
   filterCurrencyData(List<CurrencyEntity>? data, String searchedCurrency) {
     //filter the list via controller's value
     if (searchedCurrency.isNotEmpty && searchedCurrency != "") {
@@ -131,9 +127,9 @@ class HomeViewModel extends ChangeNotifier {
     return data;
   }
 
-  void routeTradePage(BuildContext context, CurrencyEntity currency) {
+  void routeTradePage(BuildContext context, CurrencyEntity? currency) {
     Routers.instance
-        .pushWithInfo(context, TradeRoute(currecyCode: currency.code));
+        .pushWithInfo(context, TradeRoute(currecyCode: currency?.code ?? ""));
   }
 
   Stream? get searchBarStreamController => _searchBarStreamController.stream;

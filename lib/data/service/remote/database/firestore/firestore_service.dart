@@ -26,9 +26,8 @@ final class FirestoreService implements IFirestoreService {
     }
 
     try {
-      //arka arkaya satın alımlarda üstüne eklenmesi gerekecek bunu düzenle yoksa
       //TODO:
-      //her seferinde eski değer yerine yeni bir değer oluşturacak.
+      //aynı tarih farklı saat alımları test edilmedi
 
       await instance
           .collection(FirestoreConstants.usersCollection)
@@ -79,26 +78,19 @@ final class FirestoreService implements IFirestoreService {
   ) async {
     List<Map<String, dynamic>?> assetDataList = [];
     try {
-      final assetPath = await instance
-          .collection(FirestoreConstants.usersCollection)
-          .doc(model.userId)
-          .collection(FirestoreConstants.assetsCollection)
+      final assetPath = await _assetCollection(model)
           .get();
 
       String originPath = assetPath.docs.toString();
       debugPrint(originPath.toString());
 
       for (var assetDoc in assetPath.docs) {
-        print(assetPath.docs.toString());
         final currencyName = assetDoc.id;
 
-        final datePath = instance
-            .collection(FirestoreConstants.usersCollection)
-            .doc(model.userId)
-            .collection(FirestoreConstants.assetsCollection)
+        final datePath =
+            _assetCollection(model)
             .doc(currencyName)
             .collection(currencyName);
-        //içeri giriyor hata collectionları alması lazım
 
         List<Timestamp> dateList = [];
 
@@ -110,10 +102,7 @@ final class FirestoreService implements IFirestoreService {
         });
 
         for (var date in dateList) {
-          final data = await instance
-              .collection(FirestoreConstants.usersCollection)
-              .doc(model.userId)
-              .collection(FirestoreConstants.assetsCollection)
+          final data = await _assetCollection(model)
               .doc(currencyName)
               .collection(currencyName)
               .doc(date.toDate().toString())
@@ -126,6 +115,14 @@ final class FirestoreService implements IFirestoreService {
       debugPrint(e.toString());
     }
     return assetDataList;
+  }
+
+  CollectionReference<Map<String, dynamic>> _assetCollection(
+      UserUidModel model) {
+    return instance
+        .collection(FirestoreConstants.usersCollection)
+        .doc(model.userId)
+        .collection(FirestoreConstants.assetsCollection);
   }
 
   @override
