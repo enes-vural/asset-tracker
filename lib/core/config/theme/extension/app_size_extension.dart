@@ -75,4 +75,7 @@ final class AppSize {
 
   ///22.0
   static const double hugeRadius = 22.0;
+
+  ///32.0
+  static const double largeIcon = 32.0;
 }

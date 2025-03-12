@@ -43,6 +43,8 @@ final class DefaultColorPalette {
   static Color grey400 = Colors.grey.shade400;
   static Color grey500 = Colors.grey.shade500;
 
+  static Color purple500 = Colors.purple.shade500;
+
   ///default white color in material 3
   static const Color vanillaWhite = Colors.white;
   static const Color vanillaBlack = Colors.black;

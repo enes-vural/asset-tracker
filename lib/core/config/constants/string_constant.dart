@@ -4,7 +4,8 @@ final class DefaultLocalStrings {
   DefaultLocalStrings._();
 
   static const emptyText = "";
-
+  static const emptyBalance = "0.00";
+  static const emptyFraction = "00";
   //Router
   //dont localize here in future
   static const splashRoute = "/default_splash";
@@ -14,11 +15,9 @@ final class DefaultLocalStrings {
   static const tradeRoute = "/trade/:currency";
   static const replaceInRouteName = "View,Route";
 
-
   static const currency = "currency";
   static const amount = "amount";
   static const price = "price";
-  
 
   static const goldCoin = "gold_coin";
   static const chfCoin = "chf_coin";
