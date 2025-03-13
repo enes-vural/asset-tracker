@@ -42,6 +42,7 @@ dependencies:
 
   #Multiple Stream Builder
   multiple_stream_builder: ^3.0.2
+  fl_chart: ^0.70.2
 
 dev_dependencies:
 
