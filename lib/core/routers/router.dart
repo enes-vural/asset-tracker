@@ -11,6 +11,7 @@ class Routers {
   static const String loginPath = DefaultLocalStrings.loginRoute;
   static const String homePath = DefaultLocalStrings.homeRoute;
   static const String tradePath = DefaultLocalStrings.tradeRoute;
+  static const String dashboardPath = DefaultLocalStrings.dashboardRoute;
 
   void pushReplaceNamed(BuildContext context, String routePath) {
     AutoRouter.of(context).pushNamed(routePath);

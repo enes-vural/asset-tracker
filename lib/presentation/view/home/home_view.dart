@@ -87,7 +87,11 @@ class _HomeViewState extends ConsumerState<HomeView> {
                   const CustomSizedBox.hugeGap(),
                   Row(
                     children: [
-                      TabBarIconWidget(icon: Icons.wallet, onTap: () {}),
+                      TabBarIconWidget(
+                          icon: Icons.wallet,
+                          onTap: () {
+                            viewModel.routeWalletPage(context);
+                          }),
                       const CustomSizedBox.mediumWidth(),
                       TabBarIconWidget(
                           icon: Icons.attach_money_rounded,

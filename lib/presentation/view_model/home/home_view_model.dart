@@ -132,6 +132,10 @@ class HomeViewModel extends ChangeNotifier {
         .pushWithInfo(context, TradeRoute(currecyCode: currency?.code ?? ""));
   }
 
+  void routeWalletPage(BuildContext context) {
+    Routers.instance.pushReplaceNamed(context, Routers.dashboardPath);
+  }
+
   Stream? get searchBarStreamController => _searchBarStreamController.stream;
   Stream get getEmptyStream => const Stream.empty(broadcast: true);
   // we will get stream after ensure connection is done !

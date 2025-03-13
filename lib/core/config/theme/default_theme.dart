@@ -1,3 +1,5 @@
+import 'dart:math';
+
 import 'package:flutter/material.dart';
 import 'package:google_fonts/google_fonts.dart';
 
@@ -38,6 +40,11 @@ final class DefaultColorPalette {
 
   ///dark red
   static const Color errorRed = Color.fromARGB(130, 244, 67, 54);
+
+  static Color randomColor() => Color.fromARGB(
+      255, Random().nextInt(255), Random().nextInt(255), Random().nextInt(255));
+  
+
 
   static Color grey100 = Colors.grey.shade100;
   static Color grey400 = Colors.grey.shade400;
