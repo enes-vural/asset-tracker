@@ -1,12 +1,9 @@
 import 'package:asset_tracker/core/config/theme/default_theme.dart';
-import 'package:asset_tracker/core/config/theme/extension/responsive_extension.dart';
 import 'package:asset_tracker/core/widgets/custom_padding.dart';
 import 'package:asset_tracker/core/widgets/custom_sized_box.dart';
 import 'package:asset_tracker/domain/entities/database/enttiy/usar_data_entity.dart';
 import 'package:asset_tracker/domain/entities/database/enttiy/user_currency_entity_model.dart';
-import 'package:asset_tracker/domain/entities/web/socket/currency_widget_entity.dart';
 import 'package:asset_tracker/injection.dart';
-import 'package:asset_tracker/presentation/view/widgets/currency_card_widget.dart';
 import 'package:auto_route/auto_route.dart';
 import 'package:fl_chart/fl_chart.dart';
 import 'package:flutter/material.dart';
@@ -77,6 +74,9 @@ class _DashboardViewState extends ConsumerState<DashboardView> {
                             fontSize: 16,
                           )),
                       const Expanded(child: CustomSizedBox.empty()),
+                      Text(list?[index].buyDate.day.toString() ?? ""),
+                      //her transaction teker teker ayrı bir şekilde database tarafından alınıp
+                      //liste şekilnde satın alınan tarihe göre gösterilmesi gerekiyor.
                       Text(
                           "- ₺ ${(list?[index].price ?? 0.0) * (list?[index].amount ?? 0.00)}",
                           style: const TextStyle(

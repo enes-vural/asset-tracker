@@ -48,6 +48,16 @@ class AppGlobalProvider extends ChangeNotifier {
       notifyListeners();
     });
   }
+
+  //TODO:
+  Future<void> getUserTransactionHistory(WidgetRef ref) async {
+    // final result = await ref.read(getTransactionHistoryUseCaseProvider)(null);
+
+    // result.fold((error) {}, (success) {
+    //   currencyList = success;
+    //   notifyListeners();
+    // });
+  }
   
   UserDataEntity? get getUserData => _userData;
   Stream? get getDataStream => _dataStream;
