@@ -16,6 +16,7 @@ import 'package:asset_tracker/domain/usecase/database/get_currency_code_use_case
 import 'package:asset_tracker/domain/usecase/database/get_user_data_use_case.dart';
 import 'package:asset_tracker/domain/usecase/web/web_use_case.dart';
 import 'package:asset_tracker/presentation/view_model/auth/auth_view_model.dart';
+import 'package:asset_tracker/presentation/view_model/home/dashboard/dashboard_view_model.dart';
 import 'package:asset_tracker/presentation/view_model/home/home_view_model.dart';
 import 'package:asset_tracker/presentation/view_model/home/trade/trade_view_model.dart';
 import 'package:asset_tracker/presentation/view_model/splash/splash_view_model.dart';
@@ -122,5 +123,10 @@ final homeViewModelProvider = ChangeNotifierProvider<HomeViewModel>((ref) {
 
 final tradeViewModelProvider = ChangeNotifierProvider<TradeViewModel>((ref) {
   return TradeViewModel();
+});
+
+final dashboardViewModelProvider =
+    ChangeNotifierProvider<DashboardViewModel>((ref) {
+  return DashboardViewModel();
 });
 //test@gmail.com

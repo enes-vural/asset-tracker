@@ -77,13 +77,8 @@ class _HomeViewState extends ConsumerState<HomeView> {
                 children: [
                   const UserEmailTextWidget(),
                   const CustomSizedBox.hugeGap(),
-                  //these are the consumer widgets are used in home view
-                  //so if we assign const keyword to them,
-                  //they will not be able to listen the changes in the provider
-                  // ignore: prefer_const_constructors
-                  BalanceTextWidget(),
-                  // ignore: prefer_const_constructors
-                  BalanceProfitTextWidget(),
+                  const BalanceTextWidget(),
+                  const BalanceProfitTextWidget(),
                   const CustomSizedBox.hugeGap(),
                   Row(
                     children: [

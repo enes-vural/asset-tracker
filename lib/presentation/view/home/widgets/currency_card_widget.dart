@@ -46,7 +46,7 @@ class CurrencyCardListWidget extends ConsumerWidget {
             //and our data is changing below with our filter chars.
             //so we need to calculate profit after data is filtered
             //if we directly use calculateProfitBalance(data) it will fetch filtered data by keyboard and miscalculate profit.
-            viewModel.calculateProfitBalance(ref, snapshots.snapshot1.data);
+            viewModel.calculateProfitBalance(ref);
           });
 
           data = viewModel.filterCurrencyData(

@@ -10,12 +10,10 @@ class BalanceTextWidget extends ConsumerWidget {
 
   @override
   Widget build(BuildContext context, WidgetRef ref) {
-    String currenctBalance = ref
-            .watch(appGlobalProvider.notifier)
-            .getUserData
-            ?.latestBalance
-            .toString() ??
-        DefaultLocalStrings.emptyBalance;
+    String currenctBalance =
+        ref.watch(appGlobalProvider).getLatestBalance.toString();
+
+    DefaultLocalStrings.emptyBalance;
     // Ondalık ayırma
     List<String> parts = currenctBalance.split(".");
     String wholePart = parts[0]; // Tam sayı kısmı
