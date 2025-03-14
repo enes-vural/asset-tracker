@@ -28,8 +28,6 @@ class AppGlobalProvider extends ChangeNotifier {
     notifyListeners();
   }
 
-  //TODO:
-  //Burası da değişecek optimize değil.
   void updateSocketCurrency(Stream? newStream) {
     _dataStream = newStream;
     notifyListeners();
@@ -143,9 +141,5 @@ class AppGlobalProvider extends ChangeNotifier {
   double get getProfit => _totalProfit;
   double get getPercentProfit => _totalProfitPercent;
   double get getUserBalance => _userBalance;
-  double get getLatestBalance {
-    //TODO: remove
-    print(_latestBalance);
-    return _latestBalance;
-  }
+  double get getLatestBalance => _latestBalance;
 }

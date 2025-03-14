@@ -6,8 +6,7 @@ import 'package:asset_tracker/domain/entities/database/enttiy/user_currency_enti
 import 'package:asset_tracker/injection.dart';
 import 'package:asset_tracker/presentation/view/home/widgets/balance_text_widget.dart';
 import 'package:asset_tracker/presentation/view/home/widgets/custom_pie_chart_widget.dart';
-import 'package:asset_tracker/presentation/view/widgets/users_asset_transaction_widget.dart';
-import 'package:asset_tracker/presentation/view_model/home/dashboard/dashboard_view_model.dart';
+import 'package:asset_tracker/presentation/view/widgets/transaction/users_asset_transaction_widget.dart';
 import 'package:asset_tracker/provider/app_global_provider.dart';
 import 'package:auto_route/auto_route.dart';
 import 'package:flutter/material.dart';
@@ -22,20 +21,12 @@ class DashboardView extends ConsumerStatefulWidget {
 }
 
 class _DashboardViewState extends ConsumerState<DashboardView> {
-  @override
-  void initState() {
-    // WidgetsBinding.instance.addPostFrameCallback((_) {
-    //   ref.read(dashboardViewModelProvider.notifier).showAssetsAsStatistic(ref);
-    // });
-    super.initState();
-  }
 
   @override
   Widget build(BuildContext context) {
-    final DashboardViewModel viewModel = ref.watch(dashboardViewModelProvider);
     final AppGlobalProvider appGlobal = ref.watch(appGlobalProvider);
 
-    UserDataEntity? entity = ref.watch(appGlobalProvider.notifier).getUserData;
+    UserDataEntity? entity = appGlobal.getUserData;
     List<UserCurrencyEntityModel>? list = entity?.currencyList;
 
     return Scaffold(
@@ -49,9 +40,8 @@ class _DashboardViewState extends ConsumerState<DashboardView> {
               widget: Icon(Icons.filter_alt_off_outlined),
             ),
           ]),
-      body: SizedBox(
-        height: ResponsiveSize(context).screenHeight,
-        width: ResponsiveSize(context).screenWidth,
+      body: SingleChildScrollView(
+        scrollDirection: Axis.vertical,
         child: Column(
           children: [
             SizedBox(
@@ -70,9 +60,18 @@ class _DashboardViewState extends ConsumerState<DashboardView> {
               ),
             ),
             const UserAssetTransactionWidget(),
+
           ],
         ),
       ),
+    );
+  }
+
+  Container aaa() {
+    return Container(
+      width: 100,
+      height: 100,
+      color: Colors.red,
     );
   }
 }
