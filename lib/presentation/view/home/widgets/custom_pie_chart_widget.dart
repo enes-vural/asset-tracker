@@ -1,4 +1,5 @@
 import 'package:asset_tracker/core/config/theme/default_theme.dart';
+import 'package:asset_tracker/core/config/theme/extension/app_size_extension.dart';
 import 'package:asset_tracker/core/widgets/custom_padding.dart';
 import 'package:asset_tracker/domain/entities/database/enttiy/user_currency_entity_model.dart';
 import 'package:flutter/material.dart';
@@ -18,21 +19,43 @@ class _PieChartWidgetState extends State<PieChartWidget> {
 
   @override
   void initState() {
+    super.initState();
+    _generateSections();
+  }
+
+  // Helper function to group and calculate values
+  void _generateSections() {
+    // Create a map to store total values for each currencyCode
+    Map<String, double> currencyTotals = {};
+
+    // Group the data and sum values for each currencyCode
     widget.dataItems?.forEach((element) {
+      final totalValue = element.amount * element.price;
+
+      // If the currencyCode already exists, add the value to the existing total
+      if (currencyTotals.containsKey(element.currencyCode)) {
+        currencyTotals[element.currencyCode] =
+            currencyTotals[element.currencyCode]! + totalValue;
+      } else {
+        currencyTotals[element.currencyCode] = totalValue;
+      }
+    });
+
+    // Generate PieChartSectionData from the grouped data
+    currencyTotals.forEach((currencyCode, totalValue) {
       Color? sectionColor = DefaultColorPalette.randomColor();
       _sections.add(
         PieChartSectionData(
-          //random color need here for each section
           color: sectionColor,
-          value: element.amount * element.price,
-          title: element.currencyCode,
-          radius: 80,
-          titleStyle: const TextStyle(color: Colors.white, fontSize: 12),
+          value: totalValue,
+          title: currencyCode,
+          radius: AppSize.chartRadius,
+          titleStyle: const TextStyle(
+              color: DefaultColorPalette.vanillaWhite,
+              fontSize: AppSize.smallText),
         ),
       );
     });
-
-    super.initState();
   }
 
   @override
@@ -45,7 +68,7 @@ class _PieChartWidgetState extends State<PieChartWidget> {
           child: PieChart(
             PieChartData(
               sectionsSpace: 2, // Dilimler arası boşluk
-              centerSpaceRadius: 25, // Ortadaki boşluk
+              centerSpaceRadius: AppSize.chartCenterRadius, // Ortadaki boşluk
               sections: _sections,
             ),
           ),

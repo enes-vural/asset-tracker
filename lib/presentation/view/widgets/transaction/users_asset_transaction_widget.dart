@@ -60,55 +60,53 @@ class _UserAssetTransactionWidgetState
     }
 
     if (!isLoading) {
-      return Expanded(
-        child: CustomPadding.largeHorizontal(
-          widget: Container(
-            decoration: CustomDecoration.roundBox(radius: AppSize.largeRadius),
-            child: Column(
-              spacing: AppSize.hugePadd,
-              children: groupedData.entries
-                  .map((MapEntry<String, List<UserCurrencyEntityModel>> entry) {
-                final CalculateProfitEntity? stats =
-                    viewModel.calculateSelectedCurrencyTotalAmount(
-                        ref, entry.key.toString());
+      return CustomPadding.largeHorizontal(
+        widget: Container(
+          decoration: CustomDecoration.roundBox(radius: AppSize.largeRadius),
+          child: Column(
+            spacing: AppSize.hugePadd,
+            children: groupedData.entries
+                .map((MapEntry<String, List<UserCurrencyEntityModel>> entry) {
+              final CalculateProfitEntity? stats =
+                  viewModel.calculateSelectedCurrencyTotalAmount(
+                      ref, entry.key.toString());
 
-                double quentities = entry.value.fold<double>(0.0,
-                    (previousValue, element) => previousValue + element.amount);
+              double quentities = entry.value.fold<double>(0.0,
+                  (previousValue, element) => previousValue + element.amount);
 
-                // Her bir kategori için (örneğin ALTIN, DOLAR) başlık ve kartlar
-                return Column(
-                  spacing: 2.0,
-                  crossAxisAlignment: CrossAxisAlignment.start,
-                  children: [
-                    CustomPadding.smallHorizontal(
-                      widget: Row(
-                        mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                        children: [
-                          Text(
-                            "${entry.key} (${quentities.toNumberWithTurkishFormat()})", // Kategori adı (ALTIN, DOLAR)
-                            style: const TextStyle(
-                              fontWeight: FontWeight.bold,
-                              fontSize: 20,
-                            ),
+              // Her bir kategori için (örneğin ALTIN, DOLAR) başlık ve kartlar
+              return Column(
+                spacing: 2.0,
+                crossAxisAlignment: CrossAxisAlignment.start,
+                children: [
+                  CustomPadding.smallHorizontal(
+                    widget: Row(
+                      mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                      children: [
+                        Text(
+                          "${entry.key} (${quentities.toNumberWithTurkishFormat()})", // Kategori adı (ALTIN, DOLAR)
+                          style: const TextStyle(
+                            fontWeight: FontWeight.bold,
+                            fontSize: 20,
                           ),
-                          Text(
-                            "Available: ${entry.value.length}",
-                            style: TextStyle(
-                              fontWeight: FontWeight.bold,
-                              fontSize: 16,
-                              color: Colors.grey.shade500,
-                            ),
+                        ),
+                        Text(
+                          "Available: ${entry.value.length}",
+                          style: TextStyle(
+                            fontWeight: FontWeight.bold,
+                            fontSize: 16,
+                            color: Colors.grey.shade500,
                           ),
-                        ],
-                      ),
+                        ),
+                      ],
                     ),
-                    // Kategorinin altındaki işlemler (Card'lar)
-                    _transactionCDescription(stats),
-                    TransactionCardLVBWidget(entry: entry),
-                  ],
-                );
-              }).toList(),
-            ),
+                  ),
+                  // Kategorinin altındaki işlemler (Card'lar)
+                  _transactionCDescription(stats),
+                  TransactionCardLVBWidget(entry: entry),
+                ],
+              );
+            }).toList(),
           ),
         ),
       );
