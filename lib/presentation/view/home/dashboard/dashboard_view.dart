@@ -1,6 +1,6 @@
 import 'package:asset_tracker/core/config/theme/default_theme.dart';
-import 'package:asset_tracker/core/config/theme/extension/responsive_extension.dart';
 import 'package:asset_tracker/core/widgets/custom_padding.dart';
+import 'package:asset_tracker/core/widgets/custom_sized_box.dart';
 import 'package:asset_tracker/domain/entities/database/enttiy/usar_data_entity.dart';
 import 'package:asset_tracker/domain/entities/database/enttiy/user_currency_entity_model.dart';
 import 'package:asset_tracker/injection.dart';
@@ -21,7 +21,6 @@ class DashboardView extends ConsumerStatefulWidget {
 }
 
 class _DashboardViewState extends ConsumerState<DashboardView> {
-
   @override
   Widget build(BuildContext context) {
     final AppGlobalProvider appGlobal = ref.watch(appGlobalProvider);
@@ -31,48 +30,40 @@ class _DashboardViewState extends ConsumerState<DashboardView> {
 
     return Scaffold(
       backgroundColor: Colors.grey.shade100,
-      appBar: AppBar(
-          backgroundColor: Colors.grey.shade100,
-          centerTitle: true,
-          title: const Text("Dashboard"),
-          actions: const [
-            CustomPadding.largeHorizontal(
-              widget: Icon(Icons.filter_alt_off_outlined),
-            ),
-          ]),
+      appBar: _appBarWidget(),
       body: SingleChildScrollView(
         scrollDirection: Axis.vertical,
-        child: Column(
-          children: [
-            SizedBox(
-              height: ResponsiveSize(context).screenHeight.toPercent(45),
-              child: Column(
-                mainAxisAlignment: MainAxisAlignment.start,
-                children: [
-                  PieChartWidget(dataItems: list),
-                  Text(
-                    "Available Balance",
-                    style: TextStyle(
-                        color: DefaultColorPalette.grey500, fontSize: 15),
-                  ),
-                  const BalanceTextWidget(),
-                ],
-              ),
-            ),
-            const UserAssetTransactionWidget(),
-
-          ],
+        child: SizedBox(
+          child: Column(
+            children: [
+              PieChartWidget(dataItems: list),
+              availableTextWidget(),
+              const BalanceTextWidget(),
+              const CustomSizedBox.hugeGap(),
+              const SizedBox(child: UserAssetTransactionWidget()),
+            ],
+          ),
         ),
       ),
     );
   }
 
-  Container aaa() {
-    return Container(
-      width: 100,
-      height: 100,
-      color: Colors.red,
+  Text availableTextWidget() {
+    return Text(
+      "Available Balance",
+      style: TextStyle(color: DefaultColorPalette.grey500, fontSize: 15),
     );
   }
-}
 
+  AppBar _appBarWidget() {
+    return AppBar(
+        backgroundColor: Colors.grey.shade100,
+        centerTitle: true,
+        title: const Text("Dashboard"),
+        actions: const [
+          CustomPadding.largeHorizontal(
+            widget: Icon(Icons.filter_alt_off_outlined),
+          ),
+        ]);
+  }
+}

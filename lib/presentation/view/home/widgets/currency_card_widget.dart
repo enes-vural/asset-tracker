@@ -34,8 +34,7 @@ class CurrencyCardListWidget extends ConsumerWidget {
           }
 
           if (!snapshots.snapshot1.hasData ||
-              snapshots.snapshot1.data?.length == null ||
-              snapshots.snapshot1.data?[0] == null) {
+              snapshots.snapshot1.data?.length == null) {
             return loadingTextWidget();
           }
 
