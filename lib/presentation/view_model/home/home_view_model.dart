@@ -4,8 +4,6 @@ import 'package:asset_tracker/core/config/theme/extension/currency_widget_title_
 import 'package:asset_tracker/core/helpers/snackbar.dart';
 import 'package:asset_tracker/core/routers/app_router.gr.dart';
 import 'package:asset_tracker/core/routers/router.dart' show Routers;
-import 'package:asset_tracker/domain/entities/database/enttiy/usar_data_entity.dart';
-import 'package:asset_tracker/domain/entities/database/enttiy/user_currency_entity_model.dart';
 import 'package:asset_tracker/domain/entities/web/socket/currency_entity.dart';
 import 'package:asset_tracker/domain/usecase/web/web_use_case.dart';
 import 'package:asset_tracker/injection.dart';
@@ -57,42 +55,9 @@ class HomeViewModel extends ChangeNotifier {
     notifyListeners();
   }
 
-  calculateProfitBalance(WidgetRef ref, List<CurrencyEntity>? globalAssets) {
-    final UserDataEntity? userData =
-        ref.watch(appGlobalProvider.notifier).getUserData;
-
-    List<UserCurrencyEntityModel> userCurrencyList =
-        userData?.currencyList ?? [];
-
-    double userBalance = userData?.balance ?? 0.00;
-    double newBalance = userBalance;
-
-    CurrencyEntity? currency;
-
-    userCurrencyList.forEach((element) {
-      try {
-        currency = globalAssets?.firstWhere(
-          (elementCurrency) => elementCurrency.code == element.currencyCode,
-        );
-      } catch (e) {
-        currency = null;
-      }
-
-      if (currency?.code != null) {
-        double oldPrice = element.price * element.amount;
-        double newPrice = double.parse(currency!.satis) * element.amount;
-        double latestPrice = newPrice - oldPrice;
-        newBalance += latestPrice;
-      }
-    });
-
-    totalProfit = 100 - ((newBalance * 100) / userBalance);
-
-    if (userData != null) {
-      ref.read(appGlobalProvider.notifier).updateUserData(
-          userData.copyWith(profit: totalProfit, latestBalance: newBalance));
-      notifyListeners();
-    }
+  void calculateProfitBalance(WidgetRef ref) {
+    ref.read(appGlobalProvider).calculateProfitBalance();
+    notifyListeners();
   }
 
   Future<void> getErrorStream({required BuildContext parentContext}) async {

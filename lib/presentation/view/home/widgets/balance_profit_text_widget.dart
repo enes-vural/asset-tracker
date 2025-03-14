@@ -9,7 +9,7 @@ class BalanceProfitTextWidget extends ConsumerWidget {
   @override
   Widget build(BuildContext context, WidgetRef ref) {
     double? profitPercent =
-        ref.watch(appGlobalProvider.notifier).getUserData?.profit;
+        ref.watch(appGlobalProvider).getPercentProfit;
 
     bool isNegative() {
       if (profitPercent.toString().contains("-")) {

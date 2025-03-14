@@ -1,5 +1,7 @@
 import 'package:asset_tracker/data/model/database/response/asset_code_model.dart';
 import 'package:asset_tracker/domain/entities/database/enttiy/usar_data_entity.dart';
+import 'package:asset_tracker/domain/entities/database/enttiy/user_currency_entity_model.dart';
+import 'package:asset_tracker/domain/entities/general/calculate_profit_entity.dart';
 import 'package:asset_tracker/domain/entities/web/socket/currency_entity.dart'
     show CurrencyEntity;
 import 'package:asset_tracker/injection.dart';
@@ -8,33 +10,41 @@ import 'package:flutter_riverpod/flutter_riverpod.dart';
 
 class AppGlobalProvider extends ChangeNotifier {
   List<AssetCodeModel> assetCodes = [];
-  List<CurrencyEntity>? currencyList;
   Stream? _dataStream;
-
+  List<String>? _userCurrencies;
   UserDataEntity? _userData;
+  double _totalProfitPercent = 0.0;
+  double _totalProfit = 0.0;
+  double _userBalance = 0.0;
+  double _latestBalance = 0.0;
+
+  List<CurrencyEntity>? globalAssets;
 
   updateUserData(UserDataEntity entity) {
     _userData = entity;
+    _userData?.currencyList.forEach((element) {
+      _userCurrencies?.add(element.currencyCode);
+    });
     notifyListeners();
   }
 
-  listenDataStream() {
-    if (_dataStream == null) return;
-
-    _dataStream?.listen((event) {
-      print("Data Stream : $event");
-    });
-  }
-
-  updateSocketCurrency(Stream? newStream) {
+  //TODO:
+  //Burası da değişecek optimize değil.
+  void updateSocketCurrency(Stream? newStream) {
     _dataStream = newStream;
     notifyListeners();
     _listenData();
+    notifyListeners();
   }
 
-  _listenData() {
+  void _listenData() {
+    //TODO:
+    //optimization for avoid multi listening.
     _dataStream?.listen((event) {
-      debugPrint("Data Stream : $event");
+      globalAssets = event;
+      debugPrint("Data Stream é: $event");
+      calculateProfitBalance();
+      notifyListeners();
     });
   }
 
@@ -49,16 +59,93 @@ class AppGlobalProvider extends ChangeNotifier {
     });
   }
 
-  //TODO:
-  Future<void> getUserTransactionHistory(WidgetRef ref) async {
-    // final result = await ref.read(getTransactionHistoryUseCaseProvider)(null);
+  CalculateProfitEntity? calculateProfitOrLoss(String currencyCode) {
+    // Global ve kullanıcı verilerinde dövizleri bulma
+    double totalPurchasePrice = 0.0;
+    double userAmount = 0.0;
 
-    // result.fold((error) {}, (success) {
-    //   currencyList = success;
-    //   notifyListeners();
-    // });
+    final globalIndex = globalAssets?.firstWhere(
+      (element) => element.code.toLowerCase() == currencyCode.toLowerCase(),
+    );
+
+    _userData?.currencyList.forEach((element) {
+      if (element.currencyCode.toLowerCase() == currencyCode.toLowerCase()) {
+        totalPurchasePrice += element.price * element.amount;
+        userAmount += element.amount;
+      }
+    });
+
+    // Eğer her iki döviz de bulunduysa, işlemi yapıyoruz
+    if (globalIndex == null) {
+      return null;
+    }
+
+    double globalPrice = double.parse(globalIndex.satis);
+
+    double totalCurrentValue = globalPrice * userAmount;
+
+    return CalculateProfitEntity(
+      currencyCode: currencyCode,
+      purchasePriceTotal: totalPurchasePrice,
+      latestPriceTotal: totalCurrentValue,
+    );
   }
-  
+
+  void calculateProfitBalance() {
+    final UserDataEntity? userData = _userData;
+
+    _dataStream?.listen((event) {
+      globalAssets = event;
+      notifyListeners();
+    });
+
+    List<UserCurrencyEntityModel> userCurrencyList =
+        userData?.currencyList ?? [];
+
+    double userBalance = userData?.balance ?? 0.00;
+    double newBalance = userBalance;
+
+    CurrencyEntity? currency;
+
+    //TODO: Isolate this logic to a use case
+    userCurrencyList.forEach((element) {
+      try {
+        currency = globalAssets?.firstWhere(
+          (elementCurrency) => elementCurrency.code == element.currencyCode,
+        );
+      } catch (e) {
+        currency = null;
+      }
+
+      if (currency?.code != null) {
+        double oldPrice = element.price * element.amount;
+        double newPrice = double.parse(currency!.satis) * element.amount;
+        double latestPrice = newPrice - oldPrice;
+        newBalance += latestPrice;
+      }
+    });
+    _totalProfit = newBalance - userBalance;
+    _totalProfitPercent = 100 - ((newBalance * 100) / userBalance);
+    _latestBalance = newBalance;
+    _userBalance = userBalance;
+
+    if (userData != null) {
+      updateUserData(userData.copyWith(
+          profit: _totalProfitPercent, latestBalance: newBalance));
+      notifyListeners();
+    }
+  }
+
   UserDataEntity? get getUserData => _userData;
   Stream? get getDataStream => _dataStream;
+  List<String>? get userCurrencies => _userCurrencies;
+
+  double get getProfit => _totalProfit;
+  double get getPercentProfit => _totalProfitPercent;
+  double get getUserBalance => _userBalance;
+  double get getLatestBalance {
+    //TODO: remove
+    print(_latestBalance);
+    return _latestBalance;
+  }
 }
