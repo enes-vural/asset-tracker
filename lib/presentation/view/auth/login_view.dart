@@ -1,7 +1,6 @@
 import 'package:asset_tracker/core/config/constants/global/key/fom_keys.dart';
 import 'package:asset_tracker/core/config/constants/global/key/widget_keys.dart';
 import 'package:asset_tracker/core/mixins/validation_mixin.dart';
-import 'package:asset_tracker/core/routers/router.dart';
 import 'package:asset_tracker/core/widgets/custom_align.dart';
 import 'package:asset_tracker/injection.dart';
 import 'package:auto_route/annotations.dart';
@@ -76,8 +75,7 @@ class _LoginViewState extends ConsumerState<LoginView> with ValidatorMixin {
   }
 
   void _submit(AuthViewModel authViewModel, BuildContext context) {
-    authViewModel.signInUser(ref, context,
-        () => Routers.instance.pushReplaceNamed(context, Routers.homePath));
+    authViewModel.signInUser(ref, context);
   }
 
   Center _authLogoWidget() {

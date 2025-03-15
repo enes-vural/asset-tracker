@@ -60,6 +60,15 @@ class HomeViewModel extends ChangeNotifier {
     notifyListeners();
   }
 
+  Future<void> signOut(WidgetRef ref, BuildContext context) async {
+    await ref.read(signInUseCaseProvider).signOut();
+    Routers.instance.pushReplaceNamed(context, Routers.loginPath);
+  }
+
+  void clearText() {
+    searchBarController.clear();
+  }
+
   Future<void> getErrorStream({required BuildContext parentContext}) async {
     final Stream<Either<SocketErrorEntity, SocketStateResponseModel>>? data =
         getSocketStreamUseCase.getErrorStream();

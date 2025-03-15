@@ -32,4 +32,9 @@ class FirebaseAuthService implements IFirebaseAuthService {
       idToken: getIdToken,
     );
   }
+
+  @override
+  Future<void> signOutUser() async {
+    return await authService.signOut();
+  }
 }

@@ -91,7 +91,7 @@ class _UserAssetTransactionWidgetState
                           ),
                         ),
                         Text(
-                          "Available: ${entry.value.length}",
+                          "Transaction: ${entry.value.length}",
                           style: TextStyle(
                             fontWeight: FontWeight.bold,
                             fontSize: 16,

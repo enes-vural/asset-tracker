@@ -7,4 +7,6 @@ abstract interface class IAuthService<T> {
   String? getUserId();
 
   Stream getUserStateChanges();
+
+  Future<void> signOutUser();
 }

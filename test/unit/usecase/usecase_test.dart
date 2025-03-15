@@ -23,13 +23,13 @@ void main() {
     test("Sign In Use Case Success", () async {
       when(firebaseAuthRepository.signIn(TestConstants.successLoginEntity))
           .thenAnswer((_) async =>
-              Right(UserLoginResponseEntity(token: "success-token")));
+              Right(UserLoginResponseEntity(uid: "success-token")));
 
       final result = await signInUseCase.call(TestConstants.successLoginEntity);
 
       expect(result, isA<Right<void, UserLoginResponseEntity>>());
       result.fold((_) => fail("Expected Right but got Left"),
-          (succcess) => expect(succcess.token, "success-token"));
+          (succcess) => expect(succcess.uid, "success-token"));
     });
 
     test("Sign In Use Case Failed", () async {
