@@ -108,6 +108,7 @@ class TradeViewModel extends ChangeNotifier {
         (l) {},
         (newUserData) {
           userData = newUserData;
+          //TODO: bug recall after dispoe
           ref.read(appGlobalProvider.notifier).updateUserData(
               newUserData.copyWith());
         },

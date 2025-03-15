@@ -63,7 +63,7 @@ class _HomeViewState extends ConsumerState<HomeView> {
           child: Icon(Icons.person),
         ),
         actions: [
-          exitAppIconButton(),
+          exitAppIconButton(() async => viewModel.signOut(ref, context)),
         ],
       ),
       body: Stack(
@@ -120,8 +120,7 @@ class _HomeViewState extends ConsumerState<HomeView> {
                 const CustomSizedBox.mediumWidth(),
                 HomeViewSwapButtonWidget(
                   onTap: () {
-                    //TODO: swap to trade page
-                    viewModel.swapToTradePage();
+                    viewModel.clearText();
                   },
                 ),
               ],
@@ -142,8 +141,8 @@ class _HomeViewState extends ConsumerState<HomeView> {
     );
   }
 
-  IconButton exitAppIconButton() => IconButton(
-      onPressed: () {},
+  IconButton exitAppIconButton(VoidCallback fn) => IconButton(
+      onPressed: fn,
       icon: Icon(
         Icons.exit_to_app,
         color: DefaultColorPalette.grey500,
@@ -173,5 +172,4 @@ class _HomeViewState extends ConsumerState<HomeView> {
       ),
     );
   }
-
 }

@@ -1,7 +1,7 @@
 //User Success Model
 
 final class UserLoginResponseModel {
-  final String token;
+  final String uid;
 
-  const UserLoginResponseModel({required this.token});
+  const UserLoginResponseModel({required this.uid});
 }

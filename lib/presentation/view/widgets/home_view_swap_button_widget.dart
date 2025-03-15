@@ -32,7 +32,7 @@ class HomeViewSwapButtonWidget extends StatelessWidget {
             height: 50,
             child: Center(
               child: Text(
-                "SWAP",
+                "CLEAR",
                 style: TextStyle(color: Colors.white, fontSize: 16),
               ),
             ),

@@ -12,6 +12,7 @@ class LoadingSkeletonizerWidget extends StatelessWidget {
       child: Skeletonizer(
         child: SizedBox(
           width: ResponsiveSize(context).screenWidth / 1.1,
+          height: ResponsiveSize(context).screenHeight / 1.5,
           child: ListView.builder(
             scrollDirection: Axis.vertical,
             shrinkWrap: true,

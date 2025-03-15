@@ -17,21 +17,17 @@ class SplashViewModel extends ChangeNotifier {
   }
 
   Future<void> init(WidgetRef ref, BuildContext context) async {
-    final results = await Future.wait(
-      [
-        ref.read(authGlobalProvider.notifier).getCurrentUserStream.first,
-        ref.read(appGlobalProvider.notifier).getCurrencyList(ref),
-      ],
-    );
-    final String uid = results[0] as String;
-    final _ = results[1];
+    await ref.read(appGlobalProvider.notifier).getCurrencyList(ref);
 
-    if (_checkUserLoggedIn(uid) && _checkAssetCodesLoaded(ref)) {
+    String? userId = ref.read(authGlobalProvider.notifier).getCurrentUserId;
+
+    if (_checkUserLoggedIn(userId) &&
+        _checkAssetCodesLoaded(ref) &&
+        userId != null) {
       setIsLoading(false);
       final data = await ref
           .read(getUserDataUseCaseProvider)
-          .call(UserUidEntity(userId: uid));
-      //TODO: Documention needed
+          .call(UserUidEntity(userId: userId));
       data.fold(
         (l) => debugPrint("Error getting user data"),
         (UserDataEntity success) =>

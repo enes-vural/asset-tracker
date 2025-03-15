@@ -31,9 +31,9 @@ class FirebaseAuthRepository implements IAuthRepository {
           await authService.signInUser(entity);
 
       if (userResponse?.uid != null) {
-        final String? token = userResponse?.idToken;
+        final String? userUid = userResponse?.uid;
         final UserLoginResponseModel userModel = UserLoginResponseModel(
-            token: token ??
+            uid: userUid ??
                 DefaultLocalStrings.emptyText);
 
         UserLoginResponseEntity userEntity =
@@ -76,5 +76,10 @@ class FirebaseAuthRepository implements IAuthRepository {
   @override
   Stream getUserStateChanges() {
     return authService.getUserStateChanges();
+  }
+
+  @override
+  Future<void> signOut() async {
+    return authService.signOutUser();
   }
 }
