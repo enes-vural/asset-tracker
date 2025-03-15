@@ -38,6 +38,8 @@ class MyApp extends ConsumerWidget {
 
   @override
   Widget build(BuildContext context, WidgetRef ref) {
+    //init current user before app starts
+    //because firebase auth state changes are delayed.
     ref.read(authGlobalProvider.notifier).initCurrentUser(ref);
     return MaterialApp.router(
       //---------------------------------- b

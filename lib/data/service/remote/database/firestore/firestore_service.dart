@@ -136,7 +136,6 @@ final class FirestoreService implements IFirestoreService {
           .get()
           .then((value) {
         value.docs.forEach((element) {
-          debugPrint(element.data().toString());
           assetCodeList.add(AssetCodeModel.fromJson(element.data()));
         });
       });

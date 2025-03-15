@@ -35,20 +35,7 @@ class AuthViewModel extends ChangeNotifier {
 
     result.fold(
       (failure) => EasySnackBar.show(context, failure.message),
-      (success) async {
-        final userData = await ref
-            .read(getUserDataUseCaseProvider)
-            .call(UserUidEntity(userId: success.uid));
-
-        userData.fold(
-          (f) {
-            EasySnackBar.show(context, f.message);
-          },
-          (successData) async {
-            Routers.instance.popToSplash(context);
-          },
-        );
-      },
+      (success) async => Routers.instance.popToSplash(context),
     );
   }
 }

@@ -2,7 +2,6 @@ import 'dart:async';
 import 'package:asset_tracker/data/model/auth/firebase_auth_user_model.dart';
 import 'package:asset_tracker/injection.dart';
 import 'package:flutter/material.dart';
-import 'package:flutter_riverpod/flutter_riverpod.dart';
 
 class AuthGlobalProvider extends ChangeNotifier {
   
@@ -18,15 +17,12 @@ class AuthGlobalProvider extends ChangeNotifier {
   }
 
   void initCurrentUser(ref) {
-    debugPrint("STARTED STARTED STARTED");
-
     _authSubscription =
         ref.read(authRepositoryProvider).getUserStateChanges().listen((event) {
       _currentUserIdStream.add(event?.uid);
       _currentUserId = event?.uid;
       _currentUser = FirebaseAuthUser(user: event, idToken: null);
       debugPrint("Current User ID: $_currentUserId");
-      debugPrint("DONE DONE DONE DONE");
       notifyListeners();
     });
   }
