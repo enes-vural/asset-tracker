@@ -6,6 +6,8 @@ final class DefaultLocalStrings {
   static const emptyText = "";
   static const emptyBalance = "0.00";
   static const emptyFraction = "00";
+  static const minus = "-";
+  static const turkishLira = "₺";
 
   static const censoredText = "**********";
   //Router

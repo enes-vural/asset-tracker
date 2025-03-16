@@ -1,4 +1,12 @@
+import 'package:easy_localization/easy_localization.dart';
 import 'package:flutter/material.dart';
+
+import 'package:asset_tracker/core/config/theme/default_theme.dart';
+import 'package:asset_tracker/core/config/theme/extension/app_size_extension.dart';
+import 'package:asset_tracker/core/config/theme/extension/responsive_extension.dart';
+import 'package:asset_tracker/core/config/theme/style_theme.dart';
+import 'package:asset_tracker/core/widgets/custom_padding.dart';
+import 'package:asset_tracker/generated/locale_keys.g.dart';
 
 class HomeViewSwapButtonWidget extends StatelessWidget {
   const HomeViewSwapButtonWidget({
@@ -12,28 +20,29 @@ class HomeViewSwapButtonWidget extends StatelessWidget {
   Widget build(BuildContext context) {
     return InkWell(
       onTap: onTap,
-      child: Container(
-        width: MediaQuery.of(context).size.width / 3 - 20,
-        padding: const EdgeInsets.symmetric(horizontal: 16.0),
-        decoration: BoxDecoration(
-          borderRadius: BorderRadius.circular(25),
-          color:
-              Colors.purple.shade200.withOpacity(1), // Hafif transparan beyaz
-          boxShadow: [
-            BoxShadow(
-              color: Colors.red.withOpacity(0.2),
-              blurRadius: 10.0,
-              offset: const Offset(0, 4), // Alt tarafa doğru gölge
-            ),
-          ],
-        ),
-        child: const Center(
-          child: SizedBox(
-            height: 50,
-            child: Center(
-              child: Text(
-                "CLEAR",
-                style: TextStyle(color: Colors.white, fontSize: 16),
+      child: CustomPadding.mediumHorizontal(
+        widget: Container(
+          width: MediaQuery.of(context).size.width.toPercent(33) - 20,
+          decoration: BoxDecoration(
+            borderRadius: BorderRadius.circular(AppSize.hugeRadius),
+            color:
+                DefaultColorPalette.opacityPurple,
+            boxShadow: [
+              BoxShadow(
+                color: DefaultColorPalette.opacityRed,
+                blurRadius: 10.0,
+                offset: const Offset(0, 4), // Alt tarafa doğru gölge
+              ),
+            ],
+          ),
+          child: Center(
+            child: SizedBox(
+              height: 50,
+              child: Center(
+                child: Text(
+                  LocaleKeys.home_clear.tr(),
+                  style: CustomTextStyle.whiteColorPoppins(AppSize.mediumText),
+                ),
               ),
             ),
           ),

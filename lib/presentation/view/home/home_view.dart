@@ -1,7 +1,12 @@
-import 'package:asset_tracker/core/config/constants/string_constant.dart';
+import 'package:auto_route/annotations.dart';
+import 'package:easy_localization/easy_localization.dart';
+import 'package:flutter/material.dart';
+import 'package:flutter_riverpod/flutter_riverpod.dart';
+
+import 'package:asset_tracker/core/config/localization/generated/locale_keys.g.dart';
 import 'package:asset_tracker/core/config/theme/default_theme.dart';
-import 'package:asset_tracker/core/routers/app_router.gr.dart';
-import 'package:asset_tracker/core/routers/router.dart';
+import 'package:asset_tracker/core/config/theme/extension/app_size_extension.dart';
+import 'package:asset_tracker/core/widgets/custom_icon.dart';
 import 'package:asset_tracker/core/widgets/custom_padding.dart';
 import 'package:asset_tracker/core/widgets/custom_sized_box.dart';
 import 'package:asset_tracker/injection.dart';
@@ -14,9 +19,6 @@ import 'package:asset_tracker/presentation/view/home/widgets/welcome_card_widget
 import 'package:asset_tracker/presentation/view/widgets/home_view_search_field_widget.dart';
 import 'package:asset_tracker/presentation/view/widgets/home_view_swap_button_widget.dart';
 import 'package:asset_tracker/presentation/view_model/home/home_view_model.dart';
-import 'package:auto_route/annotations.dart';
-import 'package:flutter/material.dart';
-import 'package:flutter_riverpod/flutter_riverpod.dart';
 
 @RoutePage()
 class HomeView extends ConsumerStatefulWidget {
@@ -27,7 +29,7 @@ class HomeView extends ConsumerStatefulWidget {
 }
 
 class _HomeViewState extends ConsumerState<HomeView> {
-  //async function to call data
+
   Future<void> callData() async =>
       await ref.read(homeViewModelProvider).getData(ref);
 
@@ -60,7 +62,7 @@ class _HomeViewState extends ConsumerState<HomeView> {
         scrolledUnderElevation: 0,
         leading: const CircleAvatar(
           backgroundColor: Colors.transparent,
-          child: Icon(Icons.person),
+          child: CustomIcon.person(),
         ),
         actions: [
           exitAppIconButton(() async => viewModel.signOut(ref, context)),
@@ -82,22 +84,10 @@ class _HomeViewState extends ConsumerState<HomeView> {
                   const CustomSizedBox.hugeGap(),
                   Row(
                     children: [
-                      TabBarIconWidget(
-                          icon: Icons.wallet,
-                          onTap: () {
-                            viewModel.routeWalletPage(context);
-                          }),
-                      const CustomSizedBox.mediumWidth(),
-                      TabBarIconWidget(
-                          icon: Icons.attach_money_rounded,
-                          onTap: () {
-                            viewModel.routeTradePage(context, null);
-                          }),
-                      const CustomSizedBox.mediumWidth(),
-                      TabBarIconWidget(icon: Icons.send, onTap: () {}),
-                      const CustomSizedBox.mediumWidth(),
-                      TabBarIconWidget(
-                          icon: Icons.download_rounded, onTap: () {}),
+                      _tabBarButtonWalletWidget(viewModel, context),
+                      _tabBarButtonTradeWidget(viewModel, context),
+                      _tabBarButtonSendWidget(),
+                      _tabBarButtonDownloadWidget(),
                     ],
                   ),
                   const CustomSizedBox.hugeGap(),
@@ -131,45 +121,44 @@ class _HomeViewState extends ConsumerState<HomeView> {
     );
   }
 
+  TabBarIconWidget _tabBarButtonDownloadWidget() {
+    return TabBarIconWidget(icon: IconDataConstants.download, onTap: () {});
+  }
+
+  TabBarIconWidget _tabBarButtonSendWidget() =>
+      TabBarIconWidget(icon: Icons.send, onTap: () {});
+
+  TabBarIconWidget _tabBarButtonTradeWidget(
+      HomeViewModel viewModel, BuildContext context) {
+    return TabBarIconWidget(
+        icon: IconDataConstants.dollar,
+        onTap: () {
+          viewModel.routeTradePage(context, null);
+        });
+  }
+
+  TabBarIconWidget _tabBarButtonWalletWidget(
+      HomeViewModel viewModel, BuildContext context) {
+    return TabBarIconWidget(
+        icon: IconDataConstants.wallet,
+        onTap: () {
+          viewModel.routeWalletPage(context);
+        });
+  }
+
   Text _exploreAssetsText() {
     return Text(
-      "Explore Assets",
+      //TODO:
+      LocaleKeys.dashboard_exploreAssets.tr(),
       style: TextStyle(
-        color: Colors.grey.shade700,
-        fontSize: 15,
+        color: DefaultColorPalette.grey500,
+        fontSize: AppSize.mediumText,
       ),
     );
   }
 
   IconButton exitAppIconButton(VoidCallback fn) => IconButton(
       onPressed: fn,
-      icon: Icon(
-        Icons.exit_to_app,
-        color: DefaultColorPalette.grey500,
-      ));
-
-  IconButton pushWalletIconButton() {
-    return IconButton(
-      onPressed: () {},
-      icon: Icon(
-        Icons.wallet,
-        color: DefaultColorPalette.grey400,
-      ),
-    );
-  }
-
-  IconButton pushTradePageIconButton(BuildContext context) {
-    return IconButton(
-      onPressed: () {
-        Routers.instance.pushWithInfo(
-          context,
-          TradeRoute(currecyCode: DefaultLocalStrings.emptyText),
-        );
-      },
-      icon: Icon(
-        Icons.attach_money,
-        color: DefaultColorPalette.grey400,
-      ),
-    );
-  }
+        icon: CustomIcon.exit(),
+      );
 }

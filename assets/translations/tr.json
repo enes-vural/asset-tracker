@@ -28,6 +28,18 @@
             "generalErr":"Bir hata oluştu"
         }
     },
+    "dashboard":{
+        "availableBalance":"Mevcut Bakiye",
+        "totalBalance":"Toplam Bakiye",
+        "dashboard":"Panel",
+        "transactions":"İşlemler",
+        "purchase":"Alış:",
+        "sellingPrice":"Satış Fiyatı:",
+        "profit":"Kar:",
+        "amount":"Miktar",
+        "price":"Fiyat",
+        "exploreAssets":"Keşfet"
+    },
     "trade":{
         "fillAllFields":"Tüm alanları doldurunuz.",
         "invalidAmount":"Geçersiz miktar",
@@ -57,6 +69,7 @@
         "error":"Bir hata oluştu",
         "wait":"Yükleniyor...",
         "none":"Bulunamadı",
+        "clear":"Temizle",
       "widget": {
         "ata5_yeni": "ATA Altın Yeni",
         "ata5_eski": "ATA Altın Eski",

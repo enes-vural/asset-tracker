@@ -1,3 +1,8 @@
+import 'package:asset_tracker/core/config/constants/global/general_constants.dart';
+import 'package:asset_tracker/core/config/constants/string_constant.dart';
+import 'package:asset_tracker/core/config/localization/generated/locale_keys.g.dart';
+import 'package:asset_tracker/core/config/theme/default_theme.dart';
+import 'package:asset_tracker/core/config/theme/extension/app_size_extension.dart';
 import 'package:asset_tracker/core/config/theme/extension/number_format_extension.dart';
 import 'package:asset_tracker/core/widgets/custom_sized_box.dart';
 import 'package:asset_tracker/domain/entities/database/enttiy/user_currency_entity_model.dart';
@@ -22,15 +27,15 @@ class TransactionCardLVBWidget extends StatelessWidget {
         var transaction = entry.value[index];
         return Card(
           shape: RoundedRectangleBorder(
-            borderRadius: BorderRadius.circular(10),
+            borderRadius: BorderRadius.circular(AppSize.mediumRadius),
           ),
           elevation: 4,
           child: ListTile(
             title: Text(
               transaction.currencyCode,
               style: TextStyle(
-                color: Colors.grey.shade700,
-                fontSize: 14,
+                color: DefaultColorPalette.grey700,
+                fontSize: AppSize.small2Text,
               ),
             ),
             subtitle: Row(
@@ -38,25 +43,16 @@ class TransactionCardLVBWidget extends StatelessWidget {
                 Column(
                   crossAxisAlignment: CrossAxisAlignment.start,
                   children: [
-                    Text(
-                      "Amount: ${transaction.amount}",
-                      style: const TextStyle(color: Colors.grey, fontSize: 14),
-                    ),
-                    Text(
-                        "Price: ₺${transaction.price.toNumberWithTurkishFormat()}",
-                        style:
-                            const TextStyle(color: Colors.grey, fontSize: 14)),
+                    _transactionAmountTextWidget(transaction),
+                    _transactionPerPriceTextWidget(transaction),
                   ],
                 ),
                 const Expanded(child: CustomSizedBox.empty()),
                 Column(
                   crossAxisAlignment: CrossAxisAlignment.end,
                   children: [
-                    Text(
-                      "- ₺${(transaction.price * transaction.amount).toNumberWithTurkishFormat()}",
-                      style: const TextStyle(color: Colors.red, fontSize: 16),
-                    ),
-                    Text(DateFormat("dd MMMM").format(transaction.buyDate)),
+                    _transactionPriceTextWidget(transaction),
+                    _transactionDateTextWidget(transaction),
                   ],
                 ),
               ],
@@ -64,6 +60,33 @@ class TransactionCardLVBWidget extends StatelessWidget {
           ),
         );
       },
+    );
+  }
+
+  Text _transactionPerPriceTextWidget(UserCurrencyEntityModel transaction) {
+    return Text(
+        LocaleKeys.dashboard_price.tr() +
+            transaction.price.toNumberWithTurkishFormat(),
+        style: const TextStyle(color: Colors.grey, fontSize: 14));
+  }
+
+  Text _transactionAmountTextWidget(UserCurrencyEntityModel transaction) {
+    return Text(
+      LocaleKeys.dashboard_amount.tr() + transaction.amount.toString(),
+      style: const TextStyle(color: Colors.grey, fontSize: 14),
+    );
+  }
+
+  Text _transactionDateTextWidget(UserCurrencyEntityModel transaction) {
+    return Text(GeneralConstants.dateFormat.format(transaction.buyDate));
+  }
+
+  Text _transactionPriceTextWidget(UserCurrencyEntityModel transaction) {
+    return Text(
+      DefaultLocalStrings.minus +
+          DefaultLocalStrings.turkishLira +
+          (transaction.price * transaction.amount).toNumberWithTurkishFormat(),
+      style: const TextStyle(color: DefaultColorPalette.errorRed, fontSize: 16),
     );
   }
 }

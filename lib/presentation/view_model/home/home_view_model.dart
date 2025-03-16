@@ -1,3 +1,5 @@
+// ignore_for_file: use_build_context_synchronously
+
 import 'dart:async';
 
 import 'package:asset_tracker/core/config/theme/extension/currency_widget_title_extension.dart';

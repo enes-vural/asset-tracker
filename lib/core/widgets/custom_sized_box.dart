@@ -10,6 +10,7 @@ class CustomSizedBox extends SizedBox {
   const CustomSizedBox.mediumGap({super.key})
       : super(height: AppSize.mediumPadd);
   const CustomSizedBox.largeGap({super.key}) : super(height: AppSize.largePadd);
+  
   const CustomSizedBox.hugeGap({super.key}) : super(height: AppSize.hugePadd);
 
   const CustomSizedBox.smallWidth({super.key})

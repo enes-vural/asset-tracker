@@ -15,7 +15,7 @@ class PieChartWidget extends StatefulWidget {
 }
 
 class _PieChartWidgetState extends State<PieChartWidget> {
-  List<PieChartSectionData> _sections = [];
+final List<PieChartSectionData> _sections = [];
 
   @override
   void initState() {

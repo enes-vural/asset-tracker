@@ -9,7 +9,7 @@ class DashboardViewModel extends ChangeNotifier {
   UserDataEntity? _userData;
   List<UserCurrencyEntityModel>? _transactions;
 
-  Map<String, List<UserCurrencyEntityModel>> _filteredTransactions = {};
+  final Map<String, List<UserCurrencyEntityModel>> _filteredTransactions = {};
 
   void showAssetsAsStatistic(WidgetRef ref) {
     _userData = ref.read(appGlobalProvider.notifier).getUserData;

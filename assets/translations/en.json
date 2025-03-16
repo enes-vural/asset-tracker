@@ -28,6 +28,20 @@
             "generalErr":"Error has been occurred"
         }
     },
+    "dashboard":{
+        "availableBalance":"Available Balance",
+        "totalBalance":"Total Balance",
+        "dashboard":"Dashboard",
+        "transactions":"Transactions",
+        "purchase":"Purchase:",
+        "sellingPrice":"Selling Price:",
+        "profit":"Profit:",
+        "amount":"Amount",
+        "price":"Price",
+        "exploreAssets":"Explore Assets"
+    },
+
+
     "trade":{
         "fillAllFields":"Please fill all fields",
         "invalidAmount":"Invalid amount",
@@ -57,6 +71,7 @@
           "error":"An error has been occurred",
           "wait":"Waiting for data...",
           "none":"No data available",
+          "clear":"Clear",
          "widget": {
             "ata5_yeni": "ATA Gold New",
             "ata5_eski": "ATA Gold Old",

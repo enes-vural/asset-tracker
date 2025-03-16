@@ -23,6 +23,17 @@ abstract class  LocaleKeys {
   static const auth_response_generalErr = 'auth.response.generalErr';
   static const auth_response = 'auth.response';
   static const auth = 'auth';
+  static const dashboard_availableBalance = 'dashboard.availableBalance';
+  static const dashboard_totalBalance = 'dashboard.totalBalance';
+  static const dashboard_dashboard = 'dashboard.dashboard';
+  static const dashboard_transactions = 'dashboard.transactions';
+  static const dashboard_purchase = 'dashboard.purchase';
+  static const dashboard_sellingPrice = 'dashboard.sellingPrice';
+  static const dashboard_profit = 'dashboard.profit';
+  static const dashboard_amount = 'dashboard.amount';
+  static const dashboard_price = 'dashboard.price';
+  static const dashboard_exploreAssets = 'dashboard.exploreAssets';
+  static const dashboard = 'dashboard';
   static const trade_fillAllFields = 'trade.fillAllFields';
   static const trade_invalidAmount = 'trade.invalidAmount';
   static const trade_invalidPrice = 'trade.invalidPrice';
@@ -49,6 +60,7 @@ abstract class  LocaleKeys {
   static const home_error = 'home.error';
   static const home_wait = 'home.wait';
   static const home_none = 'home.none';
+  static const home_clear = 'home.clear';
   static const home_widget_ata5_yeni = 'home.widget.ata5_yeni';
   static const home_widget_ata5_eski = 'home.widget.ata5_eski';
   static const home_widget_gremese_yeni = 'home.widget.gremese_yeni';
