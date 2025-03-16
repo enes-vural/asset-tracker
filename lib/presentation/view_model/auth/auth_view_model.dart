@@ -23,8 +23,7 @@ class AuthViewModel extends ChangeNotifier {
     notifyListeners();
   }
 
-  Future signInUser(
-      WidgetRef ref, BuildContext context) async {
+  Future signInUser(WidgetRef ref, BuildContext context) async {
     if (!(GlobalFormKeys.loginFormsKey.currentState?.validate() ?? true)) {
       return;
     }
@@ -33,9 +32,10 @@ class AuthViewModel extends ChangeNotifier {
 
     final result = await signInUseCase.call(userEntity);
 
-    result.fold(
-      (failure) => EasySnackBar.show(context, failure.message),
-      (success) async => Routers.instance.popToSplash(context),
-    );
+    result.fold((failure) => EasySnackBar.show(context, failure.message),
+        (success) async {
+      clearForms();
+      Routers.instance.popToSplash(context);
+    });
   }
 }

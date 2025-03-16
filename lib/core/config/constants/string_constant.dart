@@ -6,6 +6,8 @@ final class DefaultLocalStrings {
   static const emptyText = "";
   static const emptyBalance = "0.00";
   static const emptyFraction = "00";
+
+  static const censoredText = "**********";
   //Router
   //dont localize here in future
   static const splashRoute = "/default_splash";

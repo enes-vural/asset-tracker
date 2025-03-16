@@ -5,6 +5,7 @@ import 'package:asset_tracker/domain/entities/web/socket/currency_entity.dart';
 import 'package:asset_tracker/domain/entities/web/socket/currency_widget_entity.dart';
 import 'package:asset_tracker/injection.dart';
 import 'package:asset_tracker/presentation/view/widgets/currency_card_widget.dart';
+import 'package:asset_tracker/presentation/view/widgets/loading_skeletonizer_widget.dart';
 import 'package:easy_localization/easy_localization.dart';
 import 'package:flutter/material.dart';
 
@@ -19,41 +20,41 @@ class CurrencyCardListWidget extends ConsumerWidget {
     final viewModel = ref.watch(homeViewModelProvider.notifier);
     final appGlobal = ref.watch(appGlobalProvider.notifier);
 
+    // Stream sadece bir yerde dinleniyor
+    final dataStream = appGlobal.getDataStream ?? viewModel.getEmptyStream;
+    final searchStream =
+        viewModel.searchBarStreamController ?? viewModel.getEmptyStream;
+
     return SizedBox(
       height: ResponsiveSize(context).screenHeight.toPercent(50),
       width: ResponsiveSize(context).screenWidth,
       child: StreamBuilder2(
-        streams: StreamTuple2(
-            appGlobal.getDataStream ?? viewModel.getEmptyStream,
-            viewModel.searchBarStreamController ?? viewModel.getEmptyStream),
+        streams: StreamTuple2(dataStream, searchStream),
         initialData: InitialDataTuple2(null, null),
         builder: (context, snapshots) {
-          // Stream henüz aktif değilse veya veriler yoksa, loading widget'ı göster
-          if (snapshots.snapshot1.connectionState != ConnectionState.active) {
-            return loadingIndicatorWidget();
-          }
+          
+          // Burası incelenecek şimdilik yorum satırına alındı 
+          // TODO:
+          // if (snapshots.snapshot1.connectionState == ConnectionState.waiting) {
+          //   return Text("Connecting"); //loadingIndicatorWidget();
+          // }
 
           if (!snapshots.snapshot1.hasData ||
               snapshots.snapshot1.data?.length == null) {
-            return loadingTextWidget();
+            return const LoadingSkeletonizerWidget();
           }
 
           List<CurrencyEntity>? data = snapshots.snapshot1.data;
           WidgetsBinding.instance.addPostFrameCallback((_) {
-            //the reason why we dont give param as data instead of snapshots.snapshot1.data is that
-            //you can not call providers during build
-            //so we calculate profit after widget build
-            //and our data is changing below with our filter chars.
-            //so we need to calculate profit after data is filtered
-            //if we directly use calculateProfitBalance(data) it will fetch filtered data by keyboard and miscalculate profit.
+            // Verilerin filtresini uyguladıktan sonra kazancı hesaplayın
             viewModel.calculateProfitBalance(ref);
           });
 
+          // Search bar'dan gelen veriyi filtrele
           data = viewModel.filterCurrencyData(
               data, snapshots.snapshot2.data ?? DefaultLocalStrings.emptyText);
-          // İkinci stream'in verisini al (Search bar'dan gelen veri)
 
-          // Güncellenmiş verileri kullanarak listview'i render et
+          // Güncellenmiş verilerle listeyi render et
           return ListView.builder(
             itemCount: data?.length ?? 0,
             itemBuilder: (context, index) {

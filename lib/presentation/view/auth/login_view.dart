@@ -37,7 +37,10 @@ class _LoginViewState extends ConsumerState<LoginView> with ValidatorMixin {
       //bunu her sayfada yapmak yerine base stfull widget olusutrulabilir
       resizeToAvoidBottomInset: false,
       //appbar
-      appBar: AppBar(title: _appBarTitleWidget()),
+      appBar: AppBar(
+        title: _appBarTitleWidget(),
+        automaticallyImplyLeading: false,
+      ),
       //body
       // large a düzeltildi ekstra constructor içinde parametre verilmekten kaçınıldı
       body: CustomPadding.largeHorizontal(

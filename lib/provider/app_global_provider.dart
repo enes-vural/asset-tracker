@@ -135,7 +135,7 @@ class AppGlobalProvider extends ChangeNotifier {
   }
 
   UserDataEntity? get getUserData => _userData;
-  Stream? get getDataStream => _dataStream;
+  Stream? get getDataStream => _dataStream?.asBroadcastStream();
   List<String>? get userCurrencies => _userCurrencies;
 
   double get getProfit => _totalProfit;

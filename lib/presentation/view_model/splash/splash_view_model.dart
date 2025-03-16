@@ -19,7 +19,9 @@ class SplashViewModel extends ChangeNotifier {
     final getUserData = ref.read(getUserDataUseCaseProvider);
 
     //avoid multiple read operations in firebase in initailize
-    (!_isAssetsLoaded(appGlobal)) ? appGlobal.getCurrencyList(ref) : false;
+    (!_isAssetsLoaded(appGlobal))
+        ? await appGlobal.getCurrencyList(ref)
+        : false;
 
     //get userId from authGlobal
     String? userId = authGlobal.getCurrentUserId;
