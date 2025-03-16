@@ -28,7 +28,7 @@ class HomeViewModel extends ChangeNotifier {
   double? totalProfit;
 
   final StreamController<String> _searchBarStreamController =
-      StreamController<String>();
+      StreamController<String>.broadcast();
 
   initHomeView() {
     searchBarController.addListener(() {
