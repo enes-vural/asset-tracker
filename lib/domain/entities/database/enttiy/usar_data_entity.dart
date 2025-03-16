@@ -35,7 +35,7 @@ final class UserDataEntity {
   }) {
     return UserDataEntity(
       currencyList: currencyList ?? this.currencyList,
-      userId: uid ?? this.userId,
+      userId: uid ?? userId,
       balance: balance ?? this.balance,
       profit: profit ?? this.profit,
       latestBalance: latestBalance ?? this.latestBalance,

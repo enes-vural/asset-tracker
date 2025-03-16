@@ -1,5 +1,13 @@
-import 'package:asset_tracker/presentation/view_model/home/home_view_model.dart';
+import 'package:easy_localization/easy_localization.dart';
 import 'package:flutter/material.dart';
+
+import 'package:asset_tracker/core/config/theme/default_theme.dart';
+import 'package:asset_tracker/core/config/theme/extension/app_size_extension.dart';
+import 'package:asset_tracker/core/config/theme/extension/responsive_extension.dart';
+import 'package:asset_tracker/core/widgets/custom_icon.dart';
+import 'package:asset_tracker/core/widgets/custom_padding.dart';
+import 'package:asset_tracker/generated/locale_keys.g.dart';
+import 'package:asset_tracker/presentation/view_model/home/home_view_model.dart';
 
 class HomeViewSearchFieldWidget extends StatelessWidget {
   const HomeViewSearchFieldWidget({
@@ -12,15 +20,14 @@ class HomeViewSearchFieldWidget extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return Container(
-      width: MediaQuery.of(context).size.width /
-          2, // Ekranın yarısı kadar genişlik
-      padding: const EdgeInsets.symmetric(horizontal: 16.0),
+      width: ResponsiveSize(context).screenSize.width.toHalf(),
+      padding: const CustomEdgeInstets.largeHorizontal(),
       decoration: BoxDecoration(
-        borderRadius: BorderRadius.circular(25),
-        color: Colors.white.withOpacity(0.9), // Hafif transparan beyaz
+        borderRadius: BorderRadius.circular(AppSize.hugeRadius),
+        color: DefaultColorPalette.opacityWhite, // Hafif transparan beyaz
         boxShadow: [
           BoxShadow(
-            color: Colors.black.withOpacity(0.2),
+            color: DefaultColorPalette.opacityBlack,
             blurRadius: 10.0,
             offset: const Offset(0, 4), // Alt tarafa doğru gölge
           ),
@@ -30,9 +37,9 @@ class HomeViewSearchFieldWidget extends StatelessWidget {
         controller: viewModel.searchBarController,
         decoration: InputDecoration(
           border: InputBorder.none,
-          hintText: "Search",
-          hintStyle: TextStyle(color: Colors.grey.shade600),
-          prefixIcon: Icon(Icons.search, color: Colors.grey.shade600),
+          hintText: LocaleKeys.home_search.tr(),
+          hintStyle: TextStyle(color: DefaultColorPalette.grey600),
+          prefixIcon: CustomIcon.searchIcon(),
         ),
       ),
     );

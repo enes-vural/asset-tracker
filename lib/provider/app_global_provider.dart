@@ -36,8 +36,6 @@ class AppGlobalProvider extends ChangeNotifier {
   }
 
   void _listenData() {
-    //TODO:
-    //optimization for avoid multi listening.
     _dataStream?.listen((event) {
       globalAssets = event;
       debugPrint("Data Stream é: $event");
@@ -106,7 +104,7 @@ class AppGlobalProvider extends ChangeNotifier {
     CurrencyEntity? currency;
 
     //TODO: Isolate this logic to a use case
-    userCurrencyList.forEach((element) {
+    for (UserCurrencyEntityModel element in userCurrencyList) {
       try {
         currency = globalAssets?.firstWhere(
           (elementCurrency) => elementCurrency.code == element.currencyCode,
@@ -121,7 +119,7 @@ class AppGlobalProvider extends ChangeNotifier {
         double latestPrice = newPrice - oldPrice;
         newBalance += latestPrice;
       }
-    });
+    }
     _totalProfit = newBalance - userBalance;
     _totalProfitPercent = 100 - ((newBalance * 100) / userBalance);
     _latestBalance = newBalance;

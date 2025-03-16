@@ -10,8 +10,6 @@ import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 
 void main() async {
-  //TODO: System navigation bar color will change in initial!
-
   //Application Init here !
   //--------------------
   await AppInit.initialize();

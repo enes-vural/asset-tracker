@@ -1,4 +1,12 @@
+import 'package:auto_route/auto_route.dart';
+import 'package:easy_localization/easy_localization.dart';
+import 'package:flutter/material.dart';
+import 'package:flutter_riverpod/flutter_riverpod.dart';
+
+import 'package:asset_tracker/core/config/localization/generated/locale_keys.g.dart';
 import 'package:asset_tracker/core/config/theme/default_theme.dart';
+import 'package:asset_tracker/core/config/theme/extension/app_size_extension.dart';
+import 'package:asset_tracker/core/widgets/custom_icon.dart';
 import 'package:asset_tracker/core/widgets/custom_padding.dart';
 import 'package:asset_tracker/core/widgets/custom_sized_box.dart';
 import 'package:asset_tracker/domain/entities/database/enttiy/usar_data_entity.dart';
@@ -8,9 +16,6 @@ import 'package:asset_tracker/presentation/view/home/widgets/balance_text_widget
 import 'package:asset_tracker/presentation/view/home/widgets/custom_pie_chart_widget.dart';
 import 'package:asset_tracker/presentation/view/widgets/transaction/users_asset_transaction_widget.dart';
 import 'package:asset_tracker/provider/app_global_provider.dart';
-import 'package:auto_route/auto_route.dart';
-import 'package:flutter/material.dart';
-import 'package:flutter_riverpod/flutter_riverpod.dart';
 
 @RoutePage()
 class DashboardView extends ConsumerStatefulWidget {
@@ -50,19 +55,22 @@ class _DashboardViewState extends ConsumerState<DashboardView> {
 
   Text availableTextWidget() {
     return Text(
-      "Available Balance",
-      style: TextStyle(color: DefaultColorPalette.grey500, fontSize: 15),
+      LocaleKeys.dashboard_availableBalance.tr(),
+      style: TextStyle(
+        color: DefaultColorPalette.grey500,
+        fontSize: AppSize.mediumText,
+      ),
     );
   }
 
   AppBar _appBarWidget() {
     return AppBar(
-        backgroundColor: Colors.grey.shade100,
+        backgroundColor: DefaultColorPalette.grey100,
         centerTitle: true,
-        title: const Text("Dashboard"),
+        title: Text(LocaleKeys.dashboard_dashboard.tr()),
         actions: const [
           CustomPadding.largeHorizontal(
-            widget: Icon(Icons.filter_alt_off_outlined),
+            widget: CustomIcon.filterIcon(),
           ),
         ]);
   }
