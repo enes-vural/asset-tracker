@@ -53,7 +53,7 @@ void main() {
 
       expect(signInResult, isA<Right<void, UserLoginResponseEntity>>());
       signInResult.fold((_) => fail("Expected Right but got left"),
-          (right) => expect(right.uid, "success-token"));
+          (right) => expect(right.uid, "success-credential"));
     });
 
     test("Authentication Repository Failed (User not found) Test", () async {

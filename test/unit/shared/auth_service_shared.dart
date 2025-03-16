@@ -27,12 +27,17 @@ class MockAuthHelper {
     when(mockFirebaseAuth.signInWithEmailAndPassword(
             email: anyNamed("email"), password: anyNamed("password")))
         .thenAnswer((_) async => _userCredential);
+
+    // when(_mockAuthUserModel.user).thenReturn(_mockUser);
+    // when(_mockAuthUserModel.uid).thenReturn("success-credential");
+    // when(_mockAuthUserModel.idToken).thenReturn("success-token");
   }
 
   void whenSuccessCredAndToken() async {
     when(_userCredential.user).thenReturn(_mockUser);
     when(_mockUser.uid).thenReturn('success-credential');
-    when(_mockUser.getIdToken()).thenAnswer((_) async => "success-token");
+    when(_mockUser.getIdToken()).thenAnswer((_) async => "test-id-token");
+    when(_mockUser.displayName).thenReturn("Test User");
   }
 
   void whenFailedLogin(String email, String password) {
