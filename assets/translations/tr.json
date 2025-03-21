@@ -29,6 +29,7 @@
         }
     },
     "dashboard":{
+        "assetDataNull":"Kullanıcının herhangi bir varlığı yok",
         "availableBalance":"Mevcut Bakiye",
         "totalBalance":"Toplam Bakiye",
         "dashboard":"Panel",
@@ -60,6 +61,10 @@
 
     },
     "home": {
+        "startTradingText": "Kolayca ticarete başlayın!",
+        "secureAssetText":"Güvenli bir şekilde ticaret yapın",
+        "welcomeAssetText":"Hoşgeldiniz",
+        "finishAssetText":"Cüzdanınızı ayarladıktan sonra saniyeler içinde al-sat yapın",
         "search":"Ara",
         "socketConnectionInit":"Socket'e bağlanılıyor.",
         "buy": "Alış",

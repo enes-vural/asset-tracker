@@ -83,6 +83,7 @@ class _HomeViewState extends ConsumerState<HomeView> {
                   const BalanceProfitTextWidget(),
                   const CustomSizedBox.hugeGap(),
                   Row(
+                    mainAxisAlignment: MainAxisAlignment.spaceEvenly,
                     children: [
                       _tabBarButtonWalletWidget(viewModel, context),
                       _tabBarButtonTradeWidget(viewModel, context),

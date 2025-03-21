@@ -29,6 +29,7 @@
         }
     },
     "dashboard":{
+        "assetDataNull":"User has no any assets",
         "availableBalance":"Available Balance",
         "totalBalance":"Total Balance",
         "dashboard":"Dashboard",
@@ -62,6 +63,10 @@
 
     },
         "home": {
+          "startTradingText": "Start trading with ease!",
+          "secureAssetText":"Secure your assets today!",
+          "welcomeAssetText":"Welcome to Asset Tracker",
+          "finishAssetText":"Finish your trades with ease",
           "search":"Search",
           "socketConnectionInit":"Connection to socket",
           "buy": "Buy",

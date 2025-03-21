@@ -23,6 +23,7 @@ abstract class  LocaleKeys {
   static const auth_response_generalErr = 'auth.response.generalErr';
   static const auth_response = 'auth.response';
   static const auth = 'auth';
+  static const dashboard_assetDataNull = 'dashboard.assetDataNull';
   static const dashboard_availableBalance = 'dashboard.availableBalance';
   static const dashboard_totalBalance = 'dashboard.totalBalance';
   static const dashboard_dashboard = 'dashboard.dashboard';
@@ -51,6 +52,10 @@ abstract class  LocaleKeys {
   static const trade_userIdNull = 'trade.userIdNull';
   static const trade_nullAssetCodes = 'trade.nullAssetCodes';
   static const trade = 'trade';
+  static const home_startTradingText = 'home.startTradingText';
+  static const home_secureAssetText = 'home.secureAssetText';
+  static const home_welcomeAssetText = 'home.welcomeAssetText';
+  static const home_finishAssetText = 'home.finishAssetText';
   static const home_search = 'home.search';
   static const home_socketConnectionInit = 'home.socketConnectionInit';
   static const home_buy = 'home.buy';
