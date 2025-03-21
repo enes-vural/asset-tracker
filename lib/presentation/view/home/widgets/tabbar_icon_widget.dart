@@ -25,7 +25,7 @@ class TabBarIconWidget extends ConsumerWidget {
           onTap: onTap,
           child: Container(
             height: 60,
-            width: ResponsiveSize(context).screenWidth.toPercent(20),
+            width: ResponsiveSize(context).screenWidth.toPercent(15),
             decoration: BoxDecoration(
               color: Colors.purple.shade50,
               borderRadius: BorderRadius.circular(AppSize.largeRadius),

@@ -70,8 +70,8 @@ class FirestoreRepository implements IFirestoreRepository {
           await firestoreService.getUserAssets(UserUidModel.fromEnttiy(model));
 
       if (userAssetsData == null || userAssetsData.isEmpty) {
-        return const Left(
-            DatabaseErrorEntity(message: "User assets data is null"));
+        return Left(DatabaseErrorEntity(
+            message: LocaleKeys.dashboard_assetDataNull.tr()));
       }
 
       for (var dataIndex in userAssetsData) {
