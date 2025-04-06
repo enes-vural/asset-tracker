@@ -1,4 +1,5 @@
 import 'package:asset_tracker/domain/entities/database/enttiy/buy_currency_entity.dart';
+import 'package:cloud_firestore/cloud_firestore.dart';
 
 final class BuyCurrencyModel {
   final double amount;
@@ -18,12 +19,12 @@ final class BuyCurrencyModel {
 
   Map<String, dynamic> toJson() {
     return {
-      'amount': amount,
-      'price': price,
+      'amount': FieldValue.increment(amount),
+      'price': FieldValue.increment(price),
       'currency': currency,
       'date': date,
       'userId': userId,
-      'total': total,
+      'total': FieldValue.increment(total),
     };
   }
 

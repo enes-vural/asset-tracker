@@ -19,6 +19,12 @@ final class CustomTextStyle {
     return GoogleFonts.poppins(color: color, fontSize: size);
   }
 
+  static TextStyle balanceTextStyle(bool isLight) => _baseStyle(
+      color: isLight
+          ? DefaultColorPalette.grey400
+          : DefaultColorPalette.vanillaBlack,
+      size: 32);
+
   static TextStyle goldColorPoppins(double size) =>
       _basePoppinStyle(color: defaultTheme.primaryColor, size: size);
 
@@ -34,6 +40,14 @@ final class CustomTextStyle {
         fontSize: size,
       );
 
+  static TextStyle profitColorPoppins(double size, double? position) =>
+      GoogleFonts.poppins(
+        color: position == 1
+            ? DefaultColorPalette.vanillaGreen
+            : DefaultColorPalette.errorRed,
+        fontSize: size,
+      );
+
   static TextStyle redColorPoppins(double size) =>
       _basePoppinStyle(color: DefaultColorPalette.errorRed, size: size);
 
@@ -46,12 +60,12 @@ final class CustomTextStyle {
 final class CustomDecoration extends BoxDecoration {
   CustomDecoration.roundBox(
       {required double radius,
-      required Color borderColor,
-      required Color? containerColor,
-      required double? borderWidth})
+      Color? borderColor,
+      Color? containerColor,
+      double? borderWidth})
       : super(
           border: Border.all(
-              color: borderColor,
+              color: borderColor ?? Colors.transparent,
               width: borderWidth ?? AppSize.defaultBorderWidth),
           borderRadius: BorderRadius.circular(radius),
           color: containerColor ?? DefaultColorPalette.vanillaTranparent,

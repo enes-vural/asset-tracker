@@ -89,4 +89,23 @@ class MockFirebaseAuthRepository extends _i1.Mock
             )),
           ) as _i5.Future<
               _i3.Either<_i6.AuthErrorEntity, _i7.UserLoginResponseEntity>>);
+
+  @override
+  _i5.Stream<dynamic> getUserStateChanges() => (super.noSuchMethod(
+        Invocation.method(
+          #getUserStateChanges,
+          [],
+        ),
+        returnValue: _i5.Stream<dynamic>.empty(),
+      ) as _i5.Stream<dynamic>);
+
+  @override
+  _i5.Future<void> signOut() => (super.noSuchMethod(
+        Invocation.method(
+          #signOut,
+          [],
+        ),
+        returnValue: _i5.Future<void>.value(),
+        returnValueForMissingStub: _i5.Future<void>.value(),
+      ) as _i5.Future<void>);
 }

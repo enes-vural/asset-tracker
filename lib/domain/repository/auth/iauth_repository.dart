@@ -9,4 +9,8 @@ abstract interface class IAuthRepository {
       UserLoginEntity entity);
 
   String? getUserId();
+
+  Stream getUserStateChanges();
+
+  Future<void> signOut();
 }

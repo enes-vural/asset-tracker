@@ -1,4 +1,5 @@
 import 'package:asset_tracker/core/mixins/validation_mixin.dart';
+import 'package:asset_tracker/data/model/auth/firebase_auth_user_model.dart';
 import 'package:asset_tracker/data/service/remote/auth/firebase_auth_service.dart';
 import 'package:asset_tracker/domain/entities/auth/user_login_entity.dart';
 import 'package:mockito/mockito.dart';
@@ -33,32 +34,28 @@ void main() {
     });
 
     test("Succesfull Login Test", () async {
-      final mockUserCredential = mockAuthHelper.userCreds;
+      const userEntity =
+          UserLoginEntity(userName: "test@gmail.com", password: "123456");
+
       final mockUser = mockAuthHelper.user;
 
       mockAuthHelper.whenSuccessLogin(
           TestConstants.correctEmail, TestConstants.correctPassword);
 
-      when(mockAuthHelper.user.uid).thenReturn("test-uid-passes");
+      mockAuthHelper.whenSuccessCredAndToken();
 
-      when(mockAuthHelper.userCreds.user).thenReturn(mockUser);
-
-      when(mockAuthHelper.user.displayName).thenReturn("Test User");
-
-      final loginResult = await firebaseAuthService.signInUser(
-          const UserLoginEntity(
-              userName: "test@gmail.com", password: "123456"));
+      final FirebaseAuthUser? loginResult =
+          await firebaseAuthService.signInUser(userEntity);
 
       final user = loginResult?.user;
-
       final displayNameResult = user?.displayName;
-
       final String? testUid = user?.uid;
+      final String? idToken = await user?.getIdToken();
 
-      expect(loginResult, mockUserCredential);
       expect(user, mockUser);
       expect(displayNameResult, "Test User");
-      expect(testUid, "test-uid-passes");
+      expect(testUid, "success-credential");
+      expect(idToken, "test-id-token");
     });
 
     test("Login Failed Test (Invalid Credentials)", () async {

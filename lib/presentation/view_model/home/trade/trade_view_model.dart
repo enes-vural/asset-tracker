@@ -1,9 +1,13 @@
+// ignore_for_file: unused_local_variable
+
 import 'package:asset_tracker/core/config/constants/global/key/fom_keys.dart';
 import 'package:asset_tracker/core/config/constants/string_constant.dart';
 import 'package:asset_tracker/core/config/localization/generated/locale_keys.g.dart';
 import 'package:asset_tracker/core/helpers/snackbar.dart';
 import 'package:asset_tracker/data/model/database/response/asset_code_model.dart';
 import 'package:asset_tracker/domain/entities/database/enttiy/buy_currency_entity.dart';
+import 'package:asset_tracker/domain/entities/database/enttiy/usar_data_entity.dart';
+import 'package:asset_tracker/domain/entities/database/enttiy/user_uid_entity.dart';
 import 'package:asset_tracker/injection.dart';
 import 'package:easy_localization/easy_localization.dart';
 import 'package:flutter/cupertino.dart';
@@ -32,6 +36,7 @@ class TradeViewModel extends ChangeNotifier {
     notifyListeners();
   }
 
+//tamam
   List<AssetCodeModel> getCurrencyList(WidgetRef ref) =>
       ref.read(appGlobalProvider.notifier).assetCodes;
 
@@ -46,7 +51,7 @@ class TradeViewModel extends ChangeNotifier {
     final price = double.tryParse(priceController.text) ?? 0.0;
     final currency = selectedCurrency;
     final date = selectedDate;
-    final currentUserId = ref.read(authGlobalProvider).currentUserId;
+    final currentUserId = ref.read(authGlobalProvider).getCurrentUserId;
 
     if (currency == null) {
       EasySnackBar.show(context, LocaleKeys.trade_invalidType.tr());
@@ -76,7 +81,7 @@ class TradeViewModel extends ChangeNotifier {
 
     request.fold((failure) {
       EasySnackBar.show(context, failure.message);
-    }, (success) {
+    }, (success) async {
       EasySnackBar.show(
         context,
         LocaleKeys.trade_success.tr(
@@ -87,6 +92,28 @@ class TradeViewModel extends ChangeNotifier {
           },
         ),
       );
+      UserDataEntity? userData =
+          ref.watch(appGlobalProvider.notifier).getUserData;
+
+      //alım satım durumlaında bizden kaynaklı olan veya olmayan bir durumdan
+      //dolayı işlem başarılı zannedilirse ve kullanıcı bilgileri güncellenmezse
+      //direkt olarak son bakiye hesaplamalarını provider üzerinden yönetiyoruz
+      //ama bu durumlara karşıda bir güvenlik önlemi olarak kullanıcı bilgilerini
+      //her işlem sonrasında database den çekerek güncelliyoruz.
+      final latestUserData = await ref
+          .read(getUserDataUseCaseProvider)
+          .call(UserUidEntity(userId: currentUserId));
+
+      latestUserData.fold(
+        (l) {},
+        (newUserData) {
+          userData = newUserData;
+          //TODO: bug recall after dispoe
+          ref.read(appGlobalProvider.notifier).updateUserData(
+              newUserData.copyWith());
+        },
+      );
+
       amountController.clear();
       priceController.clear();
       notifyListeners();

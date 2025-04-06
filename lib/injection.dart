@@ -13,8 +13,10 @@ import 'package:asset_tracker/domain/repository/web/iweb_socket_repository.dart'
 import 'package:asset_tracker/domain/usecase/auth/auth_use_case.dart';
 import 'package:asset_tracker/domain/usecase/database/buy_currency_use_case.dart';
 import 'package:asset_tracker/domain/usecase/database/get_currency_code_use_case.dart';
+import 'package:asset_tracker/domain/usecase/database/get_user_data_use_case.dart';
 import 'package:asset_tracker/domain/usecase/web/web_use_case.dart';
 import 'package:asset_tracker/presentation/view_model/auth/auth_view_model.dart';
+import 'package:asset_tracker/presentation/view_model/home/dashboard/dashboard_view_model.dart';
 import 'package:asset_tracker/presentation/view_model/home/home_view_model.dart';
 import 'package:asset_tracker/presentation/view_model/home/trade/trade_view_model.dart';
 import 'package:asset_tracker/presentation/view_model/splash/splash_view_model.dart';
@@ -30,9 +32,8 @@ final appGlobalProvider = ChangeNotifierProvider<AppGlobalProvider>((ref) {
 });
 
 final authGlobalProvider = ChangeNotifierProvider<AuthGlobalProvider>((ref) {
-  return AuthGlobalProvider();
+  return AuthGlobalProvider(ref);
 });
-
 
 //Riverpod ref.watch() ile sadece gerektiği ve değiştiği yerde çağırdığı için aslında bir nevi
 //lazy injection görevi görüyor.
@@ -70,7 +71,6 @@ final webRepositoryProvider = Provider<IWebSocketRepository>((ref) {
   return WebSocketRepository(socketService: webSocketService);
 });
 
-
 final firestoreRepositoryProvider = Provider<FirestoreRepository>((ref) {
   return FirestoreRepository(firestoreService: firestoreService);
 });
@@ -88,6 +88,11 @@ final getAssetCodesUseCaseProvider = Provider<GetCurrencyCodeUseCase>((ref) {
 final buyCurrencyUseCaseProvider = Provider<BuyCurrencyUseCase>((ref) {
   final _firestoreRepository = ref.watch(firestoreRepositoryProvider);
   return BuyCurrencyUseCase(firestoreRepository: _firestoreRepository);
+});
+
+final getUserDataUseCaseProvider = Provider<GetUserDataUseCase>((ref) {
+  final _firestoreRepository = ref.watch(firestoreRepositoryProvider);
+  return GetUserDataUseCase(firestoreRepository: _firestoreRepository);
 });
 
 final signInUseCaseProvider = Provider<SignInUseCase>((ref) {
@@ -118,5 +123,10 @@ final homeViewModelProvider = ChangeNotifierProvider<HomeViewModel>((ref) {
 
 final tradeViewModelProvider = ChangeNotifierProvider<TradeViewModel>((ref) {
   return TradeViewModel();
+});
+
+final dashboardViewModelProvider =
+    ChangeNotifierProvider<DashboardViewModel>((ref) {
+  return DashboardViewModel();
 });
 //test@gmail.com
