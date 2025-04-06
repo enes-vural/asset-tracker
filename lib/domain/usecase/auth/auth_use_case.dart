@@ -14,4 +14,8 @@ class SignInUseCase implements BaseUseCase {
   Future<Either<AuthErrorEntity, UserLoginResponseEntity>> call(params) async {
     return await _authRepository.signIn(params);
   }
+  //sign out için ayrı use case açılabilir. ama şimdilik gerek yok.
+  Future<void> signOut() async {
+    return await _authRepository.signOut();
+  }
 }

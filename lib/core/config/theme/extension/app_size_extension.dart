@@ -75,4 +75,13 @@ final class AppSize {
 
   ///22.0
   static const double hugeRadius = 22.0;
+
+  ///40.0
+  static const double chartCenterRadius = 25.0;
+
+  ///80.0
+  static const double chartRadius = 80.0;
+
+  ///32.0
+  static const double largeIcon = 32.0;
 }

@@ -4,21 +4,25 @@ final class DefaultLocalStrings {
   DefaultLocalStrings._();
 
   static const emptyText = "";
+  static const emptyBalance = "0.00";
+  static const emptyFraction = "00";
+  static const minus = "-";
+  static const turkishLira = "₺";
 
+  static const censoredText = "**********";
   //Router
   //dont localize here in future
   static const splashRoute = "/default_splash";
   static const loginRoute = "/app_login";
   static const homeRoute = "/home";
+  static const dashboardRoute = "/dashboard";
   //trade route can be child path from home route.
   static const tradeRoute = "/trade/:currency";
   static const replaceInRouteName = "View,Route";
 
-
   static const currency = "currency";
   static const amount = "amount";
   static const price = "price";
-  
 
   static const goldCoin = "gold_coin";
   static const chfCoin = "chf_coin";
