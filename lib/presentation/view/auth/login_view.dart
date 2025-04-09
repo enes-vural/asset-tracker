@@ -2,6 +2,7 @@ import 'package:asset_tracker/core/config/constants/global/key/fom_keys.dart';
 import 'package:asset_tracker/core/config/constants/global/key/widget_keys.dart';
 import 'package:asset_tracker/core/mixins/validation_mixin.dart';
 import 'package:asset_tracker/core/widgets/custom_align.dart';
+import 'package:asset_tracker/core/widgets/custom_sized_box.dart';
 import 'package:asset_tracker/injection.dart';
 import 'package:auto_route/annotations.dart';
 import 'package:easy_localization/easy_localization.dart';
@@ -69,11 +70,25 @@ class _LoginViewState extends ConsumerState<LoginView> with ValidatorMixin {
                 label: LocaleKeys.auth_signIn.tr(),
                 voidCallBack: () => _submit(authViewModel, context),
               ),
+              const CustomSizedBox.smallGap(),
+              _dontHaveAccountButtonWidget(authViewModel, context),
               const Spacer(),
             ],
           ),
         ),
       ),
+    );
+  }
+
+  Center _dontHaveAccountButtonWidget(
+      AuthViewModel authViewModel, BuildContext context) {
+    return Center(
+      child: TextButton(
+          child: Text("Don't have an account?, register now",
+              style: CustomTextStyle.blackColorPoppins(AppSize.smallText)),
+          onPressed: () {
+            authViewModel.routeRegisterView(context);
+          }),
     );
   }
 

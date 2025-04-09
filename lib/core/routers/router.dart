@@ -13,6 +13,7 @@ class Routers {
   static const String homePath = DefaultLocalStrings.homeRoute;
   static const String tradePath = DefaultLocalStrings.tradeRoute;
   static const String dashboardPath = DefaultLocalStrings.dashboardRoute;
+  static const String registerPath = DefaultLocalStrings.registerRoute;
 
   void pushReplaceNamed(BuildContext context, String routePath) {
     AutoRouter.of(context).pushNamed(routePath);

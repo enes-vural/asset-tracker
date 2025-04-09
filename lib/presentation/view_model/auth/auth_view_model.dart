@@ -21,6 +21,10 @@ class AuthViewModel extends ChangeNotifier {
     notifyListeners();
   }
 
+  routeRegisterView(BuildContext context) {
+    Routers.instance.pushReplaceNamed(context, Routers.registerPath);
+  }
+
   Future signInUser(WidgetRef ref, BuildContext context) async {
     if (!(GlobalFormKeys.loginFormsKey.currentState?.validate() ?? true)) {
       return;
