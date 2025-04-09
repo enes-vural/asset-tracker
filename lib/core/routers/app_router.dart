@@ -17,7 +17,10 @@ class AppRouter extends RootStackRouter {
           page: TradeRoute.page,
           //initial: true
         ),
-
+        AutoRoute(
+          path: DefaultLocalStrings.registerRoute,
+          page: RegisterRoute.page,
+        ),
         AutoRoute(
           path: DefaultLocalStrings.dashboardRoute,
           page: DashboardRoute.page,

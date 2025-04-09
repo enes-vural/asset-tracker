@@ -38,7 +38,7 @@ class SplashViewModel extends ChangeNotifier {
     //if user data is not fetched from firebase, navigate to login page
     userData.fold(
         (DatabaseErrorEntity failure) =>
-            _navigateHomeOrLogin(context, access: false),
+            _navigateHomeOrLogin(context, access: true),
 
         //if user data is fetched from firebase, update app global provider and navigate to home page
         (UserDataEntity success) async {
