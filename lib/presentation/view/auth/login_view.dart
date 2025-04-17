@@ -31,49 +31,53 @@ class _LoginViewState extends ConsumerState<LoginView> with ValidatorMixin {
   Widget build(BuildContext context) {
     //bridge to viewModel :)
     final AuthViewModel authViewModel = ref.watch(authViewModelProvider);
+    bool canPop = ref.watch(isAuthProcessingProvider.notifier).state;
     //
-    return Scaffold(
-      ///vanilla white background color by theme
-      backgroundColor: Theme.of(context).scaffoldBackgroundColor,
-      //bunu her sayfada yapmak yerine base stfull widget olusutrulabilir
-      resizeToAvoidBottomInset: false,
-      //appbar
-      appBar: AppBar(
-        title: _appBarTitleWidget(),
-        automaticallyImplyLeading: false,
-      ),
-      //body
-      // large a düzeltildi ekstra constructor içinde parametre verilmekten kaçınıldı
-      body: CustomPadding.largeHorizontal(
-        widget: Form(
-          key: GlobalFormKeys.loginFormsKey,
-          autovalidateMode: AutovalidateMode.always,
-          child: Column(
-            mainAxisAlignment: MainAxisAlignment.spaceBetween,
-            crossAxisAlignment: CrossAxisAlignment.start,
-            children: [
-              _authLogoWidget(),
-              _signInTextWidget(),
-              AuthFormWidget.email(
-                key: WidgetKeys.loginEmailTextFieldKey,
-                emailController: authViewModel.emailController,
-                emailValidator: checkEmail,
-              ),
-              AuthFormWidget.password(
-                key: WidgetKeys.loginPasswordTextFieldKey,
-                passwordController: authViewModel.passwordController,
-                passwordValidator: checkPassword,
-              ),
-              _forgotPasswordWidget(),
-              AuthSubmitWidget(
-                key: WidgetKeys.loginSubmitButtonKey,
-                label: LocaleKeys.auth_signIn.tr(),
-                voidCallBack: () => _submit(authViewModel, context),
-              ),
-              const CustomSizedBox.smallGap(),
-              _dontHaveAccountButtonWidget(authViewModel, context),
-              const Spacer(),
-            ],
+    return PopScope(
+      canPop: canPop,
+      child: Scaffold(
+        ///vanilla white background color by theme
+        backgroundColor: Theme.of(context).scaffoldBackgroundColor,
+        //bunu her sayfada yapmak yerine base stfull widget olusutrulabilir
+        resizeToAvoidBottomInset: false,
+        //appbar
+        appBar: AppBar(
+          title: _appBarTitleWidget(),
+          automaticallyImplyLeading: false,
+        ),
+        //body
+        // large a düzeltildi ekstra constructor içinde parametre verilmekten kaçınıldı
+        body: CustomPadding.largeHorizontal(
+          widget: Form(
+            key: GlobalFormKeys.loginFormsKey,
+            autovalidateMode: AutovalidateMode.always,
+            child: Column(
+              mainAxisAlignment: MainAxisAlignment.spaceBetween,
+              crossAxisAlignment: CrossAxisAlignment.start,
+              children: [
+                _authLogoWidget(),
+                _signInTextWidget(),
+                AuthFormWidget.email(
+                  key: WidgetKeys.loginEmailTextFieldKey,
+                  emailController: authViewModel.emailController,
+                  emailValidator: checkEmail,
+                ),
+                AuthFormWidget.password(
+                  key: WidgetKeys.loginPasswordTextFieldKey,
+                  passwordController: authViewModel.passwordController,
+                  passwordValidator: checkPassword,
+                ),
+                _forgotPasswordWidget(),
+                AuthSubmitWidget(
+                  key: WidgetKeys.loginSubmitButtonKey,
+                  label: LocaleKeys.auth_signIn.tr(),
+                  voidCallBack: () => _submit(authViewModel, context),
+                ),
+                const CustomSizedBox.smallGap(),
+                _dontHaveAccountButtonWidget(authViewModel, context),
+                const Spacer(),
+              ],
+            ),
           ),
         ),
       ),

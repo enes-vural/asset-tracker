@@ -129,4 +129,9 @@ final dashboardViewModelProvider =
     ChangeNotifierProvider<DashboardViewModel>((ref) {
   return DashboardViewModel();
 });
+
+//-------------------CUSTOM PROVIDERS-------------------
+final isAuthProcessingProvider = StateProvider<bool>((ref) {
+  return true;
+});
 //test@gmail.com
