@@ -38,6 +38,19 @@ extension ConvertAuthErrorType on AuthErrorState {
         return LocaleKeys.auth_response_userDisabled.tr();
       case AuthErrorState.WRONG_PASSWORD:
         return LocaleKeys.auth_response_wrongPassword.tr();
+      case AuthErrorState.EMAIL_EXISTS:
+        return LocaleKeys.auth_response_emailExist.tr();
+      case AuthErrorState.WEAK_PASSWORD:
+        return LocaleKeys.auth_response_weakPassword.tr();
+      case AuthErrorState.OPERATION_NOT_ALLOWED:
+        return LocaleKeys.auth_response_operationNotAllowed.tr();
+      case AuthErrorState.TOO_MANY_REQUESTS:
+        return LocaleKeys.auth_response_tooManyRequests.tr();
+      case AuthErrorState.NETWORK_ERROR:
+        return LocaleKeys.auth_response_networkError.tr();
+      case AuthErrorState.USER_TOKEN_EXPIRED:
+        return LocaleKeys.auth_response_userTokenExpired.tr();
+        
       default:
         return LocaleKeys.auth_response_generalErr.tr();
     }

@@ -76,7 +76,7 @@ class AppGlobalProvider extends ChangeNotifier {
       return null;
     }
 
-    double globalPrice = double.parse(globalIndex.satis);
+    double globalPrice = double.parse(globalIndex.alis);
 
     double totalCurrentValue = globalPrice * userAmount;
 
@@ -115,7 +115,7 @@ class AppGlobalProvider extends ChangeNotifier {
 
       if (currency?.code != null) {
         double oldPrice = element.price * element.amount;
-        double newPrice = double.parse(currency!.satis) * element.amount;
+        double newPrice = double.parse(currency!.alis) * element.amount;
         double latestPrice = newPrice - oldPrice;
         newBalance += latestPrice;
       }

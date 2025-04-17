@@ -1,4 +1,4 @@
-import 'package:asset_tracker/domain/entities/auth/user_login_entity.dart';
+import 'package:asset_tracker/domain/entities/auth/request/user_login_entity.dart';
 
 final class TestConstants {
   TestConstants._();
