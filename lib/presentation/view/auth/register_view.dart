@@ -24,41 +24,44 @@ class _RegisterViewState extends ConsumerState<RegisterView>
   @override
   Widget build(BuildContext context) {
     final viewModel = ref.watch(authViewModelProvider);
-    return Scaffold(
-        appBar: AppBar(
-          centerTitle: true,
-          title: const Text("Register"),
-        ),
-        body: CustomPadding.largeHorizontal(
-          widget: Form(
-            autovalidateMode: AutovalidateMode.always,
-            key: GlobalFormKeys.registerFormsKey,
-            child: Column(
-              mainAxisAlignment: MainAxisAlignment.start,
-              children: [
-                const CustomSizedBox.hugeGap(),
-                const Center(child: CircleMainLogoWidget()),
-                const CustomSizedBox.hugeGap(),
-                const CustomAlign.centerLeft(
-                    child: Text("Register your account into Asset Tracker")),
-                AuthFormWidget.email(
-                  emailController: viewModel.emailController,
-                  emailValidator: checkEmail,
-                ),
-                const CustomSizedBox.smallGap(),
-                AuthFormWidget.password(
-                  passwordController: viewModel.passwordController,
-                  passwordValidator: checkPassword,
-                ),
-                const CustomSizedBox.hugeGap(),
-                 
-                AuthSubmitWidget(
-                    label: "Register",
-                    voidCallBack: () async =>
-                        await viewModel.registerUser(ref, context)),
-              ],
-            ),
+    bool canPop = ref.watch(isAuthProcessingProvider.notifier).state;
+    return PopScope(
+      canPop: canPop,
+      child: Scaffold(
+          appBar: AppBar(
+            centerTitle: true,
+            title: const Text("Register"),
           ),
-        ));
+          body: CustomPadding.largeHorizontal(
+            widget: Form(
+              autovalidateMode: AutovalidateMode.always,
+              key: GlobalFormKeys.registerFormsKey,
+              child: Column(
+                mainAxisAlignment: MainAxisAlignment.start,
+                children: [
+                  const CustomSizedBox.hugeGap(),
+                  const Center(child: CircleMainLogoWidget()),
+                  const CustomSizedBox.hugeGap(),
+                  const CustomAlign.centerLeft(
+                      child: Text("Register your account into Asset Tracker")),
+                  AuthFormWidget.email(
+                    emailController: viewModel.emailController,
+                    emailValidator: checkEmail,
+                  ),
+                  const CustomSizedBox.smallGap(),
+                  AuthFormWidget.password(
+                    passwordController: viewModel.passwordController,
+                    passwordValidator: checkPassword,
+                  ),
+                  const CustomSizedBox.hugeGap(),
+                  AuthSubmitWidget(
+                      label: "Register",
+                      voidCallBack: () async =>
+                          await viewModel.registerUser(ref, context)),
+                ],
+              ),
+            ),
+          )),
+    );
   }
 }

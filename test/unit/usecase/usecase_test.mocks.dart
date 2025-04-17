@@ -12,8 +12,12 @@ import 'package:asset_tracker/domain/entities/auth/error/auth_error_entity.dart'
     as _i6;
 import 'package:asset_tracker/domain/entities/auth/request/user_login_entity.dart'
     as _i8;
+import 'package:asset_tracker/domain/entities/auth/request/user_register_entity.dart'
+    as _i10;
 import 'package:asset_tracker/domain/entities/auth/response/user_login_response_entity.dart'
     as _i7;
+import 'package:asset_tracker/domain/entities/auth/response/user_register_reponse_entity.dart'
+    as _i9;
 import 'package:dartz/dartz.dart' as _i3;
 import 'package:mockito/mockito.dart' as _i1;
 
@@ -31,8 +35,8 @@ import 'package:mockito/mockito.dart' as _i1;
 // ignore_for_file: camel_case_types
 // ignore_for_file: subtype_of_sealed_class
 
-class _FakeIAuthService_0<T> extends _i1.SmartFake
-    implements _i2.IAuthService<T> {
+class _FakeIAuthService_0<L, R> extends _i1.SmartFake
+    implements _i2.IAuthService<L, R> {
   _FakeIAuthService_0(
     Object parent,
     Invocation parentInvocation,
@@ -62,13 +66,13 @@ class MockFirebaseAuthRepository extends _i1.Mock
   }
 
   @override
-  _i2.IAuthService<dynamic> get authService => (super.noSuchMethod(
+  _i2.IAuthService<dynamic, dynamic> get authService => (super.noSuchMethod(
         Invocation.getter(#authService),
-        returnValue: _FakeIAuthService_0<dynamic>(
+        returnValue: _FakeIAuthService_0<dynamic, dynamic>(
           this,
           Invocation.getter(#authService),
         ),
-      ) as _i2.IAuthService<dynamic>);
+      ) as _i2.IAuthService<dynamic, dynamic>);
 
   @override
   _i5.Future<_i3.Either<_i6.AuthErrorEntity, _i7.UserLoginResponseEntity>>
@@ -89,6 +93,26 @@ class MockFirebaseAuthRepository extends _i1.Mock
             )),
           ) as _i5.Future<
               _i3.Either<_i6.AuthErrorEntity, _i7.UserLoginResponseEntity>>);
+
+  @override
+  _i5.Future<_i3.Either<_i6.AuthErrorEntity, _i9.UserRegisterReponseEntity>>
+      registerUser(_i10.UserRegisterEntity? entity) => (super.noSuchMethod(
+            Invocation.method(
+              #registerUser,
+              [entity],
+            ),
+            returnValue: _i5.Future<
+                _i3.Either<_i6.AuthErrorEntity,
+                    _i9.UserRegisterReponseEntity>>.value(_FakeEither_1<
+                _i6.AuthErrorEntity, _i9.UserRegisterReponseEntity>(
+              this,
+              Invocation.method(
+                #registerUser,
+                [entity],
+              ),
+            )),
+          ) as _i5.Future<
+              _i3.Either<_i6.AuthErrorEntity, _i9.UserRegisterReponseEntity>>);
 
   @override
   _i5.Stream<dynamic> getUserStateChanges() => (super.noSuchMethod(
