@@ -2,7 +2,7 @@ import 'package:asset_tracker/data/repository/auth/auth_repository.dart';
 import 'package:asset_tracker/data/service/remote/auth/firebase_auth_service.dart';
 import 'package:asset_tracker/data/service/remote/auth/ifirebase_auth_service.dart';
 import 'package:asset_tracker/domain/entities/auth/error/auth_error_entity.dart';
-import 'package:asset_tracker/domain/entities/auth/user_login_response_entity.dart';
+import 'package:asset_tracker/domain/entities/auth/response/user_login_response_entity.dart';
 import 'package:asset_tracker/domain/repository/auth/iauth_repository.dart';
 import 'package:dartz/dartz.dart';
 import 'package:easy_localization/easy_localization.dart';

@@ -102,20 +102,24 @@ class _HomeViewState extends ConsumerState<HomeView> {
               ),
             ),
           ),
-          Positioned(
-            bottom: 30,
-            left: 20,
-            child: Row(
-              children: [
-                HomeViewSearchFieldWidget(viewModel: viewModel),
-                const CustomSizedBox.mediumWidth(),
-                HomeViewSwapButtonWidget(
-                  onTap: () {
-                    viewModel.clearText();
-                  },
-                ),
-              ],
-            ),
+          _homeClearButtonWidget(viewModel),
+        ],
+      ),
+    );
+  }
+
+  Positioned _homeClearButtonWidget(HomeViewModel viewModel) {
+    return Positioned(
+      bottom: 30,
+      left: 20,
+      child: Row(
+        children: [
+          HomeViewSearchFieldWidget(viewModel: viewModel),
+          const CustomSizedBox.mediumWidth(),
+          HomeViewSwapButtonWidget(
+            onTap: () {
+              viewModel.clearText();
+            },
           ),
         ],
       ),

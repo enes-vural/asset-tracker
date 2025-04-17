@@ -65,11 +65,11 @@ class CurrencyCardWidget extends StatelessWidget with GetCurrencyIconMixin {
         crossAxisAlignment: CrossAxisAlignment.center,
         children: [
           Text(
-            LocaleKeys.home_sell.tr(),
+            LocaleKeys.home_buy.tr(),
             style: CustomTextStyle.blackColorPoppins(AppSize.smallText),
           ),
           Text(
-            currency.satis.toString(),
+            currency.alis.toString(),
             style: CustomTextStyle.blackColorBoldPoppins(AppSize.small2Text),
           ),
         ],

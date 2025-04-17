@@ -10,9 +10,9 @@ import 'package:asset_tracker/data/service/remote/auth/iauth_service.dart'
     as _i2;
 import 'package:asset_tracker/domain/entities/auth/error/auth_error_entity.dart'
     as _i6;
-import 'package:asset_tracker/domain/entities/auth/user_login_entity.dart'
+import 'package:asset_tracker/domain/entities/auth/request/user_login_entity.dart'
     as _i8;
-import 'package:asset_tracker/domain/entities/auth/user_login_response_entity.dart'
+import 'package:asset_tracker/domain/entities/auth/response/user_login_response_entity.dart'
     as _i7;
 import 'package:dartz/dartz.dart' as _i3;
 import 'package:mockito/mockito.dart' as _i1;

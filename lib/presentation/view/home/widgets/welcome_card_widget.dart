@@ -39,7 +39,6 @@ class _WelcomeCardWidgetState extends State<WelcomeCardWidget> {
             description: cardDescriptions[index],
           );
         },
-        reverse: true,
         onPageChanged: (index) {},
       ),
     );

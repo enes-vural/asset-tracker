@@ -21,6 +21,14 @@ abstract class  LocaleKeys {
   static const auth_response_userDisabled = 'auth.response.userDisabled';
   static const auth_response_wrongPassword = 'auth.response.wrongPassword';
   static const auth_response_generalErr = 'auth.response.generalErr';
+  static const auth_response_emailExist = 'auth.response.emailExist';
+  static const auth_response_weakPassword = 'auth.response.weakPassword';
+  static const auth_response_operationNotAllowed =
+      'auth.response.operationNotAllowed';
+  static const auth_response_tooManyRequests = 'auth.response.tooManyRequests';
+  static const auth_response_networkError = 'auth.response.networkError';
+  static const auth_response_userTokenExpired =
+      'auth.response.userTokenExpired';
   static const auth_response = 'auth.response';
   static const auth = 'auth';
   static const dashboard_assetDataNull = 'dashboard.assetDataNull';

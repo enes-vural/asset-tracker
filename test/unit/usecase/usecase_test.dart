@@ -1,6 +1,6 @@
 import 'package:asset_tracker/data/repository/auth/auth_repository.dart';
 import 'package:asset_tracker/domain/entities/auth/error/auth_error_entity.dart';
-import 'package:asset_tracker/domain/entities/auth/user_login_response_entity.dart';
+import 'package:asset_tracker/domain/entities/auth/response/user_login_response_entity.dart';
 import 'package:asset_tracker/domain/usecase/auth/auth_use_case.dart';
 import 'package:dartz/dartz.dart';
 import 'package:mockito/annotations.dart';
