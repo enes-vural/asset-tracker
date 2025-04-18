@@ -4,7 +4,9 @@ import 'package:asset_tracker/core/config/localization/localization_manager.dart
 import 'package:asset_tracker/core/config/theme/default_theme.dart';
 import 'package:asset_tracker/core/routers/app_router.dart';
 import 'package:asset_tracker/core/config/localization/generated/locale_keys.g.dart';
+import 'package:asset_tracker/data/service/background/background_service.dart';
 import 'package:asset_tracker/injection.dart';
+import 'package:background_fetch/background_fetch.dart';
 import 'package:easy_localization/easy_localization.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
@@ -27,6 +29,10 @@ void main() async {
     //----------------------------------
     child: const ProviderScope(child: MyApp()),
   ));
+  await BackgroundService.instance.init();
+  BackgroundFetch.registerHeadlessTask(backgroundFetchHeadlessTask);
+  BackgroundService.instance
+      .addNewHeadlessTask('com.transistorsoft.customtask');
 }
 
 final appRouter = AppRouter();
