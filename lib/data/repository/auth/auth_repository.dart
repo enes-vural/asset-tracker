@@ -5,7 +5,6 @@ import 'package:asset_tracker/data/model/auth/iauth_user_model.dart';
 import 'package:asset_tracker/data/model/auth/request/user_login_model.dart';
 import 'package:asset_tracker/data/model/auth/request/user_register_model.dart';
 import 'package:asset_tracker/data/model/auth/response/user_login_response_model.dart';
-import 'package:asset_tracker/data/model/auth/response/user_register_response_model.dart';
 import 'package:asset_tracker/data/service/remote/auth/iauth_service.dart';
 import 'package:asset_tracker/domain/entities/auth/error/auth_error_entity.dart';
 import 'package:asset_tracker/domain/entities/auth/request/user_login_entity.dart';
@@ -15,8 +14,6 @@ import 'package:asset_tracker/domain/entities/auth/response/user_register_repons
 import 'package:asset_tracker/domain/repository/auth/iauth_repository.dart';
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:dartz/dartz.dart';
-import 'package:firebase_core/firebase_core.dart';
-import 'package:flutter/material.dart';
 
 /*class GoogleAuthRepository implements IAuthRepository{
   @override
