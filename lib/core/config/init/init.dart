@@ -1,3 +1,4 @@
+import 'package:asset_tracker/data/service/cache/hive_cache_service.dart';
 import 'package:easy_localization/easy_localization.dart';
 import 'package:firebase_core/firebase_core.dart';
 import 'package:flutter/material.dart';
@@ -12,6 +13,7 @@ final class AppInit {
     await Firebase.initializeApp(
       options: DefaultFirebaseOptions.currentPlatform,
     );
+    HiveCacheService.instance.init();
     Env.setup(); //Envied Initialize
   }
 }

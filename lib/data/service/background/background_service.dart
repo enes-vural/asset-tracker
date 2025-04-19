@@ -90,8 +90,8 @@ void backgroundFetchHeadlessTask(HeadlessTask task) async {
     // Burada yapman gereken işlemleri gerçekleştirebilirsin.
     // Örneğin, bir API çağrısı yapabilir veya veritabanına veri ekleyebilirsin.
   } else {
-    debugPrint("[HeadlessTask] Unknown task: $taskId");
+    debugPrint("[HeadlessTask111] Unknown task: $taskId");
   }
 
-  debugPrint("[HeadlessTask] Background task executed: $taskId");
+  debugPrint("[HeadlessTask111] Background task executed: $taskId");
 }
