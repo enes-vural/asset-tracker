@@ -1,5 +1,5 @@
-import 'package:asset_tracker/core/config/constants/global/key/fom_keys.dart';
-import 'package:asset_tracker/core/config/constants/global/key/widget_keys.dart';
+import 'package:asset_tracker/core/constants/global/key/fom_keys.dart';
+import 'package:asset_tracker/core/constants/global/key/widget_keys.dart';
 import 'package:asset_tracker/core/mixins/validation_mixin.dart';
 import 'package:asset_tracker/core/widgets/custom_align.dart';
 import 'package:asset_tracker/core/widgets/custom_sized_box.dart';

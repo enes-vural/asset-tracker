@@ -1,7 +1,3 @@
-///Auth Error Types
-///
-//Default String Constants sınıfından farklı bir sınıf olarak tanımladım burasınını
-//
 enum AuthErrorState {
   //------- LOGIN ERROR --------
   ACCOUNT_EXIST("account-exists-with-different-credential"),

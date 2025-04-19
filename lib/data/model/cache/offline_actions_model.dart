@@ -1,6 +1,7 @@
+import 'package:asset_tracker/core/constants/enums/cache/offline_action_enums.dart';
 import 'package:asset_tracker/data/model/auth/request/user_login_model.dart';
 import 'package:asset_tracker/data/model/auth/request/user_register_model.dart';
-import 'package:asset_tracker/data/service/cache/hive_cache_service.dart';
+
 
 final class OfflineActionsModel<T> {
   final OfflineActionType type;
@@ -22,13 +23,9 @@ final class OfflineActionsModel<T> {
   }
 
   factory OfflineActionsModel.fromJson(
-    Map<String, dynamic> json,
+    Map<dynamic, dynamic> json,
   ) {
-    final dynamic params = switch (json['type']) {
-      'LOGIN' => UserLoginModel.fromJson(json['params']),
-      'REGISTER' => UserRegisterModel.fromJson(json['params']),
-      _ => null,
-    };
+    final params = _getParamFromJson(json['type'], json['params']);
 
     return OfflineActionsModel(
       type: OfflineActionType.values.firstWhere((e) => e.name == json['type']),
@@ -36,5 +33,14 @@ final class OfflineActionsModel<T> {
           .firstWhere((e) => e.name == json['status']),
       params: params,
     );
+  }
+
+  static _getParamFromJson(String? type, Map<dynamic, dynamic> params) {
+    return switch (type) {
+      'LOGIN' => UserLoginModel.fromJson(Map<String, dynamic>.from(params)),
+      'REGISTER' =>
+        UserRegisterModel.fromJson(Map<String, dynamic>.from(params)),
+      _ => null,
+    };
   }
 }

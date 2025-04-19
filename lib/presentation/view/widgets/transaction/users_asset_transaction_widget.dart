@@ -1,3 +1,4 @@
+import 'package:asset_tracker/core/constants/enums/widgets/transaction_card_desc_text_type_enums.dart';
 import 'package:asset_tracker/core/config/theme/extension/app_size_extension.dart';
 import 'package:asset_tracker/core/config/theme/extension/number_format_extension.dart';
 import 'package:asset_tracker/core/config/theme/style_theme.dart';
@@ -124,6 +125,7 @@ class _UserAssetTransactionWidgetState
             type: TransactionCardDescriptionTextType.PURCHASE,
           ),
           TransactionCardDescriptionTextWidget(
+            //LOCALIZATION HERE TODO:
             label: "Selling Price:",
             stats: stats?.latestPriceTotal,
             type: TransactionCardDescriptionTextType.SELL,

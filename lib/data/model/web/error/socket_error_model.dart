@@ -1,7 +1,5 @@
+import 'package:asset_tracker/core/constants/enums/socket/socket_state_enums.dart';
 import 'package:asset_tracker/data/model/base/error/error_model.dart';
-
-import '../response/socket_state_response_model.dart';
-
 class SocketErrorModel extends BaseErrorModel {
   // şu anlık bir enum ile state belirtmeyeceğim
   final SocketStateEnum state;

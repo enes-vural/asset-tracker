@@ -1,4 +1,4 @@
-import 'package:asset_tracker/core/config/constants/string_constant.dart';
+import 'package:asset_tracker/core/constants/string_constant.dart';
 import 'package:asset_tracker/core/routers/app_router.gr.dart';
 import 'package:auto_route/auto_route.dart';
 

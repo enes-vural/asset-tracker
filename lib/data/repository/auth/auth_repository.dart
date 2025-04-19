@@ -1,5 +1,5 @@
-import 'package:asset_tracker/core/config/constants/string_constant.dart';
-import 'package:asset_tracker/data/model/auth/error/auth_error_state.dart';
+import 'package:asset_tracker/core/constants/enums/auth/auth_error_state_enums.dart';
+import 'package:asset_tracker/core/constants/string_constant.dart';
 import 'package:asset_tracker/data/model/auth/error/auth_response_model.dart';
 import 'package:asset_tracker/data/model/auth/iauth_user_model.dart';
 import 'package:asset_tracker/data/model/auth/request/user_login_model.dart';
@@ -48,7 +48,7 @@ class FirebaseAuthRepository implements IAuthRepository {
         //let's return => => =>
       } else {
         return Left(AuthErrorEntity.fromModel(
-            AuthErrorModel(errorCode: AuthErrorState.INVALID_CRED.value)));
+            AuthErrorModel(errorState: AuthErrorState.INVALID_CRED)));
       }
 
       //
@@ -58,14 +58,14 @@ class FirebaseAuthRepository implements IAuthRepository {
       //check firebase errors
       //convert it to entity before return
       return Left(
-          AuthErrorEntity.fromModel(AuthErrorModel.toErrorModel(error.code)));
+          AuthErrorEntity.fromModel(AuthErrorModel.fromErrorCode(error.code)));
       //
     } catch (e) {
       //check general errors
       //convert it to entity before return
       //aksi durumda direkt general error ver
       return Left(AuthErrorEntity.fromModel(
-          AuthErrorModel.toErrorModel(AuthErrorState.GENERAL_ERR.value)));
+          AuthErrorModel.fromErrorCode(AuthErrorState.GENERAL_ERR.value)));
       //
     }
   }
@@ -74,7 +74,7 @@ class FirebaseAuthRepository implements IAuthRepository {
   Future<Either<AuthErrorEntity, UserRegisterReponseEntity>> registerUser(
       UserRegisterEntity entity) async {
     final defaultErr = AuthErrorEntity.fromModel(
-        AuthErrorModel(errorCode: AuthErrorState.GENERAL_ERR.value));
+        AuthErrorModel(errorState: AuthErrorState.GENERAL_ERR));
 
     try {
       final UserCredential? response =
@@ -95,7 +95,7 @@ class FirebaseAuthRepository implements IAuthRepository {
         //Offline First
       }
       return Left(
-          AuthErrorEntity.fromModel(AuthErrorModel.toErrorModel(error.code)));
+          AuthErrorEntity.fromModel(AuthErrorModel.fromErrorCode(error.code)));
     }
   }
 

@@ -1,6 +1,6 @@
 // ignore_for_file: unused_element
 
-import 'package:asset_tracker/core/config/constants/string_constant.dart';
+import 'package:asset_tracker/core/constants/string_constant.dart';
 import 'package:asset_tracker/core/config/theme/default_theme.dart';
 import 'package:asset_tracker/core/config/theme/extension/app_size_extension.dart';
 import 'package:flutter/material.dart';

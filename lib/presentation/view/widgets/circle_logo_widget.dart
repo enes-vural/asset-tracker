@@ -1,4 +1,4 @@
-import 'package:asset_tracker/core/config/constants/asset_constant.dart';
+import 'package:asset_tracker/core/constants/asset_constant.dart';
 import 'package:asset_tracker/core/config/theme/default_theme.dart';
 import 'package:asset_tracker/core/config/theme/extension/asset_extension.dart';
 import 'package:asset_tracker/core/config/theme/extension/responsive_extension.dart';
