@@ -14,4 +14,18 @@ final class UserRegisterModel {
       password: entity.password,
     );
   }
+
+  Map<String, dynamic> toJson() {
+    return {
+      'userName': userName,
+      'password': password,
+    };
+  }
+
+  factory UserRegisterModel.fromJson(Map<String, dynamic> json) {
+    return UserRegisterModel(
+      userName: json['userName'] as String,
+      password: json['password'] as String,
+    );
+  }
 }

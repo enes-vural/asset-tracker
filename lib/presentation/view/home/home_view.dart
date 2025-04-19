@@ -1,3 +1,6 @@
+import 'package:asset_tracker/data/repository/cache/cache_repository.dart';
+import 'package:asset_tracker/data/service/cache/hive_cache_service.dart';
+import 'package:asset_tracker/domain/entities/auth/request/user_login_entity.dart';
 import 'package:auto_route/annotations.dart';
 import 'package:easy_localization/easy_localization.dart';
 import 'package:flutter/material.dart';
@@ -29,7 +32,6 @@ class HomeView extends ConsumerStatefulWidget {
 }
 
 class _HomeViewState extends ConsumerState<HomeView> {
-
   Future<void> callData() async =>
       await ref.read(homeViewModelProvider).getData(ref);
 
@@ -127,18 +129,38 @@ class _HomeViewState extends ConsumerState<HomeView> {
   }
 
   TabBarIconWidget _tabBarButtonDownloadWidget() {
-    return TabBarIconWidget(icon: IconDataConstants.download, onTap: () {});
+    return TabBarIconWidget(
+        icon: IconDataConstants.download,
+        onTap: () {
+          var actions = HiveCacheService.instance.getOfflineActions();
+          debugPrint("Actions: $actions");
+          for (var action in actions) {
+            debugPrint("Action Type: ${action.type}");
+            debugPrint("Action Status: ${action.status}");
+            debugPrint("Action Params: ${action.params.toJson()}");
+          }
+        });
   }
 
-  TabBarIconWidget _tabBarButtonSendWidget() =>
-      TabBarIconWidget(icon: Icons.send, onTap: () {});
+  TabBarIconWidget _tabBarButtonSendWidget() => TabBarIconWidget(
+      icon: Icons.send,
+      onTap: () {
+        CacheRepository(HiveCacheService.instance)
+            .saveOfflineAction<UserLoginEntity>(
+                OfflineActionType.LOGIN,
+                const UserLoginEntity(
+                  userName: "enes@gmail.com",
+                  password: "123456",
+                ));
+      });
 
   TabBarIconWidget _tabBarButtonTradeWidget(
       HomeViewModel viewModel, BuildContext context) {
     return TabBarIconWidget(
         icon: IconDataConstants.dollar,
         onTap: () {
-          viewModel.routeTradePage(context, null);
+          HiveCacheService.instance.clearAllOfflineActions();
+          //viewModel.routeTradePage(context, null);
         });
   }
 
@@ -163,7 +185,7 @@ class _HomeViewState extends ConsumerState<HomeView> {
   }
 
   IconButton exitAppIconButton(VoidCallback fn) => IconButton(
-      onPressed: fn,
+        onPressed: fn,
         icon: CustomIcon.exit(),
       );
 }
