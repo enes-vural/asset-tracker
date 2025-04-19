@@ -1,7 +1,7 @@
-import 'package:asset_tracker/data/repository/cache/cache_repository.dart';
-import 'package:asset_tracker/data/service/cache/hive_cache_service.dart';
+import 'package:asset_tracker/core/constants/enums/cache/offline_action_enums.dart';
 import 'package:asset_tracker/domain/entities/auth/request/user_login_entity.dart';
 import 'package:auto_route/annotations.dart';
+import 'package:dartz/dartz.dart';
 import 'package:easy_localization/easy_localization.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
@@ -132,7 +132,8 @@ class _HomeViewState extends ConsumerState<HomeView> {
     return TabBarIconWidget(
         icon: IconDataConstants.download,
         onTap: () {
-          var actions = HiveCacheService.instance.getOfflineActions();
+          var actions = ref.read(cacheUseCaseProvider).getOfflineActions();
+
           debugPrint("Actions: $actions");
           for (var action in actions) {
             debugPrint("Action Type: ${action.type}");
@@ -145,13 +146,12 @@ class _HomeViewState extends ConsumerState<HomeView> {
   TabBarIconWidget _tabBarButtonSendWidget() => TabBarIconWidget(
       icon: Icons.send,
       onTap: () {
-        CacheRepository(HiveCacheService.instance)
-            .saveOfflineAction<UserLoginEntity>(
-                OfflineActionType.LOGIN,
-                const UserLoginEntity(
-                  userName: "enes@gmail.com",
-                  password: "123456",
-                ));
+        ref.read(cacheUseCaseProvider).call(
+              const Tuple2(
+                  OfflineActionType.LOGIN,
+                  UserLoginEntity(
+                      userName: 'oyku@gmail.com', password: "123456")),
+            );
       });
 
   TabBarIconWidget _tabBarButtonTradeWidget(
@@ -159,7 +159,7 @@ class _HomeViewState extends ConsumerState<HomeView> {
     return TabBarIconWidget(
         icon: IconDataConstants.dollar,
         onTap: () {
-          HiveCacheService.instance.clearAllOfflineActions();
+          ref.read(cacheUseCaseProvider).clearAllOfflineActions();
           //viewModel.routeTradePage(context, null);
         });
   }

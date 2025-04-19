@@ -4,18 +4,6 @@ import 'package:flutter/material.dart';
 import 'package:hive/hive.dart';
 import 'package:path_provider/path_provider.dart';
 
-enum OfflineActionStatus {
-  PENDING,
-  BACKGROUND,
-}
-
-enum OfflineActionType {
-  LOGIN,
-  REGISTER,
-  BUY_ASSET,
-  SELL_ASSET,
-}
-
 final class HiveCacheService implements ICacheService {
   late final Box _box;
 
@@ -35,6 +23,7 @@ final class HiveCacheService implements ICacheService {
     _box = await Hive.openBox(_boxName);
   }
 
+  @override
   Future<void> clearAllOfflineActions() async {
     await _box.clear();
     debugPrint("Cleared all offline actions");
@@ -55,17 +44,25 @@ final class HiveCacheService implements ICacheService {
   /// This method is used to save an offline action to the Hive box.
   /// It takes a model of type [OfflineActionsModel<T>] and a function
   /// to convert the model to JSON.
-  Future<void> saveOfflineAction<T>(
+  @override
+  Future<String?> saveOfflineAction<T>(
     OfflineActionsModel<T> model,
     Map<String, dynamic> Function(T) toJsonT,
   ) async {
     final box = await Hive.openBox(_boxName);
     final index = _getNextIndex(box);
-    await box.put("offline_actions-$index", model.toJson(toJsonT));
+    final key = "offline_actions-$index"; // key'i belirliyoruz
+
+    await box.put(key, model.toJson(toJsonT));
     debugPrint("Saved action");
+    return key;
   }
 
-  Future<void> removeOfflineAction(String key) async {
+  @override
+  Future<void> removeOfflineAction(String? key) async {
+    if (key == null) {
+      return;
+    }
     await _box.delete(key);
     debugPrint("Deleted action with key: $key");
   }
@@ -73,6 +70,7 @@ final class HiveCacheService implements ICacheService {
   /// This method is used to get all offline actions from the Hive box.
   /// It takes a function to convert JSON to the model type [T].
   /// It returns a list of [OfflineActionsModel<T>].
+  @override
   List<OfflineActionsModel> getOfflineActions() {
     final List<OfflineActionsModel> actions = [];
 

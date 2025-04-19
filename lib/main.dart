@@ -1,4 +1,4 @@
-import 'package:asset_tracker/core/config/constants/asset_constant.dart';
+import 'package:asset_tracker/core/constants/asset_constant.dart';
 import 'package:asset_tracker/core/config/init/init.dart';
 import 'package:asset_tracker/core/config/localization/localization_manager.dart';
 import 'package:asset_tracker/core/config/theme/default_theme.dart';
@@ -29,10 +29,10 @@ void main() async {
     //----------------------------------
     child: const ProviderScope(child: MyApp()),
   ));
-  await BackgroundService.instance.init();
-  BackgroundFetch.registerHeadlessTask(backgroundFetchHeadlessTask);
-  BackgroundService.instance
-      .addNewHeadlessTask('com.transistorsoft.customtask');
+  // await BackgroundService.instance.init();
+  // BackgroundFetch.registerHeadlessTask(backgroundFetchHeadlessTask);
+  // BackgroundService.instance
+  //     .addNewHeadlessTask('com.transistorsoft.customtask');
 }
 
 final appRouter = AppRouter();

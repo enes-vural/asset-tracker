@@ -1,7 +1,8 @@
 // ignore_for_file: avoid_function_literals_in_foreach_calls
 
 import 'dart:async';
-import 'package:asset_tracker/core/config/constants/string_constant.dart';
+import 'package:asset_tracker/core/constants/enums/socket/socket_state_enums.dart';
+import 'package:asset_tracker/core/constants/string_constant.dart';
 import 'package:asset_tracker/data/model/web/error/socket_error_model.dart';
 import 'package:asset_tracker/data/model/web/price_changed_model.dart';
 import 'package:asset_tracker/data/model/web/response/socket_state_response_model.dart';
