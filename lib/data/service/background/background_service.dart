@@ -1,6 +1,8 @@
-import 'package:asset_tracker/application/sync/sync_manager.dart';
+import 'package:asset_tracker/data/service/cache/hive_cache_service.dart';
+import 'package:asset_tracker/firebase_options.dart';
 import 'package:asset_tracker/injection.dart';
 import 'package:background_fetch/background_fetch.dart';
+import 'package:firebase_core/firebase_core.dart';
 import 'package:flutter/material.dart' show debugPrint;
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 
@@ -60,8 +62,11 @@ final class BackgroundService {
       _registeredTasks.add(taskId);
       BackgroundFetch.scheduleTask(TaskConfig(
         taskId: taskId,
+        //1200000 (20 minute)
+        stopOnTerminate: false,
+        //60000 (1 minute)
         delay: 1200000,
-        periodic: true,
+        periodic: true, //false for testing
         enableHeadless: true,
       ));
       debugPrint("[BackgroundService] Task scheduled: $taskId");
@@ -90,7 +95,11 @@ void backgroundFetchHeadlessTask(HeadlessTask task) async {
   if (task.taskId == 'com.transistorsoft.customtask') {
     debugPrint("[HeadlessTask] Background task executed: $taskId");
     debugPrint("WE HAD TASK IN BACKGROUND OLLLL");
-
+    await Firebase.initializeApp(
+      options: DefaultFirebaseOptions.currentPlatform,
+    );
+    HiveCacheService hiveCacheService = HiveCacheService();
+    await hiveCacheService.init();
     final backgroundContainer = ProviderContainer();
     final syncManager = backgroundContainer.read(syncManagerProvider);
     await syncManager.syncOfflineActionHeadless();
