@@ -1,6 +1,7 @@
+import 'package:asset_tracker/data/model/base/base_model.dart';
 import 'package:asset_tracker/domain/entities/auth/request/user_register_entity.dart';
 
-final class UserRegisterModel {
+final class UserRegisterModel implements BaseModel {
   final String userName;
   final String password;
   const UserRegisterModel({
@@ -28,4 +29,7 @@ final class UserRegisterModel {
       password: json['password'] as String,
     );
   }
+  
+  @override
+  UserRegisterEntity toEntity() => UserRegisterEntity.fromModel(this);
 }

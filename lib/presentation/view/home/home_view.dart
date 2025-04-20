@@ -1,5 +1,5 @@
 import 'package:asset_tracker/core/constants/enums/cache/offline_action_enums.dart';
-import 'package:asset_tracker/domain/entities/auth/request/user_login_entity.dart';
+import 'package:asset_tracker/domain/entities/database/enttiy/buy_currency_entity.dart';
 import 'package:auto_route/annotations.dart';
 import 'package:dartz/dartz.dart';
 import 'package:easy_localization/easy_localization.dart';
@@ -138,7 +138,7 @@ class _HomeViewState extends ConsumerState<HomeView> {
           for (var action in actions) {
             debugPrint("Action Type: ${action.type}");
             debugPrint("Action Status: ${action.status}");
-            debugPrint("Action Params: ${action.params.toJson()}");
+            debugPrint("Action Params: ${action.params}");
           }
         });
   }
@@ -146,11 +146,17 @@ class _HomeViewState extends ConsumerState<HomeView> {
   TabBarIconWidget _tabBarButtonSendWidget() => TabBarIconWidget(
       icon: Icons.send,
       onTap: () {
-        ref.read(cacheUseCaseProvider).call(
-              const Tuple2(
-                  OfflineActionType.LOGIN,
-                  UserLoginEntity(
-                      userName: 'oyku@gmail.com', password: "123456")),
+
+        final buyModel = BuyCurrencyEntity(
+          currency: "USDTRY",
+          amount: 5,
+          price: 10000,
+          date: DateTime(DateTime.april, 2023),
+          userId: ref.read(authGlobalProvider).getCurrentUserId,
+        );
+
+        ref.read(cacheUseCaseProvider).saveOfflineAction(
+              Tuple2(OfflineActionType.BUY_ASSET, buyModel),
             );
       });
 

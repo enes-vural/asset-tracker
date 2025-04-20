@@ -1,4 +1,4 @@
-import 'package:asset_tracker/data/model/user_currency_data_model.dart';
+import 'package:asset_tracker/data/model/database/response/user_currency_data_model.dart';
 
 final class UserCurrencyEntityModel {
   final double amount;

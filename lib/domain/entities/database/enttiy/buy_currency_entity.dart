@@ -1,6 +1,7 @@
+import 'package:asset_tracker/data/model/base/base_model.dart';
 import 'package:asset_tracker/data/model/database/request/buy_currency_model.dart';
 
-final class BuyCurrencyEntity {
+final class BuyCurrencyEntity implements BaseEntity {
   final double amount;
   final double price;
   final String currency;
@@ -24,4 +25,7 @@ final class BuyCurrencyEntity {
       userId: model.userId,
     );
   }
+  
+  @override
+  BuyCurrencyModel toModel() => BuyCurrencyModel.fromEntity(this);
 }

@@ -18,6 +18,8 @@ class SplashViewModel extends ChangeNotifier {
     //get user data usecase provider
     final getUserData = ref.read(getUserDataUseCaseProvider);
 
+    final syncUser = ref.read(syncManagerProvider);
+
     //avoid multiple read operations in firebase in initailize
     (!_isAssetsLoaded(appGlobal))
         ? await appGlobal.getCurrencyList(ref)
@@ -26,6 +28,7 @@ class SplashViewModel extends ChangeNotifier {
     //get userId from authGlobal
     String? userId = authGlobal.getCurrentUserId;
 
+    await syncUser.syncOfflineActions();
     //if user is not logined in or assets are not loaded, navigate to login page
     if (!(_isLoginedBefore(userId) && _isAssetsLoaded(appGlobal))) {
       _navigateHomeOrLogin(context, access: false);
@@ -34,7 +37,6 @@ class SplashViewModel extends ChangeNotifier {
 
     //get user data from firebase
     final userData = await getUserData.call(UserUidEntity(userId: userId!));
-
     //if user data is not fetched from firebase, navigate to login page
     userData.fold(
         (DatabaseErrorEntity failure) =>

@@ -1,5 +1,6 @@
 // ignore_for_file: unused_local_variable
 
+import 'package:asset_tracker/core/constants/enums/cache/offline_action_enums.dart';
 import 'package:asset_tracker/core/constants/global/key/fom_keys.dart';
 import 'package:asset_tracker/core/constants/string_constant.dart';
 import 'package:asset_tracker/core/config/localization/generated/locale_keys.g.dart';
@@ -9,6 +10,7 @@ import 'package:asset_tracker/domain/entities/database/enttiy/buy_currency_entit
 import 'package:asset_tracker/domain/entities/database/enttiy/usar_data_entity.dart';
 import 'package:asset_tracker/domain/entities/database/enttiy/user_uid_entity.dart';
 import 'package:asset_tracker/injection.dart';
+import 'package:dartz/dartz.dart';
 import 'package:easy_localization/easy_localization.dart';
 import 'package:flutter/cupertino.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
@@ -46,7 +48,6 @@ class TradeViewModel extends ChangeNotifier {
       EasySnackBar.show(context, LocaleKeys.trade_fillAllFields.tr());
       return;
     }
-
     final amount = double.tryParse(amountController.text) ?? 0.0;
     final price = double.tryParse(priceController.text) ?? 0.0;
     final currency = selectedCurrency;
@@ -76,12 +77,22 @@ class TradeViewModel extends ChangeNotifier {
       userId: currentUserId,
     );
 
+    //Save to Offline Actions
+    String? offlineKey =
+        await ref.read(cacheUseCaseProvider).saveOfflineAction(Tuple2(
+              OfflineActionType.BUY_ASSET,
+              buyCurrencyEntity,
+            ));
+
     final request =
         await ref.read(buyCurrencyUseCaseProvider)(buyCurrencyEntity);
 
     request.fold((failure) {
       EasySnackBar.show(context, failure.message);
+
     }, (success) async {
+      //TODO: Test edilecek
+      ref.read(cacheUseCaseProvider).removeOfflineAction(offlineKey);
       EasySnackBar.show(
         context,
         LocaleKeys.trade_success.tr(

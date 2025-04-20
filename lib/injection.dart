@@ -1,5 +1,6 @@
 // ignore_for_file: no_leading_underscores_for_local_identifiers
 
+import 'package:asset_tracker/application/sync/sync_manager.dart';
 import 'package:asset_tracker/data/repository/auth/auth_repository.dart';
 import 'package:asset_tracker/data/repository/cache/cache_repository.dart';
 import 'package:asset_tracker/data/repository/database/firestore/firestore_repository.dart';
@@ -39,6 +40,10 @@ final appGlobalProvider = ChangeNotifierProvider<AppGlobalProvider>((ref) {
 
 final authGlobalProvider = ChangeNotifierProvider<AuthGlobalProvider>((ref) {
   return AuthGlobalProvider(ref);
+});
+
+final syncManagerProvider = Provider<SyncManager>((ref) {
+  return SyncManager(ref.read);
 });
 
 //Riverpod ref.watch() ile sadece gerektiği ve değiştiği yerde çağırdığı için aslında bir nevi

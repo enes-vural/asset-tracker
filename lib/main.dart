@@ -29,10 +29,10 @@ void main() async {
     //----------------------------------
     child: const ProviderScope(child: MyApp()),
   ));
-  // await BackgroundService.instance.init();
-  // BackgroundFetch.registerHeadlessTask(backgroundFetchHeadlessTask);
-  // BackgroundService.instance
-  //     .addNewHeadlessTask('com.transistorsoft.customtask');
+  await BackgroundService.instance.init();
+  BackgroundFetch.registerHeadlessTask(backgroundFetchHeadlessTask);
+  BackgroundService.instance
+      .addNewHeadlessTask('com.transistorsoft.customtask');
 }
 
 final appRouter = AppRouter();

@@ -1,6 +1,7 @@
+import 'package:asset_tracker/data/model/base/base_model.dart';
 import 'package:asset_tracker/domain/entities/auth/request/user_login_entity.dart';
 
-final class UserLoginModel {
+final class UserLoginModel implements BaseModel {
   final String userName;
   final String password;
   const UserLoginModel({
@@ -26,4 +27,7 @@ final class UserLoginModel {
       'password': password,
     };
   }
+
+  @override
+  UserLoginEntity toEntity() => UserLoginEntity.fromModel(this);
 }
