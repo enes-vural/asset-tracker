@@ -9,11 +9,12 @@ import '../../../firebase_options.dart';
 final class AppInit {
   static Future<void> initialize() async {
     WidgetsFlutterBinding.ensureInitialized();
+    HiveCacheService.instance.init();
     await EasyLocalization.ensureInitialized();
     await Firebase.initializeApp(
       options: DefaultFirebaseOptions.currentPlatform,
     );
-    HiveCacheService.instance.init();
     Env.setup(); //Envied Initialize
+    debugPrint("All services initialized");
   }
 }

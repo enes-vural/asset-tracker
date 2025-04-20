@@ -59,10 +59,14 @@ class AppGlobalProvider extends ChangeNotifier {
     // Global ve kullanıcı verilerinde dövizleri bulma
     double totalPurchasePrice = 0.0;
     double userAmount = 0.0;
-
-    final globalIndex = globalAssets?.firstWhere(
+    CurrencyEntity? globalIndex;
+    try {
+      globalIndex = globalAssets?.firstWhere(
       (element) => element.code.toLowerCase() == currencyCode.toLowerCase(),
     );
+    } catch (e) {
+      debugPrint("Error: $e");
+    }
 
     _userData?.currencyList.forEach((element) {
       if (element.currencyCode.toLowerCase() == currencyCode.toLowerCase()) {

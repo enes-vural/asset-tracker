@@ -1,10 +1,14 @@
 import 'package:asset_tracker/core/constants/enums/cache/offline_action_enums.dart';
+import 'package:asset_tracker/core/constants/string_constant.dart';
 import 'package:asset_tracker/data/model/auth/request/user_login_model.dart';
 import 'package:asset_tracker/data/model/auth/request/user_register_model.dart';
+import 'package:asset_tracker/data/model/base/base_model.dart';
 import 'package:asset_tracker/data/model/cache/offline_actions_model.dart';
+import 'package:asset_tracker/data/model/database/request/buy_currency_model.dart';
 import 'package:asset_tracker/data/service/cache/icache_service.dart';
 import 'package:asset_tracker/domain/entities/auth/request/user_login_entity.dart';
 import 'package:asset_tracker/domain/entities/auth/request/user_register_entity.dart';
+import 'package:asset_tracker/domain/entities/database/enttiy/buy_currency_entity.dart';
 import 'package:asset_tracker/domain/repository/cache/icache_repository.dart';
 
 final class CacheRepository implements ICacheRepository {
@@ -13,17 +17,20 @@ final class CacheRepository implements ICacheRepository {
   const CacheRepository(this._hiveCacheService);
 
   @override
-  Future<String?> saveOfflineAction<T>(
+  Future<String?> saveOfflineAction<T extends BaseEntity>(
     OfflineActionType type,
     T requestEntity,
   ) async {
-    final requestModel = _convertEntityModel(requestEntity);
+    final requestModel = requestEntity.toModel();
 
     if (requestModel == null) {
       throw Exception("Invalid request entity");
     }
 
     final OfflineActionsModel offlineModel = OfflineActionsModel(
+      //Burada id değerini repository de boş veriyoruz.
+      //Service katmanında uygun index bulunup içine atanacaktır.
+      id: DefaultLocalStrings.emptyText,
       type: type,
       status: OfflineActionStatus.PENDING,
       params: requestModel,
@@ -37,7 +44,17 @@ final class CacheRepository implements ICacheRepository {
 
   @override
   List<OfflineActionsModel> getOfflineActions() {
-    return _hiveCacheService.getOfflineActions();
+    List<OfflineActionsModel> rawActions =
+        _hiveCacheService.getOfflineActions();
+    List<OfflineActionsModel> convertedActions = [];
+
+    for (var action in rawActions) {
+      final convertedAction = action.copyWith(
+        params: action.params.toEntity(),
+      );
+      convertedActions.add(convertedAction);
+    }
+    return convertedActions;
   }
 
   @override
@@ -50,12 +67,25 @@ final class CacheRepository implements ICacheRepository {
     await _hiveCacheService.clearAllOfflineActions();
   }
 
-  dynamic _convertEntityModel(dynamic entity) {
-    if (entity is UserLoginEntity) {
-      return UserLoginModel.fromEntity(entity);
-    } else if (entity is UserRegisterEntity) {
-      UserRegisterModel.fromEntity(entity);
-    }
-    throw UnsupportedError('Unsupported entity type: ${entity.runtimeType}');
-  }
+  // dynamic _convertModelToEntity(dynamic model) {
+  //   if (model is UserLoginModel) {
+  //     return UserLoginEntity.fromModel(model);
+  //   } else if (model is UserRegisterModel) {
+  //     return UserRegisterEntity.fromModel(model);
+  //   } else if (model is BuyCurrencyModel) {
+  //     return BuyCurrencyEntity.fromModel(model);
+  //   }
+  //   throw UnsupportedError('Unsupported model type: ${model.runtimeType}');
+  // }
+
+  // dynamic _convertEntityToModel(dynamic entity) {
+  //   if (entity is UserLoginEntity) {
+  //     return UserLoginModel.fromEntity(entity);
+  //   } else if (entity is UserRegisterEntity) {
+  //     UserRegisterModel.fromEntity(entity);
+  //   } else if (entity is BuyCurrencyEntity) {
+  //     return BuyCurrencyModel.fromEntity(entity);
+  //   }
+  //   throw UnsupportedError('Unsupported entity type: ${entity.runtimeType}');
+  // }
 }

@@ -43,7 +43,8 @@ final class FirestoreService implements IFirestoreService {
           .doc(model.currency)
           .collection(model.currency)
           .doc(model.date.toString())
-          .set(model.toJson())
+          //TODO: check here
+          .set(model.toFirebaseJson())
           .then((_) {
         return Right(model);
       });

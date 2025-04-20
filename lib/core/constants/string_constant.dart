@@ -10,6 +10,7 @@ final class DefaultLocalStrings {
   static const turkishLira = "₺";
 
   static const censoredText = "**********";
+  static const dividerText = "-------------------------";
   //Router
   //dont localize here in future
   static const splashRoute = "/default_splash";

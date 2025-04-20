@@ -1,3 +1,6 @@
+import 'package:asset_tracker/core/constants/enums/cache/offline_action_enums.dart';
+import 'package:asset_tracker/core/constants/string_constant.dart';
+import 'package:asset_tracker/data/model/base/base_model.dart';
 import 'package:asset_tracker/data/model/cache/offline_actions_model.dart';
 import 'package:asset_tracker/data/service/cache/icache_service.dart';
 import 'package:flutter/material.dart';
@@ -52,6 +55,7 @@ final class HiveCacheService implements ICacheService {
     final box = await Hive.openBox(_boxName);
     final index = _getNextIndex(box);
     final key = "offline_actions-$index"; // key'i belirliyoruz
+    model = model.copyWith(id: key); // modelin id'sini güncelliyoruz
 
     await box.put(key, model.toJson(toJsonT));
     debugPrint("Saved action");
@@ -82,7 +86,58 @@ final class HiveCacheService implements ICacheService {
         }
       }
     }
+    _printOfflineActions(actions);
 
-    return actions;
+    return _removeDuplicateActions(actions);
+  }
+
+  _printOfflineActions(List<OfflineActionsModel> actions) {
+    for (OfflineActionsModel action in actions) {
+      debugPrint(DefaultLocalStrings.dividerText);
+      debugPrint("Action ID: ${action.id}");
+      debugPrint("Action Type: ${action.type}");
+      debugPrint("Action Status: ${action.status}");
+      debugPrint("Action Params: ${action.params}");
+      debugPrint(DefaultLocalStrings.dividerText);
+    }
+  }
+
+  List<OfflineActionsModel> _removeDuplicateActions(
+      List<OfflineActionsModel> actions) {
+    List<OfflineActionsModel> uniqueActions = [];
+    List<String> toDelete = [];
+    final Set<String> seenTypes = {};
+
+    uniqueActions = actions.where((action) {
+      // Eğer aksiyon LOGIN türündeyse, sadece bir kez kabul et
+      if (action.type == OfflineActionType.LOGIN) {
+        // LOGIN için sadece ilkini kabul et
+        if (seenTypes.contains(action.type.name)) {
+          seenTypes.add(action.type.name);
+          toDelete.add(action.id);
+          debugPrint("Duplicate action found: ${action.id}");
+          return false;
+        } else {
+          seenTypes.add(action.type.name);
+          return true;
+        }
+      }
+
+      String actionIdentifier = '${action.type}-${action.params.hashCode}';
+
+      if (seenTypes.contains(actionIdentifier)) {
+        toDelete.add(action.id);
+        debugPrint("Duplicate action found: ${action.id}");
+        return false;
+      } else {
+        seenTypes.add(actionIdentifier);
+        return true;
+      }
+    }).toList();
+
+    for (String id in toDelete) {
+      removeOfflineAction(id);
+    }
+    return uniqueActions;
   }
 }

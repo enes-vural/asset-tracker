@@ -4,7 +4,7 @@ import 'package:asset_tracker/data/model/database/request/buy_currency_model.dar
 import 'package:asset_tracker/data/model/database/request/user_uid_model.dart';
 import 'package:asset_tracker/data/model/database/response/asset_code_model.dart';
 import 'package:asset_tracker/data/model/database/response/user_data_model.dart';
-import 'package:asset_tracker/data/model/user_currency_data_model.dart';
+import 'package:asset_tracker/data/model/database/response/user_currency_data_model.dart';
 import 'package:asset_tracker/data/service/remote/database/firestore/ifirestore_service.dart';
 import 'package:asset_tracker/domain/entities/database/enttiy/buy_currency_entity.dart';
 import 'package:asset_tracker/domain/entities/database/enttiy/usar_data_entity.dart';

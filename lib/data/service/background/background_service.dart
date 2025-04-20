@@ -1,5 +1,8 @@
+import 'package:asset_tracker/application/sync/sync_manager.dart';
+import 'package:asset_tracker/injection.dart';
 import 'package:background_fetch/background_fetch.dart';
 import 'package:flutter/material.dart' show debugPrint;
+import 'package:flutter_riverpod/flutter_riverpod.dart';
 
 final class BackgroundService {
   final List<String> _registeredTasks = [];
@@ -19,7 +22,7 @@ final class BackgroundService {
   Future _configure() async {
     Future<int> status = BackgroundFetch.configure(
       BackgroundFetchConfig(
-          minimumFetchInterval: 15,
+          minimumFetchInterval: 20,
           forceAlarmManager: false,
           stopOnTerminate: false,
           startOnBoot: true,
@@ -57,7 +60,7 @@ final class BackgroundService {
       _registeredTasks.add(taskId);
       BackgroundFetch.scheduleTask(TaskConfig(
         taskId: taskId,
-        delay: 15000,
+        delay: 1200000,
         periodic: true,
         enableHeadless: true,
       ));
@@ -87,6 +90,12 @@ void backgroundFetchHeadlessTask(HeadlessTask task) async {
   if (task.taskId == 'com.transistorsoft.customtask') {
     debugPrint("[HeadlessTask] Background task executed: $taskId");
     debugPrint("WE HAD TASK IN BACKGROUND OLLLL");
+
+    final backgroundContainer = ProviderContainer();
+    final syncManager = backgroundContainer.read(syncManagerProvider);
+    await syncManager.syncOfflineActionHeadless();
+    backgroundContainer.dispose();
+
     // Burada yapman gereken işlemleri gerçekleştirebilirsin.
     // Örneğin, bir API çağrısı yapabilir veya veritabanına veri ekleyebilirsin.
   } else {

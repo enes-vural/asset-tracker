@@ -1,5 +1,6 @@
 import 'package:cloud_firestore/cloud_firestore.dart';
 
+//TODO: BuyCurrencyModel ile birleştirilebilir.
 final class UserCurrencyDataModel {
   final double amount;
   final String currencyCode;
