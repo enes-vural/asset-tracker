@@ -1,6 +1,5 @@
 import 'package:asset_tracker/core/constants/enums/cache/offline_action_enums.dart';
 import 'package:asset_tracker/core/constants/string_constant.dart';
-import 'package:asset_tracker/data/model/base/base_model.dart';
 import 'package:asset_tracker/data/model/cache/offline_actions_model.dart';
 import 'package:asset_tracker/data/service/cache/icache_service.dart';
 import 'package:flutter/material.dart';
