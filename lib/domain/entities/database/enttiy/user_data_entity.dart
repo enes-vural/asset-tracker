@@ -3,7 +3,7 @@ import 'package:asset_tracker/domain/entities/database/enttiy/user_currency_enti
 
 final class UserDataEntity {
   final String userId;
-  final List<UserCurrencyEntityModel> currencyList;
+  final List<UserCurrencyEntity> currencyList;
   final double balance;
   final double? latestBalance;
   final double? profit;
@@ -20,14 +20,14 @@ final class UserDataEntity {
     return UserDataEntity(
       userId: model.uid,
       currencyList: model.currencyList
-          .map((e) => UserCurrencyEntityModel.fromModel(e))
+          .map((e) => UserCurrencyEntity.fromModel(e))
           .toList(),
       balance: model.balance,
     );
   }
 
   UserDataEntity copyWith({
-    List<UserCurrencyEntityModel>? currencyList,
+    List<UserCurrencyEntity>? currencyList,
     String? uid,
     double? balance,
     double? profit,

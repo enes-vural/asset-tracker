@@ -7,7 +7,7 @@ import 'package:asset_tracker/core/config/localization/generated/locale_keys.g.d
 import 'package:asset_tracker/core/helpers/snackbar.dart';
 import 'package:asset_tracker/data/model/database/response/asset_code_model.dart';
 import 'package:asset_tracker/domain/entities/database/enttiy/buy_currency_entity.dart';
-import 'package:asset_tracker/domain/entities/database/enttiy/usar_data_entity.dart';
+import 'package:asset_tracker/domain/entities/database/enttiy/user_data_entity.dart';
 import 'package:asset_tracker/domain/entities/database/enttiy/user_uid_entity.dart';
 import 'package:asset_tracker/injection.dart';
 import 'package:dartz/dartz.dart';

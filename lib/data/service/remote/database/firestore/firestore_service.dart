@@ -6,6 +6,7 @@ import 'package:asset_tracker/data/model/database/error/database_error_model.dar
 import 'package:asset_tracker/data/model/database/request/buy_currency_model.dart';
 import 'package:asset_tracker/data/model/database/request/user_uid_model.dart';
 import 'package:asset_tracker/data/model/database/response/asset_code_model.dart';
+import 'package:asset_tracker/data/model/database/response/user_currency_data_model.dart';
 import 'package:asset_tracker/data/service/remote/database/firestore/ifirestore_service.dart';
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:dartz/dartz.dart';
@@ -79,8 +80,7 @@ final class FirestoreService implements IFirestoreService {
   ) async {
     List<Map<String, dynamic>?> assetDataList = [];
     try {
-      final assetPath = await _assetCollection(model)
-          .get();
+      final assetPath = await _assetCollection(model).get();
 
       String originPath = assetPath.docs.toString();
       debugPrint(originPath.toString());
@@ -89,9 +89,7 @@ final class FirestoreService implements IFirestoreService {
         final currencyName = assetDoc.id;
 
         final datePath =
-            _assetCollection(model)
-            .doc(currencyName)
-            .collection(currencyName);
+            _assetCollection(model).doc(currencyName).collection(currencyName);
 
         List<Timestamp> dateList = [];
 
@@ -142,6 +140,25 @@ final class FirestoreService implements IFirestoreService {
       });
 
       return Right(assetCodeList);
+    } catch (e) {
+      debugPrint(e.toString());
+      return Left(DatabaseErrorModel(message: e.toString()));
+    }
+  }
+
+  @override
+  Future<Either<DatabaseErrorModel, bool>> deleteUserTransaction(
+      UserCurrencyDataModel model) async {
+    try {
+      await instance
+          .collection(FirestoreConstants.usersCollection)
+          .doc(model.userId)
+          .collection(FirestoreConstants.assetsCollection)
+          .doc(model.currencyCode)
+          .collection(model.currencyCode)
+          .doc(model.buyDate.toDate().toString())
+          .delete();
+      return const Right(true);
     } catch (e) {
       debugPrint(e.toString());
       return Left(DatabaseErrorModel(message: e.toString()));
