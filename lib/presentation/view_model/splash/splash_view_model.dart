@@ -1,9 +1,8 @@
 // ignore_for_file: use_build_context_synchronously
 
+import 'package:asset_tracker/core/constants/string_constant.dart';
 import 'package:asset_tracker/core/routers/router.dart';
-import 'package:asset_tracker/domain/entities/database/enttiy/usar_data_entity.dart';
 import 'package:asset_tracker/domain/entities/database/enttiy/user_uid_entity.dart';
-import 'package:asset_tracker/domain/entities/database/error/database_error_entity.dart';
 import 'package:asset_tracker/injection.dart';
 import 'package:asset_tracker/provider/app_global_provider.dart';
 import 'package:flutter/material.dart';
@@ -16,7 +15,7 @@ class SplashViewModel extends ChangeNotifier {
     //auth global provider
     final authGlobal = ref.read(authGlobalProvider.notifier);
     //get user data usecase provider
-    final getUserData = ref.read(getUserDataUseCaseProvider);
+    // final getUserData = ref.read(getUserDataUseCaseProvider);
 
     final syncUser = ref.read(syncManagerProvider);
 
@@ -35,18 +34,16 @@ class SplashViewModel extends ChangeNotifier {
       return;
     }
 
-    //get user data from firebase
-    final userData = await getUserData.call(UserUidEntity(userId: userId!));
-    //if user data is not fetched from firebase, navigate to login page
-    userData.fold(
-        (DatabaseErrorEntity failure) =>
-            _navigateHomeOrLogin(context, access: true),
+    final userDataStatus = await ref.read(appGlobalProvider).getLatestUserData(
+        ref, UserUidEntity(userId: userId ?? DefaultLocalStrings.emptyText));
 
-        //if user data is fetched from firebase, update app global provider and navigate to home page
-        (UserDataEntity success) async {
-      await ref.read(appGlobalProvider.notifier).updateUserData(success);
+    if (userDataStatus == false) {
+      _navigateHomeOrLogin(context, access: false);
+      return;
+    } else {
+      //if user is logined in and assets are loaded, navigate to home page
       _navigateHomeOrLogin(context, access: true);
-    });
+    }
   }
 
   //check if user is logined in

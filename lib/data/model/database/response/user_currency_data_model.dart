@@ -1,7 +1,9 @@
+import 'package:asset_tracker/domain/entities/database/enttiy/user_currency_entity_model.dart';
 import 'package:cloud_firestore/cloud_firestore.dart';
 
 //TODO: BuyCurrencyModel ile birleştirilebilir.
 final class UserCurrencyDataModel {
+  final String userId;
   final double amount;
   final String currencyCode;
   final Timestamp buyDate;
@@ -9,14 +11,31 @@ final class UserCurrencyDataModel {
   final double total;
 
   UserCurrencyDataModel(
-      {required this.amount,
-      required this.currencyCode,
-      required this.buyDate,
-      required this.price,
-      required this.total});
+      {
+    required this.userId,
+    required this.amount,
+    required this.currencyCode,
+    required this.buyDate,
+    required this.price,
+    required this.total,
+  });
+
+  factory UserCurrencyDataModel.fromEntity(
+    UserCurrencyEntity entity,
+  ) {
+    return UserCurrencyDataModel(
+      userId: entity.userId,
+      amount: entity.amount,
+      currencyCode: entity.currencyCode,
+      buyDate: Timestamp.fromDate(entity.buyDate),
+      price: entity.price,
+      total: entity.total,
+    );
+  }
 
   factory UserCurrencyDataModel.fromJson(Map<String, dynamic> json) {
     return UserCurrencyDataModel(
+      userId: json['userId'] ?? 'N/A',
       amount: json['amount'] ?? 0.0,
       currencyCode: json['currency'] ?? 'N/A',
       buyDate: json['date'] ?? Timestamp.now(),

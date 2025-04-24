@@ -7,7 +7,8 @@ import 'package:asset_tracker/data/model/database/response/user_data_model.dart'
 import 'package:asset_tracker/data/model/database/response/user_currency_data_model.dart';
 import 'package:asset_tracker/data/service/remote/database/firestore/ifirestore_service.dart';
 import 'package:asset_tracker/domain/entities/database/enttiy/buy_currency_entity.dart';
-import 'package:asset_tracker/domain/entities/database/enttiy/usar_data_entity.dart';
+import 'package:asset_tracker/domain/entities/database/enttiy/user_data_entity.dart';
+import 'package:asset_tracker/domain/entities/database/enttiy/user_currency_entity_model.dart';
 import 'package:asset_tracker/domain/entities/database/enttiy/user_uid_entity.dart';
 import 'package:asset_tracker/domain/entities/database/error/database_error_entity.dart';
 import 'package:asset_tracker/domain/repository/database/firestore/ifirestore_repository.dart';
@@ -88,6 +89,28 @@ class FirestoreRepository implements IFirestoreRepository {
       userDataModel.balance = totalBalance;
 
       return Right(UserDataEntity.fromModel(userDataModel));
+    } catch (e) {
+      return Left(DatabaseErrorEntity(message: e.toString()));
+    }
+  }
+
+  @override
+  Future<Either<DatabaseErrorEntity, bool>> deleteUserTransaction(
+      UserCurrencyEntity entity) async {
+    final UserCurrencyDataModel model =
+        UserCurrencyDataModel.fromEntity(entity);
+
+    try {
+      final status = await firestoreService.deleteUserTransaction(model);
+      return status.fold(
+        (failure) {
+          return Left(DatabaseErrorEntity.fromModel(failure));
+        },
+        (success) {
+          debugPrint("Delete user transaction success: $success");
+          return Right(success);
+        },
+      );
     } catch (e) {
       return Left(DatabaseErrorEntity(message: e.toString()));
     }

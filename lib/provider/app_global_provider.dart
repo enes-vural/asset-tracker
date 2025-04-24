@@ -1,6 +1,7 @@
 import 'package:asset_tracker/data/model/database/response/asset_code_model.dart';
-import 'package:asset_tracker/domain/entities/database/enttiy/usar_data_entity.dart';
+import 'package:asset_tracker/domain/entities/database/enttiy/user_data_entity.dart';
 import 'package:asset_tracker/domain/entities/database/enttiy/user_currency_entity_model.dart';
+import 'package:asset_tracker/domain/entities/database/enttiy/user_uid_entity.dart';
 import 'package:asset_tracker/domain/entities/general/calculate_profit_entity.dart';
 import 'package:asset_tracker/domain/entities/web/socket/currency_entity.dart'
     show CurrencyEntity;
@@ -20,6 +21,23 @@ class AppGlobalProvider extends ChangeNotifier {
 
   List<CurrencyEntity>? globalAssets;
 
+  //if failure has been occurred we will return false
+  //if success we will update user data
+  //and return true
+  Future<bool> getLatestUserData(WidgetRef ref, UserUidEntity entity) async {
+    final result = await ref.read(getUserDataUseCaseProvider)(entity);
+    return await result.fold(
+      (failure) {
+        debugPrint("Error: $failure");
+        return false;
+      },
+      (success) async {
+        await updateUserData(success);
+        return true;
+      },
+    );
+  }
+
   updateUserData(UserDataEntity entity) {
     _userData = entity;
     _userData?.currencyList.forEach((element) {
@@ -38,7 +56,7 @@ class AppGlobalProvider extends ChangeNotifier {
   void _listenData() {
     _dataStream?.listen((event) {
       globalAssets = event;
-      debugPrint("Data Stream é: $event");
+      //debugPrint("Data Stream é: $event");
       calculateProfitBalance();
       notifyListeners();
     });
@@ -62,8 +80,8 @@ class AppGlobalProvider extends ChangeNotifier {
     CurrencyEntity? globalIndex;
     try {
       globalIndex = globalAssets?.firstWhere(
-      (element) => element.code.toLowerCase() == currencyCode.toLowerCase(),
-    );
+        (element) => element.code.toLowerCase() == currencyCode.toLowerCase(),
+      );
     } catch (e) {
       debugPrint("Error: $e");
     }
@@ -99,8 +117,7 @@ class AppGlobalProvider extends ChangeNotifier {
       notifyListeners();
     });
 
-    List<UserCurrencyEntityModel> userCurrencyList =
-        userData?.currencyList ?? [];
+    List<UserCurrencyEntity> userCurrencyList = userData?.currencyList ?? [];
 
     double userBalance = userData?.balance ?? 0.00;
     double newBalance = userBalance;
@@ -108,7 +125,7 @@ class AppGlobalProvider extends ChangeNotifier {
     CurrencyEntity? currency;
 
     //TODO: Isolate this logic to a use case
-    for (UserCurrencyEntityModel element in userCurrencyList) {
+    for (UserCurrencyEntity element in userCurrencyList) {
       try {
         currency = globalAssets?.firstWhere(
           (elementCurrency) => elementCurrency.code == element.currencyCode,
@@ -125,7 +142,7 @@ class AppGlobalProvider extends ChangeNotifier {
       }
     }
     _totalProfit = newBalance - userBalance;
-    _totalProfitPercent = 100 - ((newBalance * 100) / userBalance);
+    _totalProfitPercent = (_totalProfit / 100) * 100;
     _latestBalance = newBalance;
     _userBalance = userBalance;
 

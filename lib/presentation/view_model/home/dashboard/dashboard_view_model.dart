@@ -1,5 +1,6 @@
-import 'package:asset_tracker/domain/entities/database/enttiy/usar_data_entity.dart';
+import 'package:asset_tracker/domain/entities/database/enttiy/user_data_entity.dart';
 import 'package:asset_tracker/domain/entities/database/enttiy/user_currency_entity_model.dart';
+import 'package:asset_tracker/domain/entities/database/enttiy/user_uid_entity.dart';
 import 'package:asset_tracker/domain/entities/general/calculate_profit_entity.dart';
 import 'package:asset_tracker/injection.dart';
 import 'package:flutter/material.dart';
@@ -7,9 +8,9 @@ import 'package:flutter_riverpod/flutter_riverpod.dart';
 
 class DashboardViewModel extends ChangeNotifier {
   UserDataEntity? _userData;
-  List<UserCurrencyEntityModel>? _transactions;
+  List<UserCurrencyEntity>? _transactions;
 
-  final Map<String, List<UserCurrencyEntityModel>> _filteredTransactions = {};
+  final Map<String, List<UserCurrencyEntity>> _filteredTransactions = {};
 
   void showAssetsAsStatistic(WidgetRef ref) {
     _userData = ref.read(appGlobalProvider.notifier).getUserData;
@@ -30,6 +31,26 @@ class DashboardViewModel extends ChangeNotifier {
     });
   }
 
+  Future<void> removeTransaction(
+      WidgetRef ref, UserCurrencyEntity transaction) async {
+    final status = await ref
+        .read(buyCurrencyUseCaseProvider)
+        .deleteUserTransaction(transaction);
+    status.fold((error) async {
+      // Handle error
+    }, (success) async {
+      if (success) {
+        _transactions?.remove(transaction);
+        _filteredTransactions[transaction.currencyCode]
+            ?.remove(transaction); // Remove from filtered transactions
+        await ref
+            .read(appGlobalProvider.notifier)
+            .getLatestUserData(ref, UserUidEntity(userId: transaction.userId));
+        notifyListeners();
+      }
+    });
+  }
+
   CalculateProfitEntity? calculateSelectedCurrencyTotalAmount(
       WidgetRef ref, String currencyCode) {
     return ref
@@ -37,6 +58,6 @@ class DashboardViewModel extends ChangeNotifier {
         .calculateProfitOrLoss(currencyCode);
   }
 
-  Map<String, List<UserCurrencyEntityModel>>? get filteredTransactions =>
+  Map<String, List<UserCurrencyEntity>>? get filteredTransactions =>
       _filteredTransactions;
 }

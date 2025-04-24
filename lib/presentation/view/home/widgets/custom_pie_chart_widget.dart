@@ -6,7 +6,7 @@ import 'package:flutter/material.dart';
 import 'package:fl_chart/fl_chart.dart';
 
 class PieChartWidget extends StatefulWidget {
-  final List<UserCurrencyEntityModel>? dataItems;
+  final List<UserCurrencyEntity>? dataItems;
 
   const PieChartWidget({super.key, this.dataItems});
 

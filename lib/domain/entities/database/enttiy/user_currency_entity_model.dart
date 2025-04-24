@@ -1,13 +1,15 @@
 import 'package:asset_tracker/data/model/database/response/user_currency_data_model.dart';
 
-final class UserCurrencyEntityModel {
+final class UserCurrencyEntity {
+  final String userId;
   final double amount;
   final String currencyCode;
   final DateTime buyDate;
   final double price;
   final double total;
 
-  const UserCurrencyEntityModel({
+  const UserCurrencyEntity({
+    required this.userId,
     required this.amount,
     required this.currencyCode,
     required this.buyDate,
@@ -15,8 +17,9 @@ final class UserCurrencyEntityModel {
     required this.total,
   });
 
-  factory UserCurrencyEntityModel.fromModel(UserCurrencyDataModel model) {
-    return UserCurrencyEntityModel(
+  factory UserCurrencyEntity.fromModel(UserCurrencyDataModel model) {
+    return UserCurrencyEntity(
+      userId: model.userId,
       amount: model.amount,
       currencyCode: model.currencyCode,
       buyDate: model.buyDate.toDate(),
