@@ -2,64 +2,41 @@ import 'package:asset_tracker/core/config/theme/default_theme.dart';
 import 'package:asset_tracker/core/config/theme/extension/app_size_extension.dart';
 import 'package:asset_tracker/core/widgets/custom_padding.dart';
 import 'package:asset_tracker/domain/entities/database/enttiy/user_currency_entity_model.dart';
+import 'package:asset_tracker/injection.dart';
 import 'package:flutter/material.dart';
 import 'package:fl_chart/fl_chart.dart';
+import 'package:flutter_riverpod/flutter_riverpod.dart';
 
-class PieChartWidget extends StatefulWidget {
-  final List<UserCurrencyEntity>? dataItems;
-
-  const PieChartWidget({super.key, this.dataItems});
+class PieChartWidget extends ConsumerStatefulWidget {
+  const PieChartWidget({super.key});
 
   @override
-  State<PieChartWidget> createState() => _PieChartWidgetState();
+  ConsumerState<PieChartWidget> createState() => _PieChartWidgetState();
 }
 
-class _PieChartWidgetState extends State<PieChartWidget> {
-final List<PieChartSectionData> _sections = [];
-
-  @override
-  void initState() {
-    super.initState();
-    _generateSections();
-  }
-
-  // Helper function to group and calculate values
-  void _generateSections() {
-    // Create a map to store total values for each currencyCode
-    Map<String, double> currencyTotals = {};
-
-    // Group the data and sum values for each currencyCode
-    widget.dataItems?.forEach((element) {
-      final totalValue = element.amount * element.price;
-
-      // If the currencyCode already exists, add the value to the existing total
-      if (currencyTotals.containsKey(element.currencyCode)) {
-        currencyTotals[element.currencyCode] =
-            currencyTotals[element.currencyCode]! + totalValue;
-      } else {
-        currencyTotals[element.currencyCode] = totalValue;
-      }
-    });
-
-    // Generate PieChartSectionData from the grouped data
-    currencyTotals.forEach((currencyCode, totalValue) {
-      Color? sectionColor = DefaultColorPalette.randomColor();
-      _sections.add(
-        PieChartSectionData(
-          color: sectionColor,
-          value: totalValue,
-          title: currencyCode,
-          radius: AppSize.chartRadius,
-          titleStyle: const TextStyle(
-              color: DefaultColorPalette.vanillaWhite,
-              fontSize: AppSize.smallText),
-        ),
-      );
-    });
-  }
+class _PieChartWidgetState extends ConsumerState<PieChartWidget> {
+  List<PieChartSectionData> _sections = [];
+  List<UserCurrencyEntity> prevList = [];
 
   @override
   Widget build(BuildContext context) {
+    List<UserCurrencyEntity>? currencyList;
+
+    currencyList = ref.watch(appGlobalProvider.select(
+      (value) => value.getUserData?.currencyList,
+    ));
+
+    if (prevList.isEmpty || prevList == []) {
+      prevList = currencyList ?? [];
+      _sections = _generateSections(currencyList);
+    }
+
+    //TODO: Collection package for here
+    if (prevList != currencyList) {
+      prevList = currencyList ?? [];
+      _sections = _generateSections(currencyList);
+    }
+
     return CustomPadding.hugeTop(
       widget: Center(
         child: SizedBox(
@@ -67,13 +44,46 @@ final List<PieChartSectionData> _sections = [];
           height: 250,
           child: PieChart(
             PieChartData(
-              sectionsSpace: 2, // Dilimler arası boşluk
-              centerSpaceRadius: AppSize.chartCenterRadius, // Ortadaki boşluk
-              sections: _sections,
+              sectionsSpace: 2,
+              centerSpaceRadius: AppSize.chartCenterRadius,
+              sections: List.of(_sections),
             ),
           ),
         ),
       ),
     );
   }
+
+  List<PieChartSectionData> _generateSections(List<UserCurrencyEntity>? data) {
+    final Map<String, double> currencyTotals = {};
+    final List<PieChartSectionData> sections = [];
+
+    data?.forEach((element) {
+      final totalValue = element.amount * element.price;
+      currencyTotals.update(
+        element.currencyCode,
+        (value) => value + totalValue,
+        ifAbsent: () => totalValue,
+      );
+    });
+
+    currencyTotals.forEach((currencyCode, totalValue) {
+      sections.add(
+        PieChartSectionData(
+          color: DefaultColorPalette.randomColor(),
+          value: totalValue,
+          title: currencyCode,
+          radius: AppSize.chartRadius,
+          titleStyle: const TextStyle(
+            color: DefaultColorPalette.vanillaWhite,
+            fontSize: AppSize.smallText,
+          ),
+        ),
+      );
+    });
+
+    return sections;
+  }
+
+
 }

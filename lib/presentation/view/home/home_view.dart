@@ -1,3 +1,4 @@
+import 'package:asset_tracker/core/constants/database/transaction_type_enum.dart';
 import 'package:asset_tracker/core/constants/enums/cache/offline_action_enums.dart';
 import 'package:asset_tracker/domain/entities/database/enttiy/buy_currency_entity.dart';
 import 'package:auto_route/annotations.dart';
@@ -153,6 +154,7 @@ class _HomeViewState extends ConsumerState<HomeView> {
           price: 10000,
           date: DateTime(DateTime.april, 2023),
           userId: ref.read(authGlobalProvider).getCurrentUserId,
+          transactionType: TransactionTypeEnum.BUY,
         );
 
         ref.read(cacheUseCaseProvider).saveOfflineAction(

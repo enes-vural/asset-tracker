@@ -41,7 +41,7 @@ class _DashboardViewState extends ConsumerState<DashboardView> {
         child: SizedBox(
           child: Column(
             children: [
-              PieChartWidget(dataItems: list),
+              PieChartWidget(),
               availableTextWidget(),
               const BalanceTextWidget(),
               const CustomSizedBox.hugeGap(),

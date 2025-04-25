@@ -43,43 +43,46 @@ class _TradeViewState extends ConsumerState<TradeView> with ValidatorMixin {
   @override
   Widget build(BuildContext context) {
     final viewModel = ref.watch(tradeViewModelProvider);
-    return Scaffold(
-      backgroundColor: DefaultColorPalette.grey100,
-      appBar: AppBar(),
-      body: Form(
-        key: GlobalFormKeys.tradeFormKey,
-        autovalidateMode: AutovalidateMode.onUserInteraction,
-        child: CustomPadding.hugeHorizontal(
-          widget: Column(
-            children: [
-              const CustomSizedBox.largeGap(),
-              CustomFormField.countForm(
-                label: LocaleKeys.trade_buyAmount.tr(),
-                controller: viewModel.amountController,
-                validator: (value) => checkAmount(value, false),
-                type: TextInputType.text,
-                icon: Icons.numbers,
-              ),
-              const CustomSizedBox.smallGap(),
-              CustomFormField.countForm(
-                label: LocaleKeys.trade_buyPrice.tr(),
-                controller: viewModel.priceController,
-                validator: (value) => checkAmount(value, true),
-                type: TextInputType.text,
-                icon: Icons.attach_money_rounded,
-              ),
-              const CustomSizedBox.smallGap(),
-              CustomAlign.centerRight(
-                child: Row(
-                  mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                  children: [
-                    dropDownWidget(viewModel),
-                    customDatePickerWidget(viewModel),
-                  ],
+    return PopScope(
+      canPop: viewModel.canPop,
+      child: Scaffold(
+        backgroundColor: DefaultColorPalette.grey100,
+        appBar: AppBar(),
+        body: Form(
+          key: GlobalFormKeys.tradeFormKey,
+          autovalidateMode: AutovalidateMode.onUserInteraction,
+          child: CustomPadding.hugeHorizontal(
+            widget: Column(
+              children: [
+                const CustomSizedBox.largeGap(),
+                CustomFormField.countForm(
+                  label: LocaleKeys.trade_buyAmount.tr(),
+                  controller: viewModel.amountController,
+                  validator: (value) => checkAmount(value, false),
+                  type: TextInputType.text,
+                  icon: Icons.numbers,
                 ),
-              ),
-              buyCurrencyWidget(viewModel, context),
-            ],
+                const CustomSizedBox.smallGap(),
+                CustomFormField.countForm(
+                  label: LocaleKeys.trade_buyPrice.tr(),
+                  controller: viewModel.priceController,
+                  validator: (value) => checkAmount(value, true),
+                  type: TextInputType.text,
+                  icon: Icons.attach_money_rounded,
+                ),
+                const CustomSizedBox.smallGap(),
+                CustomAlign.centerRight(
+                  child: Row(
+                    mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                    children: [
+                      dropDownWidget(viewModel),
+                      customDatePickerWidget(viewModel),
+                    ],
+                  ),
+                ),
+                buyCurrencyWidget(viewModel, context),
+              ],
+            ),
           ),
         ),
       ),
