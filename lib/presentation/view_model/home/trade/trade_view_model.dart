@@ -99,8 +99,9 @@ class TradeViewModel extends ChangeNotifier {
     final request =
         await ref.read(buyCurrencyUseCaseProvider)(buyCurrencyEntity);
 
-    request.fold((failure) {
+    await request.fold((failure) {
       EasySnackBar.show(context, failure.message);
+
     }, (success) async {
       //TODO: Test edilecek
       ref.read(cacheUseCaseProvider).removeOfflineAction(offlineKey);
@@ -126,13 +127,13 @@ class TradeViewModel extends ChangeNotifier {
           .read(getUserDataUseCaseProvider)
           .call(UserUidEntity(userId: currentUserId));
 
-      latestUserData.fold(
-        //TODO: buraya dispose engeli canpop gelecek
-        (l) {},
-        (newUserData) {
+      await latestUserData.fold(
+        (l) {
+          EasySnackBar.show(context, l.message);
+        },
+        (newUserData) async {
           userData = newUserData;
-          //TODO: bug recall after dispoe
-          ref
+          await ref
               .read(appGlobalProvider.notifier)
               .updateUserData(newUserData.copyWith());
         },
@@ -141,7 +142,7 @@ class TradeViewModel extends ChangeNotifier {
       amountController.clear();
       priceController.clear();
       notifyListeners();
-      changePopState(true);
     });
+    changePopState(true);
   }
 }
