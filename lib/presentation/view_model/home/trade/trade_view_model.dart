@@ -1,5 +1,6 @@
 // ignore_for_file: unused_local_variable
 
+import 'package:asset_tracker/core/constants/database/transaction_type_enum.dart';
 import 'package:asset_tracker/core/constants/enums/cache/offline_action_enums.dart';
 import 'package:asset_tracker/core/constants/global/key/fom_keys.dart';
 import 'package:asset_tracker/core/constants/string_constant.dart';
@@ -21,6 +22,15 @@ class TradeViewModel extends ChangeNotifier {
 
   String? selectedCurrency;
   DateTime? selectedDate;
+
+  bool canPop = true;
+
+  void changePopState(bool state) {
+    if (canPop != state) {
+      canPop = state;
+      notifyListeners();
+    }
+  }
 
   void changeSelectedDate(DateTime? newDate) {
     selectedDate = newDate;
@@ -48,6 +58,8 @@ class TradeViewModel extends ChangeNotifier {
       EasySnackBar.show(context, LocaleKeys.trade_fillAllFields.tr());
       return;
     }
+
+    changePopState(false);
     final amount = double.tryParse(amountController.text) ?? 0.0;
     final price = double.tryParse(priceController.text) ?? 0.0;
     final currency = selectedCurrency;
@@ -70,12 +82,12 @@ class TradeViewModel extends ChangeNotifier {
     }
 
     final BuyCurrencyEntity buyCurrencyEntity = BuyCurrencyEntity(
-      amount: amount,
-      price: price,
-      currency: currency,
-      date: date,
-      userId: currentUserId,
-    );
+        amount: amount,
+        price: price,
+        currency: currency,
+        date: date,
+        userId: currentUserId,
+        transactionType: TransactionTypeEnum.BUY);
 
     //Save to Offline Actions
     String? offlineKey =
@@ -89,7 +101,6 @@ class TradeViewModel extends ChangeNotifier {
 
     request.fold((failure) {
       EasySnackBar.show(context, failure.message);
-
     }, (success) async {
       //TODO: Test edilecek
       ref.read(cacheUseCaseProvider).removeOfflineAction(offlineKey);
@@ -116,18 +127,21 @@ class TradeViewModel extends ChangeNotifier {
           .call(UserUidEntity(userId: currentUserId));
 
       latestUserData.fold(
+        //TODO: buraya dispose engeli canpop gelecek
         (l) {},
         (newUserData) {
           userData = newUserData;
           //TODO: bug recall after dispoe
-          ref.read(appGlobalProvider.notifier).updateUserData(
-              newUserData.copyWith());
+          ref
+              .read(appGlobalProvider.notifier)
+              .updateUserData(newUserData.copyWith());
         },
       );
 
       amountController.clear();
       priceController.clear();
       notifyListeners();
+      changePopState(true);
     });
   }
 }

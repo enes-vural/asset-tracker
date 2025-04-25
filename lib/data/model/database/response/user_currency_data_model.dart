@@ -1,3 +1,4 @@
+import 'package:asset_tracker/core/constants/database/transaction_type_enum.dart';
 import 'package:asset_tracker/domain/entities/database/enttiy/user_currency_entity_model.dart';
 import 'package:cloud_firestore/cloud_firestore.dart';
 
@@ -9,6 +10,7 @@ final class UserCurrencyDataModel {
   final Timestamp buyDate;
   final double price;
   final double total;
+  final TransactionTypeEnum transactionType;
 
   UserCurrencyDataModel(
       {
@@ -18,6 +20,7 @@ final class UserCurrencyDataModel {
     required this.buyDate,
     required this.price,
     required this.total,
+    required this.transactionType,
   });
 
   factory UserCurrencyDataModel.fromEntity(
@@ -30,6 +33,7 @@ final class UserCurrencyDataModel {
       buyDate: Timestamp.fromDate(entity.buyDate),
       price: entity.price,
       total: entity.total,
+      transactionType: entity.transactionType,
     );
   }
 
@@ -41,6 +45,8 @@ final class UserCurrencyDataModel {
       buyDate: json['date'] ?? Timestamp.now(),
       price: json['price'] ?? 0.0,
       total: json['total'] ?? 0.0,
+      transactionType:
+          TransactionTypeEnum.values.firstWhere((e) => e.name == json['type']),
     );
   }
 }

@@ -1,3 +1,4 @@
+import 'package:asset_tracker/core/constants/database/transaction_type_enum.dart';
 import 'package:asset_tracker/data/model/base/base_model.dart';
 import 'package:asset_tracker/domain/entities/database/enttiy/buy_currency_entity.dart';
 import 'package:cloud_firestore/cloud_firestore.dart';
@@ -10,12 +11,14 @@ final class BuyCurrencyModel extends Equatable implements BaseModel {
   final DateTime date;
   final String? userId;
   double get total => amount * price;
+  final TransactionTypeEnum transactionType;
 
   const BuyCurrencyModel({
     required this.amount,
     required this.price,
     required this.currency,
     required this.date,
+    required this.transactionType,
     this.userId,
   });
 
@@ -35,6 +38,7 @@ final class BuyCurrencyModel extends Equatable implements BaseModel {
       'date': date,
       'userId': userId,
       'total': FieldValue.increment(total),
+      'type': transactionType.value,
     };
   }
 
@@ -46,6 +50,7 @@ final class BuyCurrencyModel extends Equatable implements BaseModel {
       'date': date,
       'userId': userId,
       'total': total,
+      'type': transactionType.value,
     };
   }
 
@@ -61,6 +66,8 @@ final class BuyCurrencyModel extends Equatable implements BaseModel {
       currency: json['currency'] as String,
       date: json['date'] as DateTime,
       userId: json['userId'] as String?,
+      transactionType: TransactionTypeEnum.values
+          .firstWhere((e) => e.name == json['type'] as String),
     );
   }
 
@@ -71,6 +78,7 @@ final class BuyCurrencyModel extends Equatable implements BaseModel {
       currency: entity.currency,
       date: entity.date,
       userId: entity.userId,
+      transactionType: entity.transactionType,
     );
   }
 

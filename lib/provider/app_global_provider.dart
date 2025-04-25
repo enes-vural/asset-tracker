@@ -1,3 +1,4 @@
+import 'package:asset_tracker/core/constants/database/transaction_type_enum.dart';
 import 'package:asset_tracker/data/model/database/response/asset_code_model.dart';
 import 'package:asset_tracker/domain/entities/database/enttiy/user_data_entity.dart';
 import 'package:asset_tracker/domain/entities/database/enttiy/user_currency_entity_model.dart';
@@ -33,6 +34,7 @@ class AppGlobalProvider extends ChangeNotifier {
       },
       (success) async {
         await updateUserData(success);
+        notifyListeners();
         return true;
       },
     );
@@ -127,6 +129,9 @@ class AppGlobalProvider extends ChangeNotifier {
     //TODO: Isolate this logic to a use case
     for (UserCurrencyEntity element in userCurrencyList) {
       try {
+        if (element.transactionType == TransactionTypeEnum.SELL) {
+          continue;
+        }
         currency = globalAssets?.firstWhere(
           (elementCurrency) => elementCurrency.code == element.currencyCode,
         );
@@ -142,7 +147,7 @@ class AppGlobalProvider extends ChangeNotifier {
       }
     }
     _totalProfit = newBalance - userBalance;
-    _totalProfitPercent = (_totalProfit / 100) * 100;
+    _totalProfitPercent = ((newBalance * 100) / userBalance) - 100;
     _latestBalance = newBalance;
     _userBalance = userBalance;
 
