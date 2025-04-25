@@ -153,7 +153,4 @@ final dashboardViewModelProvider =
 });
 
 //-------------------CUSTOM PROVIDERS-------------------
-final isAuthProcessingProvider = StateProvider<bool>((ref) {
-  return true;
-});
 //test@gmail.com

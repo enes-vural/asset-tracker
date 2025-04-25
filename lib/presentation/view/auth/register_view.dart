@@ -1,4 +1,5 @@
 import 'package:asset_tracker/core/constants/global/key/fom_keys.dart';
+import 'package:asset_tracker/core/helpers/dialog_helper.dart';
 import 'package:asset_tracker/core/mixins/validation_mixin.dart';
 import 'package:asset_tracker/core/widgets/custom_align.dart';
 import 'package:asset_tracker/core/widgets/custom_padding.dart';
@@ -24,9 +25,11 @@ class _RegisterViewState extends ConsumerState<RegisterView>
   @override
   Widget build(BuildContext context) {
     final viewModel = ref.watch(authViewModelProvider);
-    bool canPop = ref.watch(isAuthProcessingProvider.notifier).state;
+
+    EasyDialog.showDialogOnProcess(context, ref, authViewModelProvider);
+
     return PopScope(
-      canPop: canPop,
+      canPop: viewModel.canPop,
       child: Scaffold(
           appBar: AppBar(
             centerTitle: true,

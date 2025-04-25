@@ -10,6 +10,13 @@ class DashboardViewModel extends ChangeNotifier {
   UserDataEntity? _userData;
   List<UserCurrencyEntity>? _transactions;
 
+  bool canPop = true;
+
+  void changePopState(bool state) {
+    canPop = state;
+    notifyListeners();
+  }
+
   final Map<String, List<UserCurrencyEntity>> _filteredTransactions = {};
 
   void showAssetsAsStatistic(WidgetRef ref) {
@@ -33,10 +40,12 @@ class DashboardViewModel extends ChangeNotifier {
 
   Future<void> removeTransaction(
       WidgetRef ref, UserCurrencyEntity transaction) async {
+    changePopState(false);
+
     final status = await ref
         .read(buyCurrencyUseCaseProvider)
         .deleteUserTransaction(transaction);
-    status.fold((error) async {
+    await status.fold((error) async {
       // Handle error
     }, (success) async {
       if (success) {
@@ -49,6 +58,7 @@ class DashboardViewModel extends ChangeNotifier {
         notifyListeners();
       }
     });
+    changePopState(true);
   }
 
   CalculateProfitEntity? calculateSelectedCurrencyTotalAmount(

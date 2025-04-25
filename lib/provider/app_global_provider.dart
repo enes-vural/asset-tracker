@@ -29,7 +29,7 @@ class AppGlobalProvider extends ChangeNotifier {
     final result = await ref.read(getUserDataUseCaseProvider)(entity);
     return await result.fold(
       (failure) {
-        debugPrint("Error: $failure");
+        debugPrint("Error: ${failure.message}");
         return false;
       },
       (success) async {

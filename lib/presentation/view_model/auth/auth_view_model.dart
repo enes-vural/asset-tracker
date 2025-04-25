@@ -20,8 +20,11 @@ class AuthViewModel extends ChangeNotifier {
   final TextEditingController emailController = TextEditingController();
   final TextEditingController passwordController = TextEditingController();
 
-  _changeProcessingState({required WidgetRef ref, required bool canPop}) {
-    ref.read(isAuthProcessingProvider.notifier).state = canPop;
+  bool canPop = true;
+
+  changePopState(bool value) {
+    if (value == canPop) return;
+    canPop = value;
     notifyListeners();
   }
 
@@ -40,12 +43,12 @@ class AuthViewModel extends ChangeNotifier {
     if (!(GlobalFormKeys.registerFormsKey.currentState?.validate() ?? true)) {
       return;
     }
-    _changeProcessingState(ref: ref, canPop: false);
+    changePopState(false);
     final UserRegisterEntity userEntity = UserRegisterEntity(
         userName: emailController.text, password: passwordController.text);
 
     final result = await signInUseCase.registerUser(userEntity);
-    _changeProcessingState(ref: ref, canPop: true);
+    changePopState(true);
     result.fold(
       (failure) {
         EasySnackBar.show(context, failure.message);
@@ -64,7 +67,7 @@ class AuthViewModel extends ChangeNotifier {
     if (!(GlobalFormKeys.loginFormsKey.currentState?.validate() ?? true)) {
       return;
     }
-    _changeProcessingState(ref: ref, canPop: false);
+    changePopState(false);
     final UserLoginEntity userEntity = UserLoginEntity(
         userName: emailController.text, password: passwordController.text);
 
@@ -75,16 +78,17 @@ class AuthViewModel extends ChangeNotifier {
 
     final result = await signInUseCase.call(userEntity);
 
-    _changeProcessingState(ref: ref, canPop: true);
-    result.fold((failure) {
+    
+    await result.fold((failure) {
       if (failure.state != AuthErrorState.NETWORK_ERROR) {
         ref.read(cacheUseCaseProvider).removeOfflineAction(cachedKey);
       }
       EasySnackBar.show(context, failure.message);
-    },
-        (success) async {
+      changePopState(true);
+    }, (success) async {
       ref.read(cacheUseCaseProvider).removeOfflineAction(cachedKey);
       _clearForms();
+      changePopState(true);
       Routers.instance.popToSplash(context);
     });
   }
