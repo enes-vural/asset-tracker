@@ -1,4 +1,5 @@
 import 'package:asset_tracker/core/config/localization/generated/locale_keys.g.dart';
+import 'package:asset_tracker/core/constants/database/transaction_type_enum.dart';
 import 'package:asset_tracker/data/model/database/error/database_error_model.dart';
 import 'package:asset_tracker/data/model/database/request/buy_currency_model.dart';
 import 'package:asset_tracker/data/model/database/request/user_uid_model.dart';
@@ -50,7 +51,8 @@ class FirestoreRepository implements IFirestoreRepository {
   Future<Either<DatabaseErrorEntity, BuyCurrencyEntity>> buyCurrency(
       BuyCurrencyEntity entity) async {
     final data =
-        await firestoreService.buyCurrency(BuyCurrencyModel.fromEntity(entity));
+        await firestoreService
+        .saveTransaction(BuyCurrencyModel.fromEntity(entity));
 
     return data.fold((failure) {
       return Left(DatabaseErrorEntity.fromModel(failure));
@@ -80,7 +82,7 @@ class FirestoreRepository implements IFirestoreRepository {
         ));
       }
 
-      for (var dataIndex in userAssetsData) {
+      for (Map<String, dynamic>? dataIndex in userAssetsData) {
         debugPrint("User assets data: ${dataIndex.toString()}");
         if (dataIndex != null) {
           userDataModel.currencyList
@@ -89,7 +91,10 @@ class FirestoreRepository implements IFirestoreRepository {
       }
 
       for (var currency in userDataModel.currencyList) {
+        if (currency.transactionType == TransactionTypeEnum.BUY) {
+
         totalBalance += currency.total;
+        }
       }
       userDataModel.balance = totalBalance;
 
@@ -113,6 +118,27 @@ class FirestoreRepository implements IFirestoreRepository {
         },
         (success) {
           debugPrint("Delete user transaction success: $success");
+          return Right(success);
+        },
+      );
+    } catch (e) {
+      return Left(DatabaseErrorEntity(message: e.toString()));
+    }
+  }
+  
+  @override
+  Future<Either<DatabaseErrorEntity, bool>> sellCurrency(
+      UserCurrencyEntity entity) async {
+    final UserCurrencyDataModel model =
+        UserCurrencyDataModel.fromEntity(entity);
+    try {
+      final status = await firestoreService.sellCurrency(model);
+      return status.fold(
+        (failure) {
+          return Left(DatabaseErrorEntity.fromModel(failure));
+        },
+        (success) {
+          debugPrint("Sell user transaction success: $success");
           return Right(success);
         },
       );

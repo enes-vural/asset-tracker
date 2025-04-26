@@ -31,4 +31,24 @@ final class UserCurrencyEntity {
       transactionType: model.transactionType,
     );
   }
+
+  UserCurrencyEntity copyWith({
+    String? userId,
+    double? amount,
+    String? currencyCode,
+    DateTime? buyDate,
+    double? price,
+    double? total,
+    TransactionTypeEnum? transactionType,
+  }) {
+    return UserCurrencyEntity(
+      userId: userId ?? this.userId,
+      amount: amount ?? this.amount,
+      currencyCode: currencyCode ?? this.currencyCode,
+      buyDate: buyDate ?? this.buyDate,
+      price: price ?? this.price,
+      total: total ?? this.total,
+      transactionType: transactionType ?? this.transactionType,
+    );
+  }
 }

@@ -1,3 +1,4 @@
+import 'package:asset_tracker/core/constants/database/transaction_type_enum.dart';
 import 'package:asset_tracker/core/constants/global/general_constants.dart';
 import 'package:asset_tracker/core/constants/string_constant.dart';
 import 'package:asset_tracker/core/config/localization/generated/locale_keys.g.dart';
@@ -35,12 +36,18 @@ class TransactionCardLVBWidget extends ConsumerWidget {
           ),
           elevation: 4,
           child: ListTile(
-            title: Text(
-              transaction.currencyCode,
-              style: TextStyle(
-                color: DefaultColorPalette.grey700,
-                fontSize: AppSize.small2Text,
-              ),
+            title: Row(
+              mainAxisAlignment: MainAxisAlignment.spaceBetween,
+              children: [
+                Text(
+                  transaction.currencyCode,
+                  style: TextStyle(
+                    color: DefaultColorPalette.grey700,
+                    fontSize: AppSize.small2Text,
+                  ),
+                ),
+                _transactionDateTextWidget(transaction),
+              ],
             ),
             subtitle: Row(
               children: [
@@ -74,24 +81,27 @@ class TransactionCardLVBWidget extends ConsumerWidget {
                 Column(
                   crossAxisAlignment: CrossAxisAlignment.end,
                   children: [
+                    const CustomSizedBox.smallGap(),
                     _transactionPriceTextWidget(transaction),
-                    _transactionDateTextWidget(transaction),
                     const CustomSizedBox.mediumGap(),
-                    TextButton(
-                      style: TextButton.styleFrom(
-                        padding: EdgeInsets.zero,
-                        minimumSize: Size.zero,
-                        tapTargetSize: MaterialTapTargetSize.shrinkWrap,
-                      ),
-                      onPressed: () {
-                        print("Sell button pressed");
-                        // Handle sell asset action
-                      },
-                      child: const Text(
-                        "Sell Asset",
-                        style: TextStyle(color: Colors.green),
-                      ),
-                    ),
+                    transaction.transactionType == TransactionTypeEnum.BUY
+                        ? TextButton(
+                            style: TextButton.styleFrom(
+                              padding: EdgeInsets.zero,
+                              minimumSize: Size.zero,
+                              tapTargetSize: MaterialTapTargetSize.shrinkWrap,
+                            ),
+                            onPressed: () async {
+                              print("Sell button pressed");
+                              await viewModel.sellAsset(ref, transaction);
+                            },
+                            child: const Text(
+                              "Sell",
+                              style:
+                                  TextStyle(color: Colors.green, fontSize: 16),
+                            ),
+                          )
+                        : const Text("Sold")
                   ],
                 ),
               ],
@@ -120,6 +130,16 @@ class TransactionCardLVBWidget extends ConsumerWidget {
   }
 
   Text _transactionPriceTextWidget(UserCurrencyEntity transaction) {
+    if (transaction.transactionType == TransactionTypeEnum.SELL) {
+      return Text(
+        DefaultLocalStrings.plus +
+            DefaultLocalStrings.turkishLira +
+            (transaction.price * transaction.amount)
+                .toNumberWithTurkishFormat(),
+        style: const TextStyle(
+            color: DefaultColorPalette.vanillaGreen, fontSize: 16),
+      );
+    }
     return Text(
       DefaultLocalStrings.minus +
           DefaultLocalStrings.turkishLira +

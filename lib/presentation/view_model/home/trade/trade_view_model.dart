@@ -6,6 +6,7 @@ import 'package:asset_tracker/core/constants/global/key/fom_keys.dart';
 import 'package:asset_tracker/core/constants/string_constant.dart';
 import 'package:asset_tracker/core/config/localization/generated/locale_keys.g.dart';
 import 'package:asset_tracker/core/helpers/snackbar.dart';
+import 'package:asset_tracker/core/routers/router.dart';
 import 'package:asset_tracker/data/model/database/response/asset_code_model.dart';
 import 'package:asset_tracker/domain/entities/database/enttiy/buy_currency_entity.dart';
 import 'package:asset_tracker/domain/entities/database/enttiy/user_data_entity.dart';
@@ -101,7 +102,6 @@ class TradeViewModel extends ChangeNotifier {
 
     await request.fold((failure) {
       EasySnackBar.show(context, failure.message);
-
     }, (success) async {
       //TODO: Test edilecek
       ref.read(cacheUseCaseProvider).removeOfflineAction(offlineKey);
@@ -144,5 +144,8 @@ class TradeViewModel extends ChangeNotifier {
       notifyListeners();
     });
     changePopState(true);
+    if (context.mounted) {
+      Routers.instance.pop(context);
+    }
   }
 }

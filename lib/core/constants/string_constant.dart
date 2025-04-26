@@ -7,6 +7,7 @@ final class DefaultLocalStrings {
   static const emptyBalance = "0.00";
   static const emptyFraction = "00";
   static const minus = "-";
+  static const plus = "+";
   static const turkishLira = "₺";
 
   static const censoredText = "**********";

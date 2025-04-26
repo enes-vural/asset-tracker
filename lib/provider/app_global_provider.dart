@@ -133,7 +133,7 @@ class AppGlobalProvider extends ChangeNotifier {
           continue;
         }
         currency = globalAssets?.firstWhere(
-          (elementCurrency) => elementCurrency.code == element.currencyCode,
+          (globalCurrency) => globalCurrency.code == element.currencyCode,
         );
       } catch (e) {
         currency = null;

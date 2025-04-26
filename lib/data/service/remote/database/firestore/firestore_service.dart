@@ -1,5 +1,6 @@
 // ignore_for_file: avoid_function_literals_in_foreach_calls
 
+import 'package:asset_tracker/core/constants/database/transaction_type_enum.dart';
 import 'package:asset_tracker/core/constants/firestore_constants.dart';
 import 'package:asset_tracker/core/config/localization/generated/locale_keys.g.dart';
 import 'package:asset_tracker/data/model/database/error/database_error_model.dart';
@@ -20,7 +21,7 @@ final class FirestoreService implements IFirestoreService {
 
   @override
   //eğer işlem başarılıysa verdiğimiz modeli geri döndürsün istiyorum.
-  Future<Either<DatabaseErrorModel, BuyCurrencyModel>> buyCurrency(
+  Future<Either<DatabaseErrorModel, BuyCurrencyModel>> saveTransaction(
       BuyCurrencyModel model) async {
     if (model.userId == null) {
       Left(DatabaseErrorModel(message: LocaleKeys.trade_userIdNull.tr()));
@@ -42,7 +43,7 @@ final class FirestoreService implements IFirestoreService {
           .doc(model.userId)
           .collection(FirestoreConstants.assetsCollection)
           .doc(model.currency)
-          .collection(model.currency)
+          .collection(model.transactionType.value.toString())
           .doc(model.date.toString())
           //TODO: check here
           .set(
@@ -55,11 +56,6 @@ final class FirestoreService implements IFirestoreService {
     } catch (e) {
       return Left(DatabaseErrorModel(message: e.toString()));
     }
-  }
-
-  @override
-  Future<void> sellCurrency() {
-    throw UnimplementedError();
   }
 
   @override
@@ -91,26 +87,31 @@ final class FirestoreService implements IFirestoreService {
       for (var assetDoc in assetPath.docs) {
         final currencyName = assetDoc.id;
 
-        final datePath =
-            _assetCollection(model).doc(currencyName).collection(currencyName);
+        for (final type in [
+          TransactionTypeEnum.BUY.value,
+          TransactionTypeEnum.SELL.value
+        ]) {
+          final datePath =
+              _assetCollection(model).doc(currencyName).collection(type);
 
-        List<Timestamp> dateList = [];
+          List<Timestamp> dateList = [];
 
-        final dateData = await datePath.get();
+          final dateData = await datePath.get();
 
-        dateData.docs.forEach((element) {
-          debugPrint(element.data().toString());
-          dateList.add(element.data()['date']);
-        });
+          dateData.docs.forEach((element) {
+            debugPrint('[$type] ${element.data()}');
+            dateList.add(element.data()['date']);
+          });
 
-        for (var date in dateList) {
-          final data = await _assetCollection(model)
-              .doc(currencyName)
-              .collection(currencyName)
-              .doc(date.toDate().toString())
-              .get();
+          for (var date in dateList) {
+            final data = await _assetCollection(model)
+                .doc(currencyName)
+                .collection(type)
+                .doc(date.toDate().toString())
+                .get();
 
-          assetDataList.add(data.data());
+            assetDataList.add(data.data());
+          }
         }
       }
     } catch (e) {
@@ -158,9 +159,30 @@ final class FirestoreService implements IFirestoreService {
           .doc(model.userId)
           .collection(FirestoreConstants.assetsCollection)
           .doc(model.currencyCode)
-          .collection(model.currencyCode)
+          .collection(model.transactionType.value.toString())
           .doc(model.buyDate.toDate().toString())
           .delete();
+      return const Right(true);
+    } catch (e) {
+      debugPrint(e.toString());
+      return Left(DatabaseErrorModel(message: e.toString()));
+    }
+  }
+
+  @override
+  Future<Either<DatabaseErrorModel, bool>> sellCurrency(
+      UserCurrencyDataModel model) async {
+    try {
+      //SELL olarak db ye kaydediyoruz
+      await saveTransaction(BuyCurrencyModel.fromUserCurrencyModel(model));
+      //Fakat kullanıcıdan silmek için önceki modeldeki transactionType'ı
+      //BUY olarak güncelleyip silme işlemini yapıyoruz.
+      //Böylece kullanıcıdan silinen işlem, db'de SELL olarak kalıyor.
+      //ve BUY tarafındaki transaction u siliyoruz.
+      final removeModel = model.copyWith(
+        transactionType: TransactionTypeEnum.BUY,
+      );
+      await deleteUserTransaction(removeModel);
       return const Right(true);
     } catch (e) {
       debugPrint(e.toString());
