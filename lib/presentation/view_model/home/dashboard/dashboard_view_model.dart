@@ -1,3 +1,4 @@
+import 'package:asset_tracker/core/constants/database/transaction_type_enum.dart';
 import 'package:asset_tracker/domain/entities/database/enttiy/user_data_entity.dart';
 import 'package:asset_tracker/domain/entities/database/enttiy/user_currency_entity_model.dart';
 import 'package:asset_tracker/domain/entities/database/enttiy/user_uid_entity.dart';
@@ -21,7 +22,8 @@ class DashboardViewModel extends ChangeNotifier {
 
   void showAssetsAsStatistic(WidgetRef ref) {
     _userData = ref.read(appGlobalProvider.notifier).getUserData;
-    _transactions = _userData?.currencyList;
+    _transactions =
+        (_userData?.currencyList ?? []) + (_userData?.soldCurrencyList ?? []);
 
     _filteredTransactions.clear(); // Önce temizle
 
@@ -38,6 +40,42 @@ class DashboardViewModel extends ChangeNotifier {
     });
   }
 
+  Future<void> sellAsset(WidgetRef ref, UserCurrencyEntity transaction) async {
+    changePopState(false);
+
+    CalculateProfitEntity? latestState =
+        calculateSelectedCurrencyTotalAmount(ref, transaction.currencyCode);
+
+    final latestCurrencyData = transaction.copyWith(
+        total: (latestState?.latestPriceTotal),
+        price: ((latestState?.latestPriceTotal ?? 0) / transaction.amount),
+        transactionType: TransactionTypeEnum.SELL);
+
+    final status = await ref
+        .read(buyCurrencyUseCaseProvider)
+        .sellCurrency(latestCurrencyData);
+    await status.fold((error) async {
+      // Handle error
+    }, (success) async {
+      if (success) {
+        debugPrint("Transaction sold successfully");
+        await _updateLatestUserInfo(transaction, ref);
+      }
+    });
+    changePopState(true);
+  }
+
+  Future<void> _updateLatestUserInfo(
+      UserCurrencyEntity transaction, WidgetRef ref) async {
+    _transactions?.remove(transaction);
+    _filteredTransactions[transaction.currencyCode]
+        ?.remove(transaction); // Remove from filtered transactions
+    await ref
+        .read(appGlobalProvider.notifier)
+        .getLatestUserData(ref, UserUidEntity(userId: transaction.userId));
+    notifyListeners();
+  }
+
   Future<void> removeTransaction(
       WidgetRef ref, UserCurrencyEntity transaction) async {
     changePopState(false);
@@ -49,13 +87,7 @@ class DashboardViewModel extends ChangeNotifier {
       // Handle error
     }, (success) async {
       if (success) {
-        _transactions?.remove(transaction);
-        _filteredTransactions[transaction.currencyCode]
-            ?.remove(transaction); // Remove from filtered transactions
-        await ref
-            .read(appGlobalProvider.notifier)
-            .getLatestUserData(ref, UserUidEntity(userId: transaction.userId));
-        notifyListeners();
+        await _updateLatestUserInfo(transaction, ref);
       }
     });
     changePopState(true);

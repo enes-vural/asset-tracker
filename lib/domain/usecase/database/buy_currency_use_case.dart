@@ -22,4 +22,10 @@ class BuyCurrencyUseCase
       UserCurrencyEntity entity) async {
     return await firestoreRepository.deleteUserTransaction(entity);
   }
+
+
+  Future<Either<BaseErrorEntity, bool>> sellCurrency(
+      UserCurrencyEntity entity) async {
+    return await firestoreRepository.sellCurrency(entity);
+  }
 }

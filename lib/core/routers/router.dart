@@ -19,6 +19,10 @@ class Routers {
     AutoRouter.of(context).pushNamed(routePath);
   }
 
+  void pop(BuildContext context) {
+    AutoRouter.of(context).popForced();
+  }
+
   void popToSplash(BuildContext context) async {
     await AutoRouter.of(context).popAndPush(const SplashRoute());
   }

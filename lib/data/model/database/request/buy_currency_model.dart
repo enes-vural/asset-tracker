@@ -1,5 +1,6 @@
 import 'package:asset_tracker/core/constants/database/transaction_type_enum.dart';
 import 'package:asset_tracker/data/model/base/base_model.dart';
+import 'package:asset_tracker/data/model/database/response/user_currency_data_model.dart';
 import 'package:asset_tracker/domain/entities/database/enttiy/buy_currency_entity.dart';
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:equatable/equatable.dart';
@@ -81,6 +82,20 @@ final class BuyCurrencyModel extends Equatable implements BaseModel {
       transactionType: entity.transactionType,
     );
   }
+
+  factory BuyCurrencyModel.fromUserCurrencyModel(
+    UserCurrencyDataModel model,
+  ) {
+    return BuyCurrencyModel(
+      amount: model.amount,
+      price: model.price,
+      currency: model.currencyCode,
+      date: model.buyDate.toDate(),
+      userId: model.userId,
+      transactionType: model.transactionType,
+    );
+  }
+  
 
   @override
   List<Object?> get props => [

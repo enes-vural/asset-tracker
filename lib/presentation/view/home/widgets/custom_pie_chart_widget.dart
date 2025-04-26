@@ -2,7 +2,9 @@ import 'package:asset_tracker/core/config/theme/default_theme.dart';
 import 'package:asset_tracker/core/config/theme/extension/app_size_extension.dart';
 import 'package:asset_tracker/core/widgets/custom_padding.dart';
 import 'package:asset_tracker/domain/entities/database/enttiy/user_currency_entity_model.dart';
+import 'package:asset_tracker/generated/locale_keys.g.dart';
 import 'package:asset_tracker/injection.dart';
+import 'package:easy_localization/easy_localization.dart';
 import 'package:flutter/material.dart';
 import 'package:fl_chart/fl_chart.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
@@ -46,10 +48,27 @@ class _PieChartWidgetState extends ConsumerState<PieChartWidget> {
             PieChartData(
               sectionsSpace: 2,
               centerSpaceRadius: AppSize.chartCenterRadius,
-              sections: List.of(_sections),
+              sections: _sections.isNotEmpty
+                  ? List.of(_sections)
+                  : [
+                      _defaultEmptySection(),
+                    ],
             ),
           ),
         ),
+      ),
+    );
+  }
+
+  PieChartSectionData _defaultEmptySection() {
+    return PieChartSectionData(
+      color: DefaultColorPalette.primaryGold,
+      value: 1,
+      title: LocaleKeys.dashboard_exploreAssets.tr(),
+      radius: AppSize.chartRadius,
+      titleStyle: const TextStyle(
+        color: DefaultColorPalette.vanillaBlack,
+        fontSize: AppSize.mediumText,
       ),
     );
   }
