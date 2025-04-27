@@ -1,3 +1,4 @@
+import 'package:asset_tracker/core/config/localization/generated/locale_keys.g.dart';
 import 'package:asset_tracker/core/constants/global/key/fom_keys.dart';
 import 'package:asset_tracker/core/helpers/dialog_helper.dart';
 import 'package:asset_tracker/core/mixins/validation_mixin.dart';
@@ -9,6 +10,7 @@ import 'package:asset_tracker/presentation/view/auth/widget/auth_form_widget.dar
 import 'package:asset_tracker/presentation/view/auth/widget/auth_submit_widget.dart';
 import 'package:asset_tracker/presentation/view/widgets/circle_logo_widget.dart';
 import 'package:auto_route/auto_route.dart';
+import 'package:easy_localization/easy_localization.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 
@@ -33,7 +35,7 @@ class _RegisterViewState extends ConsumerState<RegisterView>
       child: Scaffold(
           appBar: AppBar(
             centerTitle: true,
-            title: const Text("Register"),
+            title: Text(LocaleKeys.auth_register.tr()),
           ),
           body: CustomPadding.largeHorizontal(
             widget: Form(
@@ -45,8 +47,8 @@ class _RegisterViewState extends ConsumerState<RegisterView>
                   const CustomSizedBox.hugeGap(),
                   const Center(child: CircleMainLogoWidget()),
                   const CustomSizedBox.hugeGap(),
-                  const CustomAlign.centerLeft(
-                      child: Text("Register your account into Asset Tracker")),
+                  CustomAlign.centerLeft(
+                      child: Text(LocaleKeys.auth_registerTitle.tr())),
                   AuthFormWidget.email(
                     emailController: viewModel.emailController,
                     emailValidator: checkEmail,
@@ -58,7 +60,7 @@ class _RegisterViewState extends ConsumerState<RegisterView>
                   ),
                   const CustomSizedBox.hugeGap(),
                   AuthSubmitWidget(
-                      label: "Register",
+                      label: LocaleKeys.auth_register.tr(),
                       voidCallBack: () async =>
                           await viewModel.registerUser(ref, context)),
                 ],

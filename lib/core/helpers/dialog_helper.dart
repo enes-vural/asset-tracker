@@ -1,3 +1,5 @@
+import 'package:asset_tracker/core/config/localization/generated/locale_keys.g.dart';
+import 'package:easy_localization/easy_localization.dart';
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
@@ -10,12 +12,12 @@ final class EasyDialog {
           false, // Kullanıcının dialog'u dışarı tıklayarak kapatmasını engeller
       builder: (BuildContext context) {
         return CupertinoAlertDialog(
-          title: Text('Processing...'),
-          content: CupertinoActivityIndicator(), // Yükleniyor simgesi
+          title: Text(LocaleKeys.app_process.tr()),
+          content: const CupertinoActivityIndicator(), // Yükleniyor simgesi
           actions: [
             CupertinoDialogAction(
               onPressed: () {},
-              child: Text('Please wait...'),
+              child: Text(LocaleKeys.app_pleaseWait.tr()),
             ),
           ],
         );

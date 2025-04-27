@@ -1,6 +1,8 @@
 {   
     "app":{
-        "title":"Gold Exchain"
+        "title":"Gold Exchain",
+        "process":"Processing",
+        "pleaseWait":"Please wait..."
 
     },
 
@@ -9,7 +11,11 @@
         "signIn":"Sign In",
         "email":"Email",
         "password":"Password",
-
+        "register":"Register",
+        "registerText":"Don't have an account? Sign Up",
+        "loginText":"Already have an account? Sign In",
+        "registerTitle":"Register your account into Asset Tracker",
+        
         "validation":{
             "nonePassword":"Please enter your password",
             "weakPassword":"Password must be at least 6 characters",

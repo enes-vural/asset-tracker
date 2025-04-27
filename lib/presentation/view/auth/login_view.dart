@@ -88,7 +88,7 @@ class _LoginViewState extends ConsumerState<LoginView> with ValidatorMixin {
       AuthViewModel authViewModel, BuildContext context) {
     return Center(
       child: TextButton(
-          child: Text("Don't have an account?, register now",
+          child: Text(LocaleKeys.auth_registerText.tr(),
               style: CustomTextStyle.blackColorPoppins(AppSize.smallText)),
           onPressed: () {
             authViewModel.routeRegisterView(context);
