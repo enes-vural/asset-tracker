@@ -6,8 +6,7 @@ import 'package:asset_tracker/core/config/theme/extension/app_size_extension.dar
 import 'package:asset_tracker/core/config/theme/extension/responsive_extension.dart';
 import 'package:asset_tracker/core/config/theme/style_theme.dart';
 import 'package:asset_tracker/core/widgets/custom_padding.dart';
-import 'package:asset_tracker/generated/locale_keys.g.dart';
-
+import 'package:asset_tracker/core/config/localization/generated/locale_keys.g.dart';
 class HomeViewSwapButtonWidget extends StatelessWidget {
   const HomeViewSwapButtonWidget({
     super.key,

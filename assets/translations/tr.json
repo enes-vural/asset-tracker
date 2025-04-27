@@ -1,6 +1,8 @@
 {   
     "app":{
-        "title":"Altın Al - Sat"
+        "title":"Altın Al - Sat",
+        "process":"İşleniyor",
+        "pleaseWait":"Lütfen bekleyin..."
     },
 
     "auth":{
@@ -8,6 +10,10 @@
         "signIn":"Giriş Yap",
         "email":"Eposta",
         "password":"Şifre",
+        "register":"Kayıt Ol",
+        "registerText":"Hesabın yok mu? Kayıt ol",
+        "loginText":"Zaten hesabın var mı? Giriş yap",
+        "registerTitle":"Hesabınızı Altın Al - Sat'a kaydedin",
 
         "validation":{
             "nonePassword":"Lütfen şifrenizi giriniz",
