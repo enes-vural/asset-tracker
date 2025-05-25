@@ -16,13 +16,14 @@ import 'package:asset_tracker/presentation/view/home/home_view.dart' as _i2;
 import 'package:asset_tracker/presentation/view/home/trade/trade_view.dart'
     as _i6;
 import 'package:asset_tracker/presentation/view/splash/splash_view.dart' as _i5;
-import 'package:auto_route/auto_route.dart' as _i7;
-import 'package:flutter/material.dart' as _i8;
+import 'package:asset_tracker/presentation/view/trial.dart' as _i7;
+import 'package:auto_route/auto_route.dart' as _i8;
+import 'package:flutter/material.dart' as _i9;
 
 /// generated route for
 /// [_i1.DashboardView]
-class DashboardRoute extends _i7.PageRouteInfo<void> {
-  const DashboardRoute({List<_i7.PageRouteInfo>? children})
+class DashboardRoute extends _i8.PageRouteInfo<void> {
+  const DashboardRoute({List<_i8.PageRouteInfo>? children})
       : super(
           DashboardRoute.name,
           initialChildren: children,
@@ -30,7 +31,7 @@ class DashboardRoute extends _i7.PageRouteInfo<void> {
 
   static const String name = 'DashboardRoute';
 
-  static _i7.PageInfo page = _i7.PageInfo(
+  static _i8.PageInfo page = _i8.PageInfo(
     name,
     builder: (data) {
       return const _i1.DashboardView();
@@ -40,8 +41,8 @@ class DashboardRoute extends _i7.PageRouteInfo<void> {
 
 /// generated route for
 /// [_i2.HomeView]
-class HomeRoute extends _i7.PageRouteInfo<void> {
-  const HomeRoute({List<_i7.PageRouteInfo>? children})
+class HomeRoute extends _i8.PageRouteInfo<void> {
+  const HomeRoute({List<_i8.PageRouteInfo>? children})
       : super(
           HomeRoute.name,
           initialChildren: children,
@@ -49,7 +50,7 @@ class HomeRoute extends _i7.PageRouteInfo<void> {
 
   static const String name = 'HomeRoute';
 
-  static _i7.PageInfo page = _i7.PageInfo(
+  static _i8.PageInfo page = _i8.PageInfo(
     name,
     builder: (data) {
       return const _i2.HomeView();
@@ -59,8 +60,8 @@ class HomeRoute extends _i7.PageRouteInfo<void> {
 
 /// generated route for
 /// [_i3.LoginView]
-class LoginRoute extends _i7.PageRouteInfo<void> {
-  const LoginRoute({List<_i7.PageRouteInfo>? children})
+class LoginRoute extends _i8.PageRouteInfo<void> {
+  const LoginRoute({List<_i8.PageRouteInfo>? children})
       : super(
           LoginRoute.name,
           initialChildren: children,
@@ -68,7 +69,7 @@ class LoginRoute extends _i7.PageRouteInfo<void> {
 
   static const String name = 'LoginRoute';
 
-  static _i7.PageInfo page = _i7.PageInfo(
+  static _i8.PageInfo page = _i8.PageInfo(
     name,
     builder: (data) {
       return const _i3.LoginView();
@@ -78,8 +79,8 @@ class LoginRoute extends _i7.PageRouteInfo<void> {
 
 /// generated route for
 /// [_i4.RegisterView]
-class RegisterRoute extends _i7.PageRouteInfo<void> {
-  const RegisterRoute({List<_i7.PageRouteInfo>? children})
+class RegisterRoute extends _i8.PageRouteInfo<void> {
+  const RegisterRoute({List<_i8.PageRouteInfo>? children})
       : super(
           RegisterRoute.name,
           initialChildren: children,
@@ -87,7 +88,7 @@ class RegisterRoute extends _i7.PageRouteInfo<void> {
 
   static const String name = 'RegisterRoute';
 
-  static _i7.PageInfo page = _i7.PageInfo(
+  static _i8.PageInfo page = _i8.PageInfo(
     name,
     builder: (data) {
       return const _i4.RegisterView();
@@ -97,8 +98,8 @@ class RegisterRoute extends _i7.PageRouteInfo<void> {
 
 /// generated route for
 /// [_i5.SplashView]
-class SplashRoute extends _i7.PageRouteInfo<void> {
-  const SplashRoute({List<_i7.PageRouteInfo>? children})
+class SplashRoute extends _i8.PageRouteInfo<void> {
+  const SplashRoute({List<_i8.PageRouteInfo>? children})
       : super(
           SplashRoute.name,
           initialChildren: children,
@@ -106,7 +107,7 @@ class SplashRoute extends _i7.PageRouteInfo<void> {
 
   static const String name = 'SplashRoute';
 
-  static _i7.PageInfo page = _i7.PageInfo(
+  static _i8.PageInfo page = _i8.PageInfo(
     name,
     builder: (data) {
       return const _i5.SplashView();
@@ -116,11 +117,11 @@ class SplashRoute extends _i7.PageRouteInfo<void> {
 
 /// generated route for
 /// [_i6.TradeView]
-class TradeRoute extends _i7.PageRouteInfo<TradeRouteArgs> {
+class TradeRoute extends _i8.PageRouteInfo<TradeRouteArgs> {
   TradeRoute({
-    _i8.Key? key,
+    _i9.Key? key,
     required String currecyCode,
-    List<_i7.PageRouteInfo>? children,
+    List<_i8.PageRouteInfo>? children,
   }) : super(
           TradeRoute.name,
           args: TradeRouteArgs(
@@ -133,7 +134,7 @@ class TradeRoute extends _i7.PageRouteInfo<TradeRouteArgs> {
 
   static const String name = 'TradeRoute';
 
-  static _i7.PageInfo page = _i7.PageInfo(
+  static _i8.PageInfo page = _i8.PageInfo(
     name,
     builder: (data) {
       final pathParams = data.inheritedPathParams;
@@ -154,7 +155,7 @@ class TradeRouteArgs {
     required this.currecyCode,
   });
 
-  final _i8.Key? key;
+  final _i9.Key? key;
 
   final String currecyCode;
 
@@ -162,4 +163,23 @@ class TradeRouteArgs {
   String toString() {
     return 'TradeRouteArgs{key: $key, currecyCode: $currecyCode}';
   }
+}
+
+/// generated route for
+/// [_i7.TrialView]
+class TrialRoute extends _i8.PageRouteInfo<void> {
+  const TrialRoute({List<_i8.PageRouteInfo>? children})
+      : super(
+          TrialRoute.name,
+          initialChildren: children,
+        );
+
+  static const String name = 'TrialRoute';
+
+  static _i8.PageInfo page = _i8.PageInfo(
+    name,
+    builder: (data) {
+      return const _i7.TrialView();
+    },
+  );
 }
