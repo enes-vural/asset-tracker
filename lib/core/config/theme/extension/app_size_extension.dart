@@ -1,3 +1,5 @@
+import 'package:flutter_screenutil/flutter_screenutil.dart';
+
 ///class set the sizes of Text Widgets.
 ///* Text Size
 ///* small Text 12.0
@@ -22,22 +24,22 @@
 ///* largeRadius 12.0
 final class AppSize {
   ///*small 12.0
-  static const double smallText = 12.0;
+  static double smallText = 12.0.sp;
 
   ///*small 14.0
-  static const double small2Text = 14.0;
+  static double small2Text = 14.0.sp;
 
   ///*small v2.0 size: 14.0
-  static const double smallText2 = 14.0;
+  static double smallText2 = 14.0.sp;
 
   ///*medium 16.0
-  static const double mediumText = 16.0;
+  static double mediumText = 16.0.sp;
 
   ///large 18.0
-  static const double largeText = 18.0;
+  static double largeText = 18.0.sp;
 
   ///xLarge 24.0
-  static const double xLargeText = 24.0;
+  static double xLargeText = 24.0.sp;
 
   // Padding //
 
@@ -54,7 +56,7 @@ final class AppSize {
   static const double largePadd = 16.0;
 
   ///24.0
-  static const double hugePadd = 24.0;
+  static const double hugePadd = 32.0;
 
   // Border //
   static const double defaultBorderWidth = 1.0;
@@ -65,23 +67,23 @@ final class AppSize {
 
   // Radius //
   ///6.0
-  static const double smallRadius = 6.0;
+  static double smallRadius = 6.0.r;
 
   ///10.0
-  static const double mediumRadius = 10.0;
+  static double mediumRadius = 10.0.r;
 
   ///12.0
-  static const double largeRadius = 12.0;
+  static double largeRadius = 12.0.r;
 
   ///22.0
-  static const double hugeRadius = 22.0;
+  static double hugeRadius = 22.0.r;
 
   ///40.0
-  static const double chartCenterRadius = 25.0;
+  static double chartCenterRadius = 25.0.r;
 
   ///80.0
-  static const double chartRadius = 80.0;
+  static double chartRadius = 80.0.r;
 
   ///32.0
-  static const double largeIcon = 32.0;
+  static double largeIcon = 32.0.r;
 }

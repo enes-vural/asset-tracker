@@ -33,7 +33,25 @@ final class CustomTextStyle {
 
   static TextStyle blackColorPoppins(double size) =>
       _basePoppinStyle(color: DefaultColorPalette.vanillaBlack, size: size);
-  
+
+  static TextStyle greyColorPoppins(double size) =>
+      _basePoppinStyle(color: DefaultColorPalette.customGrey, size: size);
+
+  static TextStyle greyColorManrope(double size) => TextStyle(
+        color: DefaultColorPalette.customGrey,
+        fontFamily: 'Manrope',
+        fontSize: size,
+      );
+
+  static TextStyle loginButtonTextStyle(Color color) => TextStyle(
+        color: color,
+        fontFamily: 'Manrope',
+        fontSize: AppSize.mediumText,
+        letterSpacing: 0,
+        fontWeight: FontWeight.normal,
+        height: 1.5,
+      );
+
   static TextStyle blackColorBoldPoppins(double size) => GoogleFonts.poppins(
         fontWeight: FontWeight.bold,
         color: DefaultColorPalette.vanillaBlack,
@@ -53,9 +71,8 @@ final class CustomTextStyle {
 
   static TextStyle greenColorPoppins(double size) =>
       _basePoppinStyle(color: DefaultColorPalette.vanillaGreen, size: size);
-      
-
 }
+
 /// Helper class for box decoration style in Containers.
 final class CustomDecoration extends BoxDecoration {
   CustomDecoration.roundBox(
@@ -71,6 +88,7 @@ final class CustomDecoration extends BoxDecoration {
           color: containerColor ?? DefaultColorPalette.vanillaTranparent,
         );
 }
+
 ///Helper Class for custom text form fields.
 
 final class CustomInputDecoration extends InputDecoration {
@@ -84,11 +102,24 @@ final class CustomInputDecoration extends InputDecoration {
   CustomInputDecoration.mediumRoundInput(
       {required String? label, IconData? icon})
       : super(
-            label: Text(label ?? DefaultLocalStrings.emptyText),
-            icon: icon != null ? Icon(icon) : null,
-            border: OutlineInputBorder(
-                borderRadius: BorderRadius.circular(AppSize.mediumRadius)));
+        
+          label: Text(label ?? DefaultLocalStrings.emptyText),
+          icon: icon != null ? Icon(icon) : null,
+          labelStyle: CustomTextStyle.greyColorManrope(AppSize.smallText2),
+          enabledBorder: _defaultInputBorder(),
+          focusedBorder: _defaultInputBorder(),
+        );
+
+  static OutlineInputBorder _defaultInputBorder() {
+    return OutlineInputBorder(
+      borderSide: BorderSide(
+        color: DefaultColorPalette.customGreyLight,
+        width: AppSize.defaultBorderWidth,
+        style: BorderStyle.solid,
+      ),
+      borderRadius: BorderRadius.circular(AppSize.mediumRadius),
+    );
+  }
 
   //this methods fills the border design
-
 }

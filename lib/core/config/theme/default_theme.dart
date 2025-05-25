@@ -56,6 +56,15 @@ final class DefaultColorPalette {
   static Color grey600 = Colors.grey.shade600;
   static Color grey700 = Colors.grey.shade700;
 
+  static Color mainBlue = const Color.fromRGBO(25, 127, 229, 1);
+  static Color mainWhite = const Color.fromRGBO(239, 242, 244, 1);
+  static Color mainTextBlack = const Color.fromRGBO(17, 20, 22, 1);
+
+  static Color customGrey = const Color.fromRGBO(99, 117, 135, 1);
+  static Color customGreyLight = const Color.fromRGBO(219, 224, 229, 1);
+  static Color customGreyLightX = const Color.fromRGBO(239, 242, 244, 1);
+
+
   static Color purple500 = Colors.purple.shade500;
 
   ///default white color in material 3

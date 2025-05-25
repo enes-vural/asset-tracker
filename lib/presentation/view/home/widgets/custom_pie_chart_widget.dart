@@ -66,7 +66,7 @@ class _PieChartWidgetState extends ConsumerState<PieChartWidget> {
       value: 1,
       title: LocaleKeys.dashboard_exploreAssets.tr(),
       radius: AppSize.chartRadius,
-      titleStyle: const TextStyle(
+      titleStyle: TextStyle(
         color: DefaultColorPalette.vanillaBlack,
         fontSize: AppSize.mediumText,
       ),
@@ -93,7 +93,7 @@ class _PieChartWidgetState extends ConsumerState<PieChartWidget> {
           value: totalValue,
           title: currencyCode,
           radius: AppSize.chartRadius,
-          titleStyle: const TextStyle(
+          titleStyle: TextStyle(
             color: DefaultColorPalette.vanillaWhite,
             fontSize: AppSize.smallText,
           ),

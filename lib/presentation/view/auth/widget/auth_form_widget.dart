@@ -53,10 +53,13 @@ class AuthFormWidget extends StatelessWidget {
       widget: SizedBox(
         width: ResponsiveSize(context).screenWidth,
         child: TextFormField(
+
           obscureText: isObs,
           controller: formController,
           validator: validaor,
-          decoration: CustomInputDecoration.mediumRoundInput(label: label),
+          decoration: CustomInputDecoration.mediumRoundInput(
+            label: label,
+          ),
         ),
       ),
     );
