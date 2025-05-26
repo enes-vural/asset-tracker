@@ -10,12 +10,12 @@ class AppRouter extends RootStackRouter {
         AutoRoute(
           path: DefaultLocalStrings.splashRoute,
           page: SplashRoute.page,
-          initial: false,
+          initial: true,
         ),
         AutoRoute(
           path: DefaultLocalStrings.trialRoute,
           page: TrialRoute.page,
-          initial: true,
+          //initial: true,
         ),
         AutoRoute(
           path: DefaultLocalStrings.tradeRoute,

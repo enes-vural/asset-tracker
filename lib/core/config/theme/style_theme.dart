@@ -4,6 +4,7 @@ import 'package:asset_tracker/core/constants/string_constant.dart';
 import 'package:asset_tracker/core/config/theme/default_theme.dart';
 import 'package:asset_tracker/core/config/theme/extension/app_size_extension.dart';
 import 'package:flutter/material.dart';
+import 'package:flutter_screenutil/flutter_screenutil.dart';
 import 'package:google_fonts/google_fonts.dart';
 
 ///class set the style of Text Widgets.
@@ -97,17 +98,34 @@ final class CustomInputDecoration extends InputDecoration {
       : super(
             label: Text(label ?? DefaultLocalStrings.emptyText),
             border: OutlineInputBorder(
-                borderRadius: BorderRadius.circular(radius)));
+            borderRadius: BorderRadius.circular(radius),
+          ),
+        );
 
   CustomInputDecoration.mediumRoundInput(
-      {required String? label, IconData? icon})
+      {
+    required String? label,
+    IconData? icon,
+    Color? fillColor,
+    bool hasLabel = true,
+  })
       : super(
-        
-          label: Text(label ?? DefaultLocalStrings.emptyText),
+          fillColor: fillColor ?? DefaultColorPalette.customGreyLightX,
+          filled: true,
+          label: hasLabel ? Text(label ?? DefaultLocalStrings.emptyText) : null,
           icon: icon != null ? Icon(icon) : null,
           labelStyle: CustomTextStyle.greyColorManrope(AppSize.smallText2),
           enabledBorder: _defaultInputBorder(),
-          focusedBorder: _defaultInputBorder(),
+          focusedBorder: _focusedInputBorder(),
+          errorBorder: _errorBorder(),
+          focusedErrorBorder: _errorBorder(),
+          hintText: label,
+          hintStyle: TextStyle(
+            color: DefaultColorPalette.customGrey,
+            fontFamily: 'Manrope',
+            fontSize: AppSize.smallText2,
+            fontWeight: FontWeight.normal,
+          ),
         );
 
   static OutlineInputBorder _defaultInputBorder() {
@@ -118,6 +136,26 @@ final class CustomInputDecoration extends InputDecoration {
         style: BorderStyle.solid,
       ),
       borderRadius: BorderRadius.circular(AppSize.mediumRadius),
+    );
+  }
+
+  static OutlineInputBorder _focusedInputBorder() {
+    return OutlineInputBorder(
+      borderRadius: BorderRadius.circular(AppSize.mediumRadius),
+      borderSide: BorderSide(
+        color: DefaultColorPalette.mainBlue,
+        width: 2.r,
+      ),
+    );
+  }
+
+  static OutlineInputBorder _errorBorder() {
+    return OutlineInputBorder(
+      borderRadius: BorderRadius.circular(AppSize.mediumRadius),
+      borderSide: BorderSide(
+        color: DefaultColorPalette.errorRed,
+        width: 2.r,
+      ),
     );
   }
 

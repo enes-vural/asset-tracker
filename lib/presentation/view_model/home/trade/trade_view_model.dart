@@ -98,7 +98,7 @@ class TradeViewModel extends ChangeNotifier {
             ));
 
     final request =
-        await ref.read(buyCurrencyUseCaseProvider)(buyCurrencyEntity);
+        await ref.read(databaseUseCaseProvider)(buyCurrencyEntity);
 
     await request.fold((failure) {
       EasySnackBar.show(context, failure.message);
@@ -124,8 +124,8 @@ class TradeViewModel extends ChangeNotifier {
       //ama bu durumlara karşıda bir güvenlik önlemi olarak kullanıcı bilgilerini
       //her işlem sonrasında database den çekerek güncelliyoruz.
       final latestUserData = await ref
-          .read(getUserDataUseCaseProvider)
-          .call(UserUidEntity(userId: currentUserId));
+          .read(databaseUseCaseProvider)
+          .getUserData(UserUidEntity(userId: currentUserId));
 
       await latestUserData.fold(
         (l) {

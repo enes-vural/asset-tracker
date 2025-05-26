@@ -94,23 +94,13 @@ final cacheRepositoryProvider = Provider<ICacheRepository>((ref) {
 
 //------------------ USE CASE PROVIDERS ------------------
 
-final getAssetCodesUseCaseProvider = Provider<GetCurrencyCodeUseCase>((ref) {
+final databaseUseCaseProvider = Provider<DatabaseUseCase>((ref) {
   final _firestoreRepository = ref.watch(firestoreRepositoryProvider);
-  return GetCurrencyCodeUseCase(firestoreRepository: _firestoreRepository);
+  return DatabaseUseCase(firestoreRepository: _firestoreRepository);
 });
 
 //multiple usage of same repository instance,.
 //make here single one shared instance.
-
-final buyCurrencyUseCaseProvider = Provider<BuyCurrencyUseCase>((ref) {
-  final _firestoreRepository = ref.watch(firestoreRepositoryProvider);
-  return BuyCurrencyUseCase(firestoreRepository: _firestoreRepository);
-});
-
-final getUserDataUseCaseProvider = Provider<GetUserDataUseCase>((ref) {
-  final _firestoreRepository = ref.watch(firestoreRepositoryProvider);
-  return GetUserDataUseCase(firestoreRepository: _firestoreRepository);
-});
 
 final signInUseCaseProvider = Provider<SignInUseCase>((ref) {
   final _authRepositoryProvider = ref.watch(authRepositoryProvider);
