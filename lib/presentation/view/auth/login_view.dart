@@ -1,6 +1,7 @@
 import 'package:asset_tracker/core/config/theme/default_theme.dart';
 import 'package:asset_tracker/core/config/theme/extension/app_size_extension.dart';
 import 'package:asset_tracker/core/config/theme/style_theme.dart';
+import 'package:asset_tracker/core/constants/global/key/fom_keys.dart';
 import 'package:asset_tracker/core/constants/global/key/widget_keys.dart';
 import 'package:asset_tracker/core/mixins/validation_mixin.dart';
 import 'package:asset_tracker/core/widgets/custom_padding.dart';
@@ -31,13 +32,14 @@ class _TrialViewState extends ConsumerState<LoginView> with ValidatorMixin {
   @override
   Widget build(BuildContext context) {
     final AuthViewModel viewModel = ref.watch(authViewModelProvider);
-
+    final GlobalKey<FormState> loginFormsKey = GlobalKey<FormState>();
     return PopScope(
       canPop: viewModel.canPop,
       child: Scaffold(
         resizeToAvoidBottomInset: false,
         appBar: AppBar(
           backgroundColor: Colors.white,
+          automaticallyImplyLeading: false,
           title: Column(
             mainAxisSize: MainAxisSize.min,
             children: <Widget>[
@@ -56,87 +58,100 @@ class _TrialViewState extends ConsumerState<LoginView> with ValidatorMixin {
           ),
           centerTitle: true,
         ),
-        body: Column(
-          mainAxisSize: MainAxisSize.min,
-          children: <Widget>[
-            const CustomSizedBox.hugeGap(),
-            const CustomPadding.largeHorizontal(
-              widget: Column(
-                mainAxisSize: MainAxisSize.min,
-                children: <Widget>[
-                  Text(
-                    'Get access to the tools you need to invest, spend, and put your money in motion.',
-                    textAlign: TextAlign.center,
-                    style: TextStyle(
-                        color: Color.fromRGBO(17, 20, 22, 1),
-                        fontFamily: 'Manrope',
-                        fontSize: 16,
-                        letterSpacing: 0,
-                        fontWeight: FontWeight.normal,
-                        height: 1.5),
-                  ),
-                ],
-              ),
-            ),
-            CustomPadding.hugeHorizontal(
-              widget: AuthFormWidget.email(
-                key: WidgetKeys.loginEmailTextFieldKey,
-                emailController: viewModel.emailController,
-                emailValidator: checkEmail,
-              ),
-            ),
-            CustomPadding.hugeHorizontal(
-              widget: AuthFormWidget.password(
-                key: WidgetKeys.loginPasswordTextFieldKey,
-                passwordController: viewModel.passwordController,
-                passwordValidator: checkPassword,
-              ),
-            ),
-            const CustomSizedBox.mediumGap(),
-            CustomPadding.largeHorizontal(
-              widget: Column(
-                mainAxisSize: MainAxisSize.min,
-                children: <Widget>[
-                  Text(
-                    "'By continuing, you agree to Finaks's Terms of Service and acknowledge that you have read its Privacy Policy. '",
-                    textAlign: TextAlign.center,
-                    style: TextStyle(
-                        color: DefaultColorPalette.customGrey,
-                        fontFamily: 'Manrope',
-                        fontSize: 14,
-                        letterSpacing: 0,
-                        fontWeight: FontWeight.normal,
-                        height: 1.5),
-                  ),
-                ],
-              ),
-            ),
-            const CustomSizedBox.mediumGap(),
-            CustomPadding.hugeHorizontal(
-              widget: Row(
-                children: [
-                  HalfLoginButton(
-                    label: "Sign Up",
-                    color: DefaultColorPalette.customGreyLightX,
-                    textStyle: CustomTextStyle.loginButtonTextStyle(
-                      DefaultColorPalette.mainTextBlack,
+        body: Form(
+          key: loginFormsKey,
+          child: Column(
+            mainAxisSize: MainAxisSize.min,
+            children: <Widget>[
+              const CustomSizedBox.hugeGap(),
+              const CustomPadding.largeHorizontal(
+                widget: Column(
+                  mainAxisSize: MainAxisSize.min,
+                  children: <Widget>[
+                    Text(
+                      'Get access to the tools you need to invest, spend, and put your money in motion.',
+                      textAlign: TextAlign.center,
+                      style: TextStyle(
+                          color: Color.fromRGBO(17, 20, 22, 1),
+                          fontFamily: 'Manrope',
+                          fontSize: 16,
+                          letterSpacing: 0,
+                          fontWeight: FontWeight.normal,
+                          height: 1.5),
                     ),
-                    onPressed: () =>
-                        _navigateToRegisterView(viewModel, context),
-                  ),
-                  const CustomSizedBox.smallWidth(),
-                  HalfLoginButton(
-                    label: "Next",
-                    color: DefaultColorPalette.mainBlue,
-                    textStyle: CustomTextStyle.loginButtonTextStyle(
-                      DefaultColorPalette.mainWhite,
-                    ),
-                    onPressed: () => _submit(viewModel, context),
-                  ),
-                ],
+                  ],
+                ),
               ),
-            ),
-          ],
+              const CustomSizedBox.hugeGap(),
+              CustomPadding.hugeHorizontal(
+                widget: AuthFormWidget.email(
+                  key: WidgetKeys.loginEmailTextFieldKey,
+                  emailController: viewModel.emailController,
+                  emailValidator: checkEmail,
+                  hasTitle: false,
+                  hasLabel: true,
+                ),
+              ),
+              CustomPadding.hugeHorizontal(
+                widget: AuthFormWidget.password(
+                  key: WidgetKeys.loginPasswordTextFieldKey,
+                  passwordController: viewModel.passwordController,
+                  passwordValidator: checkPassword,
+                  hasTitle: false,
+                  hasLabel: true,
+                ),
+              ),
+              const CustomSizedBox.mediumGap(),
+              CustomPadding.largeHorizontal(
+                widget: Column(
+                  mainAxisSize: MainAxisSize.min,
+                  children: <Widget>[
+                    Text(
+                      "'By continuing, you agree to Finaks's Terms of Service and acknowledge that you have read its Privacy Policy. '",
+                      textAlign: TextAlign.center,
+                      style: TextStyle(
+                          color: DefaultColorPalette.customGrey,
+                          fontFamily: 'Manrope',
+                          fontSize: AppSize.smallText,
+                          letterSpacing: 0,
+                          fontWeight: FontWeight.normal,
+                          height: 1.5),
+                    ),
+                  ],
+                ),
+              ),
+              const CustomSizedBox.mediumGap(),
+              CustomPadding.hugeHorizontal(
+                widget: Row(
+                  children: [
+                    HalfLoginButton(
+                      label: "Sign Up",
+                      color: DefaultColorPalette.customGreyLightX,
+                      textStyle: CustomTextStyle.loginButtonTextStyle(
+                        DefaultColorPalette.mainTextBlack,
+                      ),
+                      onPressed: () =>
+                          _navigateToRegisterView(viewModel, context),
+                    ),
+                    const CustomSizedBox.smallWidth(),
+                    HalfLoginButton(
+                      label: "Next",
+                      color: DefaultColorPalette.mainBlue,
+                      textStyle: CustomTextStyle.loginButtonTextStyle(
+                        DefaultColorPalette.mainWhite,
+                      ),
+                      onPressed: () {
+                        if (!(loginFormsKey.currentState?.validate() ?? true)) {
+                          return;
+                        }
+                        _submit(viewModel, context);
+                      },
+                    ),
+                  ],
+                ),
+              ),
+            ],
+          ),
         ),
       ),
     );
@@ -147,8 +162,8 @@ class _TrialViewState extends ConsumerState<LoginView> with ValidatorMixin {
     authViewModel.routeRegisterView(context);
   }
 
-  void _submit(AuthViewModel authViewModel, BuildContext context) {
-    authViewModel.signInUser(ref, context);
+  void _submit(AuthViewModel authViewModel, BuildContext context) async {
+    await authViewModel.signInUser(ref, context);
   }
 }
 

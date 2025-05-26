@@ -52,7 +52,7 @@ class DashboardViewModel extends ChangeNotifier {
         transactionType: TransactionTypeEnum.SELL);
 
     final status = await ref
-        .read(buyCurrencyUseCaseProvider)
+        .read(databaseUseCaseProvider)
         .sellCurrency(latestCurrencyData);
     await status.fold((error) async {
       // Handle error
@@ -81,7 +81,7 @@ class DashboardViewModel extends ChangeNotifier {
     changePopState(false);
 
     final status = await ref
-        .read(buyCurrencyUseCaseProvider)
+        .read(databaseUseCaseProvider)
         .deleteUserTransaction(transaction);
     await status.fold((error) async {
       // Handle error

@@ -2,6 +2,7 @@ import 'package:asset_tracker/core/config/localization/generated/locale_keys.g.d
 import 'package:asset_tracker/core/constants/database/transaction_type_enum.dart';
 import 'package:asset_tracker/data/model/database/error/database_error_model.dart';
 import 'package:asset_tracker/data/model/database/request/buy_currency_model.dart';
+import 'package:asset_tracker/data/model/database/request/save_user_model.dart';
 import 'package:asset_tracker/data/model/database/request/user_uid_model.dart';
 import 'package:asset_tracker/data/model/database/response/asset_code_model.dart';
 import 'package:asset_tracker/data/model/database/response/user_data_model.dart';
@@ -12,6 +13,7 @@ import 'package:asset_tracker/domain/entities/database/enttiy/user_data_entity.d
 import 'package:asset_tracker/domain/entities/database/enttiy/user_currency_entity_model.dart';
 import 'package:asset_tracker/domain/entities/database/enttiy/user_uid_entity.dart';
 import 'package:asset_tracker/domain/entities/database/error/database_error_entity.dart';
+import 'package:asset_tracker/domain/entities/database/request/save_user_entity.dart';
 import 'package:asset_tracker/domain/repository/database/firestore/ifirestore_repository.dart';
 import 'package:dartz/dartz.dart';
 import 'package:easy_localization/easy_localization.dart';
@@ -50,8 +52,7 @@ class FirestoreRepository implements IFirestoreRepository {
   @override
   Future<Either<DatabaseErrorEntity, BuyCurrencyEntity>> buyCurrency(
       BuyCurrencyEntity entity) async {
-    final data =
-        await firestoreService
+    final data = await firestoreService
         .saveTransaction(BuyCurrencyModel.fromEntity(entity));
 
     return data.fold((failure) {
@@ -92,8 +93,7 @@ class FirestoreRepository implements IFirestoreRepository {
 
       for (var currency in userDataModel.currencyList) {
         if (currency.transactionType == TransactionTypeEnum.BUY) {
-
-        totalBalance += currency.total;
+          totalBalance += currency.total;
         }
       }
       userDataModel.balance = totalBalance;
@@ -125,7 +125,7 @@ class FirestoreRepository implements IFirestoreRepository {
       return Left(DatabaseErrorEntity(message: e.toString()));
     }
   }
-  
+
   @override
   Future<Either<DatabaseErrorEntity, bool>> sellCurrency(
       UserCurrencyEntity entity) async {
@@ -139,6 +139,26 @@ class FirestoreRepository implements IFirestoreRepository {
         },
         (success) {
           debugPrint("Sell user transaction success: $success");
+          return Right(success);
+        },
+      );
+    } catch (e) {
+      return Left(DatabaseErrorEntity(message: e.toString()));
+    }
+  }
+
+  @override
+  Future<Either<DatabaseErrorEntity, bool>> saveUser(
+      SaveUserEntity entity) async {
+    final SaveUserModel model = SaveUserModel.fromEntity(entity);
+    try {
+      final response = await firestoreService.saveUser(model);
+      return response.fold(
+        (failure) {
+          return Left(DatabaseErrorEntity.fromModel(failure));
+        },
+        (success) {
+          debugPrint("Save user success: $success");
           return Right(success);
         },
       );

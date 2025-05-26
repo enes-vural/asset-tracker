@@ -32,7 +32,7 @@ final class SyncManager {
             //TODO:
             //Left error kontrolüne göre silme işlemi eklenecek.
             final result =
-                await read(buyCurrencyUseCaseProvider).call(action.params);
+                await read(databaseUseCaseProvider).call(action.params);
             if (result.isRight()) {
               await cacheUseCase.removeOfflineAction(action.id);
               debugPrint("Asset bought successfully");
@@ -78,7 +78,7 @@ final class SyncManager {
             //TODO:
             //Left error kontrolüne göre silme işlemi eklenecek.
             final buyCurrencyUseCase =
-                hContainer.read(buyCurrencyUseCaseProvider);
+                hContainer.read(databaseUseCaseProvider);
             final result = await buyCurrencyUseCase.call(action.params);
             if (result.isRight()) {
               await cacheUseCase.removeOfflineAction(action.id);

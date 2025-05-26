@@ -26,7 +26,7 @@ class AppGlobalProvider extends ChangeNotifier {
   //if success we will update user data
   //and return true
   Future<bool> getLatestUserData(WidgetRef ref, UserUidEntity entity) async {
-    final result = await ref.read(getUserDataUseCaseProvider)(entity);
+    final result = await ref.read(databaseUseCaseProvider).getUserData(entity);
     return await result.fold(
       (failure) {
         debugPrint("Error: ${failure.message}");
@@ -67,7 +67,7 @@ class AppGlobalProvider extends ChangeNotifier {
   Future<void> getCurrencyList(WidgetRef ref) async {
     //Future provider can be replace in here but we don't need to use it
     //already default provider can handle it.
-    final result = await ref.read(getAssetCodesUseCaseProvider)(null);
+    final result = await ref.read(databaseUseCaseProvider).getAssetCodes(null);
 
     result.fold((error) {}, (success) {
       assetCodes = success;

@@ -26,8 +26,8 @@ final class AppSize {
   ///*small 12.0
   static double smallText = 12.0.sp;
 
-  ///*small 14.0
-  static double small2Text = 14.0.sp;
+  ///*small 13.0
+  static double small2Text = 13.0.sp;
 
   ///*small v2.0 size: 14.0
   static double smallText2 = 14.0.sp;

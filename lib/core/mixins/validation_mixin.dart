@@ -27,6 +27,11 @@ mixin ValidatorMixin {
             : LocaleKeys.auth_validation_weakPassword.tr()
         : LocaleKeys.auth_validation_nonePassword.tr();
   }
+  
+  //Default bir check validation yaz
+  String? checkText(String? text) {
+    return text != null && text.isNotEmpty ? null : "Bu alan boş bırakılamaz.";
+  }
 
   String? checkAmount(String? text, bool isPrice) {
     //isPrice true ise fiyat kontrolü yapılır

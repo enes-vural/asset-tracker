@@ -1,6 +1,7 @@
 import 'package:asset_tracker/data/model/database/error/database_error_model.dart'
     show DatabaseErrorModel;
 import 'package:asset_tracker/data/model/database/request/buy_currency_model.dart';
+import 'package:asset_tracker/data/model/database/request/save_user_model.dart';
 import 'package:asset_tracker/data/model/database/request/user_uid_model.dart';
 import 'package:asset_tracker/data/model/database/response/asset_code_model.dart'
     show AssetCodeModel;
@@ -24,6 +25,8 @@ abstract interface class IDatabaseService {
   Future<List<Map<String, dynamic>?>?> getUserAssets(
     UserUidModel model,
   );
+
+  Future<Either<DatabaseErrorModel, bool>> saveUser(SaveUserModel model);
 
   Future<Either<DatabaseErrorModel, bool>> deleteUserTransaction(
       UserCurrencyDataModel model);

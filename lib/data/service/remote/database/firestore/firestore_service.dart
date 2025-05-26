@@ -5,6 +5,7 @@ import 'package:asset_tracker/core/constants/firestore_constants.dart';
 import 'package:asset_tracker/core/config/localization/generated/locale_keys.g.dart';
 import 'package:asset_tracker/data/model/database/error/database_error_model.dart';
 import 'package:asset_tracker/data/model/database/request/buy_currency_model.dart';
+import 'package:asset_tracker/data/model/database/request/save_user_model.dart';
 import 'package:asset_tracker/data/model/database/request/user_uid_model.dart';
 import 'package:asset_tracker/data/model/database/response/asset_code_model.dart';
 import 'package:asset_tracker/data/model/database/response/user_currency_data_model.dart';
@@ -183,6 +184,20 @@ final class FirestoreService implements IFirestoreService {
         transactionType: TransactionTypeEnum.BUY,
       );
       await deleteUserTransaction(removeModel);
+      return const Right(true);
+    } catch (e) {
+      debugPrint(e.toString());
+      return Left(DatabaseErrorModel(message: e.toString()));
+    }
+  }
+
+  @override
+  Future<Either<DatabaseErrorModel, bool>> saveUser(SaveUserModel model) async {
+    try {
+      await instance
+          .collection(FirestoreConstants.usersCollection)
+          .doc(model.uid)
+          .set(model.toJson());
       return const Right(true);
     } catch (e) {
       debugPrint(e.toString());
