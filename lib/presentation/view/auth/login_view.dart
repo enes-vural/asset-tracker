@@ -1,7 +1,6 @@
 import 'package:asset_tracker/core/config/theme/default_theme.dart';
 import 'package:asset_tracker/core/config/theme/extension/app_size_extension.dart';
 import 'package:asset_tracker/core/config/theme/style_theme.dart';
-import 'package:asset_tracker/core/constants/global/key/fom_keys.dart';
 import 'package:asset_tracker/core/constants/global/key/widget_keys.dart';
 import 'package:asset_tracker/core/mixins/validation_mixin.dart';
 import 'package:asset_tracker/core/widgets/custom_padding.dart';
@@ -44,15 +43,14 @@ class _TrialViewState extends ConsumerState<LoginView> with ValidatorMixin {
             mainAxisSize: MainAxisSize.min,
             children: <Widget>[
               Text(
-                'Welcome to your future',
+                'Finaks',
                 textAlign: TextAlign.center,
                 style: TextStyle(
                     color: Color.fromRGBO(17, 20, 22, 1),
                     fontFamily: 'Manrope',
                     fontSize: 22.sp,
                     letterSpacing: 0,
-                    fontWeight: FontWeight.normal,
-                    height: 1.7.sh),
+                    fontWeight: FontWeight.bold),
               ),
             ],
           ),
@@ -63,7 +61,18 @@ class _TrialViewState extends ConsumerState<LoginView> with ValidatorMixin {
           child: Column(
             mainAxisSize: MainAxisSize.min,
             children: <Widget>[
+              Text(
+                'Welcome to your future',
+                textAlign: TextAlign.center,
+                style: TextStyle(
+                    color: DefaultColorPalette.mainTextBlack,
+                    fontFamily: 'Manrope',
+                    fontSize: 22.sp,
+                    letterSpacing: 0,
+                    fontWeight: FontWeight.normal),
+              ),
               const CustomSizedBox.hugeGap(),
+              
               const CustomPadding.largeHorizontal(
                 widget: Column(
                   mainAxisSize: MainAxisSize.min,

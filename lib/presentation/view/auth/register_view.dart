@@ -35,6 +35,22 @@ class _RegisterViewState extends ConsumerState<RegisterView>
             backgroundColor: Colors.white,
             automaticallyImplyLeading: true,
             elevation: 0,
+            title: const Column(
+              mainAxisSize: MainAxisSize.min,
+              children: <Widget>[
+                Text(
+                  "Finaks",
+                  textAlign: TextAlign.center,
+                  style: const TextStyle(
+                    color: Color.fromRGBO(17, 20, 22, 1),
+                    fontFamily: 'Manrope',
+                    fontSize: 22,
+                    letterSpacing: 0,
+                    fontWeight: FontWeight.bold,
+                  ),
+                ),
+              ],
+            ),
           ),
           body: CustomPadding.smallHorizontal(
             widget: Form(

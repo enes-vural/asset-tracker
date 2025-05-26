@@ -2,7 +2,6 @@
 
 import 'package:asset_tracker/core/constants/database/transaction_type_enum.dart';
 import 'package:asset_tracker/core/constants/enums/cache/offline_action_enums.dart';
-import 'package:asset_tracker/core/constants/global/key/fom_keys.dart';
 import 'package:asset_tracker/core/constants/string_constant.dart';
 import 'package:asset_tracker/core/config/localization/generated/locale_keys.g.dart';
 import 'package:asset_tracker/core/helpers/snackbar.dart';
@@ -19,8 +18,11 @@ import 'package:flutter_riverpod/flutter_riverpod.dart';
 
 class TradeViewModel extends ChangeNotifier {
   TextEditingController amountController = TextEditingController();
-  TextEditingController priceController = TextEditingController();
+  TextEditingController priceTotalController = TextEditingController();
+  TextEditingController priceUnitController = TextEditingController();
+  TextEditingController dateController = TextEditingController();
 
+  
   String? selectedCurrency;
   DateTime? selectedDate;
 
@@ -55,14 +57,9 @@ class TradeViewModel extends ChangeNotifier {
 
   Future<void> buyCurrency(
       {required WidgetRef ref, required BuildContext context}) async {
-    if (!GlobalFormKeys.tradeFormKey.currentState!.validate()) {
-      EasySnackBar.show(context, LocaleKeys.trade_fillAllFields.tr());
-      return;
-    }
-
     changePopState(false);
     final amount = double.tryParse(amountController.text) ?? 0.0;
-    final price = double.tryParse(priceController.text) ?? 0.0;
+    final price = double.tryParse(priceUnitController.text) ?? 0.0;
     final currency = selectedCurrency;
     final date = selectedDate;
     final currentUserId = ref.read(authGlobalProvider).getCurrentUserId;
@@ -140,7 +137,11 @@ class TradeViewModel extends ChangeNotifier {
       );
 
       amountController.clear();
-      priceController.clear();
+      priceUnitController.clear();
+      priceTotalController.clear();
+      dateController.clear();
+      changeSelectedDate(null);
+      changeSelectedCurrency(null);
       notifyListeners();
     });
     changePopState(true);

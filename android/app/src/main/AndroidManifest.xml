@@ -4,7 +4,6 @@
     <uses-permission android:name="android.permission.RECEIVE_BOOT_COMPLETED" />
 
     <application
-        android:debuggable="false"
         android:label="asset_tracker"
         android:name="${applicationName}"
         android:icon="@mipmap/ic_launcher">

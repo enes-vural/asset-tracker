@@ -15,6 +15,27 @@ class Routers {
   static const String dashboardPath = DefaultLocalStrings.dashboardRoute;
   static const String registerPath = DefaultLocalStrings.registerRoute;
 
+  Route<T> _createSlideRoute<T extends Object?>(Widget page) {
+    return PageRouteBuilder<T>(
+      pageBuilder: (context, animation, secondaryAnimation) => page,
+      transitionsBuilder: (context, animation, secondaryAnimation, child) {
+        const begin = Offset(1.0, 0.0); // Sağdan başlar
+        const end = Offset.zero; // Merkeze kayar
+        const curve = Curves.easeInOut;
+
+        var tween = Tween(begin: begin, end: end).chain(
+          CurveTween(curve: curve),
+        );
+
+        return SlideTransition(
+          position: animation.drive(tween),
+          child: child,
+        );
+      },
+      transitionDuration: const Duration(milliseconds: 300),
+    );
+  }
+
   void pushReplaceNamed(BuildContext context, String routePath) {
     AutoRouter.of(context).pushNamed(routePath);
   }

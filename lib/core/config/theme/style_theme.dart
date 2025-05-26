@@ -115,10 +115,10 @@ final class CustomInputDecoration extends InputDecoration {
           label: hasLabel ? Text(label ?? DefaultLocalStrings.emptyText) : null,
           icon: icon != null ? Icon(icon) : null,
           labelStyle: CustomTextStyle.greyColorManrope(AppSize.smallText2),
-          enabledBorder: _defaultInputBorder(),
-          focusedBorder: _focusedInputBorder(),
-          errorBorder: _errorBorder(),
-          focusedErrorBorder: _errorBorder(),
+          enabledBorder: defaultInputBorder(),
+          focusedBorder: focusedInputBorder(),
+          errorBorder: errorInputBorder(),
+          focusedErrorBorder: errorInputBorder(),
           hintText: label,
           hintStyle: TextStyle(
             color: DefaultColorPalette.customGrey,
@@ -128,7 +128,7 @@ final class CustomInputDecoration extends InputDecoration {
           ),
         );
 
-  static OutlineInputBorder _defaultInputBorder() {
+  static OutlineInputBorder defaultInputBorder() {
     return OutlineInputBorder(
       borderSide: BorderSide(
         color: DefaultColorPalette.customGreyLight,
@@ -139,7 +139,7 @@ final class CustomInputDecoration extends InputDecoration {
     );
   }
 
-  static OutlineInputBorder _focusedInputBorder() {
+  static OutlineInputBorder focusedInputBorder() {
     return OutlineInputBorder(
       borderRadius: BorderRadius.circular(AppSize.mediumRadius),
       borderSide: BorderSide(
@@ -149,7 +149,7 @@ final class CustomInputDecoration extends InputDecoration {
     );
   }
 
-  static OutlineInputBorder _errorBorder() {
+  static OutlineInputBorder errorInputBorder() {
     return OutlineInputBorder(
       borderRadius: BorderRadius.circular(AppSize.mediumRadius),
       borderSide: BorderSide(
@@ -158,6 +158,7 @@ final class CustomInputDecoration extends InputDecoration {
       ),
     );
   }
+  
 
   //this methods fills the border design
 }

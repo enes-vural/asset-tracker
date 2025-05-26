@@ -57,6 +57,7 @@ class AuthViewModel extends ChangeNotifier {
     final result = await signInUseCase.registerUser(userEntity);
     result.fold(
       (failure) {
+        changePopState(true);
         EasySnackBar.show(context, failure.message);
         _clearForms();
       },
@@ -67,6 +68,7 @@ class AuthViewModel extends ChangeNotifier {
             .read(databaseUseCaseProvider)
             .saveUserData(saveUserEntity);
         _clearForms();
+        changePopState(true);
         status.fold((error) {
           EasySnackBar.show(context, error.message);
         }, (success) {
@@ -75,7 +77,6 @@ class AuthViewModel extends ChangeNotifier {
             context, "Your account has been created successfully");
           Routers.instance.popToSplash(context);
         });
-        changePopState(true);
        
       },
     );

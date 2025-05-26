@@ -27,7 +27,50 @@ mixin ValidatorMixin {
             : LocaleKeys.auth_validation_weakPassword.tr()
         : LocaleKeys.auth_validation_nonePassword.tr();
   }
-  
+
+
+String? checkDateTime(String? text) {
+    if (text == null || text.isEmpty) {
+      return LocaleKeys.trade_fillAllFields.tr();
+    }
+
+    // dd/MM/yyyy formatını kontrol et
+    final datePattern = RegExp(r'^\d{2}/\d{2}/\d{4}$');
+    if (datePattern.hasMatch(text)) {
+      // Opsiyonel: Tarihin geçerli olup olmadığını da kontrol edebilirsiniz
+      try {
+        final parts = text.split('/');
+        final day = int.parse(parts[0]);
+        final month = int.parse(parts[1]);
+        final year = int.parse(parts[2]);
+
+        // Geçerli tarih kontrolü
+        final date = DateTime(year, month, day);
+        if (date.day != day || date.month != month || date.year != year) {
+          return LocaleKeys.trade_invalidDate
+              .tr(); // Geçersiz tarih (örn: 31/02/2025)
+        }
+
+        return null; // Geçerli dd/MM/yyyy formatında ise null döndür
+      } catch (e) {
+        return LocaleKeys.trade_invalidDate.tr(); // Parse hatası
+      }
+    }
+
+    // Diğer durumlar için validasyon yap
+    try {
+      final date = DateTime.parse(text);
+      if (date.isBefore(DateTime.now())) {
+        return LocaleKeys.trade_invalidDate.tr();
+      }
+    } catch (e) {
+      return LocaleKeys.trade_invalidDate.tr();
+    }
+
+    return null;
+  }
+
+
   //Default bir check validation yaz
   String? checkText(String? text) {
     return text != null && text.isNotEmpty ? null : "Bu alan boş bırakılamaz.";
