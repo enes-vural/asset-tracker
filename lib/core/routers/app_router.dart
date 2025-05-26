@@ -12,33 +12,39 @@ class AppRouter extends RootStackRouter {
           page: SplashRoute.page,
           initial: true,
         ),
-        AutoRoute(
+        CustomRoute(
           path: DefaultLocalStrings.trialRoute,
           page: TrialRoute.page,
+          transitionsBuilder: TransitionsBuilders.slideLeft,
           //initial: true,
         ),
-        AutoRoute(
+        CustomRoute(
           path: DefaultLocalStrings.tradeRoute,
           page: TradeRoute.page,
+          transitionsBuilder: TransitionsBuilders.slideLeft,
           //initial: true
         ),
-        AutoRoute(
+        CustomRoute(
           path: DefaultLocalStrings.registerRoute,
           page: RegisterRoute.page,
+          transitionsBuilder: TransitionsBuilders.slideLeft,
         ),
-        AutoRoute(
+        CustomRoute(
           path: DefaultLocalStrings.dashboardRoute,
           page: DashboardRoute.page,
+          transitionsBuilder: TransitionsBuilders.slideLeft,
         ),  
         // - Auth (Login View)
-        AutoRoute(
+        CustomRoute(
           path: DefaultLocalStrings.loginRoute,
           page: LoginRoute.page,
+          transitionsBuilder: TransitionsBuilders.slideLeft,
         ),
         // - Home (Menu View)
-        AutoRoute(
+        CustomRoute(
           path: DefaultLocalStrings.homeRoute,
           page: HomeRoute.page,
+          transitionsBuilder: TransitionsBuilders.slideLeft,
           //initial: true
         ),
       ];

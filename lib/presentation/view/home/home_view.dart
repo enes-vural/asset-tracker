@@ -95,8 +95,8 @@ class _HomeViewState extends ConsumerState<HomeView> {
                     ],
                   ),
                   const CustomSizedBox.hugeGap(),
-                  const WelcomeCardWidget(),
-                  const CustomSizedBox.hugeGap(),
+                  //const WelcomeCardWidget(),
+                  //const CustomSizedBox.hugeGap(),
                   _exploreAssetsText(),
                   // ignore: prefer_const_constructors
                   CurrencyCardListWidget(),

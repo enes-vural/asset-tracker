@@ -4,13 +4,13 @@ import 'package:asset_tracker/core/config/theme/default_theme.dart';
 import 'package:asset_tracker/core/config/theme/extension/app_size_extension.dart';
 import 'package:asset_tracker/core/config/theme/extension/responsive_extension.dart';
 import 'package:asset_tracker/core/config/theme/style_theme.dart';
-import 'package:asset_tracker/core/constants/string_constant.dart';
 import 'package:asset_tracker/core/widgets/custom_padding.dart';
 import 'package:asset_tracker/core/widgets/custom_sized_box.dart';
 import 'package:easy_localization/easy_localization.dart';
 import 'package:flutter/material.dart';
 
 import 'package:asset_tracker/core/config/localization/generated/locale_keys.g.dart';
+import 'package:flutter/services.dart';
 
 class AuthFormWidget extends StatelessWidget {
   const AuthFormWidget({
@@ -21,6 +21,8 @@ class AuthFormWidget extends StatelessWidget {
     required this.validaor,
     this.hasTitle = false,
     this.hasLabel = true,
+    this.type = TextInputType.text,
+    this.onChanged,
   });
 
   final String label;
@@ -29,6 +31,8 @@ class AuthFormWidget extends StatelessWidget {
   final bool isObs;
   final bool hasTitle;
   final bool hasLabel;
+  final TextInputType type;
+  final ValueChanged<String>? onChanged;
 
   AuthFormWidget.email({
     Key? key,
@@ -114,7 +118,9 @@ class AuthFormWidget extends StatelessWidget {
           SizedBox(
             width: ResponsiveSize(context).screenWidth,
             child: TextFormField(
+              onChanged: onChanged,
               obscureText: isObs,
+              keyboardType: type,
               controller: formController,
               validator: validaor,
               decoration: CustomInputDecoration.mediumRoundInput(
