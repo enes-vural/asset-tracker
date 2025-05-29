@@ -9,8 +9,11 @@ import 'package:asset_tracker/injection.dart';
 import 'package:background_fetch/background_fetch.dart';
 import 'package:easy_localization/easy_localization.dart';
 import 'package:flutter/material.dart';
+import 'package:flutter_native_splash/flutter_native_splash.dart'
+    show FlutterNativeSplash;
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
+
 
 void main() async {
   //Application Init here !
@@ -34,6 +37,7 @@ void main() async {
   BackgroundFetch.registerHeadlessTask(backgroundFetchHeadlessTask);
   BackgroundService.instance
       .addNewHeadlessTask('com.transistorsoft.customtask');
+  FlutterNativeSplash.remove();
 }
 
 final appRouter = AppRouter();

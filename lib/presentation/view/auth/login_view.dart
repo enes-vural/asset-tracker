@@ -3,6 +3,7 @@ import 'package:asset_tracker/core/config/theme/extension/app_size_extension.dar
 import 'package:asset_tracker/core/config/theme/style_theme.dart';
 import 'package:asset_tracker/core/constants/global/key/widget_keys.dart';
 import 'package:asset_tracker/core/mixins/validation_mixin.dart';
+import 'package:asset_tracker/core/widgets/custom_align.dart';
 import 'package:asset_tracker/core/widgets/custom_padding.dart';
 import 'package:asset_tracker/core/widgets/custom_sized_box.dart';
 import 'package:asset_tracker/injection.dart';
@@ -43,7 +44,7 @@ class _TrialViewState extends ConsumerState<LoginView> with ValidatorMixin {
             mainAxisSize: MainAxisSize.min,
             children: <Widget>[
               Text(
-                'Finaks',
+                'Paratik',
                 textAlign: TextAlign.center,
                 style: TextStyle(
                     color: Color.fromRGBO(17, 20, 22, 1),
@@ -62,7 +63,7 @@ class _TrialViewState extends ConsumerState<LoginView> with ValidatorMixin {
             mainAxisSize: MainAxisSize.min,
             children: <Widget>[
               Text(
-                'Welcome to your future',
+                'Paranın Rotasını Belirle',
                 textAlign: TextAlign.center,
                 style: TextStyle(
                     color: DefaultColorPalette.mainTextBlack,
@@ -72,23 +73,17 @@ class _TrialViewState extends ConsumerState<LoginView> with ValidatorMixin {
                     fontWeight: FontWeight.normal),
               ),
               const CustomSizedBox.hugeGap(),
-              
               const CustomPadding.largeHorizontal(
-                widget: Column(
-                  mainAxisSize: MainAxisSize.min,
-                  children: <Widget>[
-                    Text(
-                      'Get access to the tools you need to invest, spend, and put your money in motion.',
-                      textAlign: TextAlign.center,
-                      style: TextStyle(
-                          color: Color.fromRGBO(17, 20, 22, 1),
-                          fontFamily: 'Manrope',
-                          fontSize: 16,
-                          letterSpacing: 0,
-                          fontWeight: FontWeight.normal,
-                          height: 1.5),
-                    ),
-                  ],
+                widget: Text(
+                  'Yatırımlarını canlı takip et, yatırım portföyünü yönet, kazançlarını artır.',
+                  textAlign: TextAlign.center,
+                  style: TextStyle(
+                      color: Color.fromRGBO(17, 20, 22, 1),
+                      fontFamily: 'Manrope',
+                      fontSize: 16,
+                      letterSpacing: 0,
+                      fontWeight: FontWeight.normal,
+                      height: 1.5),
                 ),
               ),
               const CustomSizedBox.hugeGap(),
@@ -116,7 +111,7 @@ class _TrialViewState extends ConsumerState<LoginView> with ValidatorMixin {
                   mainAxisSize: MainAxisSize.min,
                   children: <Widget>[
                     Text(
-                      "'By continuing, you agree to Finaks's Terms of Service and acknowledge that you have read its Privacy Policy. '",
+                      "Devam ederek Paratik'in gizlilik politikasını ve kullanım koşullarını kabul etmiş olursun.",
                       textAlign: TextAlign.center,
                       style: TextStyle(
                           color: DefaultColorPalette.customGrey,
@@ -134,7 +129,7 @@ class _TrialViewState extends ConsumerState<LoginView> with ValidatorMixin {
                 widget: Row(
                   children: [
                     HalfLoginButton(
-                      label: "Sign Up",
+                      label: "Kayıt Ol",
                       color: DefaultColorPalette.customGreyLightX,
                       textStyle: CustomTextStyle.loginButtonTextStyle(
                         DefaultColorPalette.mainTextBlack,
@@ -144,7 +139,7 @@ class _TrialViewState extends ConsumerState<LoginView> with ValidatorMixin {
                     ),
                     const CustomSizedBox.smallWidth(),
                     HalfLoginButton(
-                      label: "Next",
+                      label: "Devam Et",
                       color: DefaultColorPalette.mainBlue,
                       textStyle: CustomTextStyle.loginButtonTextStyle(
                         DefaultColorPalette.mainWhite,
@@ -159,6 +154,18 @@ class _TrialViewState extends ConsumerState<LoginView> with ValidatorMixin {
                   ],
                 ),
               ),
+              const CustomSizedBox.mediumGap(),
+              CustomAlign.centerRight(
+                child: CustomPadding.hugeHorizontal(
+                    widget: TextButton(
+                  onPressed: () {},
+                  child: Text(
+                    "Şifremi Unuttum",
+                    style: CustomTextStyle.greyColorManrope(AppSize.smallText),
+                  ),
+                )),
+              ),
+            
             ],
           ),
         ),
