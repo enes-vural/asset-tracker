@@ -1,4 +1,6 @@
 import 'package:asset_tracker/core/config/localization/generated/locale_keys.g.dart';
+import 'package:asset_tracker/core/config/theme/extension/app_size_extension.dart';
+import 'package:asset_tracker/core/config/theme/style_theme.dart';
 import 'package:asset_tracker/core/helpers/dialog_helper.dart';
 import 'package:asset_tracker/core/mixins/validation_mixin.dart';
 import 'package:asset_tracker/core/widgets/custom_padding.dart';
@@ -21,6 +23,41 @@ class RegisterView extends ConsumerStatefulWidget {
 
 class _RegisterViewState extends ConsumerState<RegisterView>
     with ValidatorMixin {
+  FocusNode? _emailFocusNode;
+  FocusNode? _passwordFocusNode;
+  FocusNode? _firstNameFocusNode;
+  FocusNode? _lastNameFocusNode;
+
+  void _initalizeFocusNodes() {
+    _emailFocusNode ??= FocusNode();
+    _passwordFocusNode ??= FocusNode();
+    _firstNameFocusNode ??= FocusNode();
+    _lastNameFocusNode ??= FocusNode();
+  }
+
+  void _disposeFocusNodes() {
+    _emailFocusNode?.dispose();
+    _emailFocusNode = null;
+    _passwordFocusNode?.dispose();
+    _passwordFocusNode = null;
+    _firstNameFocusNode?.dispose();
+    _firstNameFocusNode = null;
+    _lastNameFocusNode?.dispose();
+    _lastNameFocusNode = null;
+  }
+
+  @override
+  void initState() {
+    _initalizeFocusNodes();
+    super.initState();
+  }
+
+  @override
+  void dispose() {
+    _disposeFocusNodes();
+    super.dispose();
+  }
+
   @override
   Widget build(BuildContext context) {
     final GlobalKey<FormState> registerFormsKey = GlobalKey<FormState>();
@@ -31,6 +68,7 @@ class _RegisterViewState extends ConsumerState<RegisterView>
     return PopScope(
       canPop: viewModel.canPop,
       child: Scaffold(
+          resizeToAvoidBottomInset: false,
           appBar: AppBar(
             backgroundColor: Colors.white,
             automaticallyImplyLeading: true,
@@ -39,7 +77,7 @@ class _RegisterViewState extends ConsumerState<RegisterView>
               mainAxisSize: MainAxisSize.min,
               children: <Widget>[
                 Text(
-                  "Finaks",
+                  "PaRota",
                   textAlign: TextAlign.center,
                   style: const TextStyle(
                     color: Color.fromRGBO(17, 20, 22, 1),
@@ -53,17 +91,18 @@ class _RegisterViewState extends ConsumerState<RegisterView>
             ),
           ),
           body: CustomPadding.smallHorizontal(
-            widget: Form(
-              key: registerFormsKey,
-              child: CustomPadding.largeAll(
-                widget: Column(
-                  crossAxisAlignment: CrossAxisAlignment.start,
-                  children: [
-                    // Title
-                    const Padding(
-                      padding: EdgeInsets.symmetric(vertical: 20.0),
-                      child: Text(
-                        'Create your account',
+            widget: SingleChildScrollView(
+              scrollDirection: Axis.vertical,
+              child: Form(
+                key: registerFormsKey,
+                child: CustomPadding.largeAll(
+                  widget: Column(
+                    crossAxisAlignment: CrossAxisAlignment.start,
+                    children: [
+                      // Title
+                      CustomSizedBox.largeGap(),
+                      Text(
+                        'Hesap Oluştur',
                         style: TextStyle(
                           color: Color.fromRGBO(17, 20, 22, 1),
                           fontFamily: 'Manrope',
@@ -72,59 +111,84 @@ class _RegisterViewState extends ConsumerState<RegisterView>
                           height: 1.27,
                         ),
                       ),
-                    ),
+                      Text(
+                        "PaRota Hesabı oluşturmak için lütfen aşağıdaki bilgileri doldurun.",
+                        style: CustomTextStyle.greyColorManrope(
+                            AppSize.small2Text),
+                      ),
 
-                    const CustomSizedBox.smallGap(),
+                      const CustomSizedBox.smallGap(),
 
-                    // Email Field
-                    AuthFormWidget.email(
-                      emailController: viewModel.emailController,
-                      emailValidator: checkEmail,
-                      hasTitle: true,
-                      hasLabel: false,
-                    ),
-                    const CustomSizedBox.smallGap(),
-                    AuthFormWidget.password(
-                      passwordController: viewModel.passwordController,
-                      passwordValidator: checkPassword,
-                      hasTitle: true,
-                      hasLabel: false,
-                    ),
+                      // Email Field
+                      AuthFormWidget.email(
+                        emailController: viewModel.emailController,
+                        emailValidator: checkEmail,
+                        hasTitle: true,
+                        hasLabel: false,
+                        focusNode: _emailFocusNode,
+                        textInputAction: TextInputAction.next,
+                        onFieldSubmitted: (value) =>
+                            _passwordFocusNode?.requestFocus(),
+                      ),
+                      const CustomSizedBox.smallGap(),
+                      AuthFormWidget.password(
+                        passwordController: viewModel.passwordController,
+                        passwordValidator: checkPassword,
+                        hasTitle: true,
+                        hasLabel: false,
+                        focusNode: _passwordFocusNode,
+                        textInputAction: TextInputAction.next,
+                        onFieldSubmitted: (value) =>
+                            _firstNameFocusNode?.requestFocus(),
+                      ),
 
-                    const CustomSizedBox.smallGap(),
-                    // Password Field
-                    AuthFormWidget.firstName(
-                      firstNameController: viewModel.firstNameController,
-                      firstNameValidator: checkText,
-                      hasTitle: true,
-                      hasLabel: false,
-                    ),
+                      const CustomSizedBox.smallGap(),
+                      // Password Field
+                      AuthFormWidget.firstName(
+                        firstNameController: viewModel.firstNameController,
+                        firstNameValidator: checkText,
+                        hasTitle: true,
+                        hasLabel: false,
+                        focusNode: _firstNameFocusNode,
+                        textInputAction: TextInputAction.next,
+                        onFieldSubmitted: (value) =>
+                            _lastNameFocusNode?.requestFocus(),
+                      ),
 
-                    const CustomSizedBox.smallGap(),
-                    // First Name Field
-                    AuthFormWidget.lastName(
-                      lastNameController: viewModel.lastNameController,
-                      lastNameValidator: checkText,
-                      hasTitle: true,
-                      hasLabel: false,
-                    ),
-
-                    const CustomSizedBox.hugeGap(),
-                    AuthSubmitWidget(
-                      label: LocaleKeys.auth_register.tr(),
-                      voidCallBack: () async {
-                        if (!(registerFormsKey.currentState?.validate() ??
-                            true)) {
-                          return;
-                        }
-                        await viewModel.registerUser(ref, context);
-                      },
-                    ),
-                  ],
+                      const CustomSizedBox.smallGap(),
+                      // First Name Field
+                      AuthFormWidget.lastName(
+                        lastNameController: viewModel.lastNameController,
+                        lastNameValidator: checkText,
+                        hasTitle: true,
+                        hasLabel: false,
+                        focusNode: _lastNameFocusNode,
+                        textInputAction: TextInputAction.done,
+                        onFieldSubmitted: (value) => _submitRegisterEvent(
+                          registerFormsKey,
+                          viewModel,
+                        ),
+                      ),
+                      const CustomSizedBox.hugeGap(),
+                      AuthSubmitWidget(
+                          label: LocaleKeys.auth_register.tr(),
+                          voidCallBack: () => _submitRegisterEvent(
+                                registerFormsKey,
+                                viewModel,
+                              )),
+                    ],
+                  ),
                 ),
               ),
             ),
           )),
     );
+  }
+
+  Future<void> _submitRegisterEvent(registerFormsKey, viewModel) async {
+    if (!(registerFormsKey.currentState?.validate() ?? true)) {
+      return;
+    }
+    await viewModel.registerUser(ref, context);
   }
 }

@@ -11,7 +11,7 @@ class CircleMainLogoWidget extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return Image.asset(
-      AssetConstant.thirdLogo.toPng(),
+      AssetConstant.mainLogo.toPng(),
       width: 250.w,
     );
   }

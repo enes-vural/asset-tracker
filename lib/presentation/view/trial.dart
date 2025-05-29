@@ -1,20 +1,9 @@
-import 'package:asset_tracker/core/config/theme/default_theme.dart';
-import 'package:asset_tracker/core/config/theme/extension/app_size_extension.dart';
-import 'package:asset_tracker/core/config/theme/extension/responsive_extension.dart';
-import 'package:asset_tracker/core/config/theme/style_theme.dart';
-import 'package:asset_tracker/core/constants/global/key/widget_keys.dart';
 import 'package:asset_tracker/core/mixins/validation_mixin.dart';
 import 'package:asset_tracker/core/routers/router.dart';
-import 'package:asset_tracker/core/widgets/custom_padding.dart';
-import 'package:asset_tracker/core/widgets/custom_sized_box.dart';
-import 'package:asset_tracker/injection.dart';
-import 'package:asset_tracker/presentation/common/custom_form_field.dart';
 import 'package:asset_tracker/presentation/view/auth/widget/auth_form_widget.dart';
-import 'package:asset_tracker/presentation/view_model/auth/auth_view_model.dart';
 import 'package:auto_route/auto_route.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
-import 'package:flutter_screenutil/flutter_screenutil.dart';
 
 @RoutePage()
 class TrialView extends ConsumerStatefulWidget {
