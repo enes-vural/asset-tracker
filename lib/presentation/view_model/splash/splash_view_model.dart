@@ -9,6 +9,55 @@ import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 
 class SplashViewModel extends ChangeNotifier {
+
+  late AnimationController _fadeController;
+  late AnimationController _scaleController;
+  late Animation<double> fadeAnimation;
+  late Animation<double> scaleAnimation;
+
+  Future<void> startAnimation(tickerThis) async {
+    // Animasyon controller'larını başlat
+    _fadeController = AnimationController(
+      duration: const Duration(milliseconds: 750),
+      vsync: tickerThis,
+    );
+
+    _scaleController = AnimationController(
+      duration: const Duration(milliseconds: 600),
+      vsync: tickerThis,
+    );
+
+    // Animasyonları tanımla
+    fadeAnimation = Tween<double>(
+      begin: 0.0,
+      end: 1.0,
+    ).animate(CurvedAnimation(
+      parent: _fadeController,
+      curve: Curves.easeInOut,
+    ));
+
+    scaleAnimation = Tween<double>(
+      begin: 0.5,
+      end: 1.0,
+    ).animate(CurvedAnimation(
+      parent: _scaleController,
+      curve: Curves.elasticOut,
+    ));
+
+    WidgetsBinding.instance.addPostFrameCallback((_) {
+      // Animasyonları başlat
+      _fadeController.forward();
+      Future.delayed(const Duration(milliseconds: 150), () {
+        _scaleController.forward();
+      });
+    });
+  }
+
+  void disposeAnimation() {
+    _fadeController.dispose();
+    _scaleController.dispose();
+  }
+
   Future<void> init(WidgetRef ref, BuildContext context) async {
     //app global provider
     final appGlobal = ref.read(appGlobalProvider.notifier);

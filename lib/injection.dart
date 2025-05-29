@@ -19,8 +19,6 @@ import 'package:asset_tracker/domain/repository/web/iweb_socket_repository.dart'
 import 'package:asset_tracker/domain/usecase/auth/auth_use_case.dart';
 import 'package:asset_tracker/domain/usecase/cache/cache_use_case.dart';
 import 'package:asset_tracker/domain/usecase/database/buy_currency_use_case.dart';
-import 'package:asset_tracker/domain/usecase/database/get_currency_code_use_case.dart';
-import 'package:asset_tracker/domain/usecase/database/get_user_data_use_case.dart';
 import 'package:asset_tracker/domain/usecase/web/web_use_case.dart';
 import 'package:asset_tracker/presentation/view_model/auth/auth_view_model.dart';
 import 'package:asset_tracker/presentation/view_model/home/dashboard/dashboard_view_model.dart';
