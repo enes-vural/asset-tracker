@@ -8,6 +8,7 @@ import 'package:asset_tracker/core/widgets/custom_padding.dart';
 import 'package:asset_tracker/core/widgets/custom_sized_box.dart';
 import 'package:asset_tracker/injection.dart';
 import 'package:asset_tracker/presentation/view/auth/widget/auth_form_widget.dart';
+import 'package:asset_tracker/presentation/view/auth/widget/half_login_button_widget.dart';
 import 'package:asset_tracker/presentation/view_model/auth/auth_view_model.dart';
 import 'package:auto_route/auto_route.dart';
 import 'package:flutter/material.dart';
@@ -23,10 +24,32 @@ class LoginView extends ConsumerStatefulWidget {
 }
 
 class _TrialViewState extends ConsumerState<LoginView> with ValidatorMixin {
+
+  FocusNode? _emailFocusNode;
+  FocusNode? _passwordFocusNode;
+
+  void _initializeFocusNodes() {
+    _emailFocusNode ??= FocusNode();
+    _passwordFocusNode ??= FocusNode();
+  }
+
+  void _disposeFocusNodes() {
+    _emailFocusNode?.dispose();
+    _emailFocusNode = null;
+    _passwordFocusNode?.dispose();
+    _passwordFocusNode = null;
+  }
+  
   @override
   void initState() {
     super.initState();
-    // Any initialization logic can go here
+    _initializeFocusNodes();
+  }
+
+  @override
+  void dispose() {
+    _disposeFocusNodes();
+    super.dispose();
   }
 
   @override
@@ -44,7 +67,7 @@ class _TrialViewState extends ConsumerState<LoginView> with ValidatorMixin {
             mainAxisSize: MainAxisSize.min,
             children: <Widget>[
               Text(
-                'Paratik',
+                'PaRota',
                 textAlign: TextAlign.center,
                 style: TextStyle(
                     color: Color.fromRGBO(17, 20, 22, 1),
@@ -63,27 +86,29 @@ class _TrialViewState extends ConsumerState<LoginView> with ValidatorMixin {
             mainAxisSize: MainAxisSize.min,
             children: <Widget>[
               Text(
-                'Paranın Rotasını Belirle',
+                'Paranın Rotasını Sende',
                 textAlign: TextAlign.center,
                 style: TextStyle(
                     color: DefaultColorPalette.mainTextBlack,
                     fontFamily: 'Manrope',
                     fontSize: 22.sp,
                     letterSpacing: 0,
-                    fontWeight: FontWeight.normal),
+                  fontWeight: FontWeight.normal,
+                ),
               ),
               const CustomSizedBox.hugeGap(),
-              const CustomPadding.largeHorizontal(
+              CustomPadding.largeHorizontal(
                 widget: Text(
                   'Yatırımlarını canlı takip et, yatırım portföyünü yönet, kazançlarını artır.',
                   textAlign: TextAlign.center,
                   style: TextStyle(
-                      color: Color.fromRGBO(17, 20, 22, 1),
+                    color: DefaultColorPalette.mainTextBlack,
                       fontFamily: 'Manrope',
                       fontSize: 16,
                       letterSpacing: 0,
                       fontWeight: FontWeight.normal,
-                      height: 1.5),
+                    height: 1.5,
+                  ),
                 ),
               ),
               const CustomSizedBox.hugeGap(),
@@ -94,6 +119,10 @@ class _TrialViewState extends ConsumerState<LoginView> with ValidatorMixin {
                   emailValidator: checkEmail,
                   hasTitle: false,
                   hasLabel: true,
+                  focusNode: _emailFocusNode,
+                  textInputAction: TextInputAction.next,
+                  onFieldSubmitted: (value) =>
+                      _passwordFocusNode?.requestFocus(),
                 ),
               ),
               CustomPadding.hugeHorizontal(
@@ -103,6 +132,10 @@ class _TrialViewState extends ConsumerState<LoginView> with ValidatorMixin {
                   passwordValidator: checkPassword,
                   hasTitle: false,
                   hasLabel: true,
+                  focusNode: _passwordFocusNode,
+                  textInputAction: TextInputAction.done,
+                  onFieldSubmitted: (value) =>
+                      _submitLoginForm(loginFormsKey, viewModel),
                 ),
               ),
               const CustomSizedBox.mediumGap(),
@@ -111,7 +144,7 @@ class _TrialViewState extends ConsumerState<LoginView> with ValidatorMixin {
                   mainAxisSize: MainAxisSize.min,
                   children: <Widget>[
                     Text(
-                      "Devam ederek Paratik'in gizlilik politikasını ve kullanım koşullarını kabul etmiş olursun.",
+                      "Devam ederek PaRota'nın gizlilik politikasını ve kullanım koşullarını kabul etmiş olursun.",
                       textAlign: TextAlign.center,
                       style: TextStyle(
                           color: DefaultColorPalette.customGrey,
@@ -144,12 +177,8 @@ class _TrialViewState extends ConsumerState<LoginView> with ValidatorMixin {
                       textStyle: CustomTextStyle.loginButtonTextStyle(
                         DefaultColorPalette.mainWhite,
                       ),
-                      onPressed: () {
-                        if (!(loginFormsKey.currentState?.validate() ?? true)) {
-                          return;
-                        }
-                        _submit(viewModel, context);
-                      },
+                      onPressed: () =>
+                          _submitLoginForm(loginFormsKey, viewModel),
                     ),
                   ],
                 ),
@@ -173,6 +202,13 @@ class _TrialViewState extends ConsumerState<LoginView> with ValidatorMixin {
     );
   }
 
+  void _submitLoginForm(loginFormsKey, viewModel) {
+    if (!(loginFormsKey.currentState?.validate() ?? true)) {
+      return;
+    }
+    _submit(viewModel, context);
+  }
+
   void _navigateToRegisterView(
       AuthViewModel authViewModel, BuildContext context) {
     authViewModel.routeRegisterView(context);
@@ -180,48 +216,5 @@ class _TrialViewState extends ConsumerState<LoginView> with ValidatorMixin {
 
   void _submit(AuthViewModel authViewModel, BuildContext context) async {
     await authViewModel.signInUser(ref, context);
-  }
-}
-
-class HalfLoginButton extends StatelessWidget {
-  const HalfLoginButton({
-    super.key,
-    required this.label,
-    required this.textStyle,
-    required this.onPressed,
-    required this.color,
-  });
-
-  final String label;
-  final TextStyle? textStyle;
-  final VoidCallback? onPressed;
-  final Color color;
-
-  @override
-  Widget build(BuildContext context) {
-    return Expanded(
-      child: InkWell(
-        onTap: onPressed,
-        child: Container(
-          height: 48.h,
-          decoration: BoxDecoration(
-            borderRadius: BorderRadius.all(
-              Radius.circular(AppSize.mediumRadius),
-            ),
-            color: color,
-          ),
-          child: SizedBox(
-            height: AppSize.mediumText.h,
-            child: Center(
-              child: Text(
-                label,
-                textAlign: TextAlign.center,
-                style: textStyle,
-              ),
-            ),
-          ),
-        ),
-      ),
-    );
   }
 }

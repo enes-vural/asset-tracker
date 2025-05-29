@@ -1,5 +1,5 @@
 name: asset_tracker
-description: "Paratik mobil uygulaması ile varlıklarınızı takip edin, yönetin ve analiz edin."
+description: "PaRota mobil uygulaması ile varlıklarınızı takip edin, yönetin ve analiz edin."
 
 # Remove this line if you wish to publish to pub.dev
 publish_to: 'none' 
@@ -87,16 +87,16 @@ flutter:
 
   
 flutter_native_splash:
-  color: "#ffffff"
-  image: assets/image/third_logo.png
+  color: "#F5F3EF"
+  image: assets/image/main_logo.png
   ios: true
   web: false
   android_gravity: center
   ios_content_mode: center
 
   android_12:
-    image: assets/image/third_logo.png
-    color: "#ffffff"
-    icon_background_color: "#ffffff"
+    image: assets/image/main_logo.png
+    color: "#F5F3EF"
+    icon_background_color: "#F5F3EF"
 
 

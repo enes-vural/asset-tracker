@@ -74,10 +74,9 @@ class AuthViewModel extends ChangeNotifier {
         }, (success) {
           debugPrint("User data saved successfully");
           EasySnackBar.show(
-            context, "Your account has been created successfully");
+              context, "Your account has been created successfully");
           Routers.instance.popToSplash(context);
         });
-       
       },
     );
   }

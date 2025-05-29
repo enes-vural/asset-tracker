@@ -61,14 +61,14 @@ class _SplashViewState extends ConsumerState<SplashView>
                   child: Opacity(
                     opacity: viewModel.fadeAnimation.value,
                     child: Text(
-                      'Paratik',
+                      'PaRota',
                       style: Theme.of(context)
                               .textTheme
                               .headlineMedium
                               ?.copyWith(
                                 fontWeight: FontWeight.w600,
                                 letterSpacing: 2.0,
-                                color: const Color.fromARGB(255, 10, 73, 164),
+                                color: const Color.fromARGB(255, 10, 46, 82),
                               ) ??
                           TextStyle(
                             fontFamily: "Manrope",

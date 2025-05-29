@@ -19,7 +19,6 @@ import 'package:asset_tracker/presentation/view/home/widgets/balance_profit_text
 import 'package:asset_tracker/presentation/view/home/widgets/balance_text_widget.dart';
 import 'package:asset_tracker/presentation/view/home/widgets/currency_card_widget.dart';
 import 'package:asset_tracker/presentation/view/home/widgets/tabbar_icon_widget.dart';
-import 'package:asset_tracker/presentation/view/home/widgets/welcome_card_widget.dart';
 import 'package:asset_tracker/presentation/view/widgets/home_view_search_field_widget.dart';
 import 'package:asset_tracker/presentation/view/widgets/home_view_swap_button_widget.dart';
 import 'package:asset_tracker/presentation/view_model/home/home_view_model.dart';

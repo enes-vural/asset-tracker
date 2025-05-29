@@ -23,6 +23,9 @@ class AuthFormWidget extends StatelessWidget {
     this.hasLabel = true,
     this.type = TextInputType.text,
     this.onChanged,
+    this.focusNode,
+    this.textInputAction,
+    this.onFieldSubmitted,
   });
 
   final String label;
@@ -33,6 +36,9 @@ class AuthFormWidget extends StatelessWidget {
   final bool hasLabel;
   final TextInputType type;
   final ValueChanged<String>? onChanged;
+  final FocusNode? focusNode;
+  final TextInputAction? textInputAction;
+  final void Function(String)? onFieldSubmitted;
 
   AuthFormWidget.email({
     Key? key,
@@ -40,6 +46,9 @@ class AuthFormWidget extends StatelessWidget {
     required FormFieldValidator<String>? emailValidator,
     required bool hasTitle,
     required bool hasLabel,
+    FocusNode? focusNode,
+    TextInputAction? textInputAction,
+    void Function(String)? onFieldSubmitted,
   }) : this(
           key: key,
           formController: emailController,
@@ -48,6 +57,9 @@ class AuthFormWidget extends StatelessWidget {
           validaor: emailValidator,
           hasTitle: hasTitle,
           hasLabel: hasLabel,
+          focusNode: focusNode,
+          textInputAction: textInputAction,
+          onFieldSubmitted: onFieldSubmitted,
         );
 
   AuthFormWidget.password({
@@ -56,6 +68,9 @@ class AuthFormWidget extends StatelessWidget {
     required FormFieldValidator<String>? passwordValidator,
     required bool hasTitle,
     required bool hasLabel,
+    FocusNode? focusNode,
+    TextInputAction? textInputAction,
+    void Function(String)? onFieldSubmitted,
   }) : this(
           key: key,
           formController: passwordController,
@@ -64,6 +79,9 @@ class AuthFormWidget extends StatelessWidget {
           validaor: passwordValidator,
           hasTitle: hasTitle,
           hasLabel: hasLabel,
+          focusNode: focusNode,
+          textInputAction: textInputAction,
+          onFieldSubmitted: onFieldSubmitted,
         );
 
   const AuthFormWidget.firstName({
@@ -72,6 +90,9 @@ class AuthFormWidget extends StatelessWidget {
     required FormFieldValidator<String>? firstNameValidator,
     required bool hasTitle,
     required bool hasLabel,
+    FocusNode? focusNode,
+    TextInputAction? textInputAction,
+    void Function(String)? onFieldSubmitted,
   }) : this(
             key: key,
             formController: firstNameController,
@@ -79,7 +100,11 @@ class AuthFormWidget extends StatelessWidget {
             label: "First name",
             validaor: firstNameValidator,
             hasTitle: hasTitle,
-            hasLabel: hasLabel);
+          hasLabel: hasLabel,
+          focusNode: focusNode,
+          textInputAction: textInputAction,
+          onFieldSubmitted: onFieldSubmitted,
+        );
 
   const AuthFormWidget.lastName({
     Key? key,
@@ -87,6 +112,9 @@ class AuthFormWidget extends StatelessWidget {
     required FormFieldValidator<String>? lastNameValidator,
     required bool hasTitle,
     required bool hasLabel,
+    FocusNode? focusNode,
+    TextInputAction? textInputAction,
+    void Function(String)? onFieldSubmitted,
   }) : this(
           key: key,
           formController: lastNameController,
@@ -95,6 +123,9 @@ class AuthFormWidget extends StatelessWidget {
           validaor: lastNameValidator,
           hasTitle: hasTitle,
           hasLabel: hasLabel, 
+          focusNode: focusNode,
+          textInputAction: textInputAction,
+          onFieldSubmitted: onFieldSubmitted,
         );
 
   @override
@@ -118,6 +149,9 @@ class AuthFormWidget extends StatelessWidget {
           SizedBox(
             width: ResponsiveSize(context).screenWidth,
             child: TextFormField(
+              textInputAction: textInputAction,
+              onFieldSubmitted: onFieldSubmitted,
+              focusNode: focusNode,
               onChanged: onChanged,
               obscureText: isObs,
               keyboardType: type,
