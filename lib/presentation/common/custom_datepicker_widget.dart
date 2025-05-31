@@ -42,21 +42,20 @@ class CustomDatePickerWidget extends StatelessWidget {
             controller: viewModel.dateController,
             validator: validator,
             keyboardType: TextInputType.datetime,
-            inputFormatters: [
-              FilteringTextInputFormatter.allow(RegExp(r'[0-9/]')),
+            inputFormatters: [  
               _DateInputFormatter(),
             ],
             onChanged: (value) {
               // Tarih formatını kontrol et ve güncelle
-              if (value.isNotEmpty) {
+              if (value.length == 10) {
                 try {
-                  final date = DateFormat('dd/MM/yyyy').parse(value);
+                  final date = DateFormat('dd/MM/yyyy').parseStrict(value);
                   viewModel.changeSelectedDate(date);
                 } catch (e) {
-                  // Hatalı tarih formatı, kullanıcıya hata mesajı gösterilebilir
+                  // Hatalı format varsa ignore
                 }
-              } else {
-                viewModel.changeSelectedDate(null); // Boş değer için null ata
+              } else if (value.isEmpty) {
+                viewModel.changeSelectedDate(null);
               }
             },
             readOnly: false, // Elle yazmaya izin ver

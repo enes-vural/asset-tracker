@@ -18,7 +18,6 @@ import 'package:auto_route/annotations.dart';
 import 'package:easy_localization/easy_localization.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
-import 'package:flutter_screenutil/flutter_screenutil.dart';
 
 @RoutePage()
 class TradeView extends ConsumerStatefulWidget {
@@ -92,6 +91,7 @@ class _TradeViewState extends ConsumerState<TradeView> with ValidatorMixin {
                         viewModel.priceTotalController.text =
                             priceTotal.toStringAsFixed(2);
                       }
+                      
                     },
                   ),
                   AuthFormWidget(
@@ -120,7 +120,6 @@ class _TradeViewState extends ConsumerState<TradeView> with ValidatorMixin {
                     formController: viewModel.priceTotalController,
                     validaor: (value) => checkAmount(value, true),
                     onChanged: (value) {
-                      print(value);
                       double priceTotal = double.tryParse(value) ?? 0.0;
                       double amount =
                           double.tryParse(viewModel.amountController.text) ??
