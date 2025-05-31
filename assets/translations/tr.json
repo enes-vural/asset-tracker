@@ -1,6 +1,8 @@
 {   
     "app":{
-        "title":"Altın Al - Sat"
+        "title":"Altın Al - Sat",
+        "process":"İşleniyor",
+        "pleaseWait":"Lütfen bekleyin..."
     },
 
     "auth":{
@@ -8,6 +10,10 @@
         "signIn":"Giriş Yap",
         "email":"Eposta",
         "password":"Şifre",
+        "register":"Kayıt Ol",
+        "registerText":"Hesabın yok mu? Kayıt ol",
+        "loginText":"Zaten hesabın var mı? Giriş yap",
+        "registerTitle":"Hesabınızı Altın Al - Sat'a kaydedin",
 
         "validation":{
             "nonePassword":"Lütfen şifrenizi giriniz",
@@ -25,7 +31,13 @@
             "timeout":"Zaman aşımı, lütfen tekrar deneyin",
             "userDisabled":"Bu hesap erişilemez",
             "wrongPassword":"Geçersiz şifre",
-            "generalErr":"Bir hata oluştu"
+            "generalErr":"Bir hata oluştu",
+            "emailExist":"Email zaten mevcut",
+            "weakPassword":"Şifreniz zayıf",
+            "operationNotAllowed":"İşlem yapılamıyor",
+            "tooManyRequests":"Çok fazla istek, lütfen daha sonra tekrar deneyin",
+            "networkError":"Ağ hatası, lütfen bağlantınızı kontrol edin",
+            "userTokenExpired":"Oturum süresi doldu, lütfen tekrar giriş yapın"
         }
     },
     "dashboard":{

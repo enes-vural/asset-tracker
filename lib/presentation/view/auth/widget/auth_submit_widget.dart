@@ -1,8 +1,8 @@
+import 'package:asset_tracker/core/config/theme/default_theme.dart';
 import 'package:asset_tracker/core/config/theme/extension/app_size_extension.dart';
-import 'package:asset_tracker/core/config/theme/extension/responsive_extension.dart';
 import 'package:asset_tracker/core/widgets/custom_align.dart';
 import 'package:flutter/material.dart';
-import '../../../../core/config/theme/style_theme.dart';
+import 'package:flutter_screenutil/flutter_screenutil.dart';
 
 class AuthSubmitWidget extends StatelessWidget {
   const AuthSubmitWidget({
@@ -16,29 +16,26 @@ class AuthSubmitWidget extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    return GestureDetector(
-      onTap: () {
-        voidCallBack();
-      },
-      child: CustomAlign.center(
-        child: Container(
-          // percent %8 height
-          height: ResponsiveSize(context).screenHeight.toPercent(8),
-          //percent %50 width
-          width: ResponsiveSize(context).screenWidth.toHalf(),
-          //burası değişecek
-          decoration: CustomDecoration.roundBox(
-            //container and border color can be null,
-            //it changes by container type so we set nullable type variable in here
-            borderColor: Theme.of(context).primaryColor,
-            borderWidth: AppSize.smallBorderWidth,
-            containerColor: null,
-            radius: AppSize.mediumRadius,
+    return CustomAlign.center(
+      child: SizedBox(
+        width: double.infinity,
+        height: 56.h,
+        child: ElevatedButton(
+          onPressed: voidCallBack,
+          style: ElevatedButton.styleFrom(
+            backgroundColor: DefaultColorPalette.mainBlue,
+            shape: RoundedRectangleBorder(
+              borderRadius: BorderRadius.circular(AppSize.largeRadius),
+            ),
+            elevation: 0,
           ),
-          child: Center(
-            child: Text(
-              label,
-              style: CustomTextStyle.goldColorPoppins(AppSize.mediumText),
+          child: Text(
+            label,
+            style: const TextStyle(
+              color: Colors.white,
+              fontFamily: 'Manrope',
+              fontSize: 16,
+              fontWeight: FontWeight.w500,
             ),
           ),
         ),

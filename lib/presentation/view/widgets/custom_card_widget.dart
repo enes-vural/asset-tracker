@@ -1,4 +1,6 @@
+import 'package:asset_tracker/core/config/theme/default_theme.dart';
 import 'package:asset_tracker/core/config/theme/extension/responsive_extension.dart';
+import 'package:asset_tracker/core/widgets/custom_icon.dart';
 import 'package:asset_tracker/core/widgets/custom_padding.dart';
 import 'package:asset_tracker/core/widgets/custom_sized_box.dart';
 import 'package:flutter/material.dart';
@@ -16,7 +18,8 @@ class CustomCardWidget extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return Card(
-      elevation: 1,
+      color: Colors.white,
+      shadowColor: Colors.white,
       margin: EdgeInsets.zero, // Card'ın kenar boşluğunun sıfırlanması
       shape: RoundedRectangleBorder(
         borderRadius: BorderRadius.circular(10),
@@ -40,8 +43,8 @@ class CustomCardWidget extends StatelessWidget {
                       color: Colors.purple.shade50,
                     ),
                     child: Icon(
-                      Icons.attach_money_rounded,
-                      color: Colors.purple.shade400,
+                      IconDataConstants.dollar,
+                      color: DefaultColorPalette.purple500,
                     ),
                   ),
                   const CustomSizedBox.smallWidth(),
@@ -65,7 +68,8 @@ class CustomCardWidget extends StatelessWidget {
                               "Swipe",
                               style: TextStyle(
                                   fontWeight: FontWeight.w100,
-                                  color: Colors.grey.shade500),
+                                color: DefaultColorPalette.grey500,
+                              ),
                             ),
                           ],
                         ),

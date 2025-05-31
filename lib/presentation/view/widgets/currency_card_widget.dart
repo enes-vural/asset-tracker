@@ -1,3 +1,4 @@
+import 'package:asset_tracker/core/constants/enums/widgets/currency_card_widget_enums.dart';
 import 'package:asset_tracker/core/config/theme/extension/responsive_extension.dart';
 import 'package:asset_tracker/core/widgets/custom_sized_box.dart';
 import 'package:easy_localization/easy_localization.dart';
@@ -65,11 +66,11 @@ class CurrencyCardWidget extends StatelessWidget with GetCurrencyIconMixin {
         crossAxisAlignment: CrossAxisAlignment.center,
         children: [
           Text(
-            LocaleKeys.home_sell.tr(),
+            LocaleKeys.home_buy.tr(),
             style: CustomTextStyle.blackColorPoppins(AppSize.smallText),
           ),
           Text(
-            currency.satis.toString(),
+            currency.alis.toString(),
             style: CustomTextStyle.blackColorBoldPoppins(AppSize.small2Text),
           ),
         ],

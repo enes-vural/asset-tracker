@@ -1,27 +1,54 @@
-import 'package:asset_tracker/data/model/user_currency_data_model.dart';
+import 'package:asset_tracker/core/constants/database/transaction_type_enum.dart';
+import 'package:asset_tracker/data/model/database/response/user_currency_data_model.dart';
 
-final class UserCurrencyEntityModel {
+final class UserCurrencyEntity {
+  final String userId;
   final double amount;
   final String currencyCode;
   final DateTime buyDate;
   final double price;
   final double total;
+  final TransactionTypeEnum transactionType;
 
-  const UserCurrencyEntityModel({
+  const UserCurrencyEntity({
+    required this.userId,
     required this.amount,
     required this.currencyCode,
     required this.buyDate,
     required this.price,
     required this.total,
+    required this.transactionType,
   });
 
-  factory UserCurrencyEntityModel.fromModel(UserCurrencyDataModel model) {
-    return UserCurrencyEntityModel(
+  factory UserCurrencyEntity.fromModel(UserCurrencyDataModel model) {
+    return UserCurrencyEntity(
+      userId: model.userId,
       amount: model.amount,
       currencyCode: model.currencyCode,
       buyDate: model.buyDate.toDate(),
       price: model.price,
       total: model.total,
+      transactionType: model.transactionType,
+    );
+  }
+
+  UserCurrencyEntity copyWith({
+    String? userId,
+    double? amount,
+    String? currencyCode,
+    DateTime? buyDate,
+    double? price,
+    double? total,
+    TransactionTypeEnum? transactionType,
+  }) {
+    return UserCurrencyEntity(
+      userId: userId ?? this.userId,
+      amount: amount ?? this.amount,
+      currencyCode: currencyCode ?? this.currencyCode,
+      buyDate: buyDate ?? this.buyDate,
+      price: price ?? this.price,
+      total: total ?? this.total,
+      transactionType: transactionType ?? this.transactionType,
     );
   }
 }

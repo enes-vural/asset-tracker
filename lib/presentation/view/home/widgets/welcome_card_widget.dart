@@ -1,5 +1,5 @@
 import 'package:asset_tracker/core/config/theme/extension/responsive_extension.dart';
-import 'package:asset_tracker/generated/locale_keys.g.dart';
+import 'package:asset_tracker/core/config/localization/generated/locale_keys.g.dart';
 import 'package:asset_tracker/presentation/view/widgets/custom_card_widget.dart';
 import 'package:easy_localization/easy_localization.dart';
 import 'package:flutter/material.dart';
@@ -39,7 +39,6 @@ class _WelcomeCardWidgetState extends State<WelcomeCardWidget> {
             description: cardDescriptions[index],
           );
         },
-        reverse: true,
         onPageChanged: (index) {},
       ),
     );

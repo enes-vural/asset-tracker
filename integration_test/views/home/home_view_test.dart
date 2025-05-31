@@ -1,4 +1,4 @@
-import 'package:asset_tracker/core/config/constants/global/key/widget_keys.dart';
+import 'package:asset_tracker/core/constants/global/key/widget_keys.dart';
 import 'package:asset_tracker/core/config/localization/generated/locale_keys.g.dart';
 
 import 'package:easy_localization/easy_localization.dart';

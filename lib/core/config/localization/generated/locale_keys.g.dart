@@ -2,11 +2,17 @@
 
 abstract class  LocaleKeys {
   static const app_title = 'app.title';
+  static const app_process = 'app.process';
+  static const app_pleaseWait = 'app.pleaseWait';
   static const app = 'app';
   static const auth_forgot = 'auth.forgot';
   static const auth_signIn = 'auth.signIn';
   static const auth_email = 'auth.email';
   static const auth_password = 'auth.password';
+  static const auth_register = 'auth.register';
+  static const auth_registerText = 'auth.registerText';
+  static const auth_loginText = 'auth.loginText';
+  static const auth_registerTitle = 'auth.registerTitle';
   static const auth_validation_nonePassword = 'auth.validation.nonePassword';
   static const auth_validation_weakPassword = 'auth.validation.weakPassword';
   static const auth_validation_noneEmail = 'auth.validation.noneEmail';
@@ -21,6 +27,12 @@ abstract class  LocaleKeys {
   static const auth_response_userDisabled = 'auth.response.userDisabled';
   static const auth_response_wrongPassword = 'auth.response.wrongPassword';
   static const auth_response_generalErr = 'auth.response.generalErr';
+  static const auth_response_emailExist = 'auth.response.emailExist';
+  static const auth_response_weakPassword = 'auth.response.weakPassword';
+  static const auth_response_operationNotAllowed = 'auth.response.operationNotAllowed';
+  static const auth_response_tooManyRequests = 'auth.response.tooManyRequests';
+  static const auth_response_networkError = 'auth.response.networkError';
+  static const auth_response_userTokenExpired = 'auth.response.userTokenExpired';
   static const auth_response = 'auth.response';
   static const auth = 'auth';
   static const dashboard_assetDataNull = 'dashboard.assetDataNull';

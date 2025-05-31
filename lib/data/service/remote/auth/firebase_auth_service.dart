@@ -1,6 +1,7 @@
 import 'package:asset_tracker/data/model/auth/firebase_auth_user_model.dart';
+import 'package:asset_tracker/data/model/auth/request/user_login_model.dart';
+import 'package:asset_tracker/data/model/auth/request/user_register_model.dart';
 import 'package:asset_tracker/data/service/remote/auth/ifirebase_auth_service.dart';
-import 'package:asset_tracker/domain/entities/auth/user_login_entity.dart';
 import 'package:firebase_auth/firebase_auth.dart';
 
 class FirebaseAuthService implements IFirebaseAuthService {
@@ -8,9 +9,9 @@ class FirebaseAuthService implements IFirebaseAuthService {
   FirebaseAuthService({required this.authService});
 
   @override
-  Future<FirebaseAuthUser>? signInUser(UserLoginEntity entity) async {
+  Future<FirebaseAuthUser>? signInUser(UserLoginModel model) async {
     final response = await authService.signInWithEmailAndPassword(
-        email: entity.userName, password: entity.password);
+        email: model.userName, password: model.password);
 
     return _combineUserData(response);
   }
@@ -36,5 +37,11 @@ class FirebaseAuthService implements IFirebaseAuthService {
   @override
   Future<void> signOutUser() async {
     return await authService.signOut();
+  }
+
+  @override
+  Future<UserCredential> registerUser(UserRegisterModel model) async {
+    return await authService.createUserWithEmailAndPassword(
+        email: model.userName, password: model.password);
   }
 }
