@@ -40,6 +40,19 @@ class AppGlobalProvider extends ChangeNotifier {
     );
   }
 
+
+  Future<void> clearData() async {
+    _dataStream = null;
+    _userData = null;
+    _userCurrencies = [];
+    globalAssets = [];
+    _totalProfitPercent = 0.0;
+    _totalProfit = 0.0;
+    _userBalance = 0.0;
+    _latestBalance = 0.0;
+    notifyListeners();
+  }
+
   updateUserData(UserDataEntity entity) {
     _userData = entity;
     _userData?.currencyList.forEach((element) {

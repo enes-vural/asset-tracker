@@ -121,14 +121,19 @@ class TradeRoute extends _i8.PageRouteInfo<TradeRouteArgs> {
   TradeRoute({
     _i9.Key? key,
     required String currecyCode,
+    required String? price,
     List<_i8.PageRouteInfo>? children,
   }) : super(
           TradeRoute.name,
           args: TradeRouteArgs(
             key: key,
             currecyCode: currecyCode,
+            price: price,
           ),
-          rawPathParams: {'currency': currecyCode},
+          rawPathParams: {
+            'currency': currecyCode,
+            'price': price,
+          },
           initialChildren: children,
         );
 
@@ -139,11 +144,14 @@ class TradeRoute extends _i8.PageRouteInfo<TradeRouteArgs> {
     builder: (data) {
       final pathParams = data.inheritedPathParams;
       final args = data.argsAs<TradeRouteArgs>(
-          orElse: () =>
-              TradeRouteArgs(currecyCode: pathParams.getString('currency')));
+          orElse: () => TradeRouteArgs(
+                currecyCode: pathParams.getString('currency'),
+                price: pathParams.optString('price'),
+              ));
       return _i6.TradeView(
         key: args.key,
         currecyCode: args.currecyCode,
+        price: args.price,
       );
     },
   );
@@ -153,15 +161,18 @@ class TradeRouteArgs {
   const TradeRouteArgs({
     this.key,
     required this.currecyCode,
+    required this.price,
   });
 
   final _i9.Key? key;
 
   final String currecyCode;
 
+  final String? price;
+
   @override
   String toString() {
-    return 'TradeRouteArgs{key: $key, currecyCode: $currecyCode}';
+    return 'TradeRouteArgs{key: $key, currecyCode: $currecyCode, price: $price}';
   }
 }
 

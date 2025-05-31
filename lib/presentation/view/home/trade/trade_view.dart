@@ -1,3 +1,5 @@
+import 'package:asset_tracker/core/config/theme/extension/app_size_extension.dart';
+import 'package:asset_tracker/core/config/theme/style_theme.dart';
 import 'package:asset_tracker/core/constants/string_constant.dart';
 import 'package:asset_tracker/core/config/localization/generated/locale_keys.g.dart';
 import 'package:asset_tracker/core/config/theme/default_theme.dart';
@@ -16,12 +18,17 @@ import 'package:auto_route/annotations.dart';
 import 'package:easy_localization/easy_localization.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
+import 'package:flutter_screenutil/flutter_screenutil.dart';
 
 @RoutePage()
 class TradeView extends ConsumerStatefulWidget {
   final String currecyCode;
-  const TradeView(
-      {super.key, @PathParam('currency') required this.currecyCode});
+  final String? price;
+  const TradeView({
+    super.key,
+    @PathParam('currency') required this.currecyCode,
+    @PathParam('price') required this.price,
+  });
 
   @override
   ConsumerState<ConsumerStatefulWidget> createState() => _TradeViewState();
@@ -38,6 +45,7 @@ class _TradeViewState extends ConsumerState<TradeView> with ValidatorMixin {
       ref
           .read(tradeViewModelProvider)
           .changeSelectedCurrency(widget.currecyCode);
+      ref.read(tradeViewModelProvider).getPriceSelectedCurrency(ref);
     });
   }
 
@@ -54,6 +62,10 @@ class _TradeViewState extends ConsumerState<TradeView> with ValidatorMixin {
         backgroundColor: DefaultColorPalette.vanillaWhite,
         appBar: AppBar(
           backgroundColor: DefaultColorPalette.vanillaWhite,
+          title: Text(
+            "Buy Asset",
+            style: CustomTextStyle.greyColorManrope(AppSize.largeText),
+          ),
         ),
         body: Form(
           key: tradeFormKey,
@@ -64,33 +76,46 @@ class _TradeViewState extends ConsumerState<TradeView> with ValidatorMixin {
                 children: [
                   const CustomSizedBox.largeGap(),
                   AuthFormWidget(
-                    label: "Amount",
+                    label: "Miktar",
                     isObs: false,
                     formController: viewModel.amountController,
                     validaor: (value) => checkAmount(value, false),
                     hasLabel: false,
                     hasTitle: true,
+                    onChanged: (value) {
+                      double amount = double.tryParse(value) ?? 0.0;
+                      if (double.tryParse(viewModel.priceUnitController.text) !=
+                          null) {
+                        double priceTotal = amount *
+                            double.tryParse(
+                                viewModel.priceUnitController.text)!;
+                        viewModel.priceTotalController.text =
+                            priceTotal.toStringAsFixed(2);
+                      }
+                    },
                   ),
                   AuthFormWidget(
-                    label: "Price per Unit",
+                    label: "Adet Fiyatı",
                     isObs: false,
                     formController: viewModel.priceUnitController,
                     onChanged: (value) {
-                      print(value);
                       double amount =
                           double.tryParse(viewModel.amountController.text) ??
                               0.0;
                       double pricePerUnit = double.tryParse(value) ?? 0.0;
                       double totalPrice = amount * pricePerUnit;
-                      viewModel.priceTotalController.text =
-                          totalPrice.toStringAsFixed(2);
+                      if (viewModel.priceTotalController.text !=
+                          totalPrice.toStringAsFixed(2)) {
+                        viewModel.priceTotalController.text =
+                            totalPrice.toStringAsFixed(2);
+                      }
                     },
-                    validaor: (value) => checkAmount(value, true),
+                    validaor: (value) => null,
                     hasLabel: false,
                     hasTitle: true,
                   ),
                   AuthFormWidget(
-                    label: "Price Total",
+                    label: "Toplam Fiyat",
                     isObs: false,
                     formController: viewModel.priceTotalController,
                     validaor: (value) => checkAmount(value, true),
@@ -108,11 +133,13 @@ class _TradeViewState extends ConsumerState<TradeView> with ValidatorMixin {
                     hasTitle: true,
                   ),
                   customDatePickerWidget(viewModel),
-
                   CustomDropDownWidget(
-                      pageCurrency: widget.currecyCode,
-                      viewModel: viewModel,
-                      ref: ref),
+                    pageCurrency: widget.currecyCode,
+                    viewModel: viewModel,
+                    onSelectedChanged: () {
+                      viewModel.getPriceSelectedCurrency(ref);
+                    },
+                  ),
                   const CustomSizedBox.largeGap(),
                   AuthSubmitWidget(
                       label: "Buy",
@@ -124,32 +151,6 @@ class _TradeViewState extends ConsumerState<TradeView> with ValidatorMixin {
                         }
                         viewModel.buyCurrency(ref: ref, context: context);
                       }),
-                  // CustomFormField.countForm(
-                  //   label: LocaleKeys.trade_buyAmount.tr(),
-                  //   controller: viewModel.amountController,
-                  //   validator: (value) => checkAmount(value, false),
-                  //   type: TextInputType.text,
-                  //   icon: Icons.numbers,
-                  // ),
-                  // const CustomSizedBox.smallGap(),
-                  // CustomFormField.countForm(
-                  //   label: LocaleKeys.trade_buyPrice.tr(),
-                  //   controller: viewModel.priceController,
-                  //   validator: (value) => checkAmount(value, true),
-                  //   type: TextInputType.text,
-                  //   icon: Icons.attach_money_rounded,
-                  // ),
-                  //   const CustomSizedBox.smallGap(),
-                  //   CustomAlign.centerRight(
-                  //     child: Row(
-                  //       mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                  //       children: [
-                  //         dropDownWidget(viewModel),
-                  //         customDatePickerWidget(viewModel),
-                  //       ],
-                  //     ),
-                  //   ),
-                  //   buyCurrencyWidget(viewModel, context),
                 ],
               ),
             ),
@@ -164,14 +165,6 @@ class _TradeViewState extends ConsumerState<TradeView> with ValidatorMixin {
         viewModel: viewModel,
         validator: checkDateTime,
       );
-
-  CustomDropDownWidget<dynamic> dropDownWidget(TradeViewModel viewModel) {
-    return CustomDropDownWidget(
-      pageCurrency: widget.currecyCode,
-      viewModel: viewModel,
-      ref: ref,
-    );
-  }
 
   ElevatedButton buyCurrencyWidget(
       TradeViewModel viewModel, BuildContext context) {

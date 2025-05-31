@@ -58,6 +58,7 @@ class _TrialViewState extends ConsumerState<LoginView> with ValidatorMixin {
     final GlobalKey<FormState> loginFormsKey = GlobalKey<FormState>();
     return PopScope(
       canPop: viewModel.canPop,
+      
       child: Scaffold(
         resizeToAvoidBottomInset: false,
         appBar: AppBar(

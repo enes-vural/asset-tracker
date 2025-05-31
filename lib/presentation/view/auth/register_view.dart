@@ -100,8 +100,8 @@ class _RegisterViewState extends ConsumerState<RegisterView>
                     crossAxisAlignment: CrossAxisAlignment.start,
                     children: [
                       // Title
-                      CustomSizedBox.largeGap(),
-                      Text(
+                      const CustomSizedBox.largeGap(),
+                      const Text(
                         'Hesap Oluştur',
                         style: TextStyle(
                           color: Color.fromRGBO(17, 20, 22, 1),
@@ -163,11 +163,6 @@ class _RegisterViewState extends ConsumerState<RegisterView>
                         hasTitle: true,
                         hasLabel: false,
                         focusNode: _lastNameFocusNode,
-                        textInputAction: TextInputAction.done,
-                        onFieldSubmitted: (value) => _submitRegisterEvent(
-                          registerFormsKey,
-                          viewModel,
-                        ),
                       ),
                       const CustomSizedBox.hugeGap(),
                       AuthSubmitWidget(

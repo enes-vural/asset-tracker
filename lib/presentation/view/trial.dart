@@ -21,8 +21,6 @@ class _TrialViewState extends ConsumerState<TrialView> with ValidatorMixin {
   final _lastNameController = TextEditingController();
   final _birthdayController = TextEditingController();
 
-  bool _obscurePassword = true;
-
   @override
   void initState() {
     super.initState();
@@ -114,7 +112,7 @@ class _TrialViewState extends ConsumerState<TrialView> with ValidatorMixin {
                 TextButton(
                     onPressed: () {
                       Routers.instance
-                          .pushReplaceNamed(context, Routers.registerPath);
+                          .pushNamed(context, Routers.registerPath);
                     },
                     child: Text("Register")),
               ],
