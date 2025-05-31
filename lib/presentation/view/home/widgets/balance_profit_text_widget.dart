@@ -1,3 +1,4 @@
+import 'package:asset_tracker/core/constants/string_constant.dart';
 import 'package:asset_tracker/core/config/theme/default_theme.dart';
 import 'package:asset_tracker/injection.dart';
 import 'package:flutter/material.dart';
@@ -30,7 +31,7 @@ class BalanceProfitTextWidget extends ConsumerWidget {
                 color: DefaultColorPalette.vanillaGreen,
               ),
         Text(
-            "${ref.watch(appGlobalProvider.notifier).getUserData?.profit?.toStringAsFixed(2)}%"),
+            "${ref.watch(appGlobalProvider.notifier).getUserData?.profit?.toStringAsFixed(2) ?? DefaultLocalStrings.emptyBalance}%"),
       ],
     );
   }

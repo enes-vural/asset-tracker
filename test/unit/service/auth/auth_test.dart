@@ -1,7 +1,8 @@
 import 'package:asset_tracker/core/mixins/validation_mixin.dart';
 import 'package:asset_tracker/data/model/auth/firebase_auth_user_model.dart';
+import 'package:asset_tracker/data/model/auth/request/user_login_model.dart';
 import 'package:asset_tracker/data/service/remote/auth/firebase_auth_service.dart';
-import 'package:asset_tracker/domain/entities/auth/user_login_entity.dart';
+import 'package:asset_tracker/domain/entities/auth/request/user_login_entity.dart';
 import 'package:mockito/mockito.dart';
 import 'package:test/test.dart';
 
@@ -45,7 +46,8 @@ void main() {
       mockAuthHelper.whenSuccessCredAndToken();
 
       final FirebaseAuthUser? loginResult =
-          await firebaseAuthService.signInUser(userEntity);
+          await firebaseAuthService
+          .signInUser(UserLoginModel.fromEntity(userEntity));
 
       final user = loginResult?.user;
       final displayNameResult = user?.displayName;
@@ -64,8 +66,8 @@ void main() {
 
       expect(
           () async => await firebaseAuthService.signInUser(
-              const UserLoginEntity(
-                  userName: "email@gmail.com", password: "wrong-password")),
+              UserLoginModel.fromEntity(const UserLoginEntity(
+                  userName: "email@gmail.com", password: "wrong-password"))),
           throwsException);
     });
 

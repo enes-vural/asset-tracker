@@ -1,8 +1,10 @@
+import 'package:asset_tracker/core/constants/database/transaction_type_enum.dart';
+import 'package:asset_tracker/core/constants/enums/widgets/transaction_card_desc_text_type_enums.dart';
 import 'package:asset_tracker/core/config/theme/extension/app_size_extension.dart';
 import 'package:asset_tracker/core/config/theme/extension/number_format_extension.dart';
 import 'package:asset_tracker/core/config/theme/style_theme.dart';
 import 'package:asset_tracker/core/widgets/custom_padding.dart';
-import 'package:asset_tracker/domain/entities/database/enttiy/usar_data_entity.dart';
+import 'package:asset_tracker/domain/entities/database/enttiy/user_data_entity.dart';
 import 'package:asset_tracker/domain/entities/database/enttiy/user_currency_entity_model.dart';
 import 'package:asset_tracker/domain/entities/general/calculate_profit_entity.dart';
 import 'package:asset_tracker/injection.dart';
@@ -41,14 +43,16 @@ class _UserAssetTransactionWidgetState
   @override
   Widget build(BuildContext context) {
     UserDataEntity? entity = ref.watch(appGlobalProvider.notifier).getUserData;
-    List<UserCurrencyEntityModel>? list = entity?.currencyList;
+    List<UserCurrencyEntity>? allTransactions =
+        (entity?.currencyList ?? []) + (entity?.soldCurrencyList ?? []);
 
     final viewModel = ref.watch(dashboardViewModelProvider);
 
-    Map<String, List<UserCurrencyEntityModel>> groupedData = {};
+    Map<String, List<UserCurrencyEntity>> groupedData = {};
 
     // Verileri gruplama işlemi
-    list?.forEach((UserCurrencyEntityModel transaction) {
+    // ignore: avoid_function_literals_in_foreach_calls
+    allTransactions.forEach((UserCurrencyEntity transaction) {
       if (!groupedData.containsKey(transaction.currencyCode)) {
         groupedData[transaction.currencyCode] = [];
       }
@@ -66,15 +70,17 @@ class _UserAssetTransactionWidgetState
           child: Column(
             spacing: AppSize.hugePadd,
             children: groupedData.entries
-                .map((MapEntry<String, List<UserCurrencyEntityModel>> entry) {
+                .map((MapEntry<String, List<UserCurrencyEntity>> entry) {
               final CalculateProfitEntity? stats =
                   viewModel.calculateSelectedCurrencyTotalAmount(
                       ref, entry.key.toString());
 
-              double quentities = entry.value.fold<double>(0.0,
-                  (previousValue, element) => previousValue + element.amount);
+              double quentities = entry.value
+                  .where((e) => e.transactionType == TransactionTypeEnum.BUY)
+                  .fold<double>(0.0, (prev, e) => prev + e.amount);
 
               // Her bir kategori için (örneğin ALTIN, DOLAR) başlık ve kartlar
+              //TODO: Localization here
               return Column(
                 spacing: 2.0,
                 crossAxisAlignment: CrossAxisAlignment.start,
@@ -103,7 +109,7 @@ class _UserAssetTransactionWidgetState
                   ),
                   // Kategorinin altındaki işlemler (Card'lar)
                   _transactionCDescription(stats),
-                  TransactionCardLVBWidget(entry: entry),
+                  TransactionCardLVBWidget(entry: entry, viewModel: viewModel),
                 ],
               );
             }).toList(),
@@ -124,6 +130,7 @@ class _UserAssetTransactionWidgetState
             type: TransactionCardDescriptionTextType.PURCHASE,
           ),
           TransactionCardDescriptionTextWidget(
+            //LOCALIZATION HERE TODO:
             label: "Selling Price:",
             stats: stats?.latestPriceTotal,
             type: TransactionCardDescriptionTextType.SELL,

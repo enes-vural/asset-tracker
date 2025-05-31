@@ -1,9 +1,9 @@
 import 'dart:async';
 import 'dart:convert';
 import 'dart:io';
-import 'package:asset_tracker/core/config/constants/global/general_constants.dart';
+import 'package:asset_tracker/core/constants/enums/socket/socket_state_enums.dart';
+import 'package:asset_tracker/core/constants/global/general_constants.dart';
 import 'package:asset_tracker/core/config/localization/generated/locale_keys.g.dart';
-import 'package:asset_tracker/data/model/web/response/socket_state_response_model.dart';
 import 'package:asset_tracker/data/service/remote/web/iweb_socket_service.dart';
 import 'package:easy_localization/easy_localization.dart';
 import 'package:flutter/material.dart';

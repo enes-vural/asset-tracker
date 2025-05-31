@@ -1,4 +1,4 @@
-import 'package:asset_tracker/core/config/constants/global/key/widget_keys.dart';
+import 'package:asset_tracker/core/constants/global/key/widget_keys.dart';
 import 'package:easy_localization/easy_localization.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_test/flutter_test.dart';

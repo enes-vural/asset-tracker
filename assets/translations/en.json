@@ -1,6 +1,8 @@
 {   
     "app":{
-        "title":"Gold Exchain"
+        "title":"Gold Exchain",
+        "process":"Processing",
+        "pleaseWait":"Please wait..."
 
     },
 
@@ -9,7 +11,11 @@
         "signIn":"Sign In",
         "email":"Email",
         "password":"Password",
-
+        "register":"Register",
+        "registerText":"Don't have an account? Sign Up",
+        "loginText":"Already have an account? Sign In",
+        "registerTitle":"Register your account into Asset Tracker",
+        
         "validation":{
             "nonePassword":"Please enter your password",
             "weakPassword":"Password must be at least 6 characters",
@@ -25,7 +31,13 @@
             "timeout":"Over Timeout, try again",
             "userDisabled":"This account is no longer available",
             "wrongPassword":"Invalid password",
-            "generalErr":"Error has been occurred"
+            "generalErr":"Error has been occurred",
+            "emailExist":"Email already exist",
+            "weakPassword":"Password is weak",
+            "operationNotAllowed":"Operation not allowed",
+            "tooManyRequests":"Too many requests, please try again later",
+            "networkError":"Network error, please check your connection",
+            "userTokenExpired":"User token expired, please re-login"
         }
     },
     "dashboard":{

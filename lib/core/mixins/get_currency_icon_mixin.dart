@@ -1,4 +1,4 @@
-import 'package:asset_tracker/core/config/constants/string_constant.dart';
+import 'package:asset_tracker/core/constants/string_constant.dart';
 import 'package:asset_tracker/core/config/localization/generated/locale_keys.g.dart';
 import 'package:asset_tracker/core/config/theme/extension/asset_extension.dart';
 import 'package:easy_localization/easy_localization.dart';

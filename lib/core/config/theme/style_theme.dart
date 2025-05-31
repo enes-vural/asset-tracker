@@ -1,9 +1,10 @@
 // ignore_for_file: unused_element
 
-import 'package:asset_tracker/core/config/constants/string_constant.dart';
+import 'package:asset_tracker/core/constants/string_constant.dart';
 import 'package:asset_tracker/core/config/theme/default_theme.dart';
 import 'package:asset_tracker/core/config/theme/extension/app_size_extension.dart';
 import 'package:flutter/material.dart';
+import 'package:flutter_screenutil/flutter_screenutil.dart';
 import 'package:google_fonts/google_fonts.dart';
 
 ///class set the style of Text Widgets.
@@ -33,7 +34,25 @@ final class CustomTextStyle {
 
   static TextStyle blackColorPoppins(double size) =>
       _basePoppinStyle(color: DefaultColorPalette.vanillaBlack, size: size);
-  
+
+  static TextStyle greyColorPoppins(double size) =>
+      _basePoppinStyle(color: DefaultColorPalette.customGrey, size: size);
+
+  static TextStyle greyColorManrope(double size) => TextStyle(
+        color: DefaultColorPalette.customGrey,
+        fontFamily: 'Manrope',
+        fontSize: size,
+      );
+
+  static TextStyle loginButtonTextStyle(Color color) => TextStyle(
+        color: color,
+        fontFamily: 'Manrope',
+        fontSize: AppSize.mediumText,
+        letterSpacing: 0,
+        fontWeight: FontWeight.normal,
+        height: 1.5,
+      );
+
   static TextStyle blackColorBoldPoppins(double size) => GoogleFonts.poppins(
         fontWeight: FontWeight.bold,
         color: DefaultColorPalette.vanillaBlack,
@@ -53,9 +72,8 @@ final class CustomTextStyle {
 
   static TextStyle greenColorPoppins(double size) =>
       _basePoppinStyle(color: DefaultColorPalette.vanillaGreen, size: size);
-      
-
 }
+
 /// Helper class for box decoration style in Containers.
 final class CustomDecoration extends BoxDecoration {
   CustomDecoration.roundBox(
@@ -71,6 +89,7 @@ final class CustomDecoration extends BoxDecoration {
           color: containerColor ?? DefaultColorPalette.vanillaTranparent,
         );
 }
+
 ///Helper Class for custom text form fields.
 
 final class CustomInputDecoration extends InputDecoration {
@@ -79,16 +98,67 @@ final class CustomInputDecoration extends InputDecoration {
       : super(
             label: Text(label ?? DefaultLocalStrings.emptyText),
             border: OutlineInputBorder(
-                borderRadius: BorderRadius.circular(radius)));
+            borderRadius: BorderRadius.circular(radius),
+          ),
+        );
 
   CustomInputDecoration.mediumRoundInput(
-      {required String? label, IconData? icon})
+      {
+    required String? label,
+    IconData? icon,
+    Color? fillColor,
+    bool hasLabel = true,
+  })
       : super(
-            label: Text(label ?? DefaultLocalStrings.emptyText),
-            icon: icon != null ? Icon(icon) : null,
-            border: OutlineInputBorder(
-                borderRadius: BorderRadius.circular(AppSize.mediumRadius)));
+          fillColor: fillColor ?? DefaultColorPalette.customGreyLightX,
+          filled: true,
+          label: hasLabel ? Text(label ?? DefaultLocalStrings.emptyText) : null,
+          icon: icon != null ? Icon(icon) : null,
+          labelStyle: CustomTextStyle.greyColorManrope(AppSize.smallText2),
+          enabledBorder: defaultInputBorder(),
+          focusedBorder: focusedInputBorder(),
+          errorBorder: errorInputBorder(),
+          focusedErrorBorder: errorInputBorder(),
+          hintText: label,
+          hintStyle: TextStyle(
+            color: DefaultColorPalette.customGrey,
+            fontFamily: 'Manrope',
+            fontSize: AppSize.smallText2,
+            fontWeight: FontWeight.normal,
+          ),
+        );
+
+  static OutlineInputBorder defaultInputBorder() {
+    return OutlineInputBorder(
+      borderSide: BorderSide(
+        color: DefaultColorPalette.customGreyLight,
+        width: AppSize.defaultBorderWidth,
+        style: BorderStyle.solid,
+      ),
+      borderRadius: BorderRadius.circular(AppSize.mediumRadius),
+    );
+  }
+
+  static OutlineInputBorder focusedInputBorder() {
+    return OutlineInputBorder(
+      borderRadius: BorderRadius.circular(AppSize.mediumRadius),
+      borderSide: BorderSide(
+        color: DefaultColorPalette.mainBlue,
+        width: 2.r,
+      ),
+    );
+  }
+
+  static OutlineInputBorder errorInputBorder() {
+    return OutlineInputBorder(
+      borderRadius: BorderRadius.circular(AppSize.mediumRadius),
+      borderSide: BorderSide(
+        color: DefaultColorPalette.errorRed,
+        width: 2.r,
+      ),
+    );
+  }
+  
 
   //this methods fills the border design
-
 }

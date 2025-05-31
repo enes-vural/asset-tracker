@@ -1,6 +1,7 @@
+import 'package:asset_tracker/core/constants/enums/auth/auth_error_state_enums.dart';
 import 'package:asset_tracker/data/repository/auth/auth_repository.dart';
 import 'package:asset_tracker/domain/entities/auth/error/auth_error_entity.dart';
-import 'package:asset_tracker/domain/entities/auth/user_login_response_entity.dart';
+import 'package:asset_tracker/domain/entities/auth/response/user_login_response_entity.dart';
 import 'package:asset_tracker/domain/usecase/auth/auth_use_case.dart';
 import 'package:dartz/dartz.dart';
 import 'package:mockito/annotations.dart';
@@ -35,7 +36,9 @@ void main() {
     test("Sign In Use Case Failed", () async {
       when(firebaseAuthRepository.signIn(TestConstants.failureLoginEntity))
           .thenAnswer(
-              (_) async => Left(AuthErrorEntity(message: "User not found")));
+              (_) async => Left(AuthErrorEntity(
+              AuthErrorState.NOT_FOUND,
+              message: "User not found")));
 
       final result = await signInUseCase.call(TestConstants.failureLoginEntity);
 

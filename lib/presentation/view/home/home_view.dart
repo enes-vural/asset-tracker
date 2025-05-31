@@ -1,4 +1,8 @@
+import 'package:asset_tracker/core/constants/database/transaction_type_enum.dart';
+import 'package:asset_tracker/core/constants/enums/cache/offline_action_enums.dart';
+import 'package:asset_tracker/domain/entities/database/enttiy/buy_currency_entity.dart';
 import 'package:auto_route/annotations.dart';
+import 'package:dartz/dartz.dart';
 import 'package:easy_localization/easy_localization.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
@@ -15,7 +19,6 @@ import 'package:asset_tracker/presentation/view/home/widgets/balance_profit_text
 import 'package:asset_tracker/presentation/view/home/widgets/balance_text_widget.dart';
 import 'package:asset_tracker/presentation/view/home/widgets/currency_card_widget.dart';
 import 'package:asset_tracker/presentation/view/home/widgets/tabbar_icon_widget.dart';
-import 'package:asset_tracker/presentation/view/home/widgets/welcome_card_widget.dart';
 import 'package:asset_tracker/presentation/view/widgets/home_view_search_field_widget.dart';
 import 'package:asset_tracker/presentation/view/widgets/home_view_swap_button_widget.dart';
 import 'package:asset_tracker/presentation/view_model/home/home_view_model.dart';
@@ -29,7 +32,6 @@ class HomeView extends ConsumerStatefulWidget {
 }
 
 class _HomeViewState extends ConsumerState<HomeView> {
-
   Future<void> callData() async =>
       await ref.read(homeViewModelProvider).getData(ref);
 
@@ -92,8 +94,8 @@ class _HomeViewState extends ConsumerState<HomeView> {
                     ],
                   ),
                   const CustomSizedBox.hugeGap(),
-                  const WelcomeCardWidget(),
-                  const CustomSizedBox.hugeGap(),
+                  //const WelcomeCardWidget(),
+                  //const CustomSizedBox.hugeGap(),
                   _exploreAssetsText(),
                   // ignore: prefer_const_constructors
                   CurrencyCardListWidget(),
@@ -102,20 +104,24 @@ class _HomeViewState extends ConsumerState<HomeView> {
               ),
             ),
           ),
-          Positioned(
-            bottom: 30,
-            left: 20,
-            child: Row(
-              children: [
-                HomeViewSearchFieldWidget(viewModel: viewModel),
-                const CustomSizedBox.mediumWidth(),
-                HomeViewSwapButtonWidget(
-                  onTap: () {
-                    viewModel.clearText();
-                  },
-                ),
-              ],
-            ),
+          _homeClearButtonWidget(viewModel),
+        ],
+      ),
+    );
+  }
+
+  Positioned _homeClearButtonWidget(HomeViewModel viewModel) {
+    return Positioned(
+      bottom: 30,
+      left: 20,
+      child: Row(
+        children: [
+          HomeViewSearchFieldWidget(viewModel: viewModel),
+          const CustomSizedBox.mediumWidth(),
+          HomeViewSwapButtonWidget(
+            onTap: () {
+              viewModel.clearText();
+            },
           ),
         ],
       ),
@@ -123,18 +129,45 @@ class _HomeViewState extends ConsumerState<HomeView> {
   }
 
   TabBarIconWidget _tabBarButtonDownloadWidget() {
-    return TabBarIconWidget(icon: IconDataConstants.download, onTap: () {});
+    return TabBarIconWidget(
+        icon: IconDataConstants.download,
+        onTap: () {
+          var actions = ref.read(cacheUseCaseProvider).getOfflineActions();
+
+          debugPrint("Actions: $actions");
+          for (var action in actions) {
+            debugPrint("Action Type: ${action.type}");
+            debugPrint("Action Status: ${action.status}");
+            debugPrint("Action Params: ${action.params}");
+          }
+        });
   }
 
-  TabBarIconWidget _tabBarButtonSendWidget() =>
-      TabBarIconWidget(icon: Icons.send, onTap: () {});
+  TabBarIconWidget _tabBarButtonSendWidget() => TabBarIconWidget(
+      icon: Icons.send,
+      onTap: () {
+
+        final buyModel = BuyCurrencyEntity(
+          currency: "USDTRY",
+          amount: 5,
+          price: 10000,
+          date: DateTime(DateTime.april, 2023),
+          userId: ref.read(authGlobalProvider).getCurrentUserId,
+          transactionType: TransactionTypeEnum.BUY,
+        );
+
+        ref.read(cacheUseCaseProvider).saveOfflineAction(
+              Tuple2(OfflineActionType.BUY_ASSET, buyModel),
+            );
+      });
 
   TabBarIconWidget _tabBarButtonTradeWidget(
       HomeViewModel viewModel, BuildContext context) {
     return TabBarIconWidget(
         icon: IconDataConstants.dollar,
         onTap: () {
-          viewModel.routeTradePage(context, null);
+          ref.read(cacheUseCaseProvider).clearAllOfflineActions();
+          //viewModel.routeTradePage(context, null);
         });
   }
 
@@ -159,7 +192,7 @@ class _HomeViewState extends ConsumerState<HomeView> {
   }
 
   IconButton exitAppIconButton(VoidCallback fn) => IconButton(
-      onPressed: fn,
+        onPressed: fn,
         icon: CustomIcon.exit(),
       );
 }
