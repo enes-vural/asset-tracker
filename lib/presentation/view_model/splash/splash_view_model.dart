@@ -1,6 +1,7 @@
 // ignore_for_file: use_build_context_synchronously
 
 import 'package:asset_tracker/core/constants/string_constant.dart';
+import 'package:asset_tracker/core/routers/app_router.gr.dart';
 import 'package:asset_tracker/core/routers/router.dart';
 import 'package:asset_tracker/domain/entities/database/enttiy/user_uid_entity.dart';
 import 'package:asset_tracker/injection.dart';
@@ -9,54 +10,6 @@ import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 
 class SplashViewModel extends ChangeNotifier {
-
-  late AnimationController _fadeController;
-  late AnimationController _scaleController;
-  late Animation<double> fadeAnimation;
-  late Animation<double> scaleAnimation;
-
-  Future<void> startAnimation(tickerThis) async {
-    // Animasyon controller'larını başlat
-    _fadeController = AnimationController(
-      duration: const Duration(milliseconds: 750),
-      vsync: tickerThis,
-    );
-
-    _scaleController = AnimationController(
-      duration: const Duration(milliseconds: 600),
-      vsync: tickerThis,
-    );
-
-    // Animasyonları tanımla
-    fadeAnimation = Tween<double>(
-      begin: 0.0,
-      end: 1.0,
-    ).animate(CurvedAnimation(
-      parent: _fadeController,
-      curve: Curves.easeInOut,
-    ));
-
-    scaleAnimation = Tween<double>(
-      begin: 0.5,
-      end: 1.0,
-    ).animate(CurvedAnimation(
-      parent: _scaleController,
-      curve: Curves.elasticOut,
-    ));
-
-    WidgetsBinding.instance.addPostFrameCallback((_) {
-      // Animasyonları başlat
-      _fadeController.forward();
-      Future.delayed(const Duration(milliseconds: 150), () {
-        _scaleController.forward();
-      });
-    });
-  }
-
-  void disposeAnimation() {
-    _fadeController.dispose();
-    _scaleController.dispose();
-  }
 
   Future<void> init(WidgetRef ref, BuildContext context) async {
     //app global provider
@@ -104,6 +57,8 @@ class SplashViewModel extends ChangeNotifier {
 
   //navigate to home or login page
   void _navigateHomeOrLogin(BuildContext context, {bool access = false}) =>
-      Routers.instance.pushReplaceNamed(
-          context, access ? Routers.homePath : Routers.loginPath);
+      Routers.instance.pushAndRemoveUntil(
+          context, access ? const HomeRoute() : const LoginRoute());
+
+    
 }

@@ -22,7 +22,6 @@ class TradeViewModel extends ChangeNotifier {
   TextEditingController priceUnitController = TextEditingController();
   TextEditingController dateController = TextEditingController();
 
-  
   String? selectedCurrency;
   DateTime? selectedDate;
 
@@ -49,6 +48,36 @@ class TradeViewModel extends ChangeNotifier {
     }
     selectedCurrency = newValue;
     notifyListeners();
+  }
+
+  void getPriceSelectedCurrency(WidgetRef ref) {
+    final assets = ref.read(appGlobalProvider.notifier).globalAssets;
+    final selectedAssetCode = assets?.firstWhere(
+      (element) => element.code == selectedCurrency,
+    );
+
+    if (selectedAssetCode != null) {
+      // Debug için ekle
+      print('selectedAssetCode.satis: ${selectedAssetCode.satis}');
+      print(
+          'selectedAssetCode.satis type: ${selectedAssetCode.satis.runtimeType}');
+      print('Current priceUnitController.text: ${priceUnitController.text}');
+
+      priceTotalController.text =
+          ((double.tryParse(amountController.text) ?? 0.0) *
+                  (double.tryParse(selectedAssetCode.satis) ?? 0.0))
+              .toString();
+
+      final newUnitValue = selectedAssetCode.satis.toString();
+      print('New unit value: $newUnitValue');
+
+      priceUnitController.text = newUnitValue;
+      print(
+          'After assignment priceUnitController.text: ${priceUnitController.text}');
+    } else {
+      priceUnitController.clear();
+      priceTotalController.clear();
+    }
   }
 
 //tamam
@@ -94,8 +123,7 @@ class TradeViewModel extends ChangeNotifier {
               buyCurrencyEntity,
             ));
 
-    final request =
-        await ref.read(databaseUseCaseProvider)(buyCurrencyEntity);
+    final request = await ref.read(databaseUseCaseProvider)(buyCurrencyEntity);
 
     await request.fold((failure) {
       EasySnackBar.show(context, failure.message);

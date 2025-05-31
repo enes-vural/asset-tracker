@@ -64,7 +64,10 @@ class HomeViewModel extends ChangeNotifier {
 
   Future<void> signOut(WidgetRef ref, BuildContext context) async {
     await ref.read(signInUseCaseProvider).signOut();
-    Routers.instance.pushReplaceNamed(context, Routers.loginPath);
+    await ref.read(appGlobalProvider.notifier).clearData();
+    //clear old routes before pushing new route
+    //Routers.instance.replaceAll(context, const LoginRoute());
+    Routers.instance.pushAndRemoveUntil(context, const LoginRoute());
   }
 
   void clearText() {
@@ -105,11 +108,12 @@ class HomeViewModel extends ChangeNotifier {
 
   void routeTradePage(BuildContext context, CurrencyEntity? currency) {
     Routers.instance
-        .pushWithInfo(context, TradeRoute(currecyCode: currency?.code ?? ""));
+        .pushWithInfo(context,
+        TradeRoute(currecyCode: currency?.code ?? "", price: currency?.satis));
   }
 
   void routeWalletPage(BuildContext context) {
-    Routers.instance.pushReplaceNamed(context, Routers.dashboardPath);
+    Routers.instance.pushNamed(context, Routers.dashboardPath);
   }
 
   Stream? get searchBarStreamController => _searchBarStreamController.stream;

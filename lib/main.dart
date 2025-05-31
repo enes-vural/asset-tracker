@@ -1,3 +1,5 @@
+import 'dart:io';
+
 import 'package:asset_tracker/core/constants/asset_constant.dart';
 import 'package:asset_tracker/core/config/init/init.dart';
 import 'package:asset_tracker/core/config/localization/localization_manager.dart';
@@ -8,6 +10,7 @@ import 'package:asset_tracker/data/service/background/background_service.dart';
 import 'package:asset_tracker/injection.dart';
 import 'package:background_fetch/background_fetch.dart';
 import 'package:easy_localization/easy_localization.dart';
+import 'package:flutter/foundation.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_native_splash/flutter_native_splash.dart'
     show FlutterNativeSplash;
@@ -33,10 +36,14 @@ void main() async {
     //----------------------------------
     child: const ProviderScope(child: MyApp()),
   ));
+  //there is no condition for check is Physical Device or Emulator.
+  //background fetch only work on physical devices.
+  if (!(Platform.isIOS && kDebugMode)) {
   await BackgroundService.instance.init();
   BackgroundFetch.registerHeadlessTask(backgroundFetchHeadlessTask);
   BackgroundService.instance
       .addNewHeadlessTask('com.transistorsoft.customtask');
+}
   FlutterNativeSplash.remove();
 }
 

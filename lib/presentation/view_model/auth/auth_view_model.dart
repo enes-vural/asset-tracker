@@ -2,6 +2,7 @@ import 'package:asset_tracker/core/constants/enums/auth/auth_error_state_enums.d
 import 'package:asset_tracker/core/constants/enums/cache/offline_action_enums.dart';
 import 'package:asset_tracker/core/constants/string_constant.dart';
 import 'package:asset_tracker/core/helpers/snackbar.dart';
+import 'package:asset_tracker/core/routers/app_router.gr.dart';
 import 'package:asset_tracker/core/routers/router.dart';
 import 'package:asset_tracker/domain/entities/auth/request/user_login_entity.dart';
 import 'package:asset_tracker/domain/entities/auth/request/user_register_entity.dart';
@@ -36,12 +37,11 @@ class AuthViewModel extends ChangeNotifier {
     passwordController.text = DefaultLocalStrings.emptyText;
     firstNameController.text = DefaultLocalStrings.emptyText;
     lastNameController.text = DefaultLocalStrings.emptyText;
-
     notifyListeners();
   }
 
   routeRegisterView(BuildContext context) {
-    Routers.instance.pushReplaceNamed(context, Routers.registerPath);
+    Routers.instance.pushNamed(context, Routers.registerPath);
   }
 
   //We wont use offline support for register. The user may be confused
@@ -59,7 +59,6 @@ class AuthViewModel extends ChangeNotifier {
       (failure) {
         changePopState(true);
         EasySnackBar.show(context, failure.message);
-        _clearForms();
       },
       (UserRegisterReponseEntity success) async {
         final saveUserEntity = SaveUserEntity.fromAuthResponse(
@@ -105,7 +104,7 @@ class AuthViewModel extends ChangeNotifier {
       ref.read(cacheUseCaseProvider).removeOfflineAction(cachedKey);
       _clearForms();
       changePopState(true);
-      Routers.instance.popToSplash(context);
+      Routers.instance.pushAndRemoveUntil(context, const SplashRoute());
     });
   }
 }

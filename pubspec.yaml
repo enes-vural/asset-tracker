@@ -87,7 +87,7 @@ flutter:
 
   
 flutter_native_splash:
-  color: "#F5F3EF"
+  color: "#ffffff"
   image: assets/image/main_logo.png
   ios: true
   web: false
@@ -96,7 +96,7 @@ flutter_native_splash:
 
   android_12:
     image: assets/image/main_logo.png
-    color: "#F5F3EF"
-    icon_background_color: "#F5F3EF"
+    color: "#ffffff"
+    icon_background_color: "#ffffff"
 
 

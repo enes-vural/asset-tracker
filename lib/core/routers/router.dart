@@ -16,8 +16,23 @@ class Routers {
   static const String registerPath = DefaultLocalStrings.registerRoute;
 
 
-  void pushReplaceNamed(BuildContext context, String routePath) {
+  void pushNamed(BuildContext context, String routePath) {
     AutoRouter.of(context).pushNamed(routePath);
+  }
+
+  void replaceAll(BuildContext context, PageRouteInfo<dynamic> route) {
+    AutoRouter.of(context).replaceAll([route]);
+  }
+
+  void pushReplaceNamed(BuildContext context, String routePath) {
+    AutoRouter.of(context).replaceNamed(routePath);
+  }
+
+  void pushAndRemoveUntil(BuildContext context, PageRouteInfo<dynamic> route) {
+    AutoRouter.of(context).pushAndPopUntil(
+      route,
+      predicate: (route) => false,
+    );
   }
 
   void pop(BuildContext context) {
