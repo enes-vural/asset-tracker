@@ -18,11 +18,11 @@ final ThemeData defaultTheme = ThemeData(
 );
 
 ///Default Color Scheme for ThemeData
-const ColorScheme defaultColorScheme = ColorScheme.light(
+final ColorScheme defaultColorScheme = ColorScheme.light(
   brightness: Brightness.light,
-  primary: DefaultColorPalette.primaryGold,
+  primary: DefaultColorPalette.mainBlue,
   onPrimary: DefaultColorPalette.primaryDarkBlue,
-  secondary: DefaultColorPalette.primaryGold,
+  secondary: DefaultColorPalette.mainBlue,
   onSecondary: DefaultColorPalette.vanillaBlack,
   error: DefaultColorPalette.errorRed,
   onError: DefaultColorPalette.vanillaWhite,

@@ -25,7 +25,7 @@ class HomeViewSwapButtonWidget extends StatelessWidget {
           decoration: BoxDecoration(
             borderRadius: BorderRadius.circular(AppSize.hugeRadius),
             color:
-                DefaultColorPalette.opacityPurple,
+                DefaultColorPalette.mainBlue,
             boxShadow: [
               BoxShadow(
                 color: DefaultColorPalette.opacityRed,

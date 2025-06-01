@@ -1,6 +1,14 @@
+import 'package:asset_tracker/core/config/theme/default_theme.dart';
+import 'package:asset_tracker/core/config/theme/extension/app_size_extension.dart';
+import 'package:asset_tracker/core/config/theme/style_theme.dart';
 import 'package:asset_tracker/core/mixins/validation_mixin.dart';
 import 'package:asset_tracker/core/routers/router.dart';
+import 'package:asset_tracker/data/model/web/direction_model.dart';
+import 'package:asset_tracker/domain/entities/web/socket/currency_entity.dart';
+import 'package:asset_tracker/domain/entities/web/socket/currency_widget_entity.dart';
 import 'package:asset_tracker/presentation/view/auth/widget/auth_form_widget.dart';
+import 'package:asset_tracker/presentation/view/home/widgets/currency_card_widget.dart';
+import 'package:asset_tracker/presentation/view/widgets/currency_card_widget.dart';
 import 'package:auto_route/auto_route.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
@@ -43,6 +51,14 @@ class _TrialViewState extends ConsumerState<TrialView> with ValidatorMixin {
         backgroundColor: Colors.white,
         automaticallyImplyLeading: true,
         elevation: 0,
+        title: Text(
+          "PaRota",
+          style: TextStyle(
+            fontFamily: "Manrobe",
+            fontWeight: FontWeight.bold,
+            color: DefaultColorPalette.mainTextBlack,
+          ),
+        ),
       ),
       backgroundColor: Colors.white,
       body: SingleChildScrollView(
@@ -50,72 +66,36 @@ class _TrialViewState extends ConsumerState<TrialView> with ValidatorMixin {
           padding: const EdgeInsets.all(16.0),
           child: Form(
             key: _formKey,
-            child: Column(
-              crossAxisAlignment: CrossAxisAlignment.start,
-              children: [
-                // Title
-                Padding(
-                  padding: const EdgeInsets.symmetric(vertical: 20.0),
-                  child: Text(
-                    'Create your account',
-                    style: TextStyle(
-                      color: Color.fromRGBO(17, 20, 22, 1),
-                      fontFamily: 'Manrope',
-                      fontSize: 22,
-                      fontWeight: FontWeight.bold,
-                      height: 1.27,
-                    ),
-                  ),
-                ),
-
-                SizedBox(height: 20),
-
-                // Email Field
-                AuthFormWidget.email(
-                  emailController: null,
-                  emailValidator: null,
-                  hasTitle: true,
-                  hasLabel: false,
-                ),
-                SizedBox(height: 16),
-
-                AuthFormWidget.password(
-                  passwordController: null,
-                  passwordValidator: null,
-                  hasTitle: true,
-                  hasLabel: false,
-                ),
-
-                SizedBox(height: 16),
-
-                // Password Field
-                AuthFormWidget.firstName(
-                  firstNameController: null,
-                  firstNameValidator: null,
-                  hasTitle: true,
-                  hasLabel: false,
-                ),
-
-                SizedBox(height: 16),
-
-                // First Name Field
-                AuthFormWidget.lastName(
-                  lastNameController: null,
-                  lastNameValidator: null,
-                  hasTitle: true,
-                  hasLabel: false,
-                ),
-
-                SizedBox(height: 32),
-
-                SizedBox(height: 20),
-                TextButton(
-                    onPressed: () {
-                      Routers.instance
-                          .pushNamed(context, Routers.registerPath);
-                    },
-                    child: Text("Register")),
-              ],
+            child: Expanded(
+              child: ListView.builder(
+                shrinkWrap: true,
+                itemCount: 8,
+                itemBuilder: (context, index) {
+                  CurrencyWidgetEntity currency = CurrencyWidgetEntity(
+                      alis: "25.00",
+                      satis: "24.29",
+                      code: "TRY",
+                      dir: Direction(
+                        alisDir: "up",
+                        satisDir: "down",
+                      ),
+                      name: 'Türk Lirası',
+                      entity: CurrencyEntity(
+                          code: "code",
+                          alis: "25",
+                          satis: "25",
+                          tarih: "tarih",
+                          dir: Direction(alisDir: "up", satisDir: "down"),
+                          dusuk: "24.0",
+                          yuksek: "22.0",
+                          kapanis: "25.0"));
+                  return CurrencyCardWidget(
+                    currency: currency,
+                    onTap: () {},
+                  );
+                },
+              ),
+                
             ),
           ),
         ),

@@ -75,6 +75,9 @@ final class AppSize {
   ///12.0
   static double largeRadius = 12.0.r;
 
+  ///16.0
+  static double largeXRadius = 16.0.r;
+
   ///22.0
   static double hugeRadius = 22.0.r;
 
@@ -84,6 +87,11 @@ final class AppSize {
   ///80.0
   static double chartRadius = 80.0.r;
 
+  ///16.0
+  static double smallIcon = 16.0.r;
+  
   ///32.0
   static double largeIcon = 32.0.r;
+
+
 }

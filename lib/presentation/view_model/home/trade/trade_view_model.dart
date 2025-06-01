@@ -51,6 +51,9 @@ class TradeViewModel extends ChangeNotifier {
   }
 
   void getPriceSelectedCurrency(WidgetRef ref) {
+    if (selectedCurrency == null) {
+      return;
+    }
     final assets = ref.read(appGlobalProvider.notifier).globalAssets;
     final selectedAssetCode = assets?.firstWhere(
       (element) => element.code == selectedCurrency,
