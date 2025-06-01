@@ -40,7 +40,9 @@ class CurrencyCardWidget extends StatelessWidget with GetCurrencyIconMixin {
           crossAxisAlignment: CrossAxisAlignment.start,
           children: [
             _currencyInfoWidget(),
+                _currencyPercent(),
             _currencyPriceWidget(),
+                _currencyPriceWidget2(),
             _currencyDirectionWidget(),
           ],
         ),
@@ -54,6 +56,48 @@ class CurrencyCardWidget extends StatelessWidget with GetCurrencyIconMixin {
       child: Center(
         child: _setIcon(currency.dir.satisDir),
       ),
+    );
+  }
+
+  Expanded _currencyPriceWidget2() {
+    return Expanded(
+      flex: 5,
+      child: SizedBox(
+          child: Column(
+        mainAxisAlignment: MainAxisAlignment.center,
+        crossAxisAlignment: CrossAxisAlignment.center,
+        children: [
+          Text(
+            LocaleKeys.home_sell.tr(),
+            style: CustomTextStyle.blackColorPoppins(AppSize.smallText),
+          ),
+          Text(
+            currency.satis.toString(),
+            style: CustomTextStyle.blackColorBoldPoppins(AppSize.small2Text),
+          ),
+        ],
+      )),
+    );
+  }
+
+  Expanded _currencyPercent() {
+    return Expanded(
+      flex: 3,
+      child: SizedBox(
+          child: Column(
+        mainAxisAlignment: MainAxisAlignment.center,
+        crossAxisAlignment: CrossAxisAlignment.center,
+        children: [
+          Text(
+            "Fark",
+            style: CustomTextStyle.blackColorPoppins(AppSize.smallText),
+          ),
+          Text(
+            "%" + currency.entity.kapanis.toString(),
+            style: CustomTextStyle.greenColorPoppins(AppSize.small2Text),
+          ),
+        ],
+      )),
     );
   }
 
@@ -80,22 +124,21 @@ class CurrencyCardWidget extends StatelessWidget with GetCurrencyIconMixin {
 
   Expanded _currencyInfoWidget() {
     return Expanded(
-      flex: 6,
+      flex: 8,
       child: Row(
         mainAxisAlignment: MainAxisAlignment.start,
         children: [
           CustomPadding.smallHorizontal(
             widget: CircleAvatar(
-              radius: AppSize.hugeRadius,
+              radius: AppSize.largeXRadius,
               child: Image.asset(
                 getCurrencyIcon(currency.name),
                 fit: BoxFit.cover,
               ),
             ),
           ),
-          const CustomSizedBox.smallGap(),
           Column(
-            mainAxisAlignment: MainAxisAlignment.center,
+            mainAxisAlignment: MainAxisAlignment.start,
             crossAxisAlignment: CrossAxisAlignment.start,
             children: [
               Text(
@@ -106,7 +149,7 @@ class CurrencyCardWidget extends StatelessWidget with GetCurrencyIconMixin {
               ),
               Text(
                 currency.code.toString(),
-                style: CustomTextStyle.blackColorPoppins(AppSize.smallText),
+                style: CustomTextStyle.blackColorPoppins(AppSize.small2Text),
                 overflow: TextOverflow.clip,
               )
             ],
