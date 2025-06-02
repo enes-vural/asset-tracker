@@ -2,15 +2,12 @@ import 'package:asset_tracker/core/helpers/dialog_helper.dart';
 import 'package:asset_tracker/injection.dart';
 import 'package:auto_route/auto_route.dart';
 import 'package:easy_localization/easy_localization.dart';
-import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 
 import 'package:asset_tracker/core/config/localization/generated/locale_keys.g.dart';
 import 'package:asset_tracker/core/config/theme/default_theme.dart';
 import 'package:asset_tracker/core/config/theme/extension/app_size_extension.dart';
-import 'package:asset_tracker/core/widgets/custom_icon.dart';
-import 'package:asset_tracker/core/widgets/custom_padding.dart';
 import 'package:asset_tracker/core/widgets/custom_sized_box.dart';
 import 'package:asset_tracker/presentation/view/home/widgets/balance_text_widget.dart';
 import 'package:asset_tracker/presentation/view/home/widgets/custom_pie_chart_widget.dart';
@@ -39,7 +36,6 @@ class _DashboardViewState extends ConsumerState<DashboardView> {
       canPop: viewModel.canPop,
       child: Scaffold(
         backgroundColor: Colors.grey.shade100,
-        appBar: _appBarWidget(),
         body: SingleChildScrollView(
           scrollDirection: Axis.vertical,
           child: SizedBox(
@@ -66,17 +62,5 @@ class _DashboardViewState extends ConsumerState<DashboardView> {
         fontSize: AppSize.mediumText,
       ),
     );
-  }
-
-  AppBar _appBarWidget() {
-    return AppBar(
-        backgroundColor: DefaultColorPalette.grey100,
-        centerTitle: true,
-        title: Text(LocaleKeys.dashboard_dashboard.tr()),
-        actions: const [
-          CustomPadding.largeHorizontal(
-            widget: CustomIcon.filterIcon(),
-          ),
-        ]);
   }
 }

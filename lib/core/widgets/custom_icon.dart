@@ -22,6 +22,9 @@ class CustomIcon extends Icon {
 
   const CustomIcon.person({super.key}) : super(IconDataConstants.person);
 
+  const CustomIcon.drawer({super.key})
+      : super(IconDataConstants.menu, color: DefaultColorPalette.vanillaBlack);
+
   CustomIcon.exit({super.key})
       : super(IconDataConstants.exit, color: DefaultColorPalette.grey500);
 
@@ -41,4 +44,5 @@ final class IconDataConstants {
   static const IconData person = Icons.person_rounded;
   static const IconData exit = Icons.exit_to_app_rounded;
   static const IconData search = Icons.search;
+  static const IconData menu = Icons.menu;
 }

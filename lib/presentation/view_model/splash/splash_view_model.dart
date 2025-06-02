@@ -10,7 +10,6 @@ import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 
 class SplashViewModel extends ChangeNotifier {
-
   Future<void> init(WidgetRef ref, BuildContext context) async {
     //app global provider
     final appGlobal = ref.read(appGlobalProvider.notifier);
@@ -58,7 +57,5 @@ class SplashViewModel extends ChangeNotifier {
   //navigate to home or login page
   void _navigateHomeOrLogin(BuildContext context, {bool access = false}) =>
       Routers.instance.pushAndRemoveUntil(
-          context, access ? const HomeRoute() : const LoginRoute());
-
-    
+          context, access ? const MenuRoute() : const LoginRoute());
 }
