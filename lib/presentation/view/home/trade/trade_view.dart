@@ -59,13 +59,6 @@ class _TradeViewState extends ConsumerState<TradeView> with ValidatorMixin {
       canPop: viewModel.canPop,
       child: Scaffold(
         backgroundColor: DefaultColorPalette.vanillaWhite,
-        appBar: AppBar(
-          backgroundColor: DefaultColorPalette.vanillaWhite,
-          title: Text(
-            "Buy Asset",
-            style: CustomTextStyle.greyColorManrope(AppSize.largeText),
-          ),
-        ),
         body: Form(
           key: tradeFormKey,
           child: CustomPadding.hugeHorizontal(

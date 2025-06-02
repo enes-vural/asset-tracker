@@ -71,7 +71,7 @@ class WebSocketRepository implements IWebSocketRepository {
         });
 
         //değişmez liste olarak veriyi stream e ekle
-        _controller!.add(List.unmodifiable(_currencyEntities));
+        _controller?.add(List.unmodifiable(_currencyEntities));
         debugPrint(
             "Currency list updated, total items: ${_currencyEntities.length}");
       });

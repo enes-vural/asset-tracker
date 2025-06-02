@@ -63,7 +63,6 @@ class AppGlobalProvider extends ChangeNotifier {
 
   void updateSocketCurrency(Stream? newStream) {
     _dataStream = newStream;
-    notifyListeners();
     _listenData();
     notifyListeners();
   }

@@ -10,9 +10,7 @@ import 'package:asset_tracker/domain/entities/web/socket/currency_widget_entity.
 import 'package:asset_tracker/injection.dart';
 import 'package:asset_tracker/presentation/view/widgets/loading_skeletonizer_widget.dart';
 import 'package:flutter/material.dart';
-
 import 'package:flutter_riverpod/flutter_riverpod.dart';
-import 'package:multiple_stream_builder/multiple_stream_builder.dart';
 
 enum SortType { name, buy, sell, change }
 
@@ -35,14 +33,16 @@ class _CurrencyListWidgetState extends ConsumerState<CurrencyListWidget>
     final viewModel = ref.watch(homeViewModelProvider.notifier);
     final appGlobal = ref.watch(appGlobalProvider.notifier);
 
-    final dataStream = appGlobal.getDataStream ?? viewModel.getEmptyStream;
-    final searchStream =
-        viewModel.searchBarStreamController ?? viewModel.getEmptyStream;
+    // AppGlobalProvider'ı dinle - bu notifyListeners() çağrıldığında widget'ı rebuild eder
+    final appGlobalState = ref.watch(appGlobalProvider);
+
+    // Global assets'i direkt AppGlobalProvider'dan al
+    List<CurrencyEntity>? globalAssets = appGlobal.globalAssets;
+
+    // Search stream'i hala kullanabilirsiniz çünkü o sadece arama için
+    final searchStream = viewModel.searchBarStreamController;
 
     return Container(
-      height: ResponsiveSize(context)
-          .screenHeight
-          .toPercent(85), // Yüksekliği artırdık
       width: ResponsiveSize(context).screenWidth,
       decoration: BoxDecoration(
         color: DefaultColorPalette.vanillaWhite,
@@ -56,6 +56,7 @@ class _CurrencyListWidgetState extends ConsumerState<CurrencyListWidget>
         ],
       ),
       child: Column(
+        mainAxisSize: MainAxisSize.min,
         children: [
           // Header
           _buildSortableHeader(),
@@ -64,47 +65,85 @@ class _CurrencyListWidgetState extends ConsumerState<CurrencyListWidget>
             height: 1,
             color: DefaultColorPalette.grey300,
           ),
-          // List
-          Expanded(
-            child: StreamBuilder2(
-              streams: StreamTuple2(dataStream, searchStream),
-              initialData: InitialDataTuple2(null, null),
-              builder: (context, snapshots) {
-                if (!snapshots.snapshot1.hasData ||
-                    snapshots.snapshot1.data?.length == null) {
-                  return const LoadingSkeletonizerWidget();
-                }
+          // List - StreamBuilder yerine direkt build
+          _buildCurrencyList(globalAssets, searchStream, viewModel),
+        ],
+      ),
+    );
+  }
 
-                List<CurrencyEntity>? data = snapshots.snapshot1.data;
+  Widget _buildCurrencyList(
+    List<CurrencyEntity>? globalAssets,
+    Stream? searchStream,
+    dynamic viewModel,
+  ) {
+    // Global assets null veya boşsa loading göster
+    if (globalAssets == null || globalAssets.isEmpty) {
+      return const LoadingSkeletonizerWidget();
+    }
 
-                WidgetsBinding.instance.addPostFrameCallback((_) {
-                  viewModel.calculateProfitBalance(ref);
-                });
+    // Search stream varsa onu dinle, yoksa boş string kullan
+    return StreamBuilder<String>(
+      stream: searchStream?.cast<String>(),
+      initialData: DefaultLocalStrings.emptyText,
+      builder: (context, searchSnapshot) {
+        String searchQuery =
+            searchSnapshot.data ?? DefaultLocalStrings.emptyText;
 
-                data = viewModel.filterCurrencyData(data,
-                    snapshots.snapshot2.data ?? DefaultLocalStrings.emptyText);
+        // Post frame callback'i daha güvenli hale getirelim
+        WidgetsBinding.instance.addPostFrameCallback((_) {
+          if (mounted) {
+            viewModel.calculateProfitBalance(ref);
+          }
+        });
 
-                // Sıralama uygula
-                data = _sortCurrencyData(data ?? []);
+        // Filter data
+        List<CurrencyEntity>? filteredData = viewModel.filterCurrencyData(
+          globalAssets,
+          searchQuery,
+        );
 
-                return ListView.separated(
-                  padding: EdgeInsets.zero,
-                  itemCount: data.length,
-                  separatorBuilder: (context, index) => Container(
+        // Sıralama uygula
+        filteredData = _sortCurrencyData(filteredData ?? []);
+
+        // Filtered data boşsa mesaj göster
+        if (filteredData.isEmpty) {
+          return Padding(
+            padding: const EdgeInsets.all(AppSize.mediumPadd),
+            child: Center(
+              child: Text(
+                searchQuery.isNotEmpty
+                    ? "Arama sonucu bulunamadı"
+                    : "Hiç para birimi bulunamadı",
+                style: TextStyle(
+                  color: DefaultColorPalette.grey400,
+                  fontSize: AppSize.mediumText,
+                ),
+              ),
+            ),
+          );
+        }
+
+        return Column(
+          mainAxisSize: MainAxisSize.min,
+          children: List.generate(filteredData.length, (index) {
+            CurrencyWidgetEntity currency =
+                CurrencyWidgetEntity.fromCurrency(filteredData![index]);
+
+            return Column(
+              mainAxisSize: MainAxisSize.min,
+              children: [
+                _buildCurrencyRow(context, currency, viewModel),
+                if (index < filteredData.length - 1)
+                  Container(
                     height: 1,
                     color: DefaultColorPalette.grey100,
                   ),
-                  itemBuilder: (context, index) {
-                    CurrencyWidgetEntity currency =
-                        CurrencyWidgetEntity.fromCurrency(data![index]);
-                    return _buildCurrencyRow(context, currency, viewModel);
-                  },
-                );
-              },
-            ),
-          ),
-        ],
-      ),
+              ],
+            );
+          }),
+        );
+      },
     );
   }
 
@@ -118,7 +157,7 @@ class _CurrencyListWidgetState extends ConsumerState<CurrencyListWidget>
           Expanded(
             flex: 3,
             child: _buildSortableHeaderItem(
-              title: "Currency",
+              title: "Birim",
               sortType: SortType.name,
             ),
           ),
@@ -140,15 +179,6 @@ class _CurrencyListWidgetState extends ConsumerState<CurrencyListWidget>
               textAlign: TextAlign.center,
             ),
           ),
-          // Change %
-          Expanded(
-            flex: 2,
-            child: _buildSortableHeaderItem(
-              title: "Değişim",
-              sortType: SortType.change,
-              textAlign: TextAlign.center,
-            ),
-          ),
         ],
       ),
     );
@@ -165,12 +195,10 @@ class _CurrencyListWidgetState extends ConsumerState<CurrencyListWidget>
       onTap: () {
         setState(() {
           if (currentSortType == sortType) {
-            // Aynı sütuna tekrar tıklandıysa sıralama yönünü değiştir
             currentSortOrder = currentSortOrder == SortOrder.ascending
                 ? SortOrder.descending
                 : SortOrder.ascending;
           } else {
-            // Farklı sütuna tıklandıysa yeni sütunu seç ve ascending yap
             currentSortType = sortType;
             currentSortOrder = SortOrder.ascending;
           }
@@ -198,7 +226,6 @@ class _CurrencyListWidgetState extends ConsumerState<CurrencyListWidget>
                     ? Icons.arrow_upward
                     : Icons.arrow_downward,
                 size: 12,
-                //Default
                 color: Colors.pink,
               ),
             ],
@@ -248,7 +275,7 @@ class _CurrencyListWidgetState extends ConsumerState<CurrencyListWidget>
         viewModel.routeTradePage(context, currency.entity);
       },
       child: Container(
-        padding: EdgeInsets.symmetric(
+        padding: const EdgeInsets.symmetric(
             horizontal: AppSize.mediumPadd, vertical: AppSize.smallPadd + 2),
         child: Row(
           children: [
@@ -294,38 +321,42 @@ class _CurrencyListWidgetState extends ConsumerState<CurrencyListWidget>
             // Buy Price
             Expanded(
               flex: 2,
-              child: Text(
-                currency.alis.toString(),
-                style: CustomTextStyle.blackColorBoldPoppins(AppSize.smallText),
-                textAlign: TextAlign.center,
-              ),
-            ),
-            // Sell Price
-            Expanded(
-              flex: 2,
-              child: Text(
-                currency.satis.toString(),
-                style: CustomTextStyle.blackColorBoldPoppins(AppSize.smallText),
-                textAlign: TextAlign.center,
-              ),
-            ),
-            // Change Percentage
-            Expanded(
-              flex: 2,
               child: Container(
-                padding: EdgeInsets.symmetric(
+                padding: const EdgeInsets.symmetric(
                   horizontal: AppSize.smallPadd,
                   vertical: AppSize.smallPadd,
                 ),
                 decoration: BoxDecoration(
-                  color:
-                      _getChangeColor(currency.entity.kapanis).withOpacity(0.1),
+                  color: _getChangeColor(currency.entity.dir.alisDir)
+                      .withOpacity(0.1),
                   borderRadius: BorderRadius.circular(AppSize.smallRadius),
                 ),
                 child: Text(
-                  "%${currency.entity.kapanis.toString()}",
+                  currency.alis.toString(),
                   style: CustomTextStyle.blackColorBoldPoppins(
-                    //_getChangeColor(currency.entity.kapanis),
+                    AppSize.small2Text,
+                  ),
+                  textAlign: TextAlign.center,
+                ),
+              ),
+            ),
+            const CustomSizedBox.smallWidth(),
+            // Sell Price
+            Expanded(
+              flex: 2,
+              child: Container(
+                padding: const EdgeInsets.symmetric(
+                  horizontal: AppSize.smallPadd,
+                  vertical: AppSize.smallPadd,
+                ),
+                decoration: BoxDecoration(
+                  color: _getChangeColor(currency.entity.dir.satisDir)
+                      .withOpacity(0.1),
+                  borderRadius: BorderRadius.circular(AppSize.smallRadius),
+                ),
+                child: Text(
+                  currency.satis.toString(),
+                  style: CustomTextStyle.blackColorBoldPoppins(
                     AppSize.small2Text,
                   ),
                   textAlign: TextAlign.center,
@@ -341,19 +372,20 @@ class _CurrencyListWidgetState extends ConsumerState<CurrencyListWidget>
   Color _getChangeColor(dynamic changeValue) {
     if (changeValue == null) return DefaultColorPalette.grey400;
 
-    double value = 0.0;
-    if (changeValue is String) {
-      value = double.tryParse(changeValue) ?? 0.0;
-    } else if (changeValue is num) {
-      value = changeValue.toDouble();
-    }
-
-    if (value > 0) {
-      return DefaultColorPalette.vanillaGreen;
-    } else if (value < 0) {
-      return DefaultColorPalette.errorRed;
-    } else {
+    if (changeValue is! String) {
       return DefaultColorPalette.grey400;
     }
+
+    if (changeValue.isEmpty) {
+      return DefaultColorPalette.grey400;
+    }
+
+    if (changeValue == "up" || ((double.tryParse(changeValue) ?? 0.0) > 0)) {
+      return DefaultColorPalette.vanillaGreen;
+    } else if (changeValue == "down" ||
+        ((double.tryParse(changeValue) ?? 0.0) < 0)) {
+      return DefaultColorPalette.errorRed;
+    }
+    return DefaultColorPalette.grey400;
   }
 }

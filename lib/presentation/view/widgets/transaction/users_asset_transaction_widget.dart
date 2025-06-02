@@ -33,9 +33,12 @@ class _UserAssetTransactionWidgetState
     WidgetsBinding.instance.addPostFrameCallback((_) async {
       ref.read(dashboardViewModelProvider.notifier).showAssetsAsStatistic(ref);
       Future.delayed(const Duration(seconds: 1), () {
+        if (mounted) {
         setState(() {
           isLoading = false;
         });
+
+        }
       });
     });
   }
