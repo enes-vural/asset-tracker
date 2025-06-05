@@ -1,3 +1,5 @@
+import 'package:asset_tracker/core/config/theme/extension/app_size_extension.dart';
+import 'package:asset_tracker/core/config/theme/style_theme.dart';
 import 'package:auto_route/annotations.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
@@ -49,8 +51,8 @@ class _HomeViewState extends ConsumerState<HomeView> {
       backgroundColor: DefaultColorPalette.grey100,
       body: Stack(
         children: [
-          const CustomScrollView(
-            physics: BouncingScrollPhysics(),
+          CustomScrollView(
+            physics: const BouncingScrollPhysics(),
             slivers: [
               SliverToBoxAdapter(
                 child: CustomPadding.largeHorizontal(
@@ -58,15 +60,19 @@ class _HomeViewState extends ConsumerState<HomeView> {
                     crossAxisAlignment: CrossAxisAlignment.start,
                     mainAxisAlignment: MainAxisAlignment.start,
                     children: [
-                      UserEmailTextWidget(),
-                      CustomSizedBox.hugeGap(),
-                      BalanceTextWidget(),
-                      BalanceProfitTextWidget(),
-                      CustomSizedBox.hugeGap(),
-                      CurrencyListWidget(),
-                      CustomSizedBox.hugeGap(),
+                      const UserEmailTextWidget(),
+                      const CustomSizedBox.hugeGap(),
+                      const BalanceTextWidget(),
+                      const BalanceProfitTextWidget(),
+                      Text(
+                        "PaRota ile altın ve dövizlerinizi kolayca takip etmek için giriş yapın.",
+                        style: CustomTextStyle.greyColorManrope(
+                            AppSize.small2Text),
+                      ),
+                      const CustomSizedBox.hugeGap(),
+                      const CurrencyListWidget(),
+                      const CustomSizedBox.hugeGap(),
                       // Bottom navigation için ekstra boşluk
-                      CustomSizedBox.hugeGap(),
                     ],
                   ),
                 ),

@@ -12,6 +12,7 @@ import 'package:background_fetch/background_fetch.dart';
 import 'package:easy_localization/easy_localization.dart';
 import 'package:flutter/foundation.dart';
 import 'package:flutter/material.dart';
+import 'package:flutter/services.dart';
 import 'package:flutter_native_splash/flutter_native_splash.dart'
     show FlutterNativeSplash;
 import 'package:flutter_riverpod/flutter_riverpod.dart';
@@ -57,24 +58,30 @@ class MyApp extends ConsumerWidget {
     //init current user before app starts
     //because firebase auth state changes are delayed.
     ref.read(authGlobalProvider.notifier).initCurrentUser(ref);
-    return ScreenUtilInit(
-      designSize: const Size(375, 812), // iPhone 16 (örnek)
-      minTextAdapt: true,
-      splitScreenMode: true,
-      child: MaterialApp.router(
-        //---------------------------------- b
-        //Localization setup in Material App
-        localizationsDelegates: LocalizationManager().delegates(context),
-        supportedLocales: LocalizationManager().supportedLocales(context),
-        locale: LocalizationManager().locale(context),
-        //----------------------------------
-        //remove debug banner on top left
-        debugShowCheckedModeBanner: false,
-        // Router configrated to app
-        routerConfig: appRouter.config(),
-        //title of app
-        title: LocaleKeys.app_title.tr(),
-        theme: defaultTheme,
+    return AnnotatedRegion(
+      value: const SystemUiOverlayStyle(
+        systemNavigationBarColor: DefaultColorPalette.vanillaTranparent,
+        systemNavigationBarIconBrightness: Brightness.dark,
+      ),
+      child: ScreenUtilInit(
+        designSize: const Size(375, 812), // iPhone 16 (örnek)
+        minTextAdapt: true,
+        splitScreenMode: true,
+        child: MaterialApp.router(
+          //---------------------------------- b
+          //Localization setup in Material App
+          localizationsDelegates: LocalizationManager().delegates(context),
+          supportedLocales: LocalizationManager().supportedLocales(context),
+          locale: LocalizationManager().locale(context),
+          //----------------------------------
+          //remove debug banner on top left
+          debugShowCheckedModeBanner: false,
+          // Router configrated to app
+          routerConfig: appRouter.config(),
+          //title of app
+          title: LocaleKeys.app_title.tr(),
+          theme: defaultTheme,
+        ),
       ),
     );
   }

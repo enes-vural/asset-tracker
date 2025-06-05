@@ -335,7 +335,7 @@ class _SplashViewState extends ConsumerState<SplashView>
             animation: _logoTransformController,
             builder: (context, child) {
               return Positioned(
-                left: 120.w +
+                left: 100.w +
                     (_rLetterPositionAnimation.value.dx * 40.w), // Sağa kaydır
                 top: 10,
                 child: Opacity(
@@ -390,7 +390,7 @@ class _SplashViewState extends ConsumerState<SplashView>
               final rFinalPos = 130 + (_rLetterPositionAnimation.value.dx * 40);
               return Positioned(
                 left: rFinalPos +
-                    35 +
+                    15 +
                     (_rotaTextPositionAnimation.value.dx * 10), // R'nin yanında
                 top: 25,
                 child: Opacity(

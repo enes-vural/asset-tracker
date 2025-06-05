@@ -1,5 +1,6 @@
 import 'package:asset_tracker/core/helpers/dialog_helper.dart';
 import 'package:asset_tracker/injection.dart';
+import 'package:asset_tracker/presentation/view/home/widgets/unauthorized_widget.dart';
 import 'package:auto_route/auto_route.dart';
 import 'package:easy_localization/easy_localization.dart';
 import 'package:flutter/material.dart';
@@ -30,24 +31,31 @@ class _DashboardViewState extends ConsumerState<DashboardView> {
   @override
   Widget build(BuildContext context) {
     final viewModel = ref.watch(dashboardViewModelProvider);
+    final authState = ref.watch(authGlobalProvider);
 
     EasyDialog.showDialogOnProcess(context, ref, dashboardViewModelProvider);
     return PopScope(
       canPop: viewModel.canPop,
-      child: Scaffold(
-        backgroundColor: Colors.grey.shade100,
-        body: SingleChildScrollView(
-          scrollDirection: Axis.vertical,
-          child: SizedBox(
-            child: Column(
-              children: [
-                const PieChartWidget(),
-                availableTextWidget(),
-                const BalanceTextWidget(),
-                const CustomSizedBox.hugeGap(),
-                const SizedBox(child: UserAssetTransactionWidget()),
-              ],
-            ),
+      child: authState.getCurrentUser?.user != null
+          ? _oldScaffold()
+          : const UnAuthorizedWidget(page: UnAuthorizedPage.WALLET),
+    );
+  }
+
+  Scaffold _oldScaffold() {
+    return Scaffold(
+      backgroundColor: Colors.grey.shade100,
+      body: SingleChildScrollView(
+        scrollDirection: Axis.vertical,
+        child: SizedBox(
+          child: Column(
+            children: [
+              const PieChartWidget(),
+              availableTextWidget(),
+              const BalanceTextWidget(),
+              const CustomSizedBox.hugeGap(),
+              const SizedBox(child: UserAssetTransactionWidget()),
+            ],
           ),
         ),
       ),
