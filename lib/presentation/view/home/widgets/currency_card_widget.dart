@@ -30,11 +30,8 @@ class _CurrencyListWidgetState extends ConsumerState<CurrencyListWidget>
 
   @override
   Widget build(BuildContext context) {
-    final viewModel = ref.watch(homeViewModelProvider.notifier);
-    final appGlobal = ref.watch(appGlobalProvider.notifier);
-
-    // AppGlobalProvider'ı dinle - bu notifyListeners() çağrıldığında widget'ı rebuild eder
-    final appGlobalState = ref.watch(appGlobalProvider);
+    final viewModel = ref.watch(homeViewModelProvider);
+    final appGlobal = ref.watch(appGlobalProvider);
 
     // Global assets'i direkt AppGlobalProvider'dan al
     List<CurrencyEntity>? globalAssets = appGlobal.globalAssets;
@@ -294,7 +291,7 @@ class _CurrencyListWidgetState extends ConsumerState<CurrencyListWidget>
                       fit: BoxFit.cover,
                     ),
                   ),
-                  CustomSizedBox.smallWidth(),
+                  const CustomSizedBox.smallWidth(),
                   Expanded(
                     child: Column(
                       crossAxisAlignment: CrossAxisAlignment.start,

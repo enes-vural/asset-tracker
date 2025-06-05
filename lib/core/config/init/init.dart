@@ -17,6 +17,7 @@ final class AppInit {
       DeviceOrientation.portraitUp,
       DeviceOrientation.portraitDown,
     ]);
+    SystemChrome.setEnabledSystemUIMode(SystemUiMode.edgeToEdge);
     HiveCacheService.instance.init();
     await EasyLocalization.ensureInitialized();
     await Firebase.initializeApp(

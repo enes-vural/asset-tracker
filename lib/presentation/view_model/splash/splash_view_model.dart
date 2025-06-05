@@ -57,5 +57,5 @@ class SplashViewModel extends ChangeNotifier {
   //navigate to home or login page
   void _navigateHomeOrLogin(BuildContext context, {bool access = false}) =>
       Routers.instance.pushAndRemoveUntil(
-          context, access ? const MenuRoute() : const LoginRoute());
+          context, access ? const MenuRoute() : const MenuRoute());
 }

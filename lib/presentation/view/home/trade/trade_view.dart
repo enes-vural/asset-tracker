@@ -1,5 +1,3 @@
-import 'package:asset_tracker/core/config/theme/extension/app_size_extension.dart';
-import 'package:asset_tracker/core/config/theme/style_theme.dart';
 import 'package:asset_tracker/core/constants/string_constant.dart';
 import 'package:asset_tracker/core/config/localization/generated/locale_keys.g.dart';
 import 'package:asset_tracker/core/config/theme/default_theme.dart';
@@ -13,6 +11,7 @@ import 'package:asset_tracker/presentation/common/custom_datepicker_widget.dart'
 import 'package:asset_tracker/presentation/common/custom_dropdown_widget.dart';
 import 'package:asset_tracker/presentation/view/auth/widget/auth_form_widget.dart';
 import 'package:asset_tracker/presentation/view/auth/widget/auth_submit_widget.dart';
+import 'package:asset_tracker/presentation/view/home/widgets/unauthorized_widget.dart';
 import 'package:asset_tracker/presentation/view_model/home/trade/trade_view_model.dart';
 import 'package:auto_route/annotations.dart';
 import 'package:easy_localization/easy_localization.dart';
@@ -52,99 +51,103 @@ class _TradeViewState extends ConsumerState<TradeView> with ValidatorMixin {
   Widget build(BuildContext context) {
     final GlobalKey<FormState> tradeFormKey = GlobalKey<FormState>();
     final viewModel = ref.watch(tradeViewModelProvider);
-
+    final authState = ref.watch(authGlobalProvider);
+    
     EasyDialog.showDialogOnProcess(context, ref, tradeViewModelProvider);
 
     return PopScope(
       canPop: viewModel.canPop,
-      child: Scaffold(
-        backgroundColor: DefaultColorPalette.vanillaWhite,
-        body: Form(
-          key: tradeFormKey,
-          child: CustomPadding.hugeHorizontal(
-            widget: SingleChildScrollView(
-              scrollDirection: Axis.vertical,
-              child: Column(
-                children: [
-                  const CustomSizedBox.largeGap(),
-                  AuthFormWidget(
-                    label: "Miktar",
-                    isObs: false,
-                    formController: viewModel.amountController,
-                    validaor: (value) => checkAmount(value, false),
-                    hasLabel: false,
-                    hasTitle: true,
-                    onChanged: (value) {
-                      double amount = double.tryParse(value) ?? 0.0;
-                      if (double.tryParse(viewModel.priceUnitController.text) !=
-                          null) {
-                        double priceTotal = amount *
-                            double.tryParse(
-                                viewModel.priceUnitController.text)!;
-                        viewModel.priceTotalController.text =
-                            priceTotal.toStringAsFixed(2);
+      child: authState.getCurrentUser?.user != null
+          ? _oldScaffold(tradeFormKey, viewModel, context)
+          : const UnAuthorizedWidget(page: UnAuthorizedPage.TRADE),
+    );
+  }
+
+  Scaffold _oldScaffold(GlobalKey<FormState> tradeFormKey,
+      TradeViewModel viewModel, BuildContext context) {
+    return Scaffold(
+      backgroundColor: DefaultColorPalette.vanillaWhite,
+      body: Form(
+        key: tradeFormKey,
+        child: CustomPadding.hugeHorizontal(
+          widget: SingleChildScrollView(
+            scrollDirection: Axis.vertical,
+            child: Column(
+              children: [
+                const CustomSizedBox.largeGap(),
+                AuthFormWidget(
+                  label: "Miktar",
+                  isObs: false,
+                  formController: viewModel.amountController,
+                  validaor: (value) => checkAmount(value, false),
+                  hasLabel: false,
+                  hasTitle: true,
+                  onChanged: (value) {
+                    double amount = double.tryParse(value) ?? 0.0;
+                    if (double.tryParse(viewModel.priceUnitController.text) !=
+                        null) {
+                      double priceTotal = amount *
+                          double.tryParse(viewModel.priceUnitController.text)!;
+                      viewModel.priceTotalController.text =
+                          priceTotal.toStringAsFixed(2);
+                    }
+                  },
+                ),
+                AuthFormWidget(
+                  label: "Adet Fiyatı",
+                  isObs: false,
+                  formController: viewModel.priceUnitController,
+                  onChanged: (value) {
+                    double amount =
+                        double.tryParse(viewModel.amountController.text) ?? 0.0;
+                    double pricePerUnit = double.tryParse(value) ?? 0.0;
+                    double totalPrice = amount * pricePerUnit;
+                    if (viewModel.priceTotalController.text !=
+                        totalPrice.toStringAsFixed(2)) {
+                      viewModel.priceTotalController.text =
+                          totalPrice.toStringAsFixed(2);
+                    }
+                  },
+                  validaor: (value) => null,
+                  hasLabel: false,
+                  hasTitle: true,
+                ),
+                AuthFormWidget(
+                  label: "Toplam Fiyat",
+                  isObs: false,
+                  formController: viewModel.priceTotalController,
+                  validaor: (value) => checkAmount(value, true),
+                  onChanged: (value) {
+                    double priceTotal = double.tryParse(value) ?? 0.0;
+                    double amount =
+                        double.tryParse(viewModel.amountController.text) ?? 0.0;
+                    double pricePerUnit = priceTotal / amount;
+                    viewModel.priceUnitController.text =
+                        pricePerUnit.toStringAsFixed(2);
+                  },
+                  hasLabel: false,
+                  hasTitle: true,
+                ),
+                customDatePickerWidget(viewModel),
+                CustomDropDownWidget(
+                  pageCurrency: widget.currecyCode,
+                  viewModel: viewModel,
+                  onSelectedChanged: () {
+                    viewModel.getPriceSelectedCurrency(ref);
+                  },
+                ),
+                const CustomSizedBox.largeGap(),
+                AuthSubmitWidget(
+                    label: "Buy",
+                    voidCallBack: () async {
+                      if (!tradeFormKey.currentState!.validate()) {
+                        EasySnackBar.show(
+                            context, LocaleKeys.trade_fillAllFields.tr());
+                        return;
                       }
-                      
-                    },
-                  ),
-                  AuthFormWidget(
-                    label: "Adet Fiyatı",
-                    isObs: false,
-                    formController: viewModel.priceUnitController,
-                    onChanged: (value) {
-                      double amount =
-                          double.tryParse(viewModel.amountController.text) ??
-                              0.0;
-                      double pricePerUnit = double.tryParse(value) ?? 0.0;
-                      double totalPrice = amount * pricePerUnit;
-                      if (viewModel.priceTotalController.text !=
-                          totalPrice.toStringAsFixed(2)) {
-                        viewModel.priceTotalController.text =
-                            totalPrice.toStringAsFixed(2);
-                      }
-                    },
-                    validaor: (value) => null,
-                    hasLabel: false,
-                    hasTitle: true,
-                  ),
-                  AuthFormWidget(
-                    label: "Toplam Fiyat",
-                    isObs: false,
-                    formController: viewModel.priceTotalController,
-                    validaor: (value) => checkAmount(value, true),
-                    onChanged: (value) {
-                      double priceTotal = double.tryParse(value) ?? 0.0;
-                      double amount =
-                          double.tryParse(viewModel.amountController.text) ??
-                              0.0;
-                      double pricePerUnit = priceTotal / amount;
-                      viewModel.priceUnitController.text =
-                          pricePerUnit.toStringAsFixed(2);
-                    },
-                    hasLabel: false,
-                    hasTitle: true,
-                  ),
-                  customDatePickerWidget(viewModel),
-                  CustomDropDownWidget(
-                    pageCurrency: widget.currecyCode,
-                    viewModel: viewModel,
-                    onSelectedChanged: () {
-                      viewModel.getPriceSelectedCurrency(ref);
-                    },
-                  ),
-                  const CustomSizedBox.largeGap(),
-                  AuthSubmitWidget(
-                      label: "Buy",
-                      voidCallBack: () async {
-                        if (!tradeFormKey.currentState!.validate()) {
-                          EasySnackBar.show(
-                              context, LocaleKeys.trade_fillAllFields.tr());
-                          return;
-                        }
-                        viewModel.buyCurrency(ref: ref, context: context);
-                      }),
-                ],
-              ),
+                      viewModel.buyCurrency(ref: ref, context: context);
+                    }),
+              ],
             ),
           ),
         ),

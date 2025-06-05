@@ -1,4 +1,4 @@
-import 'package:asset_tracker/core/constants/string_constant.dart';
+import 'package:asset_tracker/core/config/theme/extension/app_size_extension.dart';
 import 'package:asset_tracker/injection.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
@@ -9,11 +9,10 @@ class UserEmailTextWidget extends ConsumerWidget {
   @override
   Widget build(BuildContext context, WidgetRef ref) {
     return Text(
-      ref.read(authGlobalProvider.notifier).getCurrentUser?.email.toString() ??
-          DefaultLocalStrings.emptyText,
-      style: const TextStyle(
+      ref.read(authGlobalProvider.notifier).getCurrentUser?.email ?? "Misafir",
+      style: TextStyle(
         color: Colors.black,
-        fontSize: 15,
+        fontSize: AppSize.mediumText,
         fontWeight: FontWeight.bold,
       ),
     );
