@@ -63,7 +63,6 @@ class _TrialViewState extends ConsumerState<LoginView> with ValidatorMixin {
         resizeToAvoidBottomInset: false,
         appBar: AppBar(
           backgroundColor: Colors.white,
-          automaticallyImplyLeading: false,
           title: Column(
             mainAxisSize: MainAxisSize.min,
             children: <Widget>[

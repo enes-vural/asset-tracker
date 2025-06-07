@@ -11,6 +11,8 @@ import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 
 class AppGlobalProvider extends ChangeNotifier {
+  //default index equals zero.
+  int menuNavigationIndex = 0;
   List<AssetCodeModel> assetCodes = [];
   Stream? _dataStream;
   List<String>? _userCurrencies;
@@ -25,6 +27,14 @@ class AppGlobalProvider extends ChangeNotifier {
   //if failure has been occurred we will return false
   //if success we will update user data
   //and return true
+
+  void changeMenuNavigationIndex(int newIndex) {
+    if (menuNavigationIndex != newIndex) {
+      menuNavigationIndex = newIndex;
+      notifyListeners();
+    }
+  }
+
   Future<bool> getLatestUserData(WidgetRef ref, UserUidEntity entity) async {
     final result = await ref.read(databaseUseCaseProvider).getUserData(entity);
     return await result.fold(
@@ -40,12 +50,10 @@ class AppGlobalProvider extends ChangeNotifier {
     );
   }
 
-
   Future<void> clearData() async {
     _dataStream = null;
     _userData = null;
     _userCurrencies = [];
-    globalAssets = [];
     _totalProfitPercent = 0.0;
     _totalProfit = 0.0;
     _userBalance = 0.0;

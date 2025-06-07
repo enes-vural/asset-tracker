@@ -3,8 +3,7 @@
 import 'dart:async';
 
 import 'package:asset_tracker/core/config/theme/extension/currency_widget_title_extension.dart';
-import 'package:asset_tracker/core/helpers/snackbar.dart';
-import 'package:asset_tracker/core/routers/app_router.gr.dart';
+//import 'package:asset_tracker/core/helpers/snackbar.dart';
 import 'package:asset_tracker/core/routers/router.dart' show Routers;
 import 'package:asset_tracker/domain/entities/web/socket/currency_entity.dart';
 import 'package:asset_tracker/domain/usecase/web/web_use_case.dart';
@@ -67,7 +66,8 @@ class HomeViewModel extends ChangeNotifier {
     await ref.read(appGlobalProvider.notifier).clearData();
     //clear old routes before pushing new route
     //Routers.instance.replaceAll(context, const LoginRoute());
-    Routers.instance.pushAndRemoveUntil(context, const LoginRoute());
+    //Routers.instance.pushAndRemoveUntil(context, const LoginRoute());
+    notifyListeners();
   }
 
   void clearText() {
@@ -79,15 +79,14 @@ class HomeViewModel extends ChangeNotifier {
         getSocketStreamUseCase.getErrorStream();
     data?.listen((event) {
       event.fold((failure) {
-        EasySnackBar.show(parentContext, failure.message);
+        //commented for UX
+        //EasySnackBar.show(parentContext, failure.message);
       }, (success) {
         debugPrint("Connection STATE : ${success.state}");
         debugPrint("Connection STATE : ${success.message}");
       });
     });
   }
-
-  swapToTradePage() {}
 
   filterCurrencyData(List<CurrencyEntity>? data, String searchedCurrency) {
     //filter the list via controller's value
@@ -107,13 +106,16 @@ class HomeViewModel extends ChangeNotifier {
   }
 
   void routeTradePage(BuildContext context, CurrencyEntity? currency) {
-    Routers.instance
-        .pushWithInfo(context,
-        TradeRoute(currecyCode: currency?.code ?? "", price: currency?.satis));
+    // Routers.instance.pushWithInfo(context,
+    //     TradeRoute(currecyCode: currency?.code ?? "", price: currency?.satis));
   }
 
   void routeWalletPage(BuildContext context) {
     Routers.instance.pushNamed(context, Routers.dashboardPath);
+  }
+
+  void routeSignInPage(BuildContext context) {
+    Routers.instance.pushNamed(context, Routers.loginPath);
   }
 
   Stream? get searchBarStreamController => _searchBarStreamController.stream;
