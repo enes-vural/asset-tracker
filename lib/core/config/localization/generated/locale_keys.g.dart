@@ -120,6 +120,7 @@ abstract class  LocaleKeys {
   static const home_widget_tek_yeni = 'home.widget.tek_yeni';
   static const home_widget_tek_eski = 'home.widget.tek_eski';
   static const home_widget_ata_yeni = 'home.widget.ata_yeni';
+  static const home_widget_ata_eski = 'home.widget.ata_eski';
   static const home_widget_dkktry = 'home.widget.dkktry';
   static const home_widget_xauusd = 'home.widget.xauusd';
   static const home_widget_xagusd = 'home.widget.xagusd';
