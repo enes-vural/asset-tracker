@@ -2,6 +2,7 @@
 
 import 'dart:async';
 import 'package:asset_tracker/core/constants/enums/socket/socket_state_enums.dart';
+import 'package:asset_tracker/core/constants/filtered_codes_constants.dart';
 import 'package:asset_tracker/core/constants/string_constant.dart';
 import 'package:asset_tracker/data/model/web/error/socket_error_model.dart';
 import 'package:asset_tracker/data/model/web/price_changed_model.dart';
@@ -27,6 +28,7 @@ class WebSocketRepository implements IWebSocketRepository {
   @override
   Future<Either<SocketErrorEntity, SocketStateResponseModel>>
       startConnection() async {
+    final Set<String> filter = FilteredCodesConstants.filteredCodes;
     try {
       _controller = StreamController.broadcast();
       _errorController = StreamController.broadcast();
@@ -51,6 +53,12 @@ class WebSocketRepository implements IWebSocketRepository {
         priceChangedModel.data.forEach((element) {
           final CurrencyEntity currencyEntity =
               CurrencyEntity.fromModel(element);
+
+          // **FİLTRE KONTROLÜ - Bu kod filtrelenmişse işleme alma**
+          if (filter.contains(currencyEntity.code.toUpperCase())) {
+            debugPrint("Currency filtered out: ${currencyEntity.code}");
+            return; // Bu currency'i işleme alma
+          }
 
           final index = _currencyEntities
               .indexWhere((entity) => entity.code == currencyEntity.code);

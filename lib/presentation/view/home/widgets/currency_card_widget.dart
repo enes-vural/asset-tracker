@@ -9,6 +9,7 @@ import 'package:asset_tracker/domain/entities/web/socket/currency_entity.dart';
 import 'package:asset_tracker/domain/entities/web/socket/currency_widget_entity.dart';
 import 'package:asset_tracker/injection.dart';
 import 'package:asset_tracker/presentation/view/widgets/loading_skeletonizer_widget.dart';
+import 'package:asset_tracker/presentation/view_model/home/home_view_model.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 
@@ -72,7 +73,7 @@ class _CurrencyListWidgetState extends ConsumerState<CurrencyListWidget>
   Widget _buildCurrencyList(
     List<CurrencyEntity>? globalAssets,
     Stream? searchStream,
-    dynamic viewModel,
+    HomeViewModel viewModel,
   ) {
     // Global assets null veya boşsa loading göster
     if (globalAssets == null || globalAssets.isEmpty) {
@@ -158,6 +159,7 @@ class _CurrencyListWidgetState extends ConsumerState<CurrencyListWidget>
               sortType: SortType.name,
             ),
           ),
+          Text("🕙︎23.05"),
           // Buy Price
           Expanded(
             flex: 2,

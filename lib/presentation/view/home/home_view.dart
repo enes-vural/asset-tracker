@@ -47,6 +47,7 @@ class _HomeViewState extends ConsumerState<HomeView> {
   @override
   Widget build(BuildContext context) {
     final HomeViewModel viewModel = ref.watch(homeViewModelProvider);
+    final authState = ref.watch(authGlobalProvider);
     return Scaffold(
       backgroundColor: DefaultColorPalette.grey100,
       body: Stack(
@@ -64,12 +65,12 @@ class _HomeViewState extends ConsumerState<HomeView> {
                       const CustomSizedBox.hugeGap(),
                       const BalanceTextWidget(),
                       const BalanceProfitTextWidget(),
-                      Text(
-                        "PaRota ile altın ve dövizlerinizi kolayca takip etmek için giriş yapın.",
-                        style: CustomTextStyle.greyColorManrope(
-                            AppSize.small2Text),
-                      ),
-                      const CustomSizedBox.hugeGap(),
+                      //if user is not authorized show _signInText Widget
+                      //else return sizedbox with no volume.
+                      authState.getCurrentUser?.user == null
+                          ? _signInText()
+                          : const CustomSizedBox.empty(),
+                      const CustomSizedBox.mediumGap(),
                       const CurrencyListWidget(),
                       const CustomSizedBox.hugeGap(),
                       // Bottom navigation için ekstra boşluk
@@ -82,6 +83,13 @@ class _HomeViewState extends ConsumerState<HomeView> {
           _homeClearButtonWidget(viewModel),
         ],
       ),
+    );
+  }
+
+  Text _signInText() {
+    return Text(
+      "PaRota ile altın ve dövizlerinizi kolayca takip etmek için giriş yapın.",
+      style: CustomTextStyle.greyColorManrope(AppSize.small2Text),
     );
   }
 
@@ -102,5 +110,4 @@ class _HomeViewState extends ConsumerState<HomeView> {
       ),
     );
   }
-
 }

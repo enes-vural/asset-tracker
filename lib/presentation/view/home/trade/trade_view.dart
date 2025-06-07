@@ -66,7 +66,7 @@ class _TradeViewState extends ConsumerState<TradeView> with ValidatorMixin {
   Scaffold _oldScaffold(GlobalKey<FormState> tradeFormKey,
       TradeViewModel viewModel, BuildContext context) {
     return Scaffold(
-      backgroundColor: DefaultColorPalette.vanillaWhite,
+      backgroundColor: DefaultColorPalette.grey100,
       body: Form(
         key: tradeFormKey,
         child: CustomPadding.hugeHorizontal(

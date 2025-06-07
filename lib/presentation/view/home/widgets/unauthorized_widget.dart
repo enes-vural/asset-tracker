@@ -16,7 +16,7 @@ class UnAuthorizedWidget extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-      backgroundColor: DefaultColorPalette.mainWhite,
+      backgroundColor: DefaultColorPalette.grey100,
       body: SafeArea(
         child: Padding(
           padding: const EdgeInsets.symmetric(horizontal: 32.0),

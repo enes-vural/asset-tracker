@@ -2,7 +2,6 @@ import 'package:easy_localization/easy_localization.dart';
 
 import 'package:asset_tracker/core/config/localization/generated/locale_keys.g.dart';
 
-
 String setCurrencyLabel(String currencyCode) {
   String newTitle = currencyTypeMap[currencyCode]?.getCurrencyTitle() ?? "N/A";
   //burası gereksiz zaten switch case default ta N/A döndürecek
@@ -54,13 +53,13 @@ Map<String, String> currencyTypeMap = {
   "TEK_ESKI": "tek_eski",
   "SEKTRY": "sektry",
   "ATA_YENI": "ata_yeni",
+  "ATA_ESKI": "ata_eski",
   "DKKTRY": "dkktry",
   "XAUUSD": "xauusd",
   "PLNTRY": "plntry",
   "HUFTRY": "huftry",
   "ZARTRY": "zartry"
 };
-
 
 extension GetCurrencyTitle on String {
   String getCurrencyTitle() {
@@ -145,6 +144,8 @@ extension GetCurrencyTitle on String {
         return LocaleKeys.home_widget_tek_eski.tr();
       case "ata_yeni":
         return LocaleKeys.home_widget_ata_yeni.tr();
+      case "ata_eski":
+        return LocaleKeys.home_widget_ata_eski.tr();
       case "dkktry":
         return LocaleKeys.home_widget_dkktry.tr();
       case "xauusd":
