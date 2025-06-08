@@ -29,6 +29,28 @@ final class DefaultLocalStrings {
   static const amount = "amount";
   static const price = "price";
 
+  static const caratKeyword = "AYAR";
+  static const gremseKeyword = "GREMSE";
+  static const singleKeyword = "TEK";
+  static const newKeyword = "YENI";
+  static const oldKeyword = "ESKI";
+
+  static const silverCode = "GUMUS";
+
+  static const goldCode = "ALTIN";
+  static const ataCode = "ATA";
+  static const chfCode = "CHF";
+  static const audCode = "AUD";
+  static const dkkCode = "DKK";
+  static const sekCode = "SEK";
+  static const nokCode = "NOK";
+  static const jpyCode = "JPY";
+  static const sarCode = "SAR";
+  static const gbpCode = "GBP";
+  static const cadCode = "CAD";
+  static const usdCode = "USD";
+  static const eurCode = "EUR";
+
   static const goldCoin = "gold_coin";
   static const chfCoin = "chf_coin";
   static const audCoin = "aud_coin";
@@ -43,5 +65,8 @@ final class DefaultLocalStrings {
   static const cadCoin = "cad_coin";
   static const usdCoin = "usd_coin";
   static const euroCoin = "euro_coin";
+  static const dkkCoin = "dkk_coin";
+  static const ataGoldCoin = "ata_gold";
   static const defaultCoin = "default_coin";
+  static const platinCoin = "platin_coin";
 }

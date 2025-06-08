@@ -4,43 +4,72 @@ import 'package:asset_tracker/core/config/theme/extension/asset_extension.dart';
 import 'package:easy_localization/easy_localization.dart';
 
 mixin GetCurrencyIconMixin {
+  static final Map<String, String> _currencyIconMap = {
+    // Gold currencies (must be checked first due to ATA exception)
+    DefaultLocalStrings.ataCode: DefaultLocalStrings.ataGoldCoin,
+    DefaultLocalStrings.chfCode: DefaultLocalStrings.chfCoin,
+    DefaultLocalStrings.audCode: DefaultLocalStrings.audCoin,
+    DefaultLocalStrings.dkkCode: DefaultLocalStrings.dkkCoin,
+    DefaultLocalStrings.sekCode: DefaultLocalStrings.sekCoin,
+    DefaultLocalStrings.nokCode: DefaultLocalStrings.nokCoin,
+    DefaultLocalStrings.jpyCode: DefaultLocalStrings.jpyCoin,
+    DefaultLocalStrings.sarCode: DefaultLocalStrings.sarCoin,
+    DefaultLocalStrings.gbpCode: DefaultLocalStrings.gbpCoin,
+    DefaultLocalStrings.cadCode: DefaultLocalStrings.cadCoin,
+    DefaultLocalStrings.usdCode: DefaultLocalStrings.usdCoin,
+    DefaultLocalStrings.eurCode: DefaultLocalStrings.euroCoin,
+  };
+
+  static final List<String> _goldKeywords = [
+    DefaultLocalStrings.goldCode,
+    DefaultLocalStrings.caratKeyword,
+    DefaultLocalStrings.gremseKeyword,
+    DefaultLocalStrings.singleKeyword,
+    DefaultLocalStrings.newKeyword,
+    DefaultLocalStrings.oldKeyword,
+  ];
+
+  static final List<String> _silverKeywords = [DefaultLocalStrings.silverCode];
+
   String getCurrencyIcon(String name) {
-    bool currencyContains(String value) {
-      return name.toLowerCase().contains(value.toLowerCase());
+    final upperName = name.toUpperCase();
+
+    if (_containsKeyword(upperName, [DefaultLocalStrings.ataCode])) {
+      return DefaultLocalStrings.ataGoldCoin.toCurrencyPng();
+    }
+    
+    if (_containsAnyKeyword(upperName, _goldKeywords) &&
+        !_containsKeyword(upperName, [DefaultLocalStrings.ataCode])) {
+      return DefaultLocalStrings.goldCoin.toCurrencyPng();
     }
 
-    if (currencyContains(LocaleKeys.home_searchItems_gold.tr())) {
-      return DefaultLocalStrings.goldCoin.toCurrencyPng();
-    } else if (currencyContains(LocaleKeys.home_searchItems_chf.tr())) {
-      return DefaultLocalStrings.audCoin.toCurrencyPng();
-    } else if (currencyContains(LocaleKeys.home_searchItems_aud.tr())) {
-      return DefaultLocalStrings.audCoin.toCurrencyPng();
-    } else if (currencyContains(LocaleKeys.home_searchItems_xau.tr())) {
+    if (_containsKeyword(upperName, [LocaleKeys.home_searchItems_xau.tr()])) {
       return DefaultLocalStrings.xauCoin.toCurrencyPng();
-    } else if (currencyContains(LocaleKeys.home_searchItems_sek.tr()) ||
-        currencyContains(LocaleKeys.home_searchItems_dkk.tr())) {
-      return DefaultLocalStrings.sekCoin.toCurrencyPng();
-    } else if (currencyContains(LocaleKeys.home_searchItems_nok.tr())) {
-      return DefaultLocalStrings.nokCoin.toCurrencyPng();
-    } else if (currencyContains(LocaleKeys.home_searchItems_jpy.tr())) {
-      return DefaultLocalStrings.jpyCoin.toCurrencyPng();
-    } else if (currencyContains(LocaleKeys.home_searchItems_silver.tr()) ||
-        currencyContains(LocaleKeys.home_searchItems_xag.tr())) {
-      return DefaultLocalStrings.silverCoin.toCurrencyPng();
-    } else if (currencyContains(LocaleKeys.home_searchItems_xpt.tr())) {
-      return DefaultLocalStrings.xptCoin.toCurrencyPng();
-    } else if (currencyContains(LocaleKeys.home_searchItems_sar.tr())) {
-      return DefaultLocalStrings.sarCoin.toCurrencyPng();
-    } else if (currencyContains(LocaleKeys.home_searchItems_gbp.tr())) {
-      return DefaultLocalStrings.gbpCoin.toCurrencyPng();
-    } else if (currencyContains(LocaleKeys.home_searchItems_cad.tr())) {
-      return DefaultLocalStrings.cadCoin.toCurrencyPng();
-    } else if (currencyContains(LocaleKeys.home_searchItems_usd.tr())) {
-      return DefaultLocalStrings.usdCoin.toCurrencyPng();
-    } else if (currencyContains(LocaleKeys.home_searchItems_eur.tr())) {
-      return DefaultLocalStrings.euroCoin.toCurrencyPng();
-    } else {
-      return DefaultLocalStrings.defaultCoin.toCurrencyPng();
     }
+
+    if (_containsAnyKeyword(upperName, _silverKeywords) ||
+        _containsKeyword(upperName, [LocaleKeys.home_searchItems_xag.tr()])) {
+      return DefaultLocalStrings.silverCoin.toCurrencyPng();
+    }
+
+    if (_containsKeyword(upperName, [LocaleKeys.home_searchItems_xpt.tr()])) {
+      return DefaultLocalStrings.xptCoin.toCurrencyPng();
+    }
+
+    for (final entry in _currencyIconMap.entries) {
+      if (_containsKeyword(upperName, [entry.key])) {
+        return entry.value.toCurrencyPng();
+      }
+    }
+
+    return DefaultLocalStrings.defaultCoin.toCurrencyPng();
+  }
+  
+  bool _containsKeyword(String text, List<String> keywords) {
+    return keywords.any((keyword) => text.contains(keyword.toUpperCase()));
+  }
+
+  bool _containsAnyKeyword(String text, List<String> keywords) {
+    return keywords.any((keyword) => text.contains(keyword.toUpperCase()));
   }
 }

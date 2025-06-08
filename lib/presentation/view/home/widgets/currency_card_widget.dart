@@ -158,8 +158,7 @@ class _CurrencyListWidgetState extends ConsumerState<CurrencyListWidget>
               title: "Birim",
               sortType: SortType.name,
             ),
-          ),
-          Text("🕙︎23.05"),
+          ),          
           // Buy Price
           Expanded(
             flex: 2,
@@ -178,6 +177,7 @@ class _CurrencyListWidgetState extends ConsumerState<CurrencyListWidget>
               textAlign: TextAlign.center,
             ),
           ),
+          
         ],
       ),
     );
@@ -237,12 +237,24 @@ class _CurrencyListWidgetState extends ConsumerState<CurrencyListWidget>
   List<CurrencyEntity> _sortCurrencyData(List<CurrencyEntity> data) {
     List<CurrencyEntity> sortedData = List.from(data);
 
+    List<CurrencyWidgetEntity> widgetData = [];
+    sortedData.forEach((value) {
+      widgetData.add(CurrencyWidgetEntity.fromCurrency(value));
+    });
+
+    Map<String, CurrencyWidgetEntity> widgetMap = {};
+    for (int i = 0; i < sortedData.length; i++) {
+      widgetMap[sortedData[i].code] = widgetData[i];
+    }
+
     sortedData.sort((a, b) {
       int comparison = 0;
 
       switch (currentSortType) {
         case SortType.name:
-          comparison = (a.code).compareTo(b.code);
+          String aName = widgetMap[a.code]?.name ?? a.code;
+          String bName = widgetMap[b.code]?.name ?? b.code;
+          comparison = aName.compareTo(bName);
           break;
         case SortType.buy:
           double aValue = double.tryParse(a.alis.toString()) ?? 0.0;
@@ -267,8 +279,8 @@ class _CurrencyListWidgetState extends ConsumerState<CurrencyListWidget>
     return sortedData;
   }
 
-  Widget _buildCurrencyRow(
-      BuildContext context, CurrencyWidgetEntity currency, dynamic viewModel) {
+  Widget _buildCurrencyRow(BuildContext context, CurrencyWidgetEntity currency,
+      HomeViewModel viewModel) {
     return InkWell(
       onTap: () {
         viewModel.routeTradePage(context, currency.entity);
@@ -287,10 +299,10 @@ class _CurrencyListWidgetState extends ConsumerState<CurrencyListWidget>
                     radius: AppSize.mediumRadius,
                     backgroundColor: DefaultColorPalette.grey100,
                     child: Image.asset(
-                      getCurrencyIcon(currency.name),
+                      getCurrencyIcon(currency.code),
                       width: AppSize.largeIcon,
                       height: AppSize.largeIcon,
-                      fit: BoxFit.cover,
+                      fit: BoxFit.fitHeight,
                     ),
                   ),
                   const CustomSizedBox.smallWidth(),
