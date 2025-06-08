@@ -130,6 +130,7 @@ abstract class  LocaleKeys {
   static const home_widget_huftry = 'home.widget.huftry';
   static const home_widget_sektry = 'home.widget.sektry';
   static const home_widget_zartry = 'home.widget.zartry';
+  static const home_widget_gramaltin = 'home.widget.gramaltin';
   static const home_widget = 'home.widget';
   static const home_searchItems_gold = 'home.searchItems.gold';
   static const home_searchItems_silver = 'home.searchItems.silver';

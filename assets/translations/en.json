@@ -139,7 +139,8 @@
             "xauusd": "XAU/USD",
             "plntry": "PLN/TRY",
             "huftry": "HUF/TRY",
-            "zartry": "ZAR/TRY"
+            "zartry": "ZAR/TRY",
+            "gramaltin":"Gram Gold"
         },
         "searchItems":{
             "gold":"Gold",

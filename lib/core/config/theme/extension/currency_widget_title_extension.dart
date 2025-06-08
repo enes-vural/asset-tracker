@@ -8,6 +8,7 @@ String setCurrencyLabel(String currencyCode) {
   return newTitle; // Return this if no match is found in the map
 }
 
+//toLowerCase ile çözülebilir ama farklı bir veri sağlayacısına geçersek isimlendirmede lazım olacak diye saklıyorum.
 Map<String, String> currencyTypeMap = {
   "ATA5_YENI": "ata5_yeni",
   "ATA5_ESKI": "ata5_eski",
@@ -58,7 +59,8 @@ Map<String, String> currencyTypeMap = {
   "XAUUSD": "xauusd",
   "PLNTRY": "plntry",
   "HUFTRY": "huftry",
-  "ZARTRY": "zartry"
+  "ZARTRY": "zartry",
+  "GRAMALTIN": "gramaltin"
 };
 
 extension GetCurrencyTitle on String {
@@ -164,6 +166,8 @@ extension GetCurrencyTitle on String {
         return LocaleKeys.home_widget_sektry.tr();
       case "zartry":
         return LocaleKeys.home_widget_zartry.tr();
+      case "gramaltin":
+        return LocaleKeys.home_widget_gramaltin.tr();
       default:
         return "Unknown Currency";
     }
