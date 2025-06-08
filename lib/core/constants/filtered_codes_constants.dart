@@ -12,5 +12,9 @@ final class FilteredCodesConstants {
     'USDCAD',
     'EURKG',
     'XAGUSD',
+    'AUDUSD',
+    'GUMUSUSD',
+    'ONS',
+    'XAUXAG'
   };
 }

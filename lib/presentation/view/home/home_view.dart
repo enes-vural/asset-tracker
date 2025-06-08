@@ -1,5 +1,6 @@
 import 'package:asset_tracker/core/config/theme/extension/app_size_extension.dart';
 import 'package:asset_tracker/core/config/theme/style_theme.dart';
+import 'package:asset_tracker/core/widgets/custom_align.dart';
 import 'package:auto_route/annotations.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
@@ -71,6 +72,9 @@ class _HomeViewState extends ConsumerState<HomeView> {
                           ? _signInText()
                           : const CustomSizedBox.empty(),
                       const CustomSizedBox.mediumGap(),
+                      _dateTimeTextWidget(),
+                      const CustomSizedBox.smallGap(),
+
                       const CurrencyListWidget(),
                       const CustomSizedBox.hugeGap(),
                       // Bottom navigation için ekstra boşluk
@@ -82,6 +86,16 @@ class _HomeViewState extends ConsumerState<HomeView> {
           ),
           _homeClearButtonWidget(viewModel),
         ],
+      ),
+    );
+  }
+
+  CustomPadding _dateTimeTextWidget() {
+    return CustomPadding.smallHorizontal(
+      widget: CustomAlign.centerRight(
+        child: Text(
+          "🕙︎${ref.watch(appGlobalProvider).globalAssets?[0].tarih.split(' ')[1] ?? ""}",
+        ),
       ),
     );
   }

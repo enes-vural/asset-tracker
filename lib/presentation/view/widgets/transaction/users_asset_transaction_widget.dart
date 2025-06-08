@@ -36,8 +36,7 @@ class _UserAssetTransactionWidgetState
         if (mounted) {
         setState(() {
           isLoading = false;
-        });
-
+          });
         }
       });
     });
@@ -100,7 +99,7 @@ class _UserAssetTransactionWidgetState
                           ),
                         ),
                         Text(
-                          "Transaction: ${entry.value.length}",
+                          "İşlem: ${entry.value.length}",
                           style: TextStyle(
                             fontWeight: FontWeight.bold,
                             fontSize: 16,
@@ -128,18 +127,18 @@ class _UserAssetTransactionWidgetState
       widget: Column(
         children: [
           TransactionCardDescriptionTextWidget(
-            label: "Purchase",
+            label: "Alış:",
             stats: stats?.purchasePriceTotal,
             type: TransactionCardDescriptionTextType.PURCHASE,
           ),
           TransactionCardDescriptionTextWidget(
             //LOCALIZATION HERE TODO:
-            label: "Selling Price:",
+            label: "Satış:",
             stats: stats?.latestPriceTotal,
             type: TransactionCardDescriptionTextType.SELL,
           ),
           TransactionCardDescriptionTextWidget(
-            label: "Profit:",
+            label: "Kar:",
             stats: stats?.profit,
             type: TransactionCardDescriptionTextType.PROFIT,
           ),
