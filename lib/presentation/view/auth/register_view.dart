@@ -1,5 +1,5 @@
 import 'package:asset_tracker/core/config/localization/generated/locale_keys.g.dart';
-import 'package:asset_tracker/core/config/theme/extension/app_size_extension.dart';
+import 'package:asset_tracker/core/config/theme/app_size.dart';
 import 'package:asset_tracker/core/config/theme/style_theme.dart';
 import 'package:asset_tracker/core/helpers/dialog_helper.dart';
 import 'package:asset_tracker/core/mixins/validation_mixin.dart';

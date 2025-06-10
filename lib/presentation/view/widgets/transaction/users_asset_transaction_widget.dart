@@ -1,6 +1,7 @@
+import 'package:asset_tracker/core/config/theme/extension/currency_widget_title_extension.dart';
 import 'package:asset_tracker/core/constants/database/transaction_type_enum.dart';
 import 'package:asset_tracker/core/constants/enums/widgets/transaction_card_desc_text_type_enums.dart';
-import 'package:asset_tracker/core/config/theme/extension/app_size_extension.dart';
+import 'package:asset_tracker/core/config/theme/app_size.dart';
 import 'package:asset_tracker/core/config/theme/extension/number_format_extension.dart';
 import 'package:asset_tracker/core/config/theme/style_theme.dart';
 import 'package:asset_tracker/core/widgets/custom_padding.dart';
@@ -92,7 +93,7 @@ class _UserAssetTransactionWidgetState
                       mainAxisAlignment: MainAxisAlignment.spaceBetween,
                       children: [
                         Text(
-                          "${entry.key} (${quentities.toNumberWithTurkishFormat()})", // Kategori adı (ALTIN, DOLAR)
+                          "${setCurrencyLabel(entry.key)} (${quentities.toNumberWithTurkishFormat()})", // Kategori adı (ALTIN, DOLAR)
                           style: const TextStyle(
                             fontWeight: FontWeight.bold,
                             fontSize: 20,

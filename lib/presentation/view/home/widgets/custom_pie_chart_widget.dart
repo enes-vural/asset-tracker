@@ -1,5 +1,5 @@
 import 'package:asset_tracker/core/config/theme/default_theme.dart';
-import 'package:asset_tracker/core/config/theme/extension/app_size_extension.dart';
+import 'package:asset_tracker/core/config/theme/app_size.dart';
 import 'package:asset_tracker/core/widgets/custom_padding.dart';
 import 'package:asset_tracker/domain/entities/database/enttiy/user_currency_entity_model.dart';
 import 'package:asset_tracker/core/config/localization/generated/locale_keys.g.dart';

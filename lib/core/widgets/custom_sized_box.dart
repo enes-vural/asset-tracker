@@ -1,4 +1,4 @@
-import 'package:asset_tracker/core/config/theme/extension/app_size_extension.dart';
+import 'package:asset_tracker/core/config/theme/app_size.dart';
 import 'package:flutter/material.dart';
 
 class CustomSizedBox extends SizedBox {

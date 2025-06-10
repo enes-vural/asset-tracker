@@ -1,6 +1,6 @@
 // ignore_for_file: overridden_fields, annotate_overrides
 
-import 'package:asset_tracker/core/config/theme/extension/app_size_extension.dart';
+import 'package:asset_tracker/core/config/theme/app_size.dart';
 import 'package:flutter/material.dart';
 
 class CustomPadding extends Padding {

@@ -1,6 +1,6 @@
 import 'package:asset_tracker/core/constants/enums/widgets/transaction_card_desc_text_type_enums.dart';
 import 'package:asset_tracker/core/constants/string_constant.dart';
-import 'package:asset_tracker/core/config/theme/extension/app_size_extension.dart';
+import 'package:asset_tracker/core/config/theme/app_size.dart';
 import 'package:asset_tracker/core/config/theme/extension/number_format_extension.dart';
 import 'package:asset_tracker/core/config/theme/style_theme.dart';
 import 'package:flutter/material.dart';
