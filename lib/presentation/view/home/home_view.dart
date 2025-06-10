@@ -9,7 +9,6 @@ import 'package:asset_tracker/core/config/theme/default_theme.dart';
 import 'package:asset_tracker/core/widgets/custom_padding.dart';
 import 'package:asset_tracker/core/widgets/custom_sized_box.dart';
 import 'package:asset_tracker/injection.dart';
-import 'package:asset_tracker/presentation/common/user_email_text_widget.dart';
 import 'package:asset_tracker/presentation/view/home/widgets/balance_profit_text_widget.dart';
 import 'package:asset_tracker/presentation/view/home/widgets/balance_text_widget.dart';
 import 'package:asset_tracker/presentation/view/home/widgets/currency_card_widget.dart';

@@ -9,6 +9,7 @@ import 'package:asset_tracker/core/widgets/custom_sized_box.dart';
 import 'package:asset_tracker/injection.dart';
 import 'package:asset_tracker/presentation/view/auth/widget/auth_form_widget.dart';
 import 'package:asset_tracker/presentation/view/auth/widget/half_login_button_widget.dart';
+import 'package:asset_tracker/presentation/view/home/widgets/parota_logo_widget.dart';
 import 'package:asset_tracker/presentation/view_model/auth/auth_view_model.dart';
 import 'package:auto_route/auto_route.dart';
 import 'package:flutter/material.dart';
@@ -63,21 +64,7 @@ class _TrialViewState extends ConsumerState<LoginView> with ValidatorMixin {
         resizeToAvoidBottomInset: false,
         appBar: AppBar(
           backgroundColor: Colors.white,
-          title: Column(
-            mainAxisSize: MainAxisSize.min,
-            children: <Widget>[
-              Text(
-                'PaRota',
-                textAlign: TextAlign.center,
-                style: TextStyle(
-                    color: Color.fromRGBO(17, 20, 22, 1),
-                    fontFamily: 'Manrope',
-                    fontSize: 22.sp,
-                    letterSpacing: 0,
-                    fontWeight: FontWeight.bold),
-              ),
-            ],
-          ),
+          title: const PaRotaLogoWidget(),
           centerTitle: true,
         ),
         body: Form(

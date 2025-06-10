@@ -1,4 +1,6 @@
 import 'package:asset_tracker/core/config/theme/default_theme.dart';
+import 'package:asset_tracker/injection.dart';
+import 'package:asset_tracker/presentation/view_model/settings/settings_view_model.dart';
 import 'package:auto_route/annotations.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
@@ -17,6 +19,8 @@ class _SettingsViewState extends ConsumerState<SettingsView> {
 
   @override
   Widget build(BuildContext context) {
+    final viewModel = ref.watch(settingsViewModelProvider);
+
     return Scaffold(
       backgroundColor: DefaultColorPalette.grey100,
       body: SafeArea(
@@ -60,7 +64,7 @@ class _SettingsViewState extends ConsumerState<SettingsView> {
                   icon: Icons.logout,
                   title: 'Çıkış Yap',
                   subtitle: 'Hesabınızdan güvenli çıkış yapın',
-                  onTap: () => _showLogoutDialog(),
+                  onTap: () => _showLogoutDialog(viewModel, ref),
                   isDestructive: true,
                 ),
                 _buildDivider(),
@@ -455,7 +459,7 @@ class _SettingsViewState extends ConsumerState<SettingsView> {
     );
   }
 
-  void _showLogoutDialog() {
+  void _showLogoutDialog(SettingsViewModel viewModel, WidgetRef ref) {
     showDialog(
       context: context,
       builder: (context) => AlertDialog(
@@ -472,11 +476,8 @@ class _SettingsViewState extends ConsumerState<SettingsView> {
           ElevatedButton(
             style: ElevatedButton.styleFrom(backgroundColor: Colors.red),
             onPressed: () {
-              // TODO: Implement logout logic
+              viewModel.signOut(ref, context);
               Navigator.pop(context);
-              ScaffoldMessenger.of(context).showSnackBar(
-                const SnackBar(content: Text('Çıkış yapıldı')),
-              );
             },
             child:
                 const Text('Çıkış Yap', style: TextStyle(color: Colors.white)),
