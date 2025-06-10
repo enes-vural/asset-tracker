@@ -1,14 +1,12 @@
-import 'package:asset_tracker/core/config/theme/extension/asset_extension.dart';
 import 'package:asset_tracker/core/config/theme/extension/responsive_extension.dart';
-import 'package:asset_tracker/core/constants/asset_constant.dart';
 import 'package:asset_tracker/core/constants/string_constant.dart';
-import 'package:asset_tracker/core/routers/app_router.gr.dart';
 import 'package:asset_tracker/core/widgets/custom_padding.dart';
 import 'package:asset_tracker/core/widgets/custom_sized_box.dart';
 import 'package:asset_tracker/presentation/view/home/dashboard/dashboard_view.dart';
 import 'package:asset_tracker/presentation/view/home/home_view.dart';
 import 'package:asset_tracker/presentation/view/home/settings/settings_view.dart';
 import 'package:asset_tracker/presentation/view/home/trade/trade_view.dart';
+import 'package:asset_tracker/presentation/view/home/widgets/parota_logo_widget.dart';
 import 'package:asset_tracker/presentation/view/home/widgets/menu_bottom_navigation_bar_widget.dart';
 import 'package:auto_route/annotations.dart';
 import 'package:flutter/material.dart';
@@ -17,7 +15,6 @@ import 'package:asset_tracker/core/config/theme/default_theme.dart';
 import 'package:asset_tracker/core/widgets/custom_icon.dart';
 import 'package:asset_tracker/injection.dart';
 import 'package:asset_tracker/presentation/view_model/home/home_view_model.dart';
-import 'package:flutter_screenutil/flutter_screenutil.dart';
 
 @RoutePage()
 class MenuView extends ConsumerStatefulWidget {
@@ -27,7 +24,8 @@ class MenuView extends ConsumerStatefulWidget {
   ConsumerState<ConsumerStatefulWidget> createState() => _MenuViewState();
 }
 
-class _MenuViewState extends ConsumerState<MenuView> {
+class _MenuViewState extends ConsumerState<MenuView>
+    with TickerProviderStateMixin {
   Future<void> callData() async =>
       await ref.read(homeViewModelProvider).getData(ref);
 
@@ -54,6 +52,7 @@ class _MenuViewState extends ConsumerState<MenuView> {
     super.initState();
   }
 
+
   @override
   Widget build(BuildContext context) {
     final HomeViewModel viewModel = ref.watch(homeViewModelProvider);
@@ -68,19 +67,8 @@ class _MenuViewState extends ConsumerState<MenuView> {
         elevation: 0,
         scrolledUnderElevation: 0,
         actionsPadding: const CustomEdgeInstets.mediumHorizontal(),
-        leading: const CircleAvatar(
-          backgroundColor: Colors.transparent,
-          child: CustomIcon.drawer(),
-        ),
         centerTitle: true,
-        title: SizedBox(
-          height: 100.h,
-          width: 100.w,
-          child: Image.asset(
-            AssetConstant.mainLogo.toPng(),
-            fit: BoxFit.cover,
-          ),
-        ),
+        title: PaRotaLogoWidget(),
         actions: [
           authState.getCurrentUser?.user != null
               ? const CustomSizedBox.empty()

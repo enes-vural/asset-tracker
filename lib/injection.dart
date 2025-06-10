@@ -24,6 +24,7 @@ import 'package:asset_tracker/presentation/view_model/auth/auth_view_model.dart'
 import 'package:asset_tracker/presentation/view_model/home/dashboard/dashboard_view_model.dart';
 import 'package:asset_tracker/presentation/view_model/home/home_view_model.dart';
 import 'package:asset_tracker/presentation/view_model/home/trade/trade_view_model.dart';
+import 'package:asset_tracker/presentation/view_model/settings/settings_view_model.dart';
 import 'package:asset_tracker/presentation/view_model/splash/splash_view_model.dart';
 import 'package:asset_tracker/provider/app_global_provider.dart';
 import 'package:asset_tracker/provider/auth_global_provider.dart';
@@ -138,6 +139,10 @@ final tradeViewModelProvider = ChangeNotifierProvider<TradeViewModel>((ref) {
 final dashboardViewModelProvider =
     ChangeNotifierProvider<DashboardViewModel>((ref) {
   return DashboardViewModel();
+});
+
+final settingsViewModelProvider = Provider<SettingsViewModel>((ref) {
+  return SettingsViewModel();
 });
 
 //-------------------CUSTOM PROVIDERS-------------------
