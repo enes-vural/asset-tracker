@@ -1,4 +1,4 @@
-import 'package:asset_tracker/core/config/theme/extension/app_size_extension.dart';
+import 'package:asset_tracker/core/config/theme/app_size.dart';
 import 'package:asset_tracker/core/config/theme/style_theme.dart';
 import 'package:asset_tracker/core/widgets/custom_align.dart';
 import 'package:auto_route/annotations.dart';
@@ -62,8 +62,8 @@ class _HomeViewState extends ConsumerState<HomeView> {
                     crossAxisAlignment: CrossAxisAlignment.start,
                     mainAxisAlignment: MainAxisAlignment.start,
                     children: [
-                      const UserEmailTextWidget(),
-                      const CustomSizedBox.hugeGap(),
+                      //const UserEmailTextWidget(),
+                      //const CustomSizedBox.hugeGap(),
                       const BalanceTextWidget(),
                       const BalanceProfitTextWidget(),
                       //if user is not authorized show _signInText Widget
@@ -95,6 +95,7 @@ class _HomeViewState extends ConsumerState<HomeView> {
       widget: CustomAlign.centerRight(
         child: Text(
           "🕙︎${ref.watch(appGlobalProvider).globalAssets?[0].tarih.split(' ')[1] ?? ""}",
+          style: CustomTextStyle.greyColorManrope(AppSize.smallText),
         ),
       ),
     );

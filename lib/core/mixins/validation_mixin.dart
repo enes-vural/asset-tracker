@@ -84,7 +84,10 @@ String? checkDateTime(String? text) {
       return LocaleKeys.trade_fillAllFields.tr();
     }
     try {
-      if (double.tryParse(text) == null) {
+      //boş bırakılmasını engeller
+      if (double.tryParse(text) == null ||
+          //0 girilmesini engelle
+          (double.tryParse(text) ?? 0.0) == 0.0) {
         return isPrice
             ? LocaleKeys.trade_invalidPrice.tr()
             : LocaleKeys.trade_invalidAmount.tr();

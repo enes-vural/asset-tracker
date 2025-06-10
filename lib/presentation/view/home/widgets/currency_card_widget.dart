@@ -1,5 +1,5 @@
 import 'package:asset_tracker/core/config/theme/default_theme.dart';
-import 'package:asset_tracker/core/config/theme/extension/app_size_extension.dart';
+import 'package:asset_tracker/core/config/theme/app_size.dart';
 import 'package:asset_tracker/core/config/theme/style_theme.dart';
 import 'package:asset_tracker/core/constants/string_constant.dart';
 import 'package:asset_tracker/core/config/theme/extension/responsive_extension.dart';
@@ -312,7 +312,7 @@ class _CurrencyListWidgetState extends ConsumerState<CurrencyListWidget>
                       mainAxisSize: MainAxisSize.min,
                       children: [
                         Text(
-                          currency.name.toString(),
+                          currency.name.toString().toUpperCase(),
                           style: CustomTextStyle.blackColorBoldPoppins(
                               AppSize.smallText2),
                           overflow: TextOverflow.ellipsis,

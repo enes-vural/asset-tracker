@@ -1,6 +1,7 @@
+import 'package:asset_tracker/core/config/theme/extension/currency_widget_title_extension.dart';
 import 'package:asset_tracker/core/config/theme/style_theme.dart';
 import 'package:asset_tracker/core/config/theme/default_theme.dart';
-import 'package:asset_tracker/core/config/theme/extension/app_size_extension.dart';
+import 'package:asset_tracker/core/config/theme/app_size.dart';
 import 'package:asset_tracker/core/widgets/custom_padding.dart';
 import 'package:asset_tracker/core/widgets/custom_sized_box.dart';
 import 'package:asset_tracker/presentation/view_model/home/trade/trade_view_model.dart';
@@ -43,7 +44,10 @@ class _CustomDropDownWidgetState<T>
 
   void _initializeCurrencies() {
     _allCurrencies =
-        widget.viewModel.getCurrencyList(ref).map((e) => e.code).toList();
+        widget.viewModel
+        .getCurrencyList(ref)
+        .map((e) => setCurrencyLabel(e.code))
+        .toList();
     _filteredList = List.from(_allCurrencies);
     _updateSelectedValue(widget.pageCurrency);
   }

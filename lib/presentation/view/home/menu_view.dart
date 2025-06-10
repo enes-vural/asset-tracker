@@ -2,9 +2,12 @@ import 'package:asset_tracker/core/config/theme/extension/asset_extension.dart';
 import 'package:asset_tracker/core/config/theme/extension/responsive_extension.dart';
 import 'package:asset_tracker/core/constants/asset_constant.dart';
 import 'package:asset_tracker/core/constants/string_constant.dart';
+import 'package:asset_tracker/core/routers/app_router.gr.dart';
 import 'package:asset_tracker/core/widgets/custom_padding.dart';
+import 'package:asset_tracker/core/widgets/custom_sized_box.dart';
 import 'package:asset_tracker/presentation/view/home/dashboard/dashboard_view.dart';
 import 'package:asset_tracker/presentation/view/home/home_view.dart';
+import 'package:asset_tracker/presentation/view/home/settings/settings_view.dart';
 import 'package:asset_tracker/presentation/view/home/trade/trade_view.dart';
 import 'package:asset_tracker/presentation/view/home/widgets/menu_bottom_navigation_bar_widget.dart';
 import 'package:auto_route/annotations.dart';
@@ -38,8 +41,8 @@ class _MenuViewState extends ConsumerState<MenuView> {
   List<dynamic> pages = [
     const HomeView(),
     const DashboardView(),
-    TradeView(currecyCode: DefaultLocalStrings.emptyText, price: null),
-    const DashboardView(),
+    const TradeView(currencyCode: DefaultLocalStrings.emptyText, price: null),
+    const SettingsView(),
   ];
 
   @override
@@ -80,7 +83,7 @@ class _MenuViewState extends ConsumerState<MenuView> {
         ),
         actions: [
           authState.getCurrentUser?.user != null
-              ? exitAppIconButton(() async => viewModel.signOut(ref, context))
+              ? const CustomSizedBox.empty()
               : TextButton(
                   onPressed: () => viewModel.routeSignInPage(context),
                   child: Text(

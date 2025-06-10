@@ -3,173 +3,79 @@ import 'package:easy_localization/easy_localization.dart';
 import 'package:asset_tracker/core/config/localization/generated/locale_keys.g.dart';
 
 String setCurrencyLabel(String currencyCode) {
-  String newTitle = currencyTypeMap[currencyCode]?.getCurrencyTitle() ?? "N/A";
+  String newTitle = currencyCode.toLowerCase().getCurrencyTitle();
   //burası gereksiz zaten switch case default ta N/A döndürecek
   return newTitle; // Return this if no match is found in the map
 }
 
-//toLowerCase ile çözülebilir ama farklı bir veri sağlayacısına geçersek isimlendirmede lazım olacak diye saklıyorum.
-Map<String, String> currencyTypeMap = {
-  "ATA5_YENI": "ata5_yeni",
-  "ATA5_ESKI": "ata5_eski",
-  "GREMESE_YENI": "gremese_yeni",
-  "GREMESE_ESKI": "gremese_eski",
-  "AYAR14": "ayar14",
-  "GUMUSTRY": "gumustry",
-  "XAGUSD": "xagusd",
-  "GUMUSUSD": "gumususd",
-  "AUDUSD": "audusd",
-  "GBPUSD": "gbpusd",
-  "XPTUSD": "xptusd",
-  "XPDUSD": "xpdusd",
-  "PLATIN": "platin",
-  "PALADYUM": "paladyum",
-  "USDJPY": "usdjpy",
-  "USDCHF": "usdchf",
-  "USDCAD": "usdcad",
-  "EURUSD": "eurusd",
-  "USDSAR": "usdsar",
-  "NOKTRY": "noktry",
-  "AUDTRY": "audtry",
-  "ALTIN": "altin",
-  "USDPURE": "usdpure",
-  "USDTRY": "usdtry",
-  "ONS": "ons",
-  "EURTRY": "eurtry",
-  "USDKG": "usdkg",
-  "EURKG": "eurkg",
-  "AYAR22": "ayar22",
-  "GBPTRY": "gbptry",
-  "CHFTRY": "chftry",
-  "KULCEALTIN": "kulcealtin",
-  "XAUXAG": "xauxag",
-  "CEYREK_YENI": "ceyrek_yeni",
-  "CADTRY": "cadtry",
-  "CEYREK_ESKI": "ceyrek_eski",
-  "SARTRY": "sartry",
-  "YARIM_YENI": "yarim_yeni",
-  "YARIM_ESKI": "yarim_eski",
-  "JPYTRY": "jpytry",
-  "TEK_YENI": "tek_yeni",
-  "TEK_ESKI": "tek_eski",
-  "SEKTRY": "sektry",
-  "ATA_YENI": "ata_yeni",
-  "ATA_ESKI": "ata_eski",
-  "DKKTRY": "dkktry",
-  "XAUUSD": "xauusd",
-  "PLNTRY": "plntry",
-  "HUFTRY": "huftry",
-  "ZARTRY": "zartry",
-  "GRAMALTIN": "gramaltin"
+//Aynı isimde bir asset bulunamayacak. Kodda 
+String? getCurrencyCodeFromLabel(String? value) {
+  return _currencyTitleMap.entries
+      .firstWhere(
+        (entry) => entry.value == value,
+        orElse: () => const MapEntry('', ''),
+      )
+      .key;
+}
+
+final Map<String, String> _currencyTitleMap = {
+  "ata5_yeni": LocaleKeys.home_widget_ata5_yeni.tr(),
+  "ata5_eski": LocaleKeys.home_widget_ata5_eski.tr(),
+  "gremese_yeni": LocaleKeys.home_widget_gremese_yeni.tr(),
+  "gremese_eski": LocaleKeys.home_widget_gremese_eski.tr(),
+  "ayar14": LocaleKeys.home_widget_ayar14.tr(),
+  "gumustry": LocaleKeys.home_widget_gumustry.tr(),
+  "gumususd": LocaleKeys.home_widget_gumususd.tr(),
+  "audusd": LocaleKeys.home_widget_audusd.tr(),
+  "gbpusd": LocaleKeys.home_widget_gbpusd.tr(),
+  "platin": LocaleKeys.home_widget_platin.tr(),
+  "paladyum": LocaleKeys.home_widget_paladyum.tr(),
+  "usdjpy": LocaleKeys.home_widget_usdjpy.tr(),
+  "usdchf": LocaleKeys.home_widget_usdchf.tr(),
+  "usdcad": LocaleKeys.home_widget_usdcad.tr(),
+  "eurusd": LocaleKeys.home_widget_eurusd.tr(),
+  "usdsar": LocaleKeys.home_widget_usdsar.tr(),
+  "noktry": LocaleKeys.home_widget_noktry.tr(),
+  "audtry": LocaleKeys.home_widget_audtry.tr(),
+  "altin": LocaleKeys.home_widget_altin.tr(),
+  //"altın": LocaleKeys.home_widget_altin.tr(),
+  "usdpure": LocaleKeys.home_widget_usdpure.tr(),
+  "usdtry": LocaleKeys.home_widget_usdtry.tr(),
+  "ons": LocaleKeys.home_widget_ons.tr(),
+  "eurtry": LocaleKeys.home_widget_eurtry.tr(),
+  "usdkg": LocaleKeys.home_widget_usdkg.tr(),
+  "eurkg": LocaleKeys.home_widget_eurkg.tr(),
+  "ayar22": LocaleKeys.home_widget_ayar22.tr(),
+  "gbptry": LocaleKeys.home_widget_gbptry.tr(),
+  "chftry": LocaleKeys.home_widget_chftry.tr(),
+  "kulcealtin": LocaleKeys.home_widget_kulcealtin.tr(),
+  "xauxag": LocaleKeys.home_widget_xauxag.tr(),
+  "ceyrek_yeni": LocaleKeys.home_widget_ceyrek_yeni.tr(),
+  "cadtry": LocaleKeys.home_widget_cadtry.tr(),
+  "ceyrek_eski": LocaleKeys.home_widget_ceyrek_eski.tr(),
+  "sartry": LocaleKeys.home_widget_sartry.tr(),
+  "yarim_yeni": LocaleKeys.home_widget_yarim_yeni.tr(),
+  "yarim_eski": LocaleKeys.home_widget_yarim_eski.tr(),
+  "jpytry": LocaleKeys.home_widget_jpytry.tr(),
+  "tek_yeni": LocaleKeys.home_widget_tek_yeni.tr(),
+  "tek_eski": LocaleKeys.home_widget_tek_eski.tr(),
+  "ata_yeni": LocaleKeys.home_widget_ata_yeni.tr(),
+  "ata_eski": LocaleKeys.home_widget_ata_eski.tr(),
+  "dkktry": LocaleKeys.home_widget_dkktry.tr(),
+  "xauusd": LocaleKeys.home_widget_xauusd.tr(),
+  "xagusd": LocaleKeys.home_widget_xagusd.tr(),
+  "xptusd": LocaleKeys.home_widget_xptusd.tr(),
+  "xpdusd": LocaleKeys.home_widget_xpdusd.tr(),
+  "plntry": LocaleKeys.home_widget_plntry.tr(),
+  "huftry": LocaleKeys.home_widget_huftry.tr(),
+  "sektry": LocaleKeys.home_widget_sektry.tr(),
+  "zartry": LocaleKeys.home_widget_zartry.tr(),
+  "gramaltin": LocaleKeys.home_widget_gramaltin.tr(),
 };
+
 
 extension GetCurrencyTitle on String {
   String getCurrencyTitle() {
-    switch (this) {
-      case "ata5_yeni":
-        return LocaleKeys.home_widget_ata5_yeni.tr();
-      case "ata5_eski":
-        return LocaleKeys.home_widget_ata5_eski.tr();
-      case "gremese_yeni":
-        return LocaleKeys.home_widget_gremese_yeni.tr();
-      case "gremese_eski":
-        return LocaleKeys.home_widget_gremese_eski.tr();
-      case "ayar14":
-        return LocaleKeys.home_widget_ayar14.tr();
-      case "gumustry":
-        return LocaleKeys.home_widget_gumustry.tr();
-      case "gumususd":
-        return LocaleKeys.home_widget_gumususd.tr();
-      case "audusd":
-        return LocaleKeys.home_widget_audusd.tr();
-      case "gbpusd":
-        return LocaleKeys.home_widget_gbpusd.tr();
-      case "platin":
-        return LocaleKeys.home_widget_platin.tr();
-      case "paladyum":
-        return LocaleKeys.home_widget_paladyum.tr();
-      case "usdjpy":
-        return LocaleKeys.home_widget_usdjpy.tr();
-      case "usdchf":
-        return LocaleKeys.home_widget_usdchf.tr();
-      case "usdcad":
-        return LocaleKeys.home_widget_usdcad.tr();
-      case "eurusd":
-        return LocaleKeys.home_widget_eurusd.tr();
-      case "usdsar":
-        return LocaleKeys.home_widget_usdsar.tr();
-      case "noktry":
-        return LocaleKeys.home_widget_noktry.tr();
-      case "audtry":
-        return LocaleKeys.home_widget_audtry.tr();
-      case "altin":
-        return LocaleKeys.home_widget_altin.tr();
-      case "usdpure":
-        return LocaleKeys.home_widget_usdpure.tr();
-      case "usdtry":
-        return LocaleKeys.home_widget_usdtry.tr();
-      case "ons":
-        return LocaleKeys.home_widget_ons.tr();
-      case "eurtry":
-        return LocaleKeys.home_widget_eurtry.tr();
-      case "usdkg":
-        return LocaleKeys.home_widget_usdkg.tr();
-      case "eurkg":
-        return LocaleKeys.home_widget_eurkg.tr();
-      case "ayar22":
-        return LocaleKeys.home_widget_ayar22.tr();
-      case "gbptry":
-        return LocaleKeys.home_widget_gbptry.tr();
-      case "chftry":
-        return LocaleKeys.home_widget_chftry.tr();
-      case "kulcealtin":
-        return LocaleKeys.home_widget_kulcealtin.tr();
-      case "xauxag":
-        return LocaleKeys.home_widget_xauxag.tr();
-      case "ceyrek_yeni":
-        return LocaleKeys.home_widget_ceyrek_yeni.tr();
-      case "cadtry":
-        return LocaleKeys.home_widget_cadtry.tr();
-      case "ceyrek_eski":
-        return LocaleKeys.home_widget_ceyrek_eski.tr();
-      case "sartry":
-        return LocaleKeys.home_widget_sartry.tr();
-      case "yarim_yeni":
-        return LocaleKeys.home_widget_yarim_yeni.tr();
-      case "yarim_eski":
-        return LocaleKeys.home_widget_yarim_eski.tr();
-      case "jpytry":
-        return LocaleKeys.home_widget_jpytry.tr();
-      case "tek_yeni":
-        return LocaleKeys.home_widget_tek_yeni.tr();
-      case "tek_eski":
-        return LocaleKeys.home_widget_tek_eski.tr();
-      case "ata_yeni":
-        return LocaleKeys.home_widget_ata_yeni.tr();
-      case "ata_eski":
-        return LocaleKeys.home_widget_ata_eski.tr();
-      case "dkktry":
-        return LocaleKeys.home_widget_dkktry.tr();
-      case "xauusd":
-        return LocaleKeys.home_widget_xauusd.tr();
-      case "xagusd":
-        return LocaleKeys.home_widget_xagusd.tr();
-      case "xptusd":
-        return LocaleKeys.home_widget_xptusd.tr();
-      case "xpdusd":
-        return LocaleKeys.home_widget_xpdusd.tr();
-      case "plntry":
-        return LocaleKeys.home_widget_plntry.tr();
-      case "huftry":
-        return LocaleKeys.home_widget_huftry.tr();
-      case "sektry":
-        return LocaleKeys.home_widget_sektry.tr();
-      case "zartry":
-        return LocaleKeys.home_widget_zartry.tr();
-      case "gramaltin":
-        return LocaleKeys.home_widget_gramaltin.tr();
-      default:
-        return "Unknown Currency";
-    }
+    return _currencyTitleMap[this] ?? "Bulunamadı";
   }
 }

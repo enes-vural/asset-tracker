@@ -21,6 +21,7 @@ final class DefaultLocalStrings {
   static const dashboardRoute = "/dashboard";
   static const menuRoute = "/menu";
   static const trialRoute = "/trial";
+  static const settingsRoute = "/settings";
   //trade route can be child path from home route.
   static const tradeRoute = "/trade/:currency";
   static const replaceInRouteName = "View,Route";

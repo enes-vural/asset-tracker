@@ -19,6 +19,11 @@ class AppRouter extends RootStackRouter {
           //initial: true,
         ),
         CustomRoute(
+          page: SettingsRoute.page,
+          path: DefaultLocalStrings.settingsRoute,
+          transitionsBuilder: TransitionsBuilders.slideLeft,
+        ),
+        CustomRoute(
           page: MenuRoute.page,
           path: DefaultLocalStrings.menuRoute,
           transitionsBuilder: TransitionsBuilders.slideLeft,

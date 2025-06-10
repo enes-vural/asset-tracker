@@ -20,11 +20,11 @@ import 'package:flutter_riverpod/flutter_riverpod.dart';
 
 @RoutePage()
 class TradeView extends ConsumerStatefulWidget {
-  final String currecyCode;
+  final String currencyCode;
   final String? price;
   const TradeView({
     super.key,
-    @PathParam('currency') required this.currecyCode,
+    @PathParam('currency') required this.currencyCode,
     @PathParam('price') required this.price,
   });
 
@@ -42,7 +42,7 @@ class _TradeViewState extends ConsumerState<TradeView> with ValidatorMixin {
       ref.read(tradeViewModelProvider).getCurrencyList(ref);
       ref
           .read(tradeViewModelProvider)
-          .changeSelectedCurrency(widget.currecyCode);
+          .changeSelectedCurrency(widget.currencyCode);
       ref.read(tradeViewModelProvider).getPriceSelectedCurrency(ref);
     });
   }
@@ -52,7 +52,7 @@ class _TradeViewState extends ConsumerState<TradeView> with ValidatorMixin {
     final GlobalKey<FormState> tradeFormKey = GlobalKey<FormState>();
     final viewModel = ref.watch(tradeViewModelProvider);
     final authState = ref.watch(authGlobalProvider);
-    
+
     EasyDialog.showDialogOnProcess(context, ref, tradeViewModelProvider);
 
     return PopScope(
@@ -86,8 +86,13 @@ class _TradeViewState extends ConsumerState<TradeView> with ValidatorMixin {
                     double amount = double.tryParse(value) ?? 0.0;
                     if (double.tryParse(viewModel.priceUnitController.text) !=
                         null) {
-                      double priceTotal = amount *
-                          double.tryParse(viewModel.priceUnitController.text)!;
+                      double priceUnit =
+                          double.tryParse(viewModel.priceUnitController.text) ??
+                              0.0;
+                      if (priceUnit == 0.0) {
+                        return;
+                      }
+                      double priceTotal = amount * priceUnit;
                       viewModel.priceTotalController.text =
                           priceTotal.toStringAsFixed(2);
                     }
@@ -121,16 +126,18 @@ class _TradeViewState extends ConsumerState<TradeView> with ValidatorMixin {
                     double priceTotal = double.tryParse(value) ?? 0.0;
                     double amount =
                         double.tryParse(viewModel.amountController.text) ?? 0.0;
-                    double pricePerUnit = priceTotal / amount;
-                    viewModel.priceUnitController.text =
-                        pricePerUnit.toStringAsFixed(2);
+                    if (amount != 0.0) {
+                      double pricePerUnit = priceTotal / amount;
+                      viewModel.priceUnitController.text =
+                          pricePerUnit.toStringAsFixed(2);
+                    }
                   },
                   hasLabel: false,
                   hasTitle: true,
                 ),
                 customDatePickerWidget(viewModel),
                 CustomDropDownWidget(
-                  pageCurrency: widget.currecyCode,
+                  pageCurrency: widget.currencyCode,
                   viewModel: viewModel,
                   onSelectedChanged: () {
                     viewModel.getPriceSelectedCurrency(ref);
@@ -173,8 +180,8 @@ class _TradeViewState extends ConsumerState<TradeView> with ValidatorMixin {
   }
 
   Text dropdownHintTextWidget() {
-    return Text(widget.currecyCode == DefaultLocalStrings.emptyText
+    return Text(widget.currencyCode == DefaultLocalStrings.emptyText
         ? LocaleKeys.trade_selectCurrecy.tr()
-        : widget.currecyCode);
+        : widget.currencyCode);
   }
 }

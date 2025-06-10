@@ -1,15 +1,18 @@
 // ignore_for_file: unused_local_variable
 
+import 'package:asset_tracker/core/config/theme/extension/currency_widget_title_extension.dart';
+import 'package:asset_tracker/core/config/theme/extension/string_extension.dart';
 import 'package:asset_tracker/core/constants/database/transaction_type_enum.dart';
 import 'package:asset_tracker/core/constants/enums/cache/offline_action_enums.dart';
+import 'package:asset_tracker/core/constants/enums/widgets/app_pages_enum.dart';
 import 'package:asset_tracker/core/constants/string_constant.dart';
 import 'package:asset_tracker/core/config/localization/generated/locale_keys.g.dart';
 import 'package:asset_tracker/core/helpers/snackbar.dart';
-import 'package:asset_tracker/core/routers/router.dart';
 import 'package:asset_tracker/data/model/database/response/asset_code_model.dart';
 import 'package:asset_tracker/domain/entities/database/enttiy/buy_currency_entity.dart';
 import 'package:asset_tracker/domain/entities/database/enttiy/user_data_entity.dart';
 import 'package:asset_tracker/domain/entities/database/enttiy/user_uid_entity.dart';
+import 'package:asset_tracker/domain/entities/web/socket/currency_widget_entity.dart';
 import 'package:asset_tracker/injection.dart';
 import 'package:dartz/dartz.dart';
 import 'package:easy_localization/easy_localization.dart';
@@ -54,28 +57,39 @@ class TradeViewModel extends ChangeNotifier {
     if (selectedCurrency == null) {
       return;
     }
-    final assets = ref.read(appGlobalProvider.notifier).globalAssets;
-    final selectedAssetCode = assets?.firstWhere(
-      (element) => element.code == selectedCurrency,
+    final rawAssets = ref.read(appGlobalProvider.notifier).globalAssets;
+    List<CurrencyWidgetEntity> assets = [];
+    rawAssets?.forEach((value) {
+      assets.add(CurrencyWidgetEntity.fromCurrency(value));
+    });
+    final CurrencyWidgetEntity? selectedAssetCode = assets.firstWhere(
+      (element) => element.name == selectedCurrency,
     );
 
     if (selectedAssetCode != null) {
       // Debug için ekle
-      print('selectedAssetCode.satis: ${selectedAssetCode.satis}');
-      print(
-          'selectedAssetCode.satis type: ${selectedAssetCode.satis.runtimeType}');
-      print('Current priceUnitController.text: ${priceUnitController.text}');
+      debugPrint('selectedAssetCode.satis: ${selectedAssetCode.entity.satis}');
+      debugPrint(
+          'selectedAssetCode.satis type: ${selectedAssetCode.entity.satis.runtimeType}');
+      debugPrint(
+          'Current priceUnitController.text: ${priceUnitController.text}');
 
       priceTotalController.text =
           ((double.tryParse(amountController.text) ?? 0.0) *
-                  (double.tryParse(selectedAssetCode.satis) ?? 0.0))
+              (double.tryParse(
+                      selectedAssetCode.entity.satis.removeTurkishLiraSign()) ??
+                  0.0))
               .toString();
-
-      final newUnitValue = selectedAssetCode.satis.toString();
-      print('New unit value: $newUnitValue');
+      //selectedAssetCode veya currency.entity yapmamızın nedeni
+      //widget entity nin para biriminin '.' ve ',' ler ile basamak ayırması.
+      //direkt ülke cinsi veya '.', ',' parse ile uğraşmamak için WidgetEntity içindeki
+      //entity i kullanarak . ve vilgüre çevirilmeden önceki double halini kullandım.
+      final newUnitValue =
+          selectedAssetCode.entity.satis.removeTurkishLiraSign();
+      debugPrint('New unit value: $newUnitValue');
 
       priceUnitController.text = newUnitValue;
-      print(
+      debugPrint(
           'After assignment priceUnitController.text: ${priceUnitController.text}');
     } else {
       priceUnitController.clear();
@@ -92,7 +106,10 @@ class TradeViewModel extends ChangeNotifier {
     changePopState(false);
     final amount = double.tryParse(amountController.text) ?? 0.0;
     final price = double.tryParse(priceUnitController.text) ?? 0.0;
-    final currency = selectedCurrency;
+    //Localize edilmiş title dan seçilen değerin Code u alındı.
+    //Database e asset'in code u olarak kaydedilebilsin diye.
+    final currency = getCurrencyCodeFromLabel(selectedCurrency);
+    // setCurrencyLabel(currencyCode)
     final date = selectedDate;
     final currentUserId = ref.read(authGlobalProvider).getCurrentUserId;
 
@@ -176,8 +193,8 @@ class TradeViewModel extends ChangeNotifier {
       notifyListeners();
     });
     changePopState(true);
-    if (context.mounted) {
-      Routers.instance.pop(context);
-    }
+    ref
+        .read(appGlobalProvider)
+        .changeMenuNavigationIndex(AppPagesEnum.WALLET.pageIndex);
   }
 }
