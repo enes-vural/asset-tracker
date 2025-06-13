@@ -31,4 +31,21 @@ class LocalizationManager {
 
   Future<void> changeLanguage(BuildContext context) async => await context
       .setLocale(context.locale == _trLocale ? _enLocale : _trLocale);
+      
+  String getCurrentLanguage(BuildContext context) {
+    return context.locale.languageCode;
+  }
+
+  // Alternatif: Daha ayrıntılı dil bilgisi için
+  String getCurrentLanguageDisplay(BuildContext context) {
+    switch (context.locale.languageCode) {
+      case 'tr':
+        return 'Türkçe';
+      case 'en':
+        return 'English';
+      default:
+        return context.locale.languageCode;
+    }
+  }
+
 }

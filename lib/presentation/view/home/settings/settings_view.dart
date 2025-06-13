@@ -1,5 +1,12 @@
+import 'package:asset_tracker/core/config/localization/localization_manager.dart';
 import 'package:asset_tracker/core/config/theme/default_theme.dart';
+import 'package:asset_tracker/core/config/theme/theme_manager.dart'
+    hide DefaultColorPalette;
+import 'package:asset_tracker/core/constants/enums/theme/app_theme_mode_enum.dart';
+import 'package:asset_tracker/core/widgets/custom_sized_box.dart';
+import 'package:asset_tracker/domain/entities/database/cache/app_theme_entity.dart';
 import 'package:asset_tracker/injection.dart';
+import 'package:asset_tracker/presentation/view/home/widgets/language_switcher_widget.dart';
 import 'package:asset_tracker/presentation/view_model/settings/settings_view_model.dart';
 import 'package:auto_route/annotations.dart';
 import 'package:flutter/material.dart';
@@ -50,32 +57,38 @@ class _SettingsViewState extends ConsumerState<SettingsView> {
               const SizedBox(height: 40),
 
               // Account Section
-              _buildSectionTitle('Hesap'),
-              const SizedBox(height: 16),
-              _buildSettingsCard([
-                _buildSettingsTile(
-                  icon: Icons.person_outline,
-                  title: 'İsim ve Soyisim',
-                  subtitle: 'Kişisel bilgilerinizi düzenleyin',
-                  onTap: () => _showNameEditDialog(),
-                ),
-                _buildDivider(),
-                _buildSettingsTile(
-                  icon: Icons.logout,
-                  title: 'Çıkış Yap',
-                  subtitle: 'Hesabınızdan güvenli çıkış yapın',
-                  onTap: () => _showLogoutDialog(viewModel, ref),
-                  isDestructive: true,
-                ),
-                _buildDivider(),
-                _buildSettingsTile(
-                  icon: Icons.delete_outline,
-                  title: 'Hesabı Sil',
-                  subtitle: 'Hesabınızı kalıcı olarak silin',
-                  onTap: () => _showDeleteAccountDialog(),
-                  isDestructive: true,
-                ),
-              ]),
+              viewModel.isAuthorized
+                  ? _buildSectionTitle('Hesap')
+                  : CustomSizedBox.empty(),
+              viewModel.isAuthorized
+                  ? SizedBox(height: 16)
+                  : CustomSizedBox.empty(),
+              viewModel.isAuthorized
+                  ? _buildSettingsCard([
+                      _buildSettingsTile(
+                        icon: Icons.person_outline,
+                        title: 'İsim ve Soyisim',
+                        subtitle: 'Kişisel bilgilerinizi düzenleyin',
+                        onTap: () => _showNameEditDialog(),
+                      ),
+                      _buildDivider(),
+                      _buildSettingsTile(
+                        icon: Icons.logout,
+                        title: 'Çıkış Yap',
+                        subtitle: 'Hesabınızdan güvenli çıkış yapın',
+                        onTap: () => _showLogoutDialog(viewModel, ref),
+                        isDestructive: true,
+                      ),
+                      _buildDivider(),
+                      _buildSettingsTile(
+                        icon: Icons.delete_outline,
+                        title: 'Hesabı Sil',
+                        subtitle: 'Hesabınızı kalıcı olarak silin',
+                        onTap: () => _showDeleteAccountDialog(),
+                        isDestructive: true,
+                      ),
+                    ])
+                  : const CustomSizedBox.empty(),
 
               const SizedBox(height: 32),
 
@@ -88,19 +101,28 @@ class _SettingsViewState extends ConsumerState<SettingsView> {
                 _buildThemeTile(),
               ]),
 
+              Text("THEME",
+                  style: TextStyle(color: Theme.of(context).primaryColor)),
+              Text(ref.watch(appThemeProvider).toString()),
               const SizedBox(height: 32),
 
               // Legal Section
-              _buildSectionTitle('Yasal'),
-              const SizedBox(height: 16),
-              _buildSettingsCard([
-                _buildSettingsTile(
-                  icon: Icons.description_outlined,
-                  title: 'Kullanıcı Sözleşmesi',
-                  subtitle: 'Kullanım şartlarını görüntüleyin',
-                  onTap: () => _showUserAgreement(),
-                ),
-              ]),
+              viewModel.isAuthorized
+                  ? _buildSectionTitle('Yasal')
+                  : const CustomSizedBox.empty(),
+              viewModel.isAuthorized
+                  ? const SizedBox(height: 16)
+                  : const CustomSizedBox.empty(),
+              viewModel.isAuthorized
+                  ? _buildSettingsCard([
+                      _buildSettingsTile(
+                        icon: Icons.description_outlined,
+                        title: 'Kullanıcı Sözleşmesi',
+                        subtitle: 'Kullanım şartlarını görüntüleyin',
+                        onTap: () => _showUserAgreement(),
+                      ),
+                    ])
+                  : const CustomSizedBox.empty(),
 
               const SizedBox(height: 32),
 
@@ -192,91 +214,11 @@ class _SettingsViewState extends ConsumerState<SettingsView> {
   }
 
   Widget _buildLanguageTile() {
-    return ListTile(
-      contentPadding: const EdgeInsets.symmetric(horizontal: 20, vertical: 8),
-      leading: Container(
-        padding: const EdgeInsets.all(8),
-        decoration: BoxDecoration(
-          color: Colors.green.withOpacity(0.1),
-          borderRadius: BorderRadius.circular(8),
-        ),
-        child: Icon(
-          Icons.language,
-          color: Colors.green[600],
-          size: 20,
-        ),
-      ),
-      title: const Text(
-        'Dil',
-        style: TextStyle(
-          fontSize: 16,
-          fontWeight: FontWeight.w500,
-        ),
-      ),
-      subtitle: const Text(
-        'Uygulama dilini seçin',
-        style: TextStyle(fontSize: 14),
-      ),
-      trailing: Container(
-        padding: const EdgeInsets.symmetric(horizontal: 12, vertical: 6),
-        decoration: BoxDecoration(
-          color: Colors.grey[100],
-          borderRadius: BorderRadius.circular(20),
-        ),
-        child: Text(
-          selectedLanguage,
-          style: TextStyle(
-            fontSize: 14,
-            fontWeight: FontWeight.w500,
-            color: Colors.grey[700],
-          ),
-        ),
-      ),
-      onTap: () => _showLanguageDialog(),
-    );
+    return LanguageSwitcherWidget(context: context);
   }
 
   Widget _buildThemeTile() {
-    return ListTile(
-      contentPadding: const EdgeInsets.symmetric(horizontal: 20, vertical: 8),
-      leading: Container(
-        padding: const EdgeInsets.all(8),
-        decoration: BoxDecoration(
-          color: Colors.purple.withOpacity(0.1),
-          borderRadius: BorderRadius.circular(8),
-        ),
-        child: Icon(
-          isDarkMode ? Icons.dark_mode : Icons.light_mode,
-          color: Colors.purple[600],
-          size: 20,
-        ),
-      ),
-      title: const Text(
-        'Tema',
-        style: TextStyle(
-          fontSize: 16,
-          fontWeight: FontWeight.w500,
-        ),
-      ),
-      subtitle: Text(
-        isDarkMode ? 'Koyu tema aktif' : 'Açık tema aktif',
-        style: const TextStyle(fontSize: 14),
-      ),
-      trailing: Switch(
-        value: isDarkMode,
-        onChanged: (value) {
-          setState(() {
-            isDarkMode = value;
-          });
-        },
-        activeColor: Colors.purple[600],
-      ),
-      onTap: () {
-        setState(() {
-          isDarkMode = !isDarkMode;
-        });
-      },
-    );
+    return ThemeSwitcher();
   }
 
   Widget _buildDivider() {
@@ -531,6 +473,54 @@ Son güncelleme: ${DateTime.now().day}/${DateTime.now().month}/${DateTime.now().
           ),
         ],
       ),
+    );
+  }
+}
+
+class ThemeSwitcher extends ConsumerStatefulWidget {
+  const ThemeSwitcher({super.key});
+
+  @override
+  ConsumerState<ConsumerStatefulWidget> createState() => _ThemeSwitcherState();
+}
+
+class _ThemeSwitcherState extends ConsumerState<ThemeSwitcher> {
+  @override
+  Widget build(BuildContext context) {
+    return ListTile(
+      contentPadding: const EdgeInsets.symmetric(horizontal: 20, vertical: 8),
+      leading: Container(
+        padding: const EdgeInsets.all(8),
+        decoration: BoxDecoration(
+          color: Colors.purple.withOpacity(0.1),
+          borderRadius: BorderRadius.circular(8),
+        ),
+        child: Icon(
+          Icons.light_mode,
+          color: Colors.purple[600],
+          size: 20,
+        ),
+      ),
+      title: const Text(
+        'Tema',
+        style: TextStyle(
+          fontSize: 16,
+          fontWeight: FontWeight.w500,
+        ),
+      ),
+      subtitle: Text(
+        'Açık tema aktif',
+        style: TextStyle(fontSize: 14, color: Theme.of(context).primaryColor),
+      ),
+      // trailing: Switch(
+      //   value: true,
+      //   onChanged: (value) {},
+      //   activeColor: Colors.purple[600],
+      // ),
+      onTap: () async {
+        await ref.read(appThemeProvider);
+        debugPrint("TIKLANDI");
+      },
     );
   }
 }

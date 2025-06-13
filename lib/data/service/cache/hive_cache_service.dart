@@ -1,5 +1,8 @@
+import 'dart:convert';
+
 import 'package:asset_tracker/core/constants/enums/cache/offline_action_enums.dart';
 import 'package:asset_tracker/core/constants/string_constant.dart';
+import 'package:asset_tracker/data/model/cache/app_theme_model.dart';
 import 'package:asset_tracker/data/model/cache/offline_actions_model.dart';
 import 'package:asset_tracker/data/service/cache/icache_service.dart';
 import 'package:flutter/material.dart';
@@ -7,11 +10,13 @@ import 'package:hive/hive.dart';
 import 'package:path_provider/path_provider.dart';
 
 final class HiveCacheService implements ICacheService {
-  late final Box _box;
+  late final Box _offlineActionsBox;
+  late final Box _themeBox;
 
   static final HiveCacheService _instance = HiveCacheService._internal();
   static HiveCacheService get instance => _instance;
-  static const String _boxName = "offline_actions";
+  static const String _offlineActionsName = "offline_actions";
+  static const String _themeName = "theme_box";
 
   HiveCacheService._internal();
 
@@ -22,12 +27,13 @@ final class HiveCacheService implements ICacheService {
   Future<void> init() async {
     final appDir = await getApplicationDocumentsDirectory();
     Hive.init(appDir.path);
-    _box = await Hive.openBox(_boxName);
+    _offlineActionsBox = await Hive.openBox(_offlineActionsName);
+    _themeBox = await Hive.openBox(_themeName);
   }
 
   @override
   Future<void> clearAllOfflineActions() async {
-    await _box.clear();
+    await _offlineActionsBox.clear();
     debugPrint("Cleared all offline actions");
   }
 
@@ -51,7 +57,7 @@ final class HiveCacheService implements ICacheService {
     OfflineActionsModel<T> model,
     Map<String, dynamic> Function(T) toJsonT,
   ) async {
-    final box = await Hive.openBox(_boxName);
+    final box = await Hive.openBox(_offlineActionsName);
     final index = _getNextIndex(box);
     final key = "offline_actions-$index"; // key'i belirliyoruz
     model = model.copyWith(id: key); // modelin id'sini güncelliyoruz
@@ -66,7 +72,7 @@ final class HiveCacheService implements ICacheService {
     if (key == null) {
       return;
     }
-    await _box.delete(key);
+    await _offlineActionsBox.delete(key);
     debugPrint("Deleted action with key: $key");
   }
 
@@ -77,9 +83,9 @@ final class HiveCacheService implements ICacheService {
   List<OfflineActionsModel> getOfflineActions() {
     final List<OfflineActionsModel> actions = [];
 
-    for (var key in _box.keys) {
+    for (var key in _offlineActionsBox.keys) {
       if (key.toString().startsWith('offline_actions')) {
-        final map = _box.get(key);
+        final map = _offlineActionsBox.get(key);
         if (map != null) {
           actions.add(OfflineActionsModel.fromJson(map));
         }
@@ -138,5 +144,23 @@ final class HiveCacheService implements ICacheService {
       removeOfflineAction(id);
     }
     return uniqueActions;
+  }
+
+  @override
+  Future<Map<String, dynamic>?> getTheme() async {
+    final box = await Hive.openBox(_themeName);
+    final jsonData = await box.get("app_theme_key");
+    if (jsonData == null) {
+      return null;
+    }
+    return Map<String, dynamic>.from(jsonData);
+  }
+
+  @override
+  Future<void> saveTheme(AppThemeModel model) async {
+    final box = await Hive.openBox(_themeName);
+    await box.put("app_theme_key", model.toJson());
+    debugPrint("Saved Theme Mode : ${model.themeMode.toString()}");
+    return;
   }
 }

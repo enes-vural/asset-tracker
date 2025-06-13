@@ -13,6 +13,7 @@ import 'package:asset_tracker/data/service/remote/database/firestore/firestore_s
 import 'package:asset_tracker/data/service/remote/database/firestore/ifirestore_service.dart';
 import 'package:asset_tracker/data/service/remote/web/iweb_socket_service.dart';
 import 'package:asset_tracker/data/service/remote/web/web_socket_service.dart';
+import 'package:asset_tracker/domain/repository/auth/iauth_repository.dart';
 import 'package:asset_tracker/domain/repository/cache/icache_repository.dart';
 import 'package:asset_tracker/domain/repository/database/firestore/ifirestore_repository.dart';
 import 'package:asset_tracker/domain/repository/web/iweb_socket_repository.dart';
@@ -28,10 +29,56 @@ import 'package:asset_tracker/presentation/view_model/settings/settings_view_mod
 import 'package:asset_tracker/presentation/view_model/splash/splash_view_model.dart';
 import 'package:asset_tracker/provider/app_global_provider.dart';
 import 'package:asset_tracker/provider/auth_global_provider.dart';
+import 'package:asset_tracker/provider/theme_provider.dart';
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:firebase_auth/firebase_auth.dart';
 //import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
+import 'package:get_it/get_it.dart';
+
+final getIt = GetIt.instance;
+
+Future<void> setupDependencies() async {
+  // ==================== SERVICES ====================
+  getIt.registerLazySingleton<ICacheService>(() => HiveCacheService());
+
+  getIt.registerLazySingleton<IFirebaseAuthService>(
+      () => FirebaseAuthService(authService: FirebaseAuth.instance));
+
+  getIt.registerLazySingleton<IWebSocketService>(() => WebSocketService());
+
+  getIt.registerLazySingleton<IFirestoreService>(
+      () => FirestoreService(instance: FirebaseFirestore.instance));
+
+  // ==================== REPOSITORIES ====================
+  getIt.registerLazySingleton<ICacheRepository>(
+      () => CacheRepository(getIt<ICacheService>()));
+
+  getIt.registerLazySingleton<IAuthRepository>(
+      () => FirebaseAuthRepository(authService: getIt<IFirebaseAuthService>()));
+
+  getIt.registerLazySingleton<IWebSocketRepository>(
+      () => WebSocketRepository(socketService: getIt<IWebSocketService>()));
+
+  getIt.registerLazySingleton<IFirestoreRepository>(
+      () => FirestoreRepository(firestoreService: getIt<IFirestoreService>()));
+
+  // ==================== USE CASES ====================
+  getIt.registerLazySingleton<CacheUseCase>(
+      () => CacheUseCase(cacheRepository: getIt<ICacheRepository>()));
+
+  getIt.registerLazySingleton<SignInUseCase>(
+      () => SignInUseCase(getIt<IAuthRepository>()));
+
+  getIt.registerLazySingleton<DatabaseUseCase>(() =>
+      DatabaseUseCase(firestoreRepository: getIt<IFirestoreRepository>()));
+
+  getIt.registerLazySingleton<GetSocketStreamUseCase>(
+      () => GetSocketStreamUseCase(getIt<IWebSocketRepository>()));
+
+  // ==================== MANAGERS ====================
+  getIt.registerLazySingleton<SyncManager>(() => SyncManager());
+}
 
 final appGlobalProvider = ChangeNotifierProvider<AppGlobalProvider>((ref) {
   return AppGlobalProvider();
@@ -42,7 +89,12 @@ final authGlobalProvider = ChangeNotifierProvider<AuthGlobalProvider>((ref) {
 });
 
 final syncManagerProvider = Provider<SyncManager>((ref) {
-  return SyncManager(ref.read);
+  return SyncManager();
+});
+
+final appThemeProvider =
+    AsyncNotifierProvider<AppThemeNotifier, AppThemeState>(() {
+  return AppThemeNotifier(cacheUseCase: getIt<CacheUseCase>());
 });
 
 //Riverpod ref.watch() ile sadece gerektiği ve değiştiği yerde çağırdığı için aslında bir nevi
@@ -53,18 +105,7 @@ final syncManagerProvider = Provider<SyncManager>((ref) {
 //Firebase Auth Service 'in bağımlılıklarını enjekte eder.
 //Dependency = FirebaseAuth.instance (from firebase_auth package)
 //Şimdilik mock data üzerinden gideceğimiz için atama yapmaya gerek yok.
-final IFirebaseAuthService authServiceInstance =
-    FirebaseAuthService(authService: FirebaseAuth.instance);
-
 // final IAuthService mockAuthServiceInstance = MockAuthService();
-
-final IWebSocketService webSocketService = WebSocketService();
-
-final IFirestoreService firestoreService = FirestoreService(
-  instance: FirebaseFirestore.instance,
-);
-
-final ICacheService hiveCacheService = HiveCacheService();
 
 //-----------------------------------------------
 //We changed the service provider with mock service in repository layer.
@@ -74,53 +115,10 @@ final ICacheService hiveCacheService = HiveCacheService();
 // });
 
 //Burası açıldığı anda Firebase ile authentication işlemlerini yapacak.
-final authRepositoryProvider = Provider<FirebaseAuthRepository>((ref) {
-  return FirebaseAuthRepository(authService: authServiceInstance);
-});
-//-----------------------------------------------
-
-final webRepositoryProvider = Provider<IWebSocketRepository>((ref) {
-  return WebSocketRepository(socketService: webSocketService);
-});
-
-final firestoreRepositoryProvider = Provider<IFirestoreRepository>((ref) {
-  return FirestoreRepository(firestoreService: firestoreService);
-});
-
-final cacheRepositoryProvider = Provider<ICacheRepository>((ref) {
-  return CacheRepository(hiveCacheService);
-});
-
-//------------------ USE CASE PROVIDERS ------------------
-
-final databaseUseCaseProvider = Provider<DatabaseUseCase>((ref) {
-  final _firestoreRepository = ref.watch(firestoreRepositoryProvider);
-  return DatabaseUseCase(firestoreRepository: _firestoreRepository);
-});
-
-//multiple usage of same repository instance,.
-//make here single one shared instance.
-
-final signInUseCaseProvider = Provider<SignInUseCase>((ref) {
-  final _authRepositoryProvider = ref.watch(authRepositoryProvider);
-  return SignInUseCase(_authRepositoryProvider);
-});
-
-final getSocketStreamUseCaseProvider = Provider<GetSocketStreamUseCase>((ref) {
-  final _webRepository = ref.watch(webRepositoryProvider);
-  return GetSocketStreamUseCase(_webRepository);
-});
-
-final cacheUseCaseProvider = Provider<CacheUseCase>((ref) {
-  final _cacheRepository = ref.watch(cacheRepositoryProvider);
-  return CacheUseCase(cacheRepository: _cacheRepository);
-});
-
 //------------------ VIEW MODEL PROVIDERS ------------------
 
 final authViewModelProvider = ChangeNotifierProvider<AuthViewModel>((ref) {
-  final _signInUseCaseProvider = ref.watch(signInUseCaseProvider);
-  return AuthViewModel(signInUseCase: _signInUseCaseProvider);
+  return AuthViewModel(signInUseCase: getIt<SignInUseCase>());
 });
 
 final splashViewModelProvider = ChangeNotifierProvider<SplashViewModel>((ref) {
@@ -128,8 +126,7 @@ final splashViewModelProvider = ChangeNotifierProvider<SplashViewModel>((ref) {
 });
 
 final homeViewModelProvider = ChangeNotifierProvider<HomeViewModel>((ref) {
-  final socketUseCase = ref.watch(getSocketStreamUseCaseProvider);
-  return HomeViewModel(getSocketStreamUseCase: socketUseCase);
+  return HomeViewModel(getSocketStreamUseCase: getIt<GetSocketStreamUseCase>());
 });
 
 final tradeViewModelProvider = ChangeNotifierProvider<TradeViewModel>((ref) {
@@ -141,8 +138,13 @@ final dashboardViewModelProvider =
   return DashboardViewModel();
 });
 
-final settingsViewModelProvider = Provider<SettingsViewModel>((ref) {
-  return SettingsViewModel();
+final settingsViewModelProvider =
+    ChangeNotifierProvider<SettingsViewModel>((ref) {
+  return SettingsViewModel(
+    getIt<SignInUseCase>(),
+    ref.read(appGlobalProvider),
+    ref.read(authGlobalProvider),
+  );
 });
 
 //-------------------CUSTOM PROVIDERS-------------------

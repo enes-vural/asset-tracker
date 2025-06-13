@@ -13,6 +13,8 @@ import 'package:asset_tracker/domain/entities/database/enttiy/buy_currency_entit
 import 'package:asset_tracker/domain/entities/database/enttiy/user_data_entity.dart';
 import 'package:asset_tracker/domain/entities/database/enttiy/user_uid_entity.dart';
 import 'package:asset_tracker/domain/entities/web/socket/currency_widget_entity.dart';
+import 'package:asset_tracker/domain/usecase/cache/cache_use_case.dart';
+import 'package:asset_tracker/domain/usecase/database/buy_currency_use_case.dart';
 import 'package:asset_tracker/injection.dart';
 import 'package:dartz/dartz.dart';
 import 'package:easy_localization/easy_localization.dart';
@@ -74,12 +76,12 @@ class TradeViewModel extends ChangeNotifier {
       debugPrint(
           'Current priceUnitController.text: ${priceUnitController.text}');
 
-      priceTotalController.text =
-          ((double.tryParse(amountController.text) ?? 0.0) *
+      priceTotalController.text = ((double.tryParse(amountController.text) ??
+                  0.0) *
               (double.tryParse(
                       selectedAssetCode.entity.satis.removeTurkishLiraSign()) ??
                   0.0))
-              .toString();
+          .toString();
       //selectedAssetCode veya currency.entity yapmamızın nedeni
       //widget entity nin para biriminin '.' ve ',' ler ile basamak ayırması.
       //direkt ülke cinsi veya '.', ',' parse ile uğraşmamak için WidgetEntity içindeki
@@ -137,19 +139,17 @@ class TradeViewModel extends ChangeNotifier {
         transactionType: TransactionTypeEnum.BUY);
 
     //Save to Offline Actions
-    String? offlineKey =
-        await ref.read(cacheUseCaseProvider).saveOfflineAction(Tuple2(
-              OfflineActionType.BUY_ASSET,
-              buyCurrencyEntity,
-            ));
-
-    final request = await ref.read(databaseUseCaseProvider)(buyCurrencyEntity);
+    String? offlineKey = await getIt<CacheUseCase>().saveOfflineAction(Tuple2(
+      OfflineActionType.BUY_ASSET,
+      buyCurrencyEntity,
+    ));
+    final request = await getIt<DatabaseUseCase>().call(buyCurrencyEntity);
 
     await request.fold((failure) {
       EasySnackBar.show(context, failure.message);
     }, (success) async {
       //TODO: Test edilecek
-      ref.read(cacheUseCaseProvider).removeOfflineAction(offlineKey);
+      getIt<CacheUseCase>().removeOfflineAction(offlineKey);
       EasySnackBar.show(
         context,
         LocaleKeys.trade_success.tr(
@@ -168,8 +168,7 @@ class TradeViewModel extends ChangeNotifier {
       //direkt olarak son bakiye hesaplamalarını provider üzerinden yönetiyoruz
       //ama bu durumlara karşıda bir güvenlik önlemi olarak kullanıcı bilgilerini
       //her işlem sonrasında database den çekerek güncelliyoruz.
-      final latestUserData = await ref
-          .read(databaseUseCaseProvider)
+      final latestUserData = await getIt<DatabaseUseCase>()
           .getUserData(UserUidEntity(userId: currentUserId));
 
       await latestUserData.fold(

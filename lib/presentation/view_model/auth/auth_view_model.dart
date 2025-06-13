@@ -9,6 +9,8 @@ import 'package:asset_tracker/domain/entities/auth/request/user_register_entity.
 import 'package:asset_tracker/domain/entities/auth/response/user_register_reponse_entity.dart';
 import 'package:asset_tracker/domain/entities/database/request/save_user_entity.dart';
 import 'package:asset_tracker/domain/usecase/auth/auth_use_case.dart';
+import 'package:asset_tracker/domain/usecase/cache/cache_use_case.dart';
+import 'package:asset_tracker/domain/usecase/database/buy_currency_use_case.dart';
 import 'package:asset_tracker/injection.dart';
 import 'package:dartz/dartz.dart';
 import 'package:flutter/material.dart';
@@ -63,8 +65,8 @@ class AuthViewModel extends ChangeNotifier {
       (UserRegisterReponseEntity success) async {
         final saveUserEntity = SaveUserEntity.fromAuthResponse(
             success, firstNameController.text, lastNameController.text);
-        final status = await ref
-            .read(databaseUseCaseProvider)
+        final status =
+            await getIt<DatabaseUseCase>()
             .saveUserData(saveUserEntity);
         _clearForms();
         changePopState(true);
@@ -88,20 +90,19 @@ class AuthViewModel extends ChangeNotifier {
     );
 
     //SAVE OFFLINE FIRST
-    final cachedKey = await ref
-        .read(cacheUseCaseProvider)
+    final cachedKey = await getIt<CacheUseCase>()
         .saveOfflineAction(Tuple2(OfflineActionType.LOGIN, userEntity));
 
     final result = await signInUseCase.call(userEntity);
 
     await result.fold((failure) {
       if (failure.state != AuthErrorState.NETWORK_ERROR) {
-        ref.read(cacheUseCaseProvider).removeOfflineAction(cachedKey);
+        getIt<CacheUseCase>().removeOfflineAction(cachedKey);
       }
       EasySnackBar.show(context, failure.message);
       changePopState(true);
     }, (success) async {
-      ref.read(cacheUseCaseProvider).removeOfflineAction(cachedKey);
+      await getIt<CacheUseCase>().removeOfflineAction(cachedKey);
       _clearForms();
       changePopState(true);
       Routers.instance.pushAndRemoveUntil(context, const SplashRoute());
