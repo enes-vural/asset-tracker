@@ -3,7 +3,6 @@ import 'package:asset_tracker/domain/entities/database/cache/app_theme_entity.da
 import 'package:asset_tracker/domain/usecase/cache/cache_use_case.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
-
 class AppThemeState {
   final ThemeMode currentTheme;
   final bool isInitialized;
@@ -39,11 +38,13 @@ class AppThemeNotifier extends AsyncNotifier<AppThemeState> {
 
   @override
   Future<AppThemeState> build() async {
-    // Async işlemleri burada yapabilirsiniz
+    // Hive'dan kayıtlı tema değerini al
     _currentThemeEntity = await cacheUseCase.getTheme();
-
+    
+    // Initialize edilmiş state'i döndür
     return AppThemeState(
-      currentTheme: _themeConverter(_currentThemeEntity),
+      currentTheme:
+          _themeConverter(_currentThemeEntity), // * işaretleri kaldırıldı
       isInitialized: true,
     );
   }
@@ -63,7 +64,8 @@ class AppThemeNotifier extends AsyncNotifier<AppThemeState> {
     // State'i güncelle - otomatik bildirim
     state = AsyncValue.data(
       AppThemeState(
-        currentTheme: _themeConverter(_currentThemeEntity),
+        currentTheme:
+            _themeConverter(_currentThemeEntity), // * işaretleri kaldırıldı
         isInitialized: true,
       ),
     );
@@ -75,11 +77,14 @@ class AppThemeNotifier extends AsyncNotifier<AppThemeState> {
   /// Temayı yükler
   Future<void> _loadTheme() async {
     final newTheme = await cacheUseCase.getTheme();
-
+    _currentThemeEntity = newTheme;
+    
     // State'i güncelle - otomatik bildirim
     state = AsyncValue.data(
       AppThemeState(
-          currentTheme: _themeConverter(newTheme), isInitialized: true),
+        currentTheme: _themeConverter(newTheme),
+        isInitialized: true,
+      ),
     );
   }
 

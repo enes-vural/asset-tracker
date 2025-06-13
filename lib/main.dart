@@ -3,8 +3,6 @@ import 'package:asset_tracker/core/config/theme/theme_manager.dart';
 import 'package:asset_tracker/core/constants/asset_constant.dart';
 import 'package:asset_tracker/core/config/init/init.dart';
 import 'package:asset_tracker/core/config/localization/localization_manager.dart';
-import 'package:asset_tracker/core/config/theme/default_theme.dart'
-    hide DefaultColorPalette;
 import 'package:asset_tracker/core/routers/app_router.dart';
 import 'package:asset_tracker/core/config/localization/generated/locale_keys.g.dart';
 import 'package:asset_tracker/data/service/background/background_service.dart';
@@ -24,7 +22,6 @@ void main() async {
   // Application Init here !
   await AppInit.initialize();
 
- 
   runApp(EasyLocalization(
     // Localization setup in runApp
     supportedLocales: LocalizationManager.supportedTranslations,
@@ -42,7 +39,7 @@ void main() async {
     BackgroundService.instance
         .addNewHeadlessTask('com.transistorsoft.customtask');
   }
- 
+
   FlutterNativeSplash.remove();
 }
 
@@ -55,10 +52,10 @@ class MyApp extends ConsumerWidget {
   Widget build(BuildContext context, WidgetRef ref) {
     // Init current user before app starts
     ref.read(authGlobalProvider.notifier).initCurrentUser(ref);
-   
+
     // AsyncNotifier ile tema state'ini izle
     final appThemeAsync = ref.watch(appThemeProvider);
-   
+
     return AnnotatedRegion(
       value: const SystemUiOverlayStyle(
         systemNavigationBarColor: DefaultColorPalette.vanillaTranparent,
@@ -70,35 +67,37 @@ class MyApp extends ConsumerWidget {
         splitScreenMode: true,
         child: appThemeAsync.when(
           // Loading durumu - tema yüklenirken
-          loading: () => MaterialApp(
-            debugShowCheckedModeBanner: false,
-            title: LocaleKeys.app_title.tr(),
-            theme: ThemeData.light(), // Default tema
-            home: const Scaffold(
-              body: Center(
-                child: CircularProgressIndicator(),
-              ),
-            ),
-          ),
+            loading: () => _loadingMaterialApp(),
 
           // Error durumu - tema yüklenemediğinde
           error: (error, stackTrace) {
             debugPrint('Theme loading error: $error');
-            return MaterialApp.router(
-              localizationsDelegates: LocalizationManager().delegates(context),
-              supportedLocales: LocalizationManager().supportedLocales(context),
-              locale: LocalizationManager().locale(context),
-              debugShowCheckedModeBanner: false,
-              routerConfig: appRouter.config(),
-              title: LocaleKeys.app_title.tr(),
-              theme: ThemeData.light(),
-              darkTheme: ThemeData.dark(),
-              themeMode: ThemeMode.system, // Fallback tema
-            );
-          },
+              return _fallbackMaterialApp(context);
+            },
 
-          // Data durumu - tema başarıyla yüklendiğinde
-          data: (appThemeState) => MaterialApp.router(
+            // Data durumu - tema başarıyla yüklendiğinde
+            data: (appThemeState) => _buildMaterialApp(context, appThemeState),
+          )),
+    );
+  }
+
+  MaterialApp _buildMaterialApp(
+      BuildContext context, AppThemeState appThemeState) {
+    return MaterialApp.router(
+      localizationsDelegates: LocalizationManager().delegates(context),
+      supportedLocales: LocalizationManager().supportedLocales(context),
+      locale: LocalizationManager().locale(context),
+      debugShowCheckedModeBanner: false,
+      routerConfig: appRouter.config(),
+      title: LocaleKeys.app_title.tr(),
+      theme: ThemeData.light(),
+      darkTheme: ThemeData.dark(),
+      themeMode: appThemeState.currentTheme, // Yüklenen tema
+    );
+  }
+
+  MaterialApp _fallbackMaterialApp(BuildContext context) {
+    return MaterialApp.router(
             localizationsDelegates: LocalizationManager().delegates(context),
             supportedLocales: LocalizationManager().supportedLocales(context),
             locale: LocalizationManager().locale(context),
@@ -107,8 +106,18 @@ class MyApp extends ConsumerWidget {
             title: LocaleKeys.app_title.tr(),
             theme: ThemeData.light(),
             darkTheme: ThemeData.dark(),
-            themeMode: appThemeState.currentTheme, // Yüklenen tema
-          ),
+      themeMode: ThemeMode.system, // Fallback tema
+    );
+  }
+
+  MaterialApp _loadingMaterialApp() {
+    return MaterialApp(
+      debugShowCheckedModeBanner: false,
+      title: LocaleKeys.app_title.tr(),
+      theme: ThemeData.light(), // Default tema
+      home: const Scaffold(
+        body: Center(
+          child: CircularProgressIndicator(),
         ),
       ),
     );
