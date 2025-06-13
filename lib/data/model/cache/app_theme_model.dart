@@ -13,20 +13,15 @@ final class AppThemeModel {
   }
 
   factory AppThemeModel.fromJson(Map<String, dynamic>? json) {
-    return AppThemeModel(themeMode: _convertStringToEnum(json?['themeMode']));
+    return AppThemeModel(
+        themeMode: _convertStringToAppThemeModeEnum(json?['themeMode']));
   }
 
-  static _convertStringToEnum(String data) {
-    switch (data) {
-      case "SYSTEM":
-        return AppThemeModeEnum.SYSTEM;
-      case "LIGHT":
-        return AppThemeModeEnum.LIGHT;
-      case "DARK":
-        return AppThemeModeEnum.DARK;
-      default:
-        return AppThemeModeEnum.LIGHT;
-    }
+  static AppThemeModeEnum _convertStringToAppThemeModeEnum(String value) {
+    return AppThemeModeEnum.values.firstWhere(
+      (e) => e.toString() == value,
+      orElse: () => AppThemeModeEnum.SYSTEM, // Varsayılan değer
+    );
   }
 
   factory AppThemeModel.fromEntity(AppThemeEntity entity) {

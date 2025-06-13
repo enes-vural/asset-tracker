@@ -103,7 +103,13 @@ class _SettingsViewState extends ConsumerState<SettingsView> {
 
               Text("THEME",
                   style: TextStyle(color: Theme.of(context).primaryColor)),
-              Text(ref.watch(appThemeProvider).toString()),
+              Text(
+                ref.watch(appThemeProvider).when(
+                      data: (theme) => theme.currentTheme.toString(),
+                      loading: () => 'Loading...',
+                      error: (error, stack) => 'Error: $error',
+                    ),
+              ),
               const SizedBox(height: 32),
 
               // Legal Section
@@ -518,7 +524,7 @@ class _ThemeSwitcherState extends ConsumerState<ThemeSwitcher> {
       //   activeColor: Colors.purple[600],
       // ),
       onTap: () async {
-        await ref.read(appThemeProvider);
+        await ref.read(appThemeProvider.notifier).switchAppTheme();
         debugPrint("TIKLANDI");
       },
     );
