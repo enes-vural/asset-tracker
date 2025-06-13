@@ -6,6 +6,7 @@ import 'package:asset_tracker/core/config/theme/extension/currency_widget_title_
 //import 'package:asset_tracker/core/helpers/snackbar.dart';
 import 'package:asset_tracker/core/routers/router.dart' show Routers;
 import 'package:asset_tracker/domain/entities/web/socket/currency_entity.dart';
+import 'package:asset_tracker/domain/usecase/auth/auth_use_case.dart';
 import 'package:asset_tracker/domain/usecase/web/web_use_case.dart';
 import 'package:asset_tracker/injection.dart';
 import 'package:dartz/dartz.dart';
@@ -62,7 +63,7 @@ class HomeViewModel extends ChangeNotifier {
   }
 
   Future<void> signOut(WidgetRef ref, BuildContext context) async {
-    await ref.read(signInUseCaseProvider).signOut();
+    await getIt<SignInUseCase>().signOut();
     await ref.read(appGlobalProvider.notifier).clearData();
     //clear old routes before pushing new route
     //Routers.instance.replaceAll(context, const LoginRoute());

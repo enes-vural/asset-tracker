@@ -6,6 +6,7 @@ import 'package:asset_tracker/domain/entities/database/enttiy/user_uid_entity.da
 import 'package:asset_tracker/domain/entities/general/calculate_profit_entity.dart';
 import 'package:asset_tracker/domain/entities/web/socket/currency_entity.dart'
     show CurrencyEntity;
+import 'package:asset_tracker/domain/usecase/database/buy_currency_use_case.dart';
 import 'package:asset_tracker/injection.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
@@ -36,7 +37,7 @@ class AppGlobalProvider extends ChangeNotifier {
   }
 
   Future<bool> getLatestUserData(WidgetRef ref, UserUidEntity entity) async {
-    final result = await ref.read(databaseUseCaseProvider).getUserData(entity);
+    final result = await getIt<DatabaseUseCase>().getUserData(entity);
     return await result.fold(
       (failure) {
         debugPrint("Error: ${failure.message}");
@@ -87,7 +88,7 @@ class AppGlobalProvider extends ChangeNotifier {
   Future<void> getCurrencyList(WidgetRef ref) async {
     //Future provider can be replace in here but we don't need to use it
     //already default provider can handle it.
-    final result = await ref.read(databaseUseCaseProvider).getAssetCodes(null);
+    final result = await getIt<DatabaseUseCase>().getAssetCodes(null);
 
     result.fold((error) {}, (success) {
       assetCodes = success;

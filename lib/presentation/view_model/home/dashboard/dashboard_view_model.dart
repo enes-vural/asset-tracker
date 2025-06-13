@@ -3,6 +3,7 @@ import 'package:asset_tracker/domain/entities/database/enttiy/user_data_entity.d
 import 'package:asset_tracker/domain/entities/database/enttiy/user_currency_entity_model.dart';
 import 'package:asset_tracker/domain/entities/database/enttiy/user_uid_entity.dart';
 import 'package:asset_tracker/domain/entities/general/calculate_profit_entity.dart';
+import 'package:asset_tracker/domain/usecase/database/buy_currency_use_case.dart';
 import 'package:asset_tracker/injection.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
@@ -51,8 +52,8 @@ class DashboardViewModel extends ChangeNotifier {
         price: ((latestState?.latestPriceTotal ?? 0) / transaction.amount),
         transactionType: TransactionTypeEnum.SELL);
 
-    final status = await ref
-        .read(databaseUseCaseProvider)
+    final status =
+        await getIt<DatabaseUseCase>()
         .sellCurrency(latestCurrencyData);
     await status.fold((error) async {
       // Handle error
@@ -79,10 +80,8 @@ class DashboardViewModel extends ChangeNotifier {
   Future<void> removeTransaction(
       WidgetRef ref, UserCurrencyEntity transaction) async {
     changePopState(false);
-
-    final status = await ref
-        .read(databaseUseCaseProvider)
-        .deleteUserTransaction(transaction);
+    final status =
+        await getIt<DatabaseUseCase>().deleteUserTransaction(transaction);
     await status.fold((error) async {
       // Handle error
     }, (success) async {

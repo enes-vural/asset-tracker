@@ -1,17 +1,18 @@
 import 'package:asset_tracker/core/constants/enums/cache/offline_action_enums.dart';
 import 'package:asset_tracker/data/model/cache/offline_actions_model.dart';
+import 'package:asset_tracker/domain/usecase/auth/auth_use_case.dart';
+import 'package:asset_tracker/domain/usecase/cache/cache_use_case.dart';
+import 'package:asset_tracker/domain/usecase/database/buy_currency_use_case.dart';
 
 import 'package:asset_tracker/injection.dart';
 import 'package:flutter/material.dart' show debugPrint;
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 
 final class SyncManager {
-  final T Function<T>(ProviderListenable<T>) read;
-  SyncManager(this.read);
 
   Future<void> syncOfflineActions() async {
-    final cacheUseCase = read(cacheUseCaseProvider);
-    List<OfflineActionsModel> actions = cacheUseCase.getOfflineActions();
+    List<OfflineActionsModel> actions =
+        getIt<CacheUseCase>().getOfflineActions();
     if (actions.isEmpty) {
       debugPrint("No offline actions to sync");
       return;
@@ -20,10 +21,10 @@ final class SyncManager {
       try {
         switch (action.type) {
           case OfflineActionType.LOGIN:
-            final result =
-                await read(signInUseCaseProvider).call(action.params);
+
+            final result = await getIt<SignInUseCase>().call(action.params);
             if (result.isRight()) {
-              await cacheUseCase.removeOfflineAction(action.id);
+              await getIt<CacheUseCase>().removeOfflineAction(action.id);
             } else {
               debugPrint("Login failed, keeping offline action");
             }
@@ -31,10 +32,9 @@ final class SyncManager {
           case OfflineActionType.BUY_ASSET:
             //TODO:
             //Left error kontrolüne göre silme işlemi eklenecek.
-            final result =
-                await read(databaseUseCaseProvider).call(action.params);
+            final result = await getIt<DatabaseUseCase>().call(action.params);
             if (result.isRight()) {
-              await cacheUseCase.removeOfflineAction(action.id);
+              await getIt<CacheUseCase>().removeOfflineAction(action.id);
               debugPrint("Asset bought successfully");
             } else {
               debugPrint("Buy asset failed, keeping offline action");
@@ -56,8 +56,8 @@ final class SyncManager {
   Future<void> syncOfflineActionHeadless() async {
     //headless container
     final hContainer = ProviderContainer();
-    final cacheUseCase = hContainer.read(cacheUseCaseProvider);
-    List<OfflineActionsModel> actions = cacheUseCase.getOfflineActions();
+    List<OfflineActionsModel> actions =
+        getIt<CacheUseCase>().getOfflineActions();
     if (actions.isEmpty) {
       debugPrint("No offline actions to sync");
       return;
@@ -66,10 +66,10 @@ final class SyncManager {
       try {
         switch (action.type) {
           case OfflineActionType.LOGIN:
-            final signInUseCase = hContainer.read(signInUseCaseProvider);
-            final result = await signInUseCase.call(action.params);
+
+            final result = await getIt<SignInUseCase>().call(action.params);
             if (result.isRight()) {
-              await cacheUseCase.removeOfflineAction(action.id);
+              await getIt<CacheUseCase>().removeOfflineAction(action.id);
             } else {
               debugPrint("Login failed, keeping offline action");
             }
@@ -77,11 +77,9 @@ final class SyncManager {
           case OfflineActionType.BUY_ASSET:
             //TODO:
             //Left error kontrolüne göre silme işlemi eklenecek.
-            final buyCurrencyUseCase =
-                hContainer.read(databaseUseCaseProvider);
-            final result = await buyCurrencyUseCase.call(action.params);
+            final result = await getIt<DatabaseUseCase>().call(action.params);
             if (result.isRight()) {
-              await cacheUseCase.removeOfflineAction(action.id);
+              await getIt<CacheUseCase>().removeOfflineAction(action.id);
               debugPrint("Asset bought successfully");
             } else {
               debugPrint("Buy asset failed, keeping offline action");

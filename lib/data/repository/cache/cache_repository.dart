@@ -1,8 +1,11 @@
 import 'package:asset_tracker/core/constants/enums/cache/offline_action_enums.dart';
+import 'package:asset_tracker/core/constants/enums/theme/app_theme_mode_enum.dart';
 import 'package:asset_tracker/core/constants/string_constant.dart';
 import 'package:asset_tracker/data/model/base/base_model.dart';
+import 'package:asset_tracker/data/model/cache/app_theme_model.dart';
 import 'package:asset_tracker/data/model/cache/offline_actions_model.dart';
 import 'package:asset_tracker/data/service/cache/icache_service.dart';
+import 'package:asset_tracker/domain/entities/database/cache/app_theme_entity.dart';
 import 'package:asset_tracker/domain/repository/cache/icache_repository.dart';
 
 final class CacheRepository implements ICacheRepository {
@@ -61,5 +64,18 @@ final class CacheRepository implements ICacheRepository {
     await _hiveCacheService.clearAllOfflineActions();
   }
 
+  @override
+  Future<AppThemeEntity> getThemeMode() async {
+    final data = await _hiveCacheService.getTheme();
+    if (data == null) {
+      return const AppThemeEntity(mode: AppThemeModeEnum.SYSTEM);
+    }
+    return AppThemeEntity.fromModel(AppThemeModel.fromJson(data));
+  }
 
+  @override
+  Future<void> saveThemeMode(AppThemeEntity entity) async {
+    final AppThemeModel model = AppThemeModel.fromEntity(entity);
+    return await _hiveCacheService.saveTheme(model);
+  }
 }
