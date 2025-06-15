@@ -44,7 +44,6 @@ class _DashboardViewState extends ConsumerState<DashboardView> {
 
   Scaffold _oldScaffold() {
     return Scaffold(
-      backgroundColor: Colors.grey.shade100,
       body: SingleChildScrollView(
         scrollDirection: Axis.vertical,
         child: SizedBox(

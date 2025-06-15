@@ -39,19 +39,36 @@ class _CurrencyListWidgetState extends ConsumerState<CurrencyListWidget>
 
     // Search stream'i hala kullanabilirsiniz çünkü o sadece arama için
     final searchStream = viewModel.searchBarStreamController;
+    final isDark = Theme.of(context).brightness == Brightness.dark;
+
 
     return Container(
       width: ResponsiveSize(context).screenWidth,
       decoration: BoxDecoration(
-        color: DefaultColorPalette.vanillaWhite,
+        color: isDark ? Colors.grey.shade900 : Colors.white, // Açık background
+
         borderRadius: BorderRadius.circular(AppSize.mediumRadius),
-        boxShadow: [
+        boxShadow: isDark
+            ? [
           BoxShadow(
-            color: Colors.black.withOpacity(0.05),
+                  color: Colors.black.withOpacity(0.3),
             blurRadius: 10,
             offset: const Offset(0, 2),
           ),
+              ]
+            : [
+                BoxShadow(
+                  color: Colors.grey.withOpacity(0.08), // Çok hafif shadow
+                  blurRadius: 8,
+                  offset: const Offset(0, 1),
+                ),
         ],
+        border: isDark
+            ? null
+            : Border.all(
+                color: Colors.grey.shade200,
+                width: 1,
+              ),
       ),
       child: Column(
         mainAxisSize: MainAxisSize.min,
@@ -89,11 +106,11 @@ class _CurrencyListWidgetState extends ConsumerState<CurrencyListWidget>
             searchSnapshot.data ?? DefaultLocalStrings.emptyText;
 
         // Post frame callback'i daha güvenli hale getirelim
-        WidgetsBinding.instance.addPostFrameCallback((_) {
-          if (mounted) {
-            viewModel.calculateProfitBalance(ref);
-          }
-        });
+        // WidgetsBinding.instance.addPostFrameCallback((_) {
+        //   if (mounted) {
+        //     viewModel.calculateProfitBalance(ref);
+        //   }
+        // });
 
         // Filter data
         List<CurrencyEntity>? filteredData = viewModel.filterCurrencyData(
@@ -214,8 +231,10 @@ class _CurrencyListWidgetState extends ConsumerState<CurrencyListWidget>
             Text(
               title,
               style: isActive
-                  ? CustomTextStyle.blackColorBoldPoppins(AppSize.smallText)
-                  : CustomTextStyle.greyColorPoppins(AppSize.smallText),
+                  ? CustomTextStyle.blackColorBoldPoppins(
+                      context, AppSize.smallText)
+                  : CustomTextStyle.greyColorPoppins(
+                      context, AppSize.smallText),
               textAlign: textAlign,
             ),
             if (isActive) ...[
@@ -314,13 +333,13 @@ class _CurrencyListWidgetState extends ConsumerState<CurrencyListWidget>
                         Text(
                           currency.name.toString().toUpperCase(),
                           style: CustomTextStyle.blackColorBoldPoppins(
-                              AppSize.smallText2),
+                              context, AppSize.smallText2),
                           overflow: TextOverflow.ellipsis,
                         ),
                         Text(
                           currency.code.toString(),
                           style: CustomTextStyle.greyColorPoppins(
-                              AppSize.small2Text),
+                              context, AppSize.small2Text),
                           overflow: TextOverflow.ellipsis,
                         ),
                       ],
@@ -345,6 +364,7 @@ class _CurrencyListWidgetState extends ConsumerState<CurrencyListWidget>
                 child: Text(
                   currency.alis.toString(),
                   style: CustomTextStyle.blackColorBoldPoppins(
+                    context,
                     AppSize.small2Text,
                   ),
                   textAlign: TextAlign.center,
@@ -368,6 +388,7 @@ class _CurrencyListWidgetState extends ConsumerState<CurrencyListWidget>
                 child: Text(
                   currency.satis.toString(),
                   style: CustomTextStyle.blackColorBoldPoppins(
+                    context,
                     AppSize.small2Text,
                   ),
                   textAlign: TextAlign.center,

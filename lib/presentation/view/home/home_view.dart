@@ -1,11 +1,11 @@
+// ignore_for_file: prefer_const_constructors
+
 import 'package:asset_tracker/core/config/theme/app_size.dart';
 import 'package:asset_tracker/core/config/theme/style_theme.dart';
 import 'package:asset_tracker/core/widgets/custom_align.dart';
 import 'package:auto_route/annotations.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
-
-import 'package:asset_tracker/core/config/theme/default_theme.dart';
 import 'package:asset_tracker/core/widgets/custom_padding.dart';
 import 'package:asset_tracker/core/widgets/custom_sized_box.dart';
 import 'package:asset_tracker/injection.dart';
@@ -49,7 +49,6 @@ class _HomeViewState extends ConsumerState<HomeView> {
     final HomeViewModel viewModel = ref.watch(homeViewModelProvider);
     final authState = ref.watch(authGlobalProvider);
     return Scaffold(
-      backgroundColor: DefaultColorPalette.grey100,
       body: Stack(
         children: [
           CustomScrollView(
@@ -63,8 +62,8 @@ class _HomeViewState extends ConsumerState<HomeView> {
                     children: [
                       //const UserEmailTextWidget(),
                       //const CustomSizedBox.hugeGap(),
-                      const BalanceTextWidget(),
-                      const BalanceProfitTextWidget(),
+                      BalanceTextWidget(),
+                      BalanceProfitTextWidget(),
                       //if user is not authorized show _signInText Widget
                       //else return sizedbox with no volume.
                       authState.getCurrentUser?.user == null
@@ -94,7 +93,7 @@ class _HomeViewState extends ConsumerState<HomeView> {
       widget: CustomAlign.centerRight(
         child: Text(
           "🕙︎${ref.watch(appGlobalProvider).globalAssets?[0].tarih.split(' ')[1] ?? ""}",
-          style: CustomTextStyle.greyColorManrope(AppSize.smallText),
+          style: CustomTextStyle.greyColorManrope(context, AppSize.smallText),
         ),
       ),
     );
@@ -103,7 +102,7 @@ class _HomeViewState extends ConsumerState<HomeView> {
   Text _signInText() {
     return Text(
       "PaRota ile altın ve dövizlerinizi kolayca takip etmek için giriş yapın.",
-      style: CustomTextStyle.greyColorManrope(AppSize.small2Text),
+      style: CustomTextStyle.greyColorManrope(context, AppSize.small2Text),
     );
   }
 

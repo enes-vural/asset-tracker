@@ -12,7 +12,8 @@ enum SocketActionEnum {
   REFRESH('2'),
   INIT_DATA('0'),
   DISCONNECT('-1'),
-  NOT_IN_LIST('-1');
+  NOT_IN_LIST('-1'),
+  FILTERED_ITEM_LENGTH('31');
 
   final String value;
   const SocketActionEnum(this.value);

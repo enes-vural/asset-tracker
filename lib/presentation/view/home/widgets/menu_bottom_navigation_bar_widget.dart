@@ -12,7 +12,7 @@ class MenuBottomNavigationBarWidget extends ConsumerWidget {
 
     return Container(
       decoration: BoxDecoration(
-        color: Colors.white,
+        //color: Colors.white,
         boxShadow: [
           BoxShadow(
             color: Colors.grey.withOpacity(0.3),
@@ -27,7 +27,7 @@ class MenuBottomNavigationBarWidget extends ConsumerWidget {
         onTap: (index) =>
             ref.read(appGlobalProvider).changeMenuNavigationIndex(index),
         type: BottomNavigationBarType.fixed,
-        backgroundColor: Colors.white,
+        // backgroundColor: Colors.white,
         selectedItemColor: DefaultColorPalette.mainBlue,
         unselectedItemColor: DefaultColorPalette.grey400,
         selectedFontSize: 12,

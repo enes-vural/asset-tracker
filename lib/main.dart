@@ -1,5 +1,5 @@
 import 'dart:io';
-import 'package:asset_tracker/core/config/theme/theme_manager.dart';
+import 'package:asset_tracker/core/config/theme/default_theme.dart';
 import 'package:asset_tracker/core/constants/asset_constant.dart';
 import 'package:asset_tracker/core/config/init/init.dart';
 import 'package:asset_tracker/core/config/localization/localization_manager.dart';
@@ -62,16 +62,16 @@ class MyApp extends ConsumerWidget {
         systemNavigationBarIconBrightness: Brightness.dark,
       ),
       child: ScreenUtilInit(
-        designSize: const Size(375, 812),
-        minTextAdapt: true,
-        splitScreenMode: true,
-        child: appThemeAsync.when(
-          // Loading durumu - tema yüklenirken
+          designSize: const Size(375, 812),
+          minTextAdapt: true,
+          splitScreenMode: true,
+          child: appThemeAsync.when(
+            // Loading durumu - tema yüklenirken
             loading: () => _loadingMaterialApp(),
 
-          // Error durumu - tema yüklenemediğinde
-          error: (error, stackTrace) {
-            debugPrint('Theme loading error: $error');
+            // Error durumu - tema yüklenemediğinde
+            error: (error, stackTrace) {
+              debugPrint('Theme loading error: $error');
               return _fallbackMaterialApp(context);
             },
 
@@ -90,23 +90,23 @@ class MyApp extends ConsumerWidget {
       debugShowCheckedModeBanner: false,
       routerConfig: appRouter.config(),
       title: LocaleKeys.app_title.tr(),
-      theme: ThemeData.light(),
-      darkTheme: ThemeData.dark(),
+      theme: defaultTheme,
+      darkTheme: darkTheme,
       themeMode: appThemeState.currentTheme, // Yüklenen tema
     );
   }
 
   MaterialApp _fallbackMaterialApp(BuildContext context) {
     return MaterialApp.router(
-            localizationsDelegates: LocalizationManager().delegates(context),
-            supportedLocales: LocalizationManager().supportedLocales(context),
-            locale: LocalizationManager().locale(context),
-            debugShowCheckedModeBanner: false,
-            routerConfig: appRouter.config(),
-            title: LocaleKeys.app_title.tr(),
-            theme: ThemeData.light(),
-            darkTheme: ThemeData.dark(),
-      themeMode: ThemeMode.system, // Fallback tema
+      localizationsDelegates: LocalizationManager().delegates(context),
+      supportedLocales: LocalizationManager().supportedLocales(context),
+      locale: LocalizationManager().locale(context),
+      debugShowCheckedModeBanner: false,
+      routerConfig: appRouter.config(),
+      title: LocaleKeys.app_title.tr(),
+      theme: ThemeData.light(),
+      darkTheme: ThemeData.dark(),
+      themeMode: ThemeMode.system,
     );
   }
 

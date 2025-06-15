@@ -28,7 +28,8 @@ class TransactionCardDescriptionTextWidget extends StatelessWidget {
             style: type == TransactionCardDescriptionTextType.PROFIT
                 ? CustomTextStyle.profitColorPoppins(
                     AppSize.largePadd, stats?.sign)
-                : CustomTextStyle.blackColorPoppins(AppSize.largePadd)),
+                : CustomTextStyle.blackColorPoppins(
+                    context, AppSize.largePadd)),
       ],
     );
   }

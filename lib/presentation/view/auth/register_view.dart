@@ -71,7 +71,6 @@ class _RegisterViewState extends ConsumerState<RegisterView>
       child: Scaffold(
           resizeToAvoidBottomInset: false,
           appBar: AppBar(
-            backgroundColor: Colors.white,
             automaticallyImplyLeading: true,
             elevation: 0,
             title: const PaRotaLogoWidget(),
@@ -100,7 +99,7 @@ class _RegisterViewState extends ConsumerState<RegisterView>
                       Text(
                         "PaRota Hesabı oluşturmak için lütfen aşağıdaki bilgileri doldurun.",
                         style: CustomTextStyle.greyColorManrope(
-                            AppSize.small2Text),
+                            context, AppSize.small2Text),
                       ),
 
                       const CustomSizedBox.smallGap(),

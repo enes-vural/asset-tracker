@@ -1,10 +1,4 @@
-import 'package:asset_tracker/core/config/localization/localization_manager.dart';
-import 'package:asset_tracker/core/config/theme/default_theme.dart';
-import 'package:asset_tracker/core/config/theme/theme_manager.dart'
-    hide DefaultColorPalette;
-import 'package:asset_tracker/core/constants/enums/theme/app_theme_mode_enum.dart';
 import 'package:asset_tracker/core/widgets/custom_sized_box.dart';
-import 'package:asset_tracker/domain/entities/database/cache/app_theme_entity.dart';
 import 'package:asset_tracker/injection.dart';
 import 'package:asset_tracker/presentation/view/home/widgets/language_switcher_widget.dart';
 import 'package:asset_tracker/presentation/view_model/settings/settings_view_model.dart';
@@ -27,9 +21,11 @@ class _SettingsViewState extends ConsumerState<SettingsView> {
   @override
   Widget build(BuildContext context) {
     final viewModel = ref.watch(settingsViewModelProvider);
+    final theme = Theme.of(context);
+    final isDarkTheme = theme.brightness == Brightness.dark;
 
     return Scaffold(
-      backgroundColor: DefaultColorPalette.grey100,
+      backgroundColor: theme.scaffoldBackgroundColor,
       body: SafeArea(
         child: SingleChildScrollView(
           padding: const EdgeInsets.all(24.0),
@@ -43,7 +39,7 @@ class _SettingsViewState extends ConsumerState<SettingsView> {
                 style: TextStyle(
                   fontSize: 32,
                   fontWeight: FontWeight.bold,
-                  color: Colors.grey[800],
+                  color: theme.colorScheme.onSurface,
                 ),
               ),
               const SizedBox(height: 8),
@@ -51,7 +47,7 @@ class _SettingsViewState extends ConsumerState<SettingsView> {
                 'Hesap ve uygulama ayarlarını yönetin',
                 style: TextStyle(
                   fontSize: 16,
-                  color: Colors.grey[600],
+                  color: theme.colorScheme.onSurface.withOpacity(0.7),
                 ),
               ),
               const SizedBox(height: 40),
@@ -144,24 +140,30 @@ class _SettingsViewState extends ConsumerState<SettingsView> {
   }
 
   Widget _buildSectionTitle(String title) {
+    final theme = Theme.of(context);
     return Text(
       title,
       style: TextStyle(
         fontSize: 20,
         fontWeight: FontWeight.w600,
-        color: Colors.grey[800],
+        color: theme.colorScheme.onSurface,
       ),
     );
   }
 
   Widget _buildSettingsCard(List<Widget> children) {
+    final theme = Theme.of(context);
+    final isDarkTheme = theme.brightness == Brightness.dark;
+    
     return Container(
       decoration: BoxDecoration(
-        color: Colors.white,
+        color: theme.cardColor,
         borderRadius: BorderRadius.circular(16),
         boxShadow: [
           BoxShadow(
-            color: Colors.black.withOpacity(0.08),
+            color: isDarkTheme
+                ? Colors.black.withOpacity(0.3)
+                : Colors.black.withOpacity(0.08),
             blurRadius: 10,
             offset: const Offset(0, 2),
           ),
@@ -179,19 +181,23 @@ class _SettingsViewState extends ConsumerState<SettingsView> {
     bool isDestructive = false,
     Widget? trailing,
   }) {
+    final theme = Theme.of(context);
+    final primaryColor = theme.colorScheme.primary;
+    final errorColor = theme.colorScheme.error;
+    
     return ListTile(
       contentPadding: const EdgeInsets.symmetric(horizontal: 20, vertical: 8),
       leading: Container(
         padding: const EdgeInsets.all(8),
         decoration: BoxDecoration(
           color: isDestructive
-              ? Colors.red.withOpacity(0.1)
-              : Colors.blue.withOpacity(0.1),
+              ? errorColor.withOpacity(0.1)
+              : primaryColor.withOpacity(0.1),
           borderRadius: BorderRadius.circular(8),
         ),
         child: Icon(
           icon,
-          color: isDestructive ? Colors.red[600] : Colors.blue[600],
+          color: isDestructive ? errorColor : primaryColor,
           size: 20,
         ),
       ),
@@ -200,20 +206,20 @@ class _SettingsViewState extends ConsumerState<SettingsView> {
         style: TextStyle(
           fontSize: 16,
           fontWeight: FontWeight.w500,
-          color: isDestructive ? Colors.red[600] : Colors.grey[800],
+          color: isDestructive ? errorColor : theme.colorScheme.onSurface,
         ),
       ),
       subtitle: Text(
         subtitle,
         style: TextStyle(
           fontSize: 14,
-          color: Colors.grey[600],
+          color: theme.colorScheme.onSurface.withOpacity(0.7),
         ),
       ),
       trailing: trailing ??
           Icon(
             Icons.chevron_right,
-            color: Colors.grey[400],
+            color: theme.colorScheme.onSurface.withOpacity(0.4),
           ),
       onTap: onTap,
     );
@@ -228,21 +234,25 @@ class _SettingsViewState extends ConsumerState<SettingsView> {
   }
 
   Widget _buildDivider() {
+    final theme = Theme.of(context);
     return Divider(
       height: 1,
       thickness: 1,
-      color: Colors.grey[200],
+      color: theme.dividerColor,
       indent: 60,
     );
   }
 
   Widget _buildInfoCard() {
+    final theme = Theme.of(context);
+    final primaryColor = theme.colorScheme.primary;
+    
     return Container(
       padding: const EdgeInsets.all(20),
       decoration: BoxDecoration(
-        color: Colors.blue.withOpacity(0.05),
+        color: primaryColor.withOpacity(0.05),
         borderRadius: BorderRadius.circular(16),
-        border: Border.all(color: Colors.blue.withOpacity(0.1)),
+        border: Border.all(color: primaryColor.withOpacity(0.1)),
       ),
       child: Column(
         crossAxisAlignment: CrossAxisAlignment.start,
@@ -251,7 +261,7 @@ class _SettingsViewState extends ConsumerState<SettingsView> {
             children: [
               Icon(
                 Icons.info_outline,
-                color: Colors.blue[600],
+                color: primaryColor,
                 size: 24,
               ),
               const SizedBox(width: 12),
@@ -260,7 +270,7 @@ class _SettingsViewState extends ConsumerState<SettingsView> {
                 style: TextStyle(
                   fontSize: 18,
                   fontWeight: FontWeight.w600,
-                  color: Colors.blue[700],
+                  color: primaryColor,
                 ),
               ),
             ],
@@ -271,7 +281,7 @@ class _SettingsViewState extends ConsumerState<SettingsView> {
             style: TextStyle(
               fontSize: 14,
               height: 1.5,
-              color: Colors.grey[700],
+              color: theme.colorScheme.onSurface.withOpacity(0.8),
             ),
           ),
           const SizedBox(height: 16),
@@ -279,7 +289,7 @@ class _SettingsViewState extends ConsumerState<SettingsView> {
             'Versiyon 1.0.0',
             style: TextStyle(
               fontSize: 12,
-              color: Colors.grey[500],
+              color: theme.colorScheme.onSurface.withOpacity(0.5),
               fontWeight: FontWeight.w500,
             ),
           ),
@@ -291,28 +301,55 @@ class _SettingsViewState extends ConsumerState<SettingsView> {
   void _showNameEditDialog() {
     final nameController = TextEditingController();
     final surnameController = TextEditingController();
+    final theme = Theme.of(context);
 
     showDialog(
       context: context,
       builder: (context) => AlertDialog(
+        backgroundColor: theme.dialogBackgroundColor,
         shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(16)),
-        title: const Text('İsim ve Soyisim Düzenle'),
+        title: Text(
+          'İsim ve Soyisim Düzenle',
+          style: TextStyle(color: theme.colorScheme.onSurface),
+        ),
         content: Column(
           mainAxisSize: MainAxisSize.min,
           children: [
             TextField(
               controller: nameController,
-              decoration: const InputDecoration(
+              style: TextStyle(color: theme.colorScheme.onSurface),
+              decoration: InputDecoration(
                 labelText: 'İsim',
-                border: OutlineInputBorder(),
+                labelStyle: TextStyle(
+                    color: theme.colorScheme.onSurface.withOpacity(0.7)),
+                border: OutlineInputBorder(
+                  borderSide: BorderSide(color: theme.dividerColor),
+                ),
+                enabledBorder: OutlineInputBorder(
+                  borderSide: BorderSide(color: theme.dividerColor),
+                ),
+                focusedBorder: OutlineInputBorder(
+                  borderSide: BorderSide(color: theme.colorScheme.primary),
+                ),
               ),
             ),
             const SizedBox(height: 16),
             TextField(
               controller: surnameController,
-              decoration: const InputDecoration(
+              style: TextStyle(color: theme.colorScheme.onSurface),
+              decoration: InputDecoration(
                 labelText: 'Soyisim',
-                border: OutlineInputBorder(),
+                labelStyle: TextStyle(
+                    color: theme.colorScheme.onSurface.withOpacity(0.7)),
+                border: OutlineInputBorder(
+                  borderSide: BorderSide(color: theme.dividerColor),
+                ),
+                enabledBorder: OutlineInputBorder(
+                  borderSide: BorderSide(color: theme.dividerColor),
+                ),
+                focusedBorder: OutlineInputBorder(
+                  borderSide: BorderSide(color: theme.colorScheme.primary),
+                ),
               ),
             ),
           ],
@@ -320,14 +357,28 @@ class _SettingsViewState extends ConsumerState<SettingsView> {
         actions: [
           TextButton(
             onPressed: () => Navigator.pop(context),
-            child: const Text('İptal'),
+            child: Text(
+              'İptal',
+              style: TextStyle(
+                  color: theme.colorScheme.onSurface.withOpacity(0.7)),
+            ),
           ),
           ElevatedButton(
+            style: ElevatedButton.styleFrom(
+              backgroundColor: theme.colorScheme.primary,
+              foregroundColor: theme.colorScheme.onPrimary,
+            ),
             onPressed: () {
               // TODO: Implement name update logic
               Navigator.pop(context);
               ScaffoldMessenger.of(context).showSnackBar(
-                const SnackBar(content: Text('İsim güncellendi')),
+                SnackBar(
+                  content: Text(
+                    'İsim güncellendi',
+                    style: TextStyle(color: theme.colorScheme.onInverseSurface),
+                  ),
+                  backgroundColor: theme.snackBarTheme.backgroundColor,
+                ),
               );
             },
             child: const Text('Kaydet'),
@@ -338,69 +389,40 @@ class _SettingsViewState extends ConsumerState<SettingsView> {
   }
 
   void _showDeleteAccountDialog() {
+    final theme = Theme.of(context);
+    
     showDialog(
       context: context,
       builder: (context) => AlertDialog(
+        backgroundColor: theme.dialogBackgroundColor,
         shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(16)),
-        title: const Text('Hesabı Sil'),
-        content: const Text(
+        title: Text(
+          'Hesabı Sil',
+          style: TextStyle(color: theme.colorScheme.onSurface),
+        ),
+        content: Text(
           'Hesabınızı silmek istediğinizden emin misiniz? Bu işlem geri alınamaz.',
+          style: TextStyle(color: theme.colorScheme.onSurface.withOpacity(0.8)),
         ),
         actions: [
           TextButton(
             onPressed: () => Navigator.pop(context),
-            child: const Text('İptal'),
+            child: Text(
+              'İptal',
+              style: TextStyle(
+                  color: theme.colorScheme.onSurface.withOpacity(0.7)),
+            ),
           ),
           ElevatedButton(
-            style: ElevatedButton.styleFrom(backgroundColor: Colors.red),
+            style: ElevatedButton.styleFrom(
+              backgroundColor: theme.colorScheme.error,
+              foregroundColor: theme.colorScheme.onError,
+            ),
             onPressed: () {
               // TODO: Implement account deletion logic
               Navigator.pop(context);
             },
-            child: const Text('Sil', style: TextStyle(color: Colors.white)),
-          ),
-        ],
-      ),
-    );
-  }
-
-  void _showLanguageDialog() {
-    showDialog(
-      context: context,
-      builder: (context) => AlertDialog(
-        shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(16)),
-        title: const Text('Dil Seçin'),
-        content: Column(
-          mainAxisSize: MainAxisSize.min,
-          children: [
-            RadioListTile<String>(
-              title: const Text('Türkçe'),
-              value: 'Türkçe',
-              groupValue: selectedLanguage,
-              onChanged: (value) {
-                setState(() {
-                  selectedLanguage = value!;
-                });
-                Navigator.pop(context);
-              },
-            ),
-            RadioListTile<String>(
-              title: const Text('English'),
-              value: 'English',
-              groupValue: selectedLanguage,
-              onChanged: (value) {
-                setState(() {
-                  selectedLanguage = value!;
-                });
-                Navigator.pop(context);
-              },
-            ),
-          ],
-        ),
-        actions: [
-          TextButton(
-            onPressed: () => Navigator.pop(context),
-            child: const Text('İptal'),
+            child: const Text('Sil'),
           ),
         ],
       ),
@@ -408,27 +430,40 @@ class _SettingsViewState extends ConsumerState<SettingsView> {
   }
 
   void _showLogoutDialog(SettingsViewModel viewModel, WidgetRef ref) {
+    final theme = Theme.of(context);
+    
     showDialog(
       context: context,
       builder: (context) => AlertDialog(
+        backgroundColor: theme.dialogBackgroundColor,
         shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(16)),
-        title: const Text('Çıkış Yap'),
-        content: const Text(
+        title: Text(
+          'Çıkış Yap',
+          style: TextStyle(color: theme.colorScheme.onSurface),
+        ),
+        content: Text(
           'Hesabınızdan çıkış yapmak istediğinizden emin misiniz?',
+          style: TextStyle(color: theme.colorScheme.onSurface.withOpacity(0.8)),
         ),
         actions: [
           TextButton(
             onPressed: () => Navigator.pop(context),
-            child: const Text('İptal'),
+            child: Text(
+              'İptal',
+              style: TextStyle(
+                  color: theme.colorScheme.onSurface.withOpacity(0.7)),
+            ),
           ),
           ElevatedButton(
-            style: ElevatedButton.styleFrom(backgroundColor: Colors.red),
+            style: ElevatedButton.styleFrom(
+              backgroundColor: theme.colorScheme.error,
+              foregroundColor: theme.colorScheme.onError,
+            ),
             onPressed: () {
               viewModel.signOut(ref, context);
               Navigator.pop(context);
             },
-            child:
-                const Text('Çıkış Yap', style: TextStyle(color: Colors.white)),
+            child: const Text('Çıkış Yap'),
           ),
         ],
       ),
@@ -436,11 +471,17 @@ class _SettingsViewState extends ConsumerState<SettingsView> {
   }
 
   void _showUserAgreement() {
+    final theme = Theme.of(context);
+    
     showDialog(
       context: context,
       builder: (context) => AlertDialog(
+        backgroundColor: theme.dialogBackgroundColor,
         shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(16)),
-        title: const Text('Kullanıcı Sözleşmesi'),
+        title: Text(
+          'Kullanıcı Sözleşmesi',
+          style: TextStyle(color: theme.colorScheme.onSurface),
+        ),
         content: SizedBox(
           width: double.maxFinite,
           height: 400,
@@ -460,7 +501,7 @@ PaRota, yalnızca bilgilendirme amaçlı geliştirilmiş bir uygulamadır. Ticar
 - Uygulamayı yasa dışı amaçlarla kullanmayın
 - Diğer kullanıcıların haklarına saygı gösterin
 
-4. SORUMLULUK REDDI
+4. SORUMLULUK REDDİ
 Uygulama geliştiricileri, uygulamadan kaynaklanan herhangi bir zarar için sorumluluk kabul etmez.
 
 5. DEĞİŞİKLİKLER
@@ -468,14 +509,21 @@ Bu sözleşme herhangi bir zamanda güncellenebilir.
 
 Son güncelleme: ${DateTime.now().day}/${DateTime.now().month}/${DateTime.now().year}
               ''',
-              style: const TextStyle(fontSize: 14, height: 1.4),
+              style: TextStyle(
+                fontSize: 14,
+                height: 1.4,
+                color: theme.colorScheme.onSurface.withOpacity(0.8),
+              ),
             ),
           ),
         ),
         actions: [
           TextButton(
             onPressed: () => Navigator.pop(context),
-            child: const Text('Kapat'),
+            child: Text(
+              'Kapat',
+              style: TextStyle(color: theme.colorScheme.primary),
+            ),
           ),
         ],
       ),
@@ -493,39 +541,65 @@ class ThemeSwitcher extends ConsumerStatefulWidget {
 class _ThemeSwitcherState extends ConsumerState<ThemeSwitcher> {
   @override
   Widget build(BuildContext context) {
+    final theme = ref.watch(appThemeProvider);
+    final contextTheme = Theme.of(context);
+    final themeMode = theme.maybeWhen(
+      data: (data) => data.currentTheme,
+      orElse: () => ThemeMode.system,
+    );
+
+    final isDark = themeMode == ThemeMode.dark;
+    final isLight = themeMode == ThemeMode.light;
+
+    String subtitle;
+    IconData icon;
+    Color iconColor;
+
+    if (isDark) {
+      subtitle = "Karanlık tema aktif";
+      icon = Icons.dark_mode;
+      iconColor = Colors.blueGrey;
+    } else if (isLight) {
+      subtitle = "Açık tema aktif";
+      icon = Icons.light_mode;
+      iconColor = Colors.amber[800]!;
+    } else {
+      subtitle = "Sistem temasına göre ayarlı";
+      icon = Icons.brightness_auto;
+      iconColor = Colors.green[700]!;
+    }
+
     return ListTile(
       contentPadding: const EdgeInsets.symmetric(horizontal: 20, vertical: 8),
       leading: Container(
         padding: const EdgeInsets.all(8),
         decoration: BoxDecoration(
-          color: Colors.purple.withOpacity(0.1),
+          color: iconColor.withOpacity(0.1),
           borderRadius: BorderRadius.circular(8),
         ),
         child: Icon(
-          Icons.light_mode,
-          color: Colors.purple[600],
+          icon,
+          color: iconColor,
           size: 20,
         ),
       ),
-      title: const Text(
+      title: Text(
         'Tema',
         style: TextStyle(
           fontSize: 16,
           fontWeight: FontWeight.w500,
+          color: contextTheme.colorScheme.onSurface,
         ),
       ),
       subtitle: Text(
-        'Açık tema aktif',
-        style: TextStyle(fontSize: 14, color: Theme.of(context).primaryColor),
+        subtitle,
+        style: TextStyle(
+          fontSize: 14,
+          color: iconColor,
+        ),
       ),
-      // trailing: Switch(
-      //   value: true,
-      //   onChanged: (value) {},
-      //   activeColor: Colors.purple[600],
-      // ),
       onTap: () async {
         await ref.read(appThemeProvider.notifier).switchAppTheme();
-        debugPrint("TIKLANDI");
       },
     );
   }

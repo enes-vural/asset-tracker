@@ -25,7 +25,8 @@ class SearchBarWidget extends StatelessWidget {
           filled: true,
           suffixIcon: Icon(Icons.search, color: DefaultColorPalette.grey500),
           hintText: LocaleKeys.home_search.tr(),
-          hintStyle: CustomTextStyle.blackColorPoppins(AppSize.mediumText),
+          hintStyle:
+              CustomTextStyle.blackColorPoppins(context, AppSize.mediumText),
           enabledBorder: _searchBorderStyle(),
           focusedBorder: _searchBorderStyle(),
         ));
