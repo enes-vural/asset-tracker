@@ -45,7 +45,7 @@ socketService.errorStream.listen(
       );
       await socketService.connectSocket();
       socketService.stream.listen((jsonData) {
-        debugPrint("DATA CAME !!!");
+        // debugPrint("DATA CAME !!!");
 final priceChangedModel = PriceChangedDataModel.fromJson(jsonData);
 
 // ONS ve USD/TRY değerlerini tutacak değişkenler
@@ -66,7 +66,7 @@ final priceChangedModel = PriceChangedDataModel.fromJson(jsonData);
 
 // **FİLTRE KONTROLÜ - Bu kod filtrelenmişse işleme alma**
           if (filter.contains(currencyEntity.code.toUpperCase())) {
-            debugPrint("Currency filtered out: ${currencyEntity.code}");
+            // debugPrint("Currency filtered out: ${currencyEntity.code}");
             return; // Bu currency'i işleme alma
           }
           final index = _currencyEntities
@@ -74,14 +74,14 @@ final priceChangedModel = PriceChangedDataModel.fromJson(jsonData);
           if (index == int.parse(SocketActionEnum.NOT_IN_LIST.value)) {
 // Entity listede yoksa, yeni öğeyi ekle
             _currencyEntities.add(currencyEntity);
-            debugPrint("New currency added: ${currencyEntity.code}");
+            // debugPrint("New currency added: ${currencyEntity.code}");
           } else {
 // Entity listede varsa, hash'lerini karşılaştır
             final existingEntity = _currencyEntities[index];
             if (existingEntity.hash != currencyEntity.hash) {
 // Eğer hash farklıysa, öğeyi güncelle
               _currencyEntities[index] = currencyEntity;
-              debugPrint("Currency updated: ${currencyEntity.code}");
+              // debugPrint("Currency updated: ${currencyEntity.code}");
             }
           }
         });

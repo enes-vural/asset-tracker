@@ -1,6 +1,5 @@
 import 'package:asset_tracker/core/constants/string_constant.dart';
 import 'package:asset_tracker/core/config/localization/generated/locale_keys.g.dart';
-import 'package:asset_tracker/core/config/theme/default_theme.dart';
 import 'package:asset_tracker/core/helpers/dialog_helper.dart';
 import 'package:asset_tracker/core/helpers/snackbar.dart';
 import 'package:asset_tracker/core/mixins/validation_mixin.dart';
@@ -66,7 +65,6 @@ class _TradeViewState extends ConsumerState<TradeView> with ValidatorMixin {
   Scaffold _oldScaffold(GlobalKey<FormState> tradeFormKey,
       TradeViewModel viewModel, BuildContext context) {
     return Scaffold(
-      backgroundColor: DefaultColorPalette.grey100,
       body: Form(
         key: tradeFormKey,
         child: CustomPadding.hugeHorizontal(

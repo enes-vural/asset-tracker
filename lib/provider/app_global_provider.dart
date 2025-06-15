@@ -1,4 +1,7 @@
+import 'dart:async';
+
 import 'package:asset_tracker/core/constants/database/transaction_type_enum.dart';
+import 'package:asset_tracker/core/constants/enums/socket/socket_state_enums.dart';
 import 'package:asset_tracker/data/model/database/response/asset_code_model.dart';
 import 'package:asset_tracker/domain/entities/database/enttiy/user_data_entity.dart';
 import 'package:asset_tracker/domain/entities/database/enttiy/user_currency_entity_model.dart';
@@ -21,13 +24,12 @@ class AppGlobalProvider extends ChangeNotifier {
   double _totalProfitPercent = 0.0;
   double _totalProfit = 0.0;
   double _userBalance = 0.0;
-  double _latestBalance = 0.0;
+  double _latestBalance = 0.0; // Default değeri 0.0 yaptık
+
+  bool _isCalculating = false;
+  Timer? _calculationTimer;
 
   List<CurrencyEntity>? globalAssets;
-
-  //if failure has been occurred we will return false
-  //if success we will update user data
-  //and return true
 
   void changeMenuNavigationIndex(int newIndex) {
     if (menuNavigationIndex != newIndex) {
@@ -45,14 +47,17 @@ class AppGlobalProvider extends ChangeNotifier {
       },
       (success) async {
         await updateUserData(success);
-        notifyListeners();
+        // Veri güncellendiğinde profit hesaplamayı yap
+        if (globalAssets != null && globalAssets!.isNotEmpty) {
+          scheduleCalculation();
+          notifyListeners();
+        }
         return true;
       },
     );
   }
 
   Future<void> clearData() async {
-    _dataStream = null;
     _userData = null;
     _userCurrencies = [];
     _totalProfitPercent = 0.0;
@@ -64,6 +69,10 @@ class AppGlobalProvider extends ChangeNotifier {
 
   updateUserData(UserDataEntity entity) {
     _userData = entity;
+    _userBalance = entity.balance ?? 0.0; // User balance'ı burada set et
+    _userCurrencies ??= []; // Null ise boş liste oluştur
+    _userCurrencies!.clear(); // Önceki verileri temizle
+
     _userData?.currencyList.forEach((element) {
       _userCurrencies?.add(element.currencyCode);
     });
@@ -79,34 +88,55 @@ class AppGlobalProvider extends ChangeNotifier {
   void _listenData() {
     _dataStream?.listen((event) {
       globalAssets = event;
-      //debugPrint("Data Stream é: $event");
-      calculateProfitBalance();
+      _updateAssetCodes();
+      // Hem global assets hem de user data varsa hesaplama yap
+      scheduleCalculation();
+
       notifyListeners();
     });
   }
 
-  Future<void> getCurrencyList(WidgetRef ref) async {
-    //Future provider can be replace in here but we don't need to use it
-    //already default provider can handle it.
-    final result = await getIt<DatabaseUseCase>().getAssetCodes(null);
+  void scheduleCalculation() {
+    // Eğer zaten hesaplama zamanlanmışsa, önceki timer'ı iptal et
+    _calculationTimer?.cancel();
 
-    result.fold((error) {}, (success) {
-      assetCodes = success;
-      notifyListeners();
+    // 300ms sonra hesaplama yap (debounce)
+    _calculationTimer = Timer(const Duration(milliseconds: 100), () {
+      if (_canCalculateProfit()) {
+        _calculateProfitBalanceInternal();
+      }
+    });
+  }
+
+  bool _canCalculateProfit() {
+    return _userData != null &&
+        globalAssets != null &&
+        globalAssets!.isNotEmpty &&
+        !_isCalculating;
+  }
+
+  _updateAssetCodes() {
+    if (assetCodes.length ==
+        int.parse(SocketActionEnum.FILTERED_ITEM_LENGTH.value)) {
+      return;
+    }
+    globalAssets?.forEach((element) {
+      assetCodes.add(AssetCodeModel(code: element.code));
     });
   }
 
   CalculateProfitEntity? calculateProfitOrLoss(String currencyCode) {
-    // Global ve kullanıcı verilerinde dövizleri bulma
     double totalPurchasePrice = 0.0;
     double userAmount = 0.0;
     CurrencyEntity? globalIndex;
+
     try {
       globalIndex = globalAssets?.firstWhere(
         (element) => element.code.toLowerCase() == currencyCode.toLowerCase(),
       );
     } catch (e) {
-      debugPrint("Error: $e");
+      debugPrint("Error finding currency: $e");
+      return null;
     }
 
     _userData?.currencyList.forEach((element) {
@@ -116,13 +146,11 @@ class AppGlobalProvider extends ChangeNotifier {
       }
     });
 
-    // Eğer her iki döviz de bulunduysa, işlemi yapıyoruz
     if (globalIndex == null) {
       return null;
     }
 
     double globalPrice = double.parse(globalIndex.alis);
-
     double totalCurrentValue = globalPrice * userAmount;
 
     return CalculateProfitEntity(
@@ -132,57 +160,73 @@ class AppGlobalProvider extends ChangeNotifier {
     );
   }
 
-  void calculateProfitBalance() {
-    final UserDataEntity? userData = _userData;
+  void _calculateProfitBalanceInternal() {
+    if (_isCalculating) return;
 
-    _dataStream?.listen((event) {
-      globalAssets = event;
-      notifyListeners();
-    });
+    _isCalculating = true;
 
-    List<UserCurrencyEntity> userCurrencyList = userData?.currencyList ?? [];
+    try {
+      final UserDataEntity? userData = _userData;
 
-    double userBalance = userData?.balance ?? 0.00;
-    double newBalance = userBalance;
+      if (userData == null || globalAssets == null || globalAssets!.isEmpty) {
+        debugPrint(
+            "Cannot calculate profit: missing data - userData: ${userData != null}, globalAssets: ${globalAssets?.length ?? 0}");
+        return;
+      }
 
-    CurrencyEntity? currency;
+      List<UserCurrencyEntity> userCurrencyList = userData.currencyList ?? [];
+      double userBalance = userData.balance ?? 0.0;
+      double newBalance = userBalance;
 
-    //TODO: Isolate this logic to a use case
-    for (UserCurrencyEntity element in userCurrencyList) {
-      try {
+      for (UserCurrencyEntity element in userCurrencyList) {
         if (element.transactionType == TransactionTypeEnum.SELL) {
           continue;
         }
-        currency = globalAssets?.firstWhere(
-          (globalCurrency) => globalCurrency.code == element.currencyCode,
-        );
-      } catch (e) {
-        currency = null;
+
+        try {
+          final currency = globalAssets?.firstWhere(
+            (globalCurrency) =>
+                globalCurrency.code.toUpperCase() ==
+                element.currencyCode.toUpperCase(),
+          );
+
+          if (currency?.code != null) {
+            double oldPrice = element.price * element.amount;
+            double newPrice = double.parse(currency!.alis) * element.amount;
+            double latestPrice = newPrice - oldPrice;
+            newBalance += latestPrice;
+          }
+        } catch (e) {
+          debugPrint("Currency not found: ${element.currencyCode}");
+          continue;
+        }
       }
 
-      if (currency?.code != null) {
-        double oldPrice = element.price * element.amount;
-        double newPrice = double.parse(currency!.alis) * element.amount;
-        double latestPrice = newPrice - oldPrice;
-        newBalance += latestPrice;
-      }
-    }
-    _totalProfit = newBalance - userBalance;
-    _totalProfitPercent = ((newBalance * 100) / userBalance) - 100;
-    _latestBalance = newBalance;
-    _userBalance = userBalance;
+      _totalProfit = newBalance - userBalance;
+      _totalProfitPercent =
+          userBalance > 0 ? ((newBalance * 100) / userBalance) - 100 : 0.0;
+      _latestBalance = newBalance;
+      _userBalance = userBalance;
 
-    if (userData != null) {
-      updateUserData(userData.copyWith(
-          profit: _totalProfitPercent, latestBalance: newBalance));
+      debugPrint(_userBalance.toString());
+      debugPrint(_latestBalance.toString());
+      debugPrint(_totalProfitPercent.toString());
+      debugPrint(_totalProfit.toString());
+
+      final updatedUserData = userData.copyWith(
+          profit: _totalProfitPercent, latestBalance: newBalance);
+      _userData = updatedUserData;
+
       notifyListeners();
+    } finally {
+      _isCalculating = false;
     }
   }
 
+  // Getter methods
   UserDataEntity? get getUserData => _userData;
   Stream? get getDataStream => _dataStream?.asBroadcastStream();
   List<String>? get userCurrencies => _userCurrencies;
-
   double get getProfit => _totalProfit;
   double get getPercentProfit => _totalProfitPercent;
   double get getUserBalance => _userBalance;

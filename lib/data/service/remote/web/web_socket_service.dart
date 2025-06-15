@@ -72,7 +72,7 @@ class WebSocketService implements IWebSocketService {
           //resend durumu gerektiği zaman
           else if (_checkJsonFirstIndex(event) ==
               SocketActionEnum.RESEND.value) {
-            debugPrint(_jsonDecodeSocketData(event).toString());
+            // debugPrint(_jsonDecodeSocketData(event).toString());
             final jsonData = _jsonDecodeSocketData(event);
             controller.add(jsonData);
           }

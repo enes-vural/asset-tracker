@@ -63,7 +63,6 @@ class _TrialViewState extends ConsumerState<LoginView> with ValidatorMixin {
       child: Scaffold(
         resizeToAvoidBottomInset: false,
         appBar: AppBar(
-          backgroundColor: Colors.white,
           title: const PaRotaLogoWidget(),
           centerTitle: true,
         ),
@@ -76,7 +75,7 @@ class _TrialViewState extends ConsumerState<LoginView> with ValidatorMixin {
                 'Paranın Rotasını Sende',
                 textAlign: TextAlign.center,
                 style: TextStyle(
-                    color: DefaultColorPalette.mainTextBlack,
+                    
                     fontFamily: 'Manrope',
                     fontSize: 22.sp,
                     letterSpacing: 0,
@@ -89,7 +88,7 @@ class _TrialViewState extends ConsumerState<LoginView> with ValidatorMixin {
                   'Yatırımlarını canlı takip et, yatırım portföyünü yönet, kazançlarını artır.',
                   textAlign: TextAlign.center,
                   style: TextStyle(
-                    color: DefaultColorPalette.mainTextBlack,
+
                       fontFamily: 'Manrope',
                       fontSize: 16,
                       letterSpacing: 0,
@@ -134,7 +133,6 @@ class _TrialViewState extends ConsumerState<LoginView> with ValidatorMixin {
                       "Devam ederek PaRota'nın gizlilik politikasını ve kullanım koşullarını kabul etmiş olursun.",
                       textAlign: TextAlign.center,
                       style: TextStyle(
-                          color: DefaultColorPalette.customGrey,
                           fontFamily: 'Manrope',
                           fontSize: AppSize.smallText,
                           letterSpacing: 0,
@@ -152,6 +150,7 @@ class _TrialViewState extends ConsumerState<LoginView> with ValidatorMixin {
                       label: "Kayıt Ol",
                       color: DefaultColorPalette.customGreyLightX,
                       textStyle: CustomTextStyle.loginButtonTextStyle(
+                        context,
                         DefaultColorPalette.mainTextBlack,
                       ),
                       onPressed: () =>
@@ -162,6 +161,7 @@ class _TrialViewState extends ConsumerState<LoginView> with ValidatorMixin {
                       label: "Devam Et",
                       color: DefaultColorPalette.mainBlue,
                       textStyle: CustomTextStyle.loginButtonTextStyle(
+                        context,
                         DefaultColorPalette.mainWhite,
                       ),
                       onPressed: () =>
@@ -177,7 +177,8 @@ class _TrialViewState extends ConsumerState<LoginView> with ValidatorMixin {
                   onPressed: () {},
                   child: Text(
                     "Şifremi Unuttum",
-                    style: CustomTextStyle.greyColorManrope(AppSize.smallText),
+                    style: CustomTextStyle.greyColorManrope(
+                        context, AppSize.smallText),
                   ),
                 )),
               ),

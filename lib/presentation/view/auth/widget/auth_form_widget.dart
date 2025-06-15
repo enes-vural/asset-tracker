@@ -130,6 +130,17 @@ class AuthFormWidget extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
+    // Tema bilgisini al
+    final theme = Theme.of(context);
+    final isDarkMode = theme.brightness == Brightness.dark;
+
+    // Tema renklerini belirle
+    final titleColor = _getTitleColor(theme, isDarkMode);
+    final inputBackgroundColor = _getInputBackgroundColor(theme, isDarkMode);
+    final inputBorderColor = _getInputBorderColor(theme, isDarkMode);
+    final inputTextColor = _getInputTextColor(theme, isDarkMode);
+    final hintColor = _getHintColor(theme, isDarkMode);
+    
     return CustomPadding.largeTop(
       widget: Column(
         crossAxisAlignment: CrossAxisAlignment.start,
@@ -138,7 +149,7 @@ class AuthFormWidget extends StatelessWidget {
             Text(
               label,
               style: TextStyle(
-                color: DefaultColorPalette.mainTextBlack,
+                color: titleColor,
                 fontFamily: 'Manrope',
                 fontSize: AppSize.smallText2,
                 fontWeight: FontWeight.normal,
@@ -148,18 +159,58 @@ class AuthFormWidget extends StatelessWidget {
           const CustomSizedBox.smallGap(),
           SizedBox(
             width: ResponsiveSize(context).screenWidth,
-            child: TextFormField(
-              textInputAction: textInputAction,
-              onFieldSubmitted: onFieldSubmitted,
-              focusNode: focusNode,
-              onChanged: onChanged,
-              obscureText: isObs,
-              keyboardType: type,
-              controller: formController,
-              validator: validaor,
-              decoration: CustomInputDecoration.mediumRoundInput(
-                  label: label,
-                hasLabel: hasLabel
+            child: Theme(
+              data: theme.copyWith(
+                inputDecorationTheme: theme.inputDecorationTheme.copyWith(
+                  fillColor: inputBackgroundColor,
+                  enabledBorder: OutlineInputBorder(
+                    borderRadius: BorderRadius.circular(12),
+                    borderSide: BorderSide(
+                      color: inputBorderColor,
+                      width: 1.0,
+                    ),
+                  ),
+                  focusedBorder: OutlineInputBorder(
+                    borderRadius: BorderRadius.circular(12),
+                    borderSide: BorderSide(
+                      color: theme.primaryColor,
+                      width: 2.0,
+                    ),
+                  ),
+                  errorBorder: OutlineInputBorder(
+                    borderRadius: BorderRadius.circular(12),
+                    borderSide: BorderSide(
+                      color: theme.colorScheme.error,
+                      width: 1.0,
+                    ),
+                  ),
+                  focusedErrorBorder: OutlineInputBorder(
+                    borderRadius: BorderRadius.circular(12),
+                    borderSide: BorderSide(
+                      color: theme.colorScheme.error,
+                      width: 2.0,
+                    ),
+                  ),
+                  hintStyle: TextStyle(
+                    color: hintColor,
+                    fontFamily: 'Manrope',
+                  ),
+                ),
+              ),
+              child: TextFormField(
+                textInputAction: textInputAction,
+                onFieldSubmitted: onFieldSubmitted,
+                focusNode: focusNode,
+                onChanged: onChanged,
+                obscureText: isObs,
+                keyboardType: type,
+                controller: formController,
+                validator: validaor,
+                style: TextStyle(
+                  color: inputTextColor,
+                  fontFamily: 'Manrope',
+                ),
+
               ),
             ),
           ),
@@ -167,4 +218,46 @@ class AuthFormWidget extends StatelessWidget {
       ),
     );
   }
+
+  // Tema renklerini belirleyen yardımcı metodlar
+  Color _getTitleColor(ThemeData theme, bool isDarkMode) {
+    if (isDarkMode) {
+      return DefaultColorPalette.vanillaWhite;
+    } else {
+      return DefaultColorPalette.mainTextBlack;
+    }
+  }
+
+  Color _getInputBackgroundColor(ThemeData theme, bool isDarkMode) {
+    if (isDarkMode) {
+      return theme.colorScheme.surface.withOpacity(0.8);
+    } else {
+      return Colors.white;
+    }
+  }
+
+  Color _getInputBorderColor(ThemeData theme, bool isDarkMode) {
+    if (isDarkMode) {
+      return theme.colorScheme.outline.withOpacity(0.5);
+    } else {
+      return Colors.grey.shade300;
+    }
+  }
+
+  Color _getInputTextColor(ThemeData theme, bool isDarkMode) {
+    if (isDarkMode) {
+      return theme.colorScheme.onSurface;
+    } else {
+      return DefaultColorPalette.mainTextBlack;
+    }
+  }
+
+  Color _getHintColor(ThemeData theme, bool isDarkMode) {
+    if (isDarkMode) {
+      return theme.colorScheme.onSurface.withOpacity(0.6);
+    } else {
+      return Colors.grey.shade500;
+    }
+  }
+
 }

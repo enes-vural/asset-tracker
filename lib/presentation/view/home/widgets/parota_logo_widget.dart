@@ -19,6 +19,12 @@ class PaRotaLogoWidget extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
+    final isDark = Theme.of(context).brightness == Brightness.dark;
+
+    final defaultOtherLettersColor = isDark
+        ? const Color(0xFF9CA3AF) // açık gri (dark mode için)
+        : const Color(0xFF374151); // koyu gri (light mode için)
+
     return RichText(
       text: TextSpan(
         style: TextStyle(
@@ -37,7 +43,7 @@ class PaRotaLogoWidget extends StatelessWidget {
           TextSpan(
             text: 'a',
             style: TextStyle(
-              color: otherLettersColor ?? const Color(0xFF374151),
+              color: otherLettersColor ?? defaultOtherLettersColor,
             ),
           ),
           TextSpan(
@@ -49,7 +55,7 @@ class PaRotaLogoWidget extends StatelessWidget {
           TextSpan(
             text: 'ota',
             style: TextStyle(
-              color: otherLettersColor ?? const Color(0xFF374151),
+              color: otherLettersColor ?? defaultOtherLettersColor,
             ),
           ),
         ],

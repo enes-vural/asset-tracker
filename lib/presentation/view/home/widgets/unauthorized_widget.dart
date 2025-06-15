@@ -16,7 +16,6 @@ class UnAuthorizedWidget extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-      backgroundColor: DefaultColorPalette.grey100,
       body: SafeArea(
         child: Padding(
           padding: const EdgeInsets.symmetric(horizontal: 32.0),
@@ -51,7 +50,6 @@ class UnAuthorizedWidget extends StatelessWidget {
                       style: TextStyle(
                         fontSize: 32,
                         fontWeight: FontWeight.w700,
-                        color: Colors.grey[900],
                         fontFamily: 'Manrope',
                       ),
                     ),

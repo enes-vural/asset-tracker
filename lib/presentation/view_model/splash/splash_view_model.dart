@@ -1,61 +1,117 @@
-// ignore_for_file: use_build_context_synchronously
-
-import 'package:asset_tracker/core/constants/string_constant.dart';
 import 'package:asset_tracker/core/routers/app_router.gr.dart';
 import 'package:asset_tracker/core/routers/router.dart';
 import 'package:asset_tracker/domain/entities/database/enttiy/user_uid_entity.dart';
 import 'package:asset_tracker/injection.dart';
-import 'package:asset_tracker/provider/app_global_provider.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 
 class SplashViewModel extends ChangeNotifier {
+
+  static DateTime? _lastSyncTime;
+  
   Future<void> init(WidgetRef ref, BuildContext context) async {
-    //app global provider
-    final appGlobal = ref.read(appGlobalProvider.notifier);
-    //auth global provider
-    final authGlobal = ref.read(authGlobalProvider.notifier);
-    //get user data usecase provider
-    // final getUserData = ref.read(getUserDataUseCaseProvider);
+    try {
+      final authGlobal = ref.read(authGlobalProvider.notifier);
+      final syncUser = ref.read(syncManagerProvider);
+      
+      // Önce hızlı kontrolleri yap
+      final String? userId = authGlobal.getCurrentUserId;
+      final bool isLoggedIn = _isLoginedBefore(userId);
 
-    final syncUser = ref.read(syncManagerProvider);
+      // Eğer giriş yapılmamışsa, diğer işlemleri yapma
+      if (!isLoggedIn) {
+        _navigateHomeOrLogin(context, access: false);
+        return;
+      }
 
-    //avoid multiple read operations in firebase in initailize
-    (!_isAssetsLoaded(appGlobal))
-        ? await appGlobal.getCurrencyList(ref)
-        : false;
+      // Paralel işlemler için Future listesi
+      List<Future> parallelTasks = [];
 
-    //get userId from authGlobal
-    String? userId = authGlobal.getCurrentUserId;
+      // Sync işlemi (throttle ile)
+      if (_shouldSync()) {
+        parallelTasks.add(_syncWithThrottle(syncUser));
+      }
 
-    await syncUser.syncOfflineActions();
-    //if user is not logined in or assets are not loaded, navigate to login page
-    if (!(_isLoginedBefore(userId) && _isAssetsLoaded(appGlobal))) {
-      _navigateHomeOrLogin(context, access: false);
-      return;
-    }
+      // Paralel işlemleri başlat
+      if (parallelTasks.isNotEmpty) {
+        await Future.wait(parallelTasks, eagerError: false);
+      }
 
-    final userDataStatus = await ref.read(appGlobalProvider).getLatestUserData(
-        ref, UserUidEntity(userId: userId ?? DefaultLocalStrings.emptyText));
+      // User data kontrolü (sadece gerekirse)
+      if (userId != null) {
+        final userDataStatus =
+            await _getUserDataWithTimeout(ref, UserUidEntity(userId: userId));
+        
+        if (!userDataStatus) {
+          _navigateHomeOrLogin(context, access: false);
+          return;
+        }
+      }
 
-    if (userDataStatus == false) {
-      _navigateHomeOrLogin(context, access: false);
-      return;
-    } else {
-      //if user is logined in and assets are loaded, navigate to home page
+      // Başarılı durumda home'a git
       _navigateHomeOrLogin(context, access: true);
+      
+    } catch (e) {
+      debugPrint('Splash init error: $e');
+      // Hata durumunda login'e yönlendir
+      _navigateHomeOrLogin(context, access: false);
     }
   }
 
-  //check if user is logined in
+  // Sync işlemini throttle ile
+  Future<void> _syncWithThrottle(dynamic syncUser) async {
+    try {
+      await syncUser.syncOfflineActions().timeout(
+        const Duration(seconds: 10), // 10 saniye timeout
+        onTimeout: () {
+          debugPrint('Sync timeout, continuing without sync');
+        },
+      );
+      _lastSyncTime = DateTime.now();
+    } catch (e) {
+      debugPrint('Sync error: $e');
+    }
+  }
+
+  // Sync gerekli mi kontrol et (5 dakika throttle)
+  bool _shouldSync() {
+    if (_lastSyncTime == null) return true;
+    return DateTime.now().difference(_lastSyncTime!) >
+        const Duration(minutes: 5);
+  }
+
+  // User data timeout ile
+  Future<bool> _getUserDataWithTimeout(
+      WidgetRef ref, UserUidEntity userEntity) async {
+    try {
+      final result = await ref
+          .read(appGlobalProvider)
+          .getLatestUserData(ref, userEntity)
+          .timeout(
+        const Duration(seconds: 8), // 8 saniye timeout
+        onTimeout: () {
+          debugPrint('GetLatestUserData timeout');
+          return false;
+        },
+      );
+      return result ?? false;
+    } catch (e) {
+      debugPrint('GetLatestUserData error: $e');
+      return false;
+    }
+  }
+
   bool _isLoginedBefore(String? uid) => (uid != null && uid.isNotEmpty);
 
-  //check if assets are loaded
-  bool _isAssetsLoaded(AppGlobalProvider appGlobal) =>
-      appGlobal.assetCodes.isNotEmpty;
+  void _navigateHomeOrLogin(BuildContext context, {bool access = false}) {
+    // Duplicate navigation önleme
+    //if (ModalRoute.of(context)?.isCurrent != true) return;
 
-  //navigate to home or login page
-  void _navigateHomeOrLogin(BuildContext context, {bool access = false}) =>
-      Routers.instance.pushAndRemoveUntil(
-          context, access ? const MenuRoute() : const MenuRoute());
+    Routers.instance.replaceAll(context, const MenuRoute());
+  }
+
+  // Cache temizleme metodu (isteğe bağlı)
+  static void clearCache() {
+    _lastSyncTime = null;
+  }
 }

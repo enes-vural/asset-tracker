@@ -1,3 +1,5 @@
+// ignore_for_file: unused_field
+
 import 'package:asset_tracker/core/constants/enums/cache/offline_action_enums.dart';
 import 'package:asset_tracker/core/constants/string_constant.dart';
 import 'package:asset_tracker/data/model/cache/app_theme_model.dart';

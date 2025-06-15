@@ -16,15 +16,14 @@ class SplashView extends ConsumerStatefulWidget {
 
 class _SplashViewState extends ConsumerState<SplashView>
     with TickerProviderStateMixin {
-
   Future<void> initalize() async =>
       await ref.read(splashViewModelProvider.notifier).init(ref, context);
-      
+
   // Animation Controllers
   late AnimationController _logoTransformController;
   late AnimationController _textRevealController;
   late AnimationController _loadingController;
-  
+
   // Logo Transform Animations
   late Animation<double> _logoScaleAnimation;
   late Animation<Offset> _logoPositionAnimation;
@@ -45,9 +44,9 @@ class _SplashViewState extends ConsumerState<SplashView>
   @override
   void initState() {
     super.initState();
+    initalize();
     _initializeAnimations();
     _startAnimationSequence();
-    initalize();
   }
 
   void _initializeAnimations() {
@@ -144,7 +143,7 @@ class _SplashViewState extends ConsumerState<SplashView>
       parent: _textRevealController,
       curve: const Interval(0.0, 0.4, curve: Curves.easeOut),
     ));
-    
+
     _aLetterPositionAnimation = Tween<Offset>(
       begin: const Offset(-0.1, 0),
       end: const Offset(0.0, 0), // P'nin hemen yanında
@@ -172,20 +171,24 @@ class _SplashViewState extends ConsumerState<SplashView>
   }
 
   void _startAnimationSequence() async {
-    // Native splash'in bitmesini bekle
-    await Future.delayed(const Duration(milliseconds: 300));
+    try {
+      // Native splash'in bitmesini bekle
+      await Future.delayed(const Duration(milliseconds: 300));
 
-    // Logo transform animasyonunu başlat (küçülme, kayma, PR harflerine dönüşüm)
-    _logoTransformController.forward();
+      // Logo transform animasyonunu başlat (küçülme, kayma, PR harflerine dönüşüm)
+      _logoTransformController.forward();
 
-    // Logo transform bitince text reveal'ı başlat
-    await Future.delayed(const Duration(milliseconds: 400));
-    _textRevealController.forward();
+      // Logo transform bitince text reveal'ı başlat
+      await Future.delayed(const Duration(milliseconds: 400));
+      _textRevealController.forward();
 
-    // Loading animasyonunu başlat
-    _loadingController.repeat();
+      // Loading animasyonunu başlat
+      _loadingController.repeat();
+    } catch (e) {
+      debugPrint(e.toString());
+      return;
+    }
   }
-
 
   @override
   void dispose() {
@@ -198,7 +201,6 @@ class _SplashViewState extends ConsumerState<SplashView>
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-      backgroundColor: Colors.white,
       body: Center(
         child: Column(
           mainAxisAlignment: MainAxisAlignment.center,
@@ -444,6 +446,4 @@ class _SplashViewState extends ConsumerState<SplashView>
       },
     );
   }
-
-  
 }

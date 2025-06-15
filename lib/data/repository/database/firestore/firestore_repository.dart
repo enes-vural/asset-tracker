@@ -84,7 +84,7 @@ class FirestoreRepository implements IFirestoreRepository {
       }
 
       for (Map<String, dynamic>? dataIndex in userAssetsData) {
-        debugPrint("User assets data: ${dataIndex.toString()}");
+        // debugPrint("User assets data: ${dataIndex.toString()}");
         if (dataIndex != null) {
           userDataModel.currencyList
               .add(UserCurrencyDataModel.fromJson(dataIndex));

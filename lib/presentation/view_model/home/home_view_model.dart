@@ -45,7 +45,7 @@ class HomeViewModel extends ChangeNotifier {
     }
 
     final data = await getSocketStreamUseCase.call(null);
-    debugPrint(data.toString());
+    // debugPrint(data.toString());
     data.fold((failure) => debugPrint(failure.message), (success) {
       debugPrint("Connection STATE : ${success.state}");
     });
@@ -57,10 +57,10 @@ class HomeViewModel extends ChangeNotifier {
     notifyListeners();
   }
 
-  void calculateProfitBalance(WidgetRef ref) {
-    ref.read(appGlobalProvider).calculateProfitBalance();
-    notifyListeners();
-  }
+  // void calculateProfitBalance(WidgetRef ref) {
+  //   ref.read(appGlobalProvider).scheduleCalculation();
+  //   notifyListeners();
+  // }
 
   Future<void> signOut(WidgetRef ref, BuildContext context) async {
     await getIt<SignInUseCase>().signOut();

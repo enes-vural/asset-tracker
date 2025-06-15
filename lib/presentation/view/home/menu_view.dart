@@ -61,9 +61,9 @@ class _MenuViewState extends ConsumerState<MenuView>
 
     return Scaffold(
       appBar: AppBar(
-        surfaceTintColor: DefaultColorPalette.grey100,
-        backgroundColor: DefaultColorPalette.grey100,
-        shadowColor: DefaultColorPalette.vanillaBlack,
+        //surfaceTintColor: DefaultColorPalette.grey100,
+        //backgroundColor: DefaultColorPalette.grey100,
+        //shadowColor: DefaultColorPalette.vanillaBlack,
         elevation: 0,
         scrolledUnderElevation: 0,
         actionsPadding: const CustomEdgeInstets.mediumHorizontal(),
