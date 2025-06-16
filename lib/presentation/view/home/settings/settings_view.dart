@@ -1,8 +1,11 @@
+import 'package:asset_tracker/core/config/localization/generated/locale_keys.g.dart';
 import 'package:asset_tracker/core/widgets/custom_sized_box.dart';
 import 'package:asset_tracker/injection.dart';
 import 'package:asset_tracker/presentation/view/home/widgets/language_switcher_widget.dart';
+import 'package:asset_tracker/presentation/view/home/widgets/theme_switcher_widget.dart';
 import 'package:asset_tracker/presentation/view_model/settings/settings_view_model.dart';
 import 'package:auto_route/annotations.dart';
+import 'package:easy_localization/easy_localization.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 
@@ -22,7 +25,6 @@ class _SettingsViewState extends ConsumerState<SettingsView> {
   Widget build(BuildContext context) {
     final viewModel = ref.watch(settingsViewModelProvider);
     final theme = Theme.of(context);
-    final isDarkTheme = theme.brightness == Brightness.dark;
 
     return Scaffold(
       backgroundColor: theme.scaffoldBackgroundColor,
@@ -35,7 +37,7 @@ class _SettingsViewState extends ConsumerState<SettingsView> {
               // Header
               const SizedBox(height: 20),
               Text(
-                'Ayarlar',
+                LocaleKeys.home_settings_settings.tr(),
                 style: TextStyle(
                   fontSize: 32,
                   fontWeight: FontWeight.bold,
@@ -44,7 +46,7 @@ class _SettingsViewState extends ConsumerState<SettingsView> {
               ),
               const SizedBox(height: 8),
               Text(
-                'Hesap ve uygulama ayarlarını yönetin',
+                LocaleKeys.home_settings_settingsDesc.tr(),
                 style: TextStyle(
                   fontSize: 16,
                   color: theme.colorScheme.onSurface.withOpacity(0.7),
@@ -54,7 +56,7 @@ class _SettingsViewState extends ConsumerState<SettingsView> {
 
               // Account Section
               viewModel.isAuthorized
-                  ? _buildSectionTitle('Hesap')
+                  ? _buildSectionTitle(LocaleKeys.home_settings_account.tr())
                   : CustomSizedBox.empty(),
               viewModel.isAuthorized
                   ? SizedBox(height: 16)
@@ -63,23 +65,24 @@ class _SettingsViewState extends ConsumerState<SettingsView> {
                   ? _buildSettingsCard([
                       _buildSettingsTile(
                         icon: Icons.person_outline,
-                        title: 'İsim ve Soyisim',
-                        subtitle: 'Kişisel bilgilerinizi düzenleyin',
+                        title: LocaleKeys.home_settings_nameLastname.tr(),
+                        subtitle:
+                            LocaleKeys.home_settings_nameLastnameDesc.tr(),
                         onTap: () => _showNameEditDialog(),
                       ),
                       _buildDivider(),
                       _buildSettingsTile(
                         icon: Icons.logout,
-                        title: 'Çıkış Yap',
-                        subtitle: 'Hesabınızdan güvenli çıkış yapın',
+                        title: LocaleKeys.home_settings_exit.tr(),
+                        subtitle: LocaleKeys.home_settings_exitDesc.tr(),
                         onTap: () => _showLogoutDialog(viewModel, ref),
                         isDestructive: true,
                       ),
                       _buildDivider(),
                       _buildSettingsTile(
                         icon: Icons.delete_outline,
-                        title: 'Hesabı Sil',
-                        subtitle: 'Hesabınızı kalıcı olarak silin',
+                        title: LocaleKeys.home_settings_remove.tr(),
+                        subtitle: LocaleKeys.home_settings_removeDesc.tr(),
                         onTap: () => _showDeleteAccountDialog(),
                         isDestructive: true,
                       ),
@@ -89,28 +92,18 @@ class _SettingsViewState extends ConsumerState<SettingsView> {
               const SizedBox(height: 32),
 
               // App Settings Section
-              _buildSectionTitle('Uygulama'),
+              _buildSectionTitle(LocaleKeys.home_settings_app.tr()),
               const SizedBox(height: 16),
               _buildSettingsCard([
                 _buildLanguageTile(),
                 _buildDivider(),
                 _buildThemeTile(),
               ]),
-
-              Text("THEME",
-                  style: TextStyle(color: Theme.of(context).primaryColor)),
-              Text(
-                ref.watch(appThemeProvider).when(
-                      data: (theme) => theme.currentTheme.toString(),
-                      loading: () => 'Loading...',
-                      error: (error, stack) => 'Error: $error',
-                    ),
-              ),
               const SizedBox(height: 32),
 
               // Legal Section
               viewModel.isAuthorized
-                  ? _buildSectionTitle('Yasal')
+                  ? _buildSectionTitle(LocaleKeys.home_settings_legal.tr())
                   : const CustomSizedBox.empty(),
               viewModel.isAuthorized
                   ? const SizedBox(height: 16)
@@ -119,8 +112,9 @@ class _SettingsViewState extends ConsumerState<SettingsView> {
                   ? _buildSettingsCard([
                       _buildSettingsTile(
                         icon: Icons.description_outlined,
-                        title: 'Kullanıcı Sözleşmesi',
-                        subtitle: 'Kullanım şartlarını görüntüleyin',
+                        title: LocaleKeys.home_settings_privacyPolicy.tr(),
+                        subtitle:
+                            LocaleKeys.home_settings_privacyPolicyDesc.tr(),
                         onTap: () => _showUserAgreement(),
                       ),
                     ])
@@ -230,7 +224,7 @@ class _SettingsViewState extends ConsumerState<SettingsView> {
   }
 
   Widget _buildThemeTile() {
-    return ThemeSwitcher();
+    return ThemeSwitcherWidget();
   }
 
   Widget _buildDivider() {
@@ -266,7 +260,7 @@ class _SettingsViewState extends ConsumerState<SettingsView> {
               ),
               const SizedBox(width: 12),
               Text(
-                'Önemli Bilgilendirme',
+                LocaleKeys.home_settings_importantText.tr(),
                 style: TextStyle(
                   fontSize: 18,
                   fontWeight: FontWeight.w600,
@@ -277,7 +271,7 @@ class _SettingsViewState extends ConsumerState<SettingsView> {
           ),
           const SizedBox(height: 16),
           Text(
-            'PaRota sadece bilgilendirme amaçlı bir uygulamadır ve herhangi bir ticari geçerliliği bulunmamaktadır. Uygulama içerisindeki bilgiler yalnızca genel amaçlı kullanım içindir.',
+            LocaleKeys.home_settings_importantDesc.tr(),
             style: TextStyle(
               fontSize: 14,
               height: 1.5,
@@ -286,7 +280,7 @@ class _SettingsViewState extends ConsumerState<SettingsView> {
           ),
           const SizedBox(height: 16),
           Text(
-            'Versiyon 1.0.0',
+            '${LocaleKeys.home_settings_version.tr()}: 1.0.0',
             style: TextStyle(
               fontSize: 12,
               color: theme.colorScheme.onSurface.withOpacity(0.5),
@@ -531,76 +525,3 @@ Son güncelleme: ${DateTime.now().day}/${DateTime.now().month}/${DateTime.now().
   }
 }
 
-class ThemeSwitcher extends ConsumerStatefulWidget {
-  const ThemeSwitcher({super.key});
-
-  @override
-  ConsumerState<ConsumerStatefulWidget> createState() => _ThemeSwitcherState();
-}
-
-class _ThemeSwitcherState extends ConsumerState<ThemeSwitcher> {
-  @override
-  Widget build(BuildContext context) {
-    final theme = ref.watch(appThemeProvider);
-    final contextTheme = Theme.of(context);
-    final themeMode = theme.maybeWhen(
-      data: (data) => data.currentTheme,
-      orElse: () => ThemeMode.system,
-    );
-
-    final isDark = themeMode == ThemeMode.dark;
-    final isLight = themeMode == ThemeMode.light;
-
-    String subtitle;
-    IconData icon;
-    Color iconColor;
-
-    if (isDark) {
-      subtitle = "Karanlık tema aktif";
-      icon = Icons.dark_mode;
-      iconColor = Colors.blueGrey;
-    } else if (isLight) {
-      subtitle = "Açık tema aktif";
-      icon = Icons.light_mode;
-      iconColor = Colors.amber[800]!;
-    } else {
-      subtitle = "Sistem temasına göre ayarlı";
-      icon = Icons.brightness_auto;
-      iconColor = Colors.green[700]!;
-    }
-
-    return ListTile(
-      contentPadding: const EdgeInsets.symmetric(horizontal: 20, vertical: 8),
-      leading: Container(
-        padding: const EdgeInsets.all(8),
-        decoration: BoxDecoration(
-          color: iconColor.withOpacity(0.1),
-          borderRadius: BorderRadius.circular(8),
-        ),
-        child: Icon(
-          icon,
-          color: iconColor,
-          size: 20,
-        ),
-      ),
-      title: Text(
-        'Tema',
-        style: TextStyle(
-          fontSize: 16,
-          fontWeight: FontWeight.w500,
-          color: contextTheme.colorScheme.onSurface,
-        ),
-      ),
-      subtitle: Text(
-        subtitle,
-        style: TextStyle(
-          fontSize: 14,
-          color: iconColor,
-        ),
-      ),
-      onTap: () async {
-        await ref.read(appThemeProvider.notifier).switchAppTheme();
-      },
-    );
-  }
-}

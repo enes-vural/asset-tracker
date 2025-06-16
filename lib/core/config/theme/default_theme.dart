@@ -117,6 +117,7 @@ final class DefaultColorPalette {
   static Color opacityWhite = Colors.white.withValues(alpha: 0.9);
 
   static Color grey100 = Colors.grey.shade100;
+  static Color grey200 = Colors.grey.shade200;
   static Color grey300 = Colors.grey.shade300;
   static Color grey400 = Colors.grey.shade400;
   static Color grey500 = Colors.grey.shade500;
