@@ -1,6 +1,9 @@
+import 'dart:async';
+
 import 'package:asset_tracker/core/config/theme/default_theme.dart';
 import 'package:asset_tracker/core/config/theme/app_size.dart';
 import 'package:asset_tracker/core/config/theme/style_theme.dart';
+import 'package:asset_tracker/core/constants/enums/widgets/currency_card_widget_enums.dart';
 import 'package:asset_tracker/core/constants/string_constant.dart';
 import 'package:asset_tracker/core/config/theme/extension/responsive_extension.dart';
 import 'package:asset_tracker/core/mixins/get_currency_icon_mixin.dart';
@@ -12,8 +15,14 @@ import 'package:asset_tracker/presentation/view/widgets/loading_skeletonizer_wid
 import 'package:asset_tracker/presentation/view_model/home/home_view_model.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
+import 'package:shared_preferences/shared_preferences.dart';
 
-enum SortType { name, buy, sell, change }
+enum SortType {
+  name,
+  buy,
+  sell,
+  custom,
+}
 
 enum SortOrder { ascending, descending }
 
@@ -26,43 +35,76 @@ class CurrencyListWidget extends ConsumerStatefulWidget {
 
 class _CurrencyListWidgetState extends ConsumerState<CurrencyListWidget>
     with GetCurrencyIconMixin {
-  SortType currentSortType = SortType.name;
+  SortType currentSortType = SortType.custom;
   SortOrder currentSortOrder = SortOrder.ascending;
+
+  // Cache için key
+  static const String _customOrderKey = 'currency_custom_order';
+  static const String _sortTypeKey = 'currency_sort_type';
+
+  // Kullanıcı özel sıralaması
+  List<String> _customOrder = [];
+  bool _isEditMode = false;
+
+  @override
+  void initState() {
+    super.initState();
+    _loadCustomOrder();
+  }
+
+  // Özel sıralamayı kaydet
+  Future<void> _saveCustomOrder(List<String> order) async {
+    final prefs = await SharedPreferences.getInstance();
+    await prefs.setStringList(_customOrderKey, order);
+    await prefs.setString(_sortTypeKey, 'custom');
+
+    setState(() {
+      _customOrder = order;
+      currentSortType = SortType.custom;
+    });
+  }
+
+  Future<void> _loadCustomOrder() async {
+    final prefs = await SharedPreferences.getInstance();
+    final customOrderJson = prefs.getStringList(_customOrderKey) ?? [];
+
+    setState(() {
+      _customOrder = customOrderJson;
+      // Başlangıçta her zaman custom order
+      //TODO: Gereksiz kod.
+      currentSortType = SortType.custom;
+    });
+  }
 
   @override
   Widget build(BuildContext context) {
     final viewModel = ref.watch(homeViewModelProvider);
     final appGlobal = ref.watch(appGlobalProvider);
 
-    // Global assets'i direkt AppGlobalProvider'dan al
     List<CurrencyEntity>? globalAssets = appGlobal.globalAssets;
-
-    // Search stream'i hala kullanabilirsiniz çünkü o sadece arama için
     final searchStream = viewModel.searchBarStreamController;
     final isDark = Theme.of(context).brightness == Brightness.dark;
-
 
     return Container(
       width: ResponsiveSize(context).screenWidth,
       decoration: BoxDecoration(
-        color: isDark ? Colors.grey.shade900 : Colors.white, // Açık background
-
+        color: isDark ? Colors.grey.shade900 : Colors.white,
         borderRadius: BorderRadius.circular(AppSize.mediumRadius),
         boxShadow: isDark
             ? [
-          BoxShadow(
+                BoxShadow(
                   color: Colors.black.withOpacity(0.3),
-            blurRadius: 10,
-            offset: const Offset(0, 2),
-          ),
+                  blurRadius: 10,
+                  offset: const Offset(0, 2),
+                ),
               ]
             : [
                 BoxShadow(
-                  color: Colors.grey.withOpacity(0.08), // Çok hafif shadow
+                  color: Colors.grey.withOpacity(0.08),
                   blurRadius: 8,
                   offset: const Offset(0, 1),
                 ),
-        ],
+              ],
         border: isDark
             ? null
             : Border.all(
@@ -80,7 +122,7 @@ class _CurrencyListWidgetState extends ConsumerState<CurrencyListWidget>
             height: 1,
             color: DefaultColorPalette.grey300,
           ),
-          // List - StreamBuilder yerine direkt build
+          // List
           _buildCurrencyList(globalAssets, searchStream, viewModel),
         ],
       ),
@@ -92,12 +134,10 @@ class _CurrencyListWidgetState extends ConsumerState<CurrencyListWidget>
     Stream? searchStream,
     HomeViewModel viewModel,
   ) {
-    // Global assets null veya boşsa loading göster
     if (globalAssets == null || globalAssets.isEmpty) {
       return const LoadingSkeletonizerWidget();
     }
 
-    // Search stream varsa onu dinle, yoksa boş string kullan
     return StreamBuilder<String>(
       stream: searchStream?.cast<String>(),
       initialData: DefaultLocalStrings.emptyText,
@@ -105,14 +145,6 @@ class _CurrencyListWidgetState extends ConsumerState<CurrencyListWidget>
         String searchQuery =
             searchSnapshot.data ?? DefaultLocalStrings.emptyText;
 
-        // Post frame callback'i daha güvenli hale getirelim
-        // WidgetsBinding.instance.addPostFrameCallback((_) {
-        //   if (mounted) {
-        //     viewModel.calculateProfitBalance(ref);
-        //   }
-        // });
-
-        // Filter data
         List<CurrencyEntity>? filteredData = viewModel.filterCurrencyData(
           globalAssets,
           searchQuery,
@@ -121,7 +153,6 @@ class _CurrencyListWidgetState extends ConsumerState<CurrencyListWidget>
         // Sıralama uygula
         filteredData = _sortCurrencyData(filteredData ?? []);
 
-        // Filtered data boşsa mesaj göster
         if (filteredData.isEmpty) {
           return Padding(
             padding: const EdgeInsets.all(AppSize.mediumPadd),
@@ -139,26 +170,116 @@ class _CurrencyListWidgetState extends ConsumerState<CurrencyListWidget>
           );
         }
 
+        // Eğer custom order modundaysa ReorderableListView kullan
+        if (currentSortType == SortType.custom &&
+            searchQuery.isEmpty &&
+            _isEditMode) {
+          return _buildReorderableList(filteredData, viewModel);
+        } else {
+          return _buildNormalList(filteredData, viewModel);
+        }
+      },
+    );
+  }
+
+  Widget _buildReorderableList(
+      List<CurrencyEntity> data, HomeViewModel viewModel) {
+    return Column(
+      mainAxisSize: MainAxisSize.min,
+      children: List.generate(data.length, (index) {
+        CurrencyWidgetEntity currency =
+            CurrencyWidgetEntity.fromCurrency(data[index]);
+
+        return LongPressDraggable<int>(
+          data: index,
+          feedback: Material(
+            elevation: 8,
+            borderRadius: BorderRadius.circular(AppSize.smallRadius),
+            child: Container(
+              width: MediaQuery.of(context).size.width * 0.9,
+              decoration: BoxDecoration(
+                color: Theme.of(context).cardColor,
+                borderRadius: BorderRadius.circular(AppSize.smallRadius),
+                border: Border.all(color: Colors.pink, width: 2),
+              ),
+              child: _buildCurrencyRow(context, currency, viewModel,
+                  isDragMode: true, isInDrag: true),
+            ),
+          ),
+          childWhenDragging: Container(
+            decoration: BoxDecoration(
+              color: DefaultColorPalette.grey100.withOpacity(0.5),
+              borderRadius: BorderRadius.circular(AppSize.smallRadius),
+            ),
+            child: _buildCurrencyRow(context, currency, viewModel,
+                isDragMode: true, isPlaceholder: true),
+          ),
+          child: DragTarget<int>(
+            onAcceptWithDetails: (fromIndex) {
+              if (fromIndex.data != index) {
+                setState(() {
+                  final CurrencyEntity item = data.removeAt(fromIndex.data);
+                  data.insert(index, item);
+
+                  // Yeni sıralamayı kaydet
+                  List<String> newOrder = data.map((e) => e.code).toList();
+                  _saveCustomOrder(newOrder);
+                });
+              }
+            },
+            builder: (context, candidateData, rejectedData) {
+              bool isAccepting = candidateData.isNotEmpty;
+
+              return AnimatedContainer(
+                duration: const Duration(milliseconds: 200),
+                decoration: BoxDecoration(
+                  color: isAccepting
+                      ? Colors.pink.withOpacity(0.1)
+                      : Colors.transparent,
+                  borderRadius: BorderRadius.circular(AppSize.smallRadius),
+                  border: isAccepting
+                      ? Border.all(color: Colors.pink, width: 2)
+                      : null,
+                ),
+                child: Column(
+                  mainAxisSize: MainAxisSize.min,
+                  children: [
+                    _buildCurrencyRow(context, currency, viewModel,
+                        isDragMode: true),
+                    if (index < data.length - 1)
+                      Container(
+                        height: 1,
+                        color: DefaultColorPalette.grey100,
+                      ),
+                  ],
+                ),
+              );
+            },
+          ),
+        );
+      }),
+    );
+  }
+
+  Widget _buildNormalList(List<CurrencyEntity> data, HomeViewModel viewModel) {
+    return Column(
+      mainAxisSize: MainAxisSize.min,
+      children: List.generate(data.length, (index) {
+        CurrencyWidgetEntity currency =
+            CurrencyWidgetEntity.fromCurrency(data[index]);
+
         return Column(
           mainAxisSize: MainAxisSize.min,
-          children: List.generate(filteredData.length, (index) {
-            CurrencyWidgetEntity currency =
-                CurrencyWidgetEntity.fromCurrency(filteredData![index]);
-
-            return Column(
-              mainAxisSize: MainAxisSize.min,
-              children: [
-                _buildCurrencyRow(context, currency, viewModel),
-                if (index < filteredData.length - 1)
-                  Container(
-                    height: 1,
-                    color: DefaultColorPalette.grey100,
-                  ),
-              ],
-            );
-          }),
+          children: [
+            _buildCurrencyRow(context, currency, viewModel),
+            if (index < data.length - 1)
+              Container(
+                height: 1,
+                color: DefaultColorPalette.grey100,
+              ),
+          ],
         );
-      },
+      }),
     );
   }
 
@@ -175,7 +296,7 @@ class _CurrencyListWidgetState extends ConsumerState<CurrencyListWidget>
               title: "Birim",
               sortType: SortType.name,
             ),
-          ),          
+          ),
           // Buy Price
           Expanded(
             flex: 2,
@@ -194,7 +315,19 @@ class _CurrencyListWidgetState extends ConsumerState<CurrencyListWidget>
               textAlign: TextAlign.center,
             ),
           ),
-          
+          IconButton(
+            icon: Icon(
+              _isEditMode ? Icons.done : Icons.edit,
+              color: _isEditMode ? Colors.green : DefaultColorPalette.grey400,
+              size: 20,
+            ),
+            onPressed: () {
+              setState(() {
+                _isEditMode = !_isEditMode;
+              });
+            },
+            tooltip: _isEditMode ? "Düzenlemeyi bitir" : "Sıralamayı düzenle",
+          ),
         ],
       ),
     );
@@ -209,11 +342,18 @@ class _CurrencyListWidgetState extends ConsumerState<CurrencyListWidget>
 
     return InkWell(
       onTap: () {
+        if (_isEditMode) {
+          return;
+        }
         setState(() {
           if (currentSortType == sortType) {
-            currentSortOrder = currentSortOrder == SortOrder.ascending
-                ? SortOrder.descending
-                : SortOrder.ascending;
+            if (currentSortOrder == SortOrder.ascending) {
+              currentSortOrder = SortOrder.descending;
+            } else {
+              // 3. tıklamada orijinal sıralamaya geç
+              currentSortType = SortType.custom;
+              currentSortOrder = SortOrder.ascending;
+            }
           } else {
             currentSortType = sortType;
             currentSortOrder = SortOrder.ascending;
@@ -237,7 +377,7 @@ class _CurrencyListWidgetState extends ConsumerState<CurrencyListWidget>
                       context, AppSize.smallText),
               textAlign: textAlign,
             ),
-            if (isActive) ...[
+            if (isActive && currentSortType != SortType.custom) ...[
               const SizedBox(width: 4),
               Icon(
                 currentSortOrder == SortOrder.ascending
@@ -256,6 +396,33 @@ class _CurrencyListWidgetState extends ConsumerState<CurrencyListWidget>
   List<CurrencyEntity> _sortCurrencyData(List<CurrencyEntity> data) {
     List<CurrencyEntity> sortedData = List.from(data);
 
+    // Custom order - eğer özel sıralama varsa onu kullan, yoksa normal sıralama
+    if (currentSortType == SortType.custom) {
+      if (_customOrder.isNotEmpty) {
+        // Özel sıralama var, onu uygula
+        sortedData.sort((a, b) {
+          int aIndex = _customOrder.indexOf(a.code);
+          int bIndex = _customOrder.indexOf(b.code);
+
+          // Eğer her ikisi de custom order'da yoksa normal sıralama
+          if (aIndex == -1 && bIndex == -1) {
+            return a.code.compareTo(b.code);
+          }
+
+          // Custom order'da olmayan elemanları sona koy
+          if (aIndex == -1) return 1;
+          if (bIndex == -1) return -1;
+
+          return aIndex.compareTo(bIndex);
+        });
+      } else {
+        // Özel sıralama yok, normal alfabetik sıralama yap
+        sortedData.sort((a, b) => a.code.compareTo(b.code));
+      }
+      return sortedData;
+    }
+
+    // Normal sıralama
     List<CurrencyWidgetEntity> widgetData = [];
     sortedData.forEach((value) {
       widgetData.add(CurrencyWidgetEntity.fromCurrency(value));
@@ -285,10 +452,8 @@ class _CurrencyListWidgetState extends ConsumerState<CurrencyListWidget>
           double bValue = double.tryParse(b.satis.toString()) ?? 0.0;
           comparison = aValue.compareTo(bValue);
           break;
-        case SortType.change:
-          double aValue = double.tryParse(a.kapanis.toString()) ?? 0.0;
-          double bValue = double.tryParse(b.kapanis.toString()) ?? 0.0;
-          comparison = aValue.compareTo(bValue);
+        case SortType.custom:
+          // Custom sorting is handled above
           break;
       }
 
@@ -298,17 +463,36 @@ class _CurrencyListWidgetState extends ConsumerState<CurrencyListWidget>
     return sortedData;
   }
 
-  Widget _buildCurrencyRow(BuildContext context, CurrencyWidgetEntity currency,
-      HomeViewModel viewModel) {
+  Widget _buildCurrencyRow(
+    BuildContext context,
+    CurrencyWidgetEntity currency,
+    HomeViewModel viewModel, {
+    bool isDragMode = false,
+    bool isInDrag = false,
+    bool isPlaceholder = false,
+  }) {
     return InkWell(
-      onTap: () {
-        viewModel.routeTradePage(context, currency.entity);
-      },
+      onTap: isInDrag
+          ? null
+          : () {
+              viewModel.routeTradePage(context, currency.entity);
+            },
       child: Container(
         padding: const EdgeInsets.symmetric(
             horizontal: AppSize.mediumPadd, vertical: AppSize.smallPadd + 2),
         child: Row(
           children: [
+            // Drag handle (sadece drag modunda göster)
+            if (isDragMode) ...[
+              Icon(
+                Icons.drag_handle,
+                color: isPlaceholder
+                    ? DefaultColorPalette.grey200
+                    : (isInDrag ? Colors.pink : DefaultColorPalette.grey400),
+                size: 20,
+              ),
+              const SizedBox(width: 8),
+            ],
             // Currency Info & Icon
             Expanded(
               flex: 3,
@@ -316,12 +500,17 @@ class _CurrencyListWidgetState extends ConsumerState<CurrencyListWidget>
                 children: [
                   CircleAvatar(
                     radius: AppSize.mediumRadius,
-                    backgroundColor: DefaultColorPalette.grey100,
-                    child: Image.asset(
-                      getCurrencyIcon(currency.code),
-                      width: AppSize.largeIcon,
-                      height: AppSize.largeIcon,
-                      fit: BoxFit.fitHeight,
+                    backgroundColor: isPlaceholder
+                        ? DefaultColorPalette.grey200
+                        : DefaultColorPalette.grey100,
+                    child: Opacity(
+                      opacity: isPlaceholder ? 0.5 : 1.0,
+                      child: Image.asset(
+                        getCurrencyIcon(currency.code),
+                        width: AppSize.largeIcon,
+                        height: AppSize.largeIcon,
+                        fit: BoxFit.fitHeight,
+                      ),
                     ),
                   ),
                   const CustomSizedBox.smallWidth(),
@@ -330,17 +519,19 @@ class _CurrencyListWidgetState extends ConsumerState<CurrencyListWidget>
                       crossAxisAlignment: CrossAxisAlignment.start,
                       mainAxisSize: MainAxisSize.min,
                       children: [
-                        Text(
-                          currency.name.toString().toUpperCase(),
-                          style: CustomTextStyle.blackColorBoldPoppins(
-                              context, AppSize.smallText2),
-                          overflow: TextOverflow.ellipsis,
+                        Opacity(
+                          opacity: isPlaceholder ? 0.5 : 1.0,
+                          child: _buildResponsiveCurrencyName(
+                              context, currency.name.toString().toUpperCase()),
                         ),
-                        Text(
-                          currency.code.toString(),
-                          style: CustomTextStyle.greyColorPoppins(
-                              context, AppSize.small2Text),
-                          overflow: TextOverflow.ellipsis,
+                        Opacity(
+                          opacity: isPlaceholder ? 0.5 : 1.0,
+                          child: Text(
+                            currency.code.toString(),
+                            style: CustomTextStyle.greyColorPoppins(
+                                context, AppSize.small2Text),
+                            overflow: TextOverflow.ellipsis,
+                          ),
                         ),
                       ],
                     ),
@@ -351,23 +542,26 @@ class _CurrencyListWidgetState extends ConsumerState<CurrencyListWidget>
             // Buy Price
             Expanded(
               flex: 2,
-              child: Container(
-                padding: const EdgeInsets.symmetric(
-                  horizontal: AppSize.smallPadd,
-                  vertical: AppSize.smallPadd,
-                ),
-                decoration: BoxDecoration(
-                  color: _getChangeColor(currency.entity.dir.alisDir)
-                      .withOpacity(0.1),
-                  borderRadius: BorderRadius.circular(AppSize.smallRadius),
-                ),
-                child: Text(
-                  currency.alis.toString(),
-                  style: CustomTextStyle.blackColorBoldPoppins(
-                    context,
-                    AppSize.small2Text,
+              child: Opacity(
+                opacity: isPlaceholder ? 0.5 : 1.0,
+                child: Container(
+                  padding: const EdgeInsets.symmetric(
+                    horizontal: AppSize.smallPadd,
+                    vertical: AppSize.smallPadd,
                   ),
-                  textAlign: TextAlign.center,
+                  decoration: BoxDecoration(
+                    color: _getChangeColor(currency.entity.dir.alisDir)
+                        .withOpacity(isPlaceholder ? 0.05 : 0.1),
+                    borderRadius: BorderRadius.circular(AppSize.smallRadius),
+                  ),
+                  child: Text(
+                    currency.alis.toString(),
+                    style: CustomTextStyle.blackColorBoldPoppins(
+                      context,
+                      AppSize.small2Text,
+                    ),
+                    textAlign: TextAlign.center,
+                  ),
                 ),
               ),
             ),
@@ -375,29 +569,47 @@ class _CurrencyListWidgetState extends ConsumerState<CurrencyListWidget>
             // Sell Price
             Expanded(
               flex: 2,
-              child: Container(
-                padding: const EdgeInsets.symmetric(
-                  horizontal: AppSize.smallPadd,
-                  vertical: AppSize.smallPadd,
-                ),
-                decoration: BoxDecoration(
-                  color: _getChangeColor(currency.entity.dir.satisDir)
-                      .withOpacity(0.1),
-                  borderRadius: BorderRadius.circular(AppSize.smallRadius),
-                ),
-                child: Text(
-                  currency.satis.toString(),
-                  style: CustomTextStyle.blackColorBoldPoppins(
-                    context,
-                    AppSize.small2Text,
+              child: Opacity(
+                opacity: isPlaceholder ? 0.5 : 1.0,
+                child: Container(
+                  padding: const EdgeInsets.symmetric(
+                    horizontal: AppSize.smallPadd,
+                    vertical: AppSize.smallPadd,
                   ),
-                  textAlign: TextAlign.center,
+                  decoration: BoxDecoration(
+                    color: _getChangeColor(currency.entity.dir.satisDir)
+                        .withOpacity(isPlaceholder ? 0.05 : 0.1),
+                    borderRadius: BorderRadius.circular(AppSize.smallRadius),
+                  ),
+                  child: Text(
+                    currency.satis.toString(),
+                    style: CustomTextStyle.blackColorBoldPoppins(
+                      context,
+                      AppSize.small2Text,
+                    ),
+                    textAlign: TextAlign.center,
+                  ),
                 ),
               ),
             ),
           ],
         ),
       ),
+    );
+  }
+
+  Widget _buildResponsiveCurrencyName(
+      BuildContext context, String currencyName) {
+    return Text(
+      currencyName,
+      style: CustomTextStyle.blackColorBoldPoppins(
+          context,
+          currencyName.length > 15
+              ? AppSize.xSmallText + 2
+              : AppSize.smallText),
+      overflow: TextOverflow.visible,
+      maxLines: 2,
+      softWrap: true,
     );
   }
 
@@ -412,9 +624,10 @@ class _CurrencyListWidgetState extends ConsumerState<CurrencyListWidget>
       return DefaultColorPalette.grey400;
     }
 
-    if (changeValue == "up" || ((double.tryParse(changeValue) ?? 0.0) > 0)) {
+    if (changeValue == CurrencyDirectionEnum.UP.value ||
+        ((double.tryParse(changeValue) ?? 0.0) > 0)) {
       return DefaultColorPalette.vanillaGreen;
-    } else if (changeValue == "down" ||
+    } else if (changeValue == CurrencyDirectionEnum.DOWN.value ||
         ((double.tryParse(changeValue) ?? 0.0) < 0)) {
       return DefaultColorPalette.errorRed;
     }

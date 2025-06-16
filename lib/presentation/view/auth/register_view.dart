@@ -109,7 +109,7 @@ class _RegisterViewState extends ConsumerState<RegisterView>
                         emailController: viewModel.emailController,
                         emailValidator: checkEmail,
                         hasTitle: true,
-                        hasLabel: false,
+                        hasLabel: true,
                         focusNode: _emailFocusNode,
                         textInputAction: TextInputAction.next,
                         onFieldSubmitted: (value) =>
@@ -120,7 +120,7 @@ class _RegisterViewState extends ConsumerState<RegisterView>
                         passwordController: viewModel.passwordController,
                         passwordValidator: checkPassword,
                         hasTitle: true,
-                        hasLabel: false,
+                        hasLabel: true,
                         focusNode: _passwordFocusNode,
                         textInputAction: TextInputAction.next,
                         onFieldSubmitted: (value) =>
@@ -133,7 +133,7 @@ class _RegisterViewState extends ConsumerState<RegisterView>
                         firstNameController: viewModel.firstNameController,
                         firstNameValidator: checkText,
                         hasTitle: true,
-                        hasLabel: false,
+                        hasLabel: true,
                         focusNode: _firstNameFocusNode,
                         textInputAction: TextInputAction.next,
                         onFieldSubmitted: (value) =>
@@ -146,7 +146,7 @@ class _RegisterViewState extends ConsumerState<RegisterView>
                         lastNameController: viewModel.lastNameController,
                         lastNameValidator: checkText,
                         hasTitle: true,
-                        hasLabel: false,
+                        hasLabel: true,
                         focusNode: _lastNameFocusNode,
                       ),
                       const CustomSizedBox.hugeGap(),

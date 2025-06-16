@@ -23,6 +23,9 @@ import 'package:flutter_screenutil/flutter_screenutil.dart';
 ///* mediumRadius 10.0
 ///* largeRadius 12.0
 final class AppSize {
+  ///*xSmall 7.0
+  static double xSmallText = 10.0.sp;
+
   ///*small 12.0
   static double smallText = 12.0.sp;
 
@@ -89,9 +92,7 @@ final class AppSize {
 
   ///16.0
   static double smallIcon = 16.0.r;
-  
+
   ///32.0
   static double largeIcon = 32.0.r;
-
-
 }

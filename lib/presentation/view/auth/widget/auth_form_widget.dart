@@ -3,14 +3,12 @@
 import 'package:asset_tracker/core/config/theme/default_theme.dart';
 import 'package:asset_tracker/core/config/theme/app_size.dart';
 import 'package:asset_tracker/core/config/theme/extension/responsive_extension.dart';
-import 'package:asset_tracker/core/config/theme/style_theme.dart';
+import 'package:asset_tracker/core/constants/string_constant.dart';
 import 'package:asset_tracker/core/widgets/custom_padding.dart';
 import 'package:asset_tracker/core/widgets/custom_sized_box.dart';
 import 'package:easy_localization/easy_localization.dart';
 import 'package:flutter/material.dart';
-
 import 'package:asset_tracker/core/config/localization/generated/locale_keys.g.dart';
-import 'package:flutter/services.dart';
 
 class AuthFormWidget extends StatelessWidget {
   const AuthFormWidget({
@@ -160,8 +158,10 @@ class AuthFormWidget extends StatelessWidget {
           SizedBox(
             width: ResponsiveSize(context).screenWidth,
             child: Theme(
+
               data: theme.copyWith(
                 inputDecorationTheme: theme.inputDecorationTheme.copyWith(
+                  
                   fillColor: inputBackgroundColor,
                   enabledBorder: OutlineInputBorder(
                     borderRadius: BorderRadius.circular(12),
@@ -198,6 +198,12 @@ class AuthFormWidget extends StatelessWidget {
                 ),
               ),
               child: TextFormField(
+                decoration: InputDecoration(
+                  hint: Text(
+                    hasLabel ? label : DefaultLocalStrings.emptyText,
+                  ),
+                ),
+                
                 textInputAction: textInputAction,
                 onFieldSubmitted: onFieldSubmitted,
                 focusNode: focusNode,
