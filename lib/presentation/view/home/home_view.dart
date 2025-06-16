@@ -12,8 +12,6 @@ import 'package:asset_tracker/injection.dart';
 import 'package:asset_tracker/presentation/view/home/widgets/balance_profit_text_widget.dart';
 import 'package:asset_tracker/presentation/view/home/widgets/balance_text_widget.dart';
 import 'package:asset_tracker/presentation/view/home/widgets/currency_card_widget.dart';
-import 'package:asset_tracker/presentation/view/widgets/home_view_search_field_widget.dart';
-import 'package:asset_tracker/presentation/view/widgets/home_view_swap_button_widget.dart';
 import 'package:asset_tracker/presentation/view_model/home/home_view_model.dart';
 
 @RoutePage()
@@ -32,13 +30,8 @@ class _HomeViewState extends ConsumerState<HomeView> {
       .read(homeViewModelProvider)
       .getErrorStream(parentContext: context);
 
-  void initHomeView() =>
-      ref.read(homeViewModelProvider.notifier).initHomeView();
-
   @override
   void initState() {
-    //initialize all streams when page starts
-    initHomeView();
     callData();
     getErrorStream();
     super.initState();
@@ -46,7 +39,6 @@ class _HomeViewState extends ConsumerState<HomeView> {
 
   @override
   Widget build(BuildContext context) {
-    final HomeViewModel viewModel = ref.watch(homeViewModelProvider);
     final authState = ref.watch(authGlobalProvider);
     return Scaffold(
       body: Stack(
@@ -82,7 +74,6 @@ class _HomeViewState extends ConsumerState<HomeView> {
               ),
             ],
           ),
-          _homeClearButtonWidget(viewModel),
         ],
       ),
     );
@@ -103,24 +94,6 @@ class _HomeViewState extends ConsumerState<HomeView> {
     return Text(
       "PaRota ile altın ve dövizlerinizi kolayca takip etmek için giriş yapın.",
       style: CustomTextStyle.greyColorManrope(context, AppSize.small2Text),
-    );
-  }
-
-  Positioned _homeClearButtonWidget(HomeViewModel viewModel) {
-    return Positioned(
-      bottom: 20, // Bottom navigation bar için yüksekliği artırdık
-      left: 20,
-      child: Row(
-        children: [
-          HomeViewSearchFieldWidget(viewModel: viewModel),
-          const CustomSizedBox.mediumWidth(),
-          HomeViewSwapButtonWidget(
-            onTap: () {
-              viewModel.clearText();
-            },
-          ),
-        ],
-      ),
     );
   }
 }

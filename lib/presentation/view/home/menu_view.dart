@@ -33,9 +33,6 @@ class _MenuViewState extends ConsumerState<MenuView>
       .read(homeViewModelProvider)
       .getErrorStream(parentContext: context);
 
-  void initHomeView() =>
-      ref.read(homeViewModelProvider.notifier).initHomeView();
-
   List<dynamic> pages = [
     const HomeView(),
     const DashboardView(),
@@ -45,8 +42,6 @@ class _MenuViewState extends ConsumerState<MenuView>
 
   @override
   void initState() {
-    //initialize all streams when page starts
-    initHomeView();
     callData();
     getErrorStream();
     super.initState();

@@ -94,7 +94,7 @@ class SplashViewModel extends ChangeNotifier {
           return false;
         },
       );
-      return result ?? false;
+      return result;
     } catch (e) {
       debugPrint('GetLatestUserData error: $e');
       return false;
