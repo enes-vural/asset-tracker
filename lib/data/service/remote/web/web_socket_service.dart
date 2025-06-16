@@ -67,7 +67,7 @@ class WebSocketService implements IWebSocketService {
           //refresh durumu gerektiği zaman
           else if (data == SocketActionEnum.REFRESH.value) {
             debugPrint("Refresh...");
-            socket!.add(SocketActionEnum.REQUEST.value);
+            socket?.add(SocketActionEnum.REQUEST.value);
           }
           //resend durumu gerektiği zaman
           else if (_checkJsonFirstIndex(event) ==

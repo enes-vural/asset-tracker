@@ -2,6 +2,7 @@
 
 import 'dart:async';
 import 'package:asset_tracker/core/constants/enums/socket/socket_state_enums.dart';
+import 'package:asset_tracker/core/constants/enums/widgets/currency_card_widget_enums.dart';
 import 'package:asset_tracker/core/constants/filtered_codes_constants.dart';
 import 'package:asset_tracker/core/constants/string_constant.dart';
 import 'package:asset_tracker/data/model/web/direction_model.dart';
@@ -26,13 +27,15 @@ class WebSocketRepository implements IWebSocketRepository {
 
   WebSocketRepository({required this.socketService});
 
+  CurrencyEntity? _previousGramGoldEntity;
+
   @override
   startConnection() async {
     final Set<String> filter = FilteredCodesConstants.filteredCodes;
     try {
       _controller = StreamController.broadcast();
       _errorController = StreamController.broadcast();
-socketService.errorStream.listen(
+      socketService.errorStream.listen(
         (SocketErrorModel model) {
           model.state == SocketStateEnum.ERROR
               ? _errorController?.add(Left(SocketErrorEntity.fromModel(model)))
@@ -46,7 +49,7 @@ socketService.errorStream.listen(
       await socketService.connectSocket();
       socketService.stream.listen((jsonData) {
         // debugPrint("DATA CAME !!!");
-final priceChangedModel = PriceChangedDataModel.fromJson(jsonData);
+        final priceChangedModel = PriceChangedDataModel.fromJson(jsonData);
 
 // ONS ve USD/TRY değerlerini tutacak değişkenler
         CurrencyEntity? onsAltinEntity;
@@ -56,7 +59,6 @@ final priceChangedModel = PriceChangedDataModel.fromJson(jsonData);
           final CurrencyEntity currencyEntity =
               CurrencyEntity.fromModel(element);
 
-// ONS ve USD/TRY değerlerini sakla
           if (currencyEntity.code.toUpperCase() == 'ONS') {
             onsAltinEntity = currencyEntity;
           }
@@ -64,24 +66,18 @@ final priceChangedModel = PriceChangedDataModel.fromJson(jsonData);
             usdTryEntity = currencyEntity;
           }
 
-// **FİLTRE KONTROLÜ - Bu kod filtrelenmişse işleme alma**
           if (filter.contains(currencyEntity.code.toUpperCase())) {
-            // debugPrint("Currency filtered out: ${currencyEntity.code}");
-            return; // Bu currency'i işleme alma
+            return;
           }
           final index = _currencyEntities
               .indexWhere((entity) => entity.code == currencyEntity.code);
           if (index == int.parse(SocketActionEnum.NOT_IN_LIST.value)) {
-// Entity listede yoksa, yeni öğeyi ekle
             _currencyEntities.add(currencyEntity);
-            // debugPrint("New currency added: ${currencyEntity.code}");
           } else {
-// Entity listede varsa, hash'lerini karşılaştır
+
             final existingEntity = _currencyEntities[index];
             if (existingEntity.hash != currencyEntity.hash) {
-// Eğer hash farklıysa, öğeyi güncelle
               _currencyEntities[index] = currencyEntity;
-              // debugPrint("Currency updated: ${currencyEntity.code}");
             }
           }
         });
@@ -126,17 +122,18 @@ final priceChangedModel = PriceChangedDataModel.fromJson(jsonData);
       final gramAltinEntity = CurrencyEntity(
         code: 'GRAMALTIN', // veya 'GRAM_ALTIN'
         dir: Direction(
-            alisDir:
-                _calculateDirection(gramAltinAlis, _getPreviousGramGoldAlis()),
+            alisDir: _calculateDirection(
+                gramAltinAlis, _getPreviousGramGoldPrice(isBuy: true)),
             satisDir: _calculateDirection(
-                gramAltinSatis, _getPreviousGramGoldSatis())),
+                gramAltinSatis, _getPreviousGramGoldPrice(isBuy: false))),
         alis: gramAltinAlis.toString(),
         satis: gramAltinSatis.toString(),
         dusuk: "0",
         yuksek: "0",
-        tarih: "",
+        tarih: DateTime.now().toString(),
         kapanis: "",
       );
+      _previousGramGoldEntity = gramAltinEntity;
 
       // Mevcut gram altın kaydını bul
       final gramAltinIndex =
@@ -165,34 +162,25 @@ final priceChangedModel = PriceChangedDataModel.fromJson(jsonData);
   // Yön hesaplama fonksiyonu (artış/azalış)
   String _calculateDirection(double currentValue, double? previousValue) {
     if (previousValue == null) return ""; // İlk değer
-    if (currentValue > previousValue) return "Up"; // Artış
-    if (currentValue < previousValue) return "Down"; // Azalış
+    if (currentValue > previousValue) {
+      return CurrencyDirectionEnum.UP.value; // Artış
+    }
+    if (currentValue < previousValue) {
+      return CurrencyDirectionEnum.DOWN.value; // Azalış
+    }
     return "";
   }
 
 // Önceki gram altın alış değerini getir
-  double? _getPreviousGramGoldAlis() {
-    final gramAltinIndex =
-        _currencyEntities.indexWhere((entity) => entity.code == 'GRAMALTIN');
-    return gramAltinIndex != -1
-        ? double.tryParse(_currencyEntities[gramAltinIndex].alis)
-        : null;
+  double? _getPreviousGramGoldPrice({required bool isBuy}) {
+    if (_previousGramGoldEntity != null) {
+      return double.tryParse(isBuy
+          ? _previousGramGoldEntity!.alis
+          : _previousGramGoldEntity!.satis);
+    }
+    return null;
   }
 
-// Önceki gram altın satış değerini getir
-  double? _getPreviousGramGoldSatis() {
-    final gramAltinIndex =
-        _currencyEntities.indexWhere((entity) => entity.code == 'GRAMALTIN');
-    return gramAltinIndex != -1
-        ? double.tryParse(_currencyEntities[gramAltinIndex].satis)
-        : null;
-  }
-
-  /*
-  void handleSocketData(Map<String, dynamic> json) {
-    _controller.add(json);
-  }
-  */
   @override
   Future<void> closeStream() async {
     await socketService.closeSocket();
