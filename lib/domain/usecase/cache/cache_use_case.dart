@@ -40,4 +40,13 @@ class CacheUseCase<T extends BaseEntity>
   Future<AppThemeEntity> getTheme() async {
     return await cacheRepository.getThemeMode();
   }
+
+  Future<void> saveCustomOrder(List<String> order) async {
+    return await cacheRepository.saveCustomOrder(order);
+  }
+
+  Future<List<String>?> getCustomOrder() async {
+    return await cacheRepository.getCustomOrder();
+  }
+
 }

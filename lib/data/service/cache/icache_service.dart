@@ -16,4 +16,8 @@ abstract interface class ICacheService {
   Future<void> saveTheme(AppThemeModel model);
 
   Future<Map<String, dynamic>?> getTheme();
+
+  Future<void> saveCustomOrder(List<String> order);
+
+  Future<List<String>?> getCustomOrder();
 }

@@ -4,12 +4,12 @@ import 'package:asset_tracker/core/config/theme/default_theme.dart';
 import 'package:asset_tracker/core/config/theme/app_size.dart';
 import 'package:asset_tracker/core/config/theme/style_theme.dart';
 import 'package:asset_tracker/core/constants/enums/widgets/currency_card_widget_enums.dart';
-import 'package:asset_tracker/core/constants/string_constant.dart';
 import 'package:asset_tracker/core/config/theme/extension/responsive_extension.dart';
 import 'package:asset_tracker/core/mixins/get_currency_icon_mixin.dart';
 import 'package:asset_tracker/core/widgets/custom_sized_box.dart';
 import 'package:asset_tracker/domain/entities/web/socket/currency_entity.dart';
 import 'package:asset_tracker/domain/entities/web/socket/currency_widget_entity.dart';
+import 'package:asset_tracker/domain/usecase/cache/cache_use_case.dart';
 import 'package:asset_tracker/injection.dart';
 import 'package:asset_tracker/presentation/view/widgets/loading_skeletonizer_widget.dart';
 import 'package:asset_tracker/presentation/view_model/home/home_view_model.dart';
@@ -22,6 +22,7 @@ enum SortType {
   buy,
   sell,
   custom,
+  type,
 }
 
 enum SortOrder { ascending, descending }
@@ -40,7 +41,6 @@ class _CurrencyListWidgetState extends ConsumerState<CurrencyListWidget>
 
   // Cache için key
   static const String _customOrderKey = 'currency_custom_order';
-  static const String _sortTypeKey = 'currency_sort_type';
 
   // Kullanıcı özel sıralaması
   List<String> _customOrder = [];
@@ -54,9 +54,7 @@ class _CurrencyListWidgetState extends ConsumerState<CurrencyListWidget>
 
   // Özel sıralamayı kaydet
   Future<void> _saveCustomOrder(List<String> order) async {
-    final prefs = await SharedPreferences.getInstance();
-    await prefs.setStringList(_customOrderKey, order);
-    await prefs.setString(_sortTypeKey, 'custom');
+    getIt<CacheUseCase>().saveCustomOrder(order);
 
     setState(() {
       _customOrder = order;
@@ -65,11 +63,10 @@ class _CurrencyListWidgetState extends ConsumerState<CurrencyListWidget>
   }
 
   Future<void> _loadCustomOrder() async {
-    final prefs = await SharedPreferences.getInstance();
-    final customOrderJson = prefs.getStringList(_customOrderKey) ?? [];
+    final customOrderJson = await getIt<CacheUseCase>().getCustomOrder();
 
     setState(() {
-      _customOrder = customOrderJson;
+      _customOrder = (customOrderJson ?? []);
       // Başlangıçta her zaman custom order
       //TODO: Gereksiz kod.
       currentSortType = SortType.custom;
@@ -260,9 +257,8 @@ class _CurrencyListWidgetState extends ConsumerState<CurrencyListWidget>
               sortType: SortType.name,
             ),
           ),
-          // Buy Price
           Expanded(
-            flex: 2,
+            flex: 3,
             child: _buildSortableHeaderItem(
               title: "Alış",
               sortType: SortType.buy,
@@ -271,7 +267,7 @@ class _CurrencyListWidgetState extends ConsumerState<CurrencyListWidget>
           ),
           // Sell Price
           Expanded(
-            flex: 2,
+            flex: 3,
             child: _buildSortableHeaderItem(
               title: "Satış",
               sortType: SortType.sell,
@@ -414,6 +410,9 @@ class _CurrencyListWidgetState extends ConsumerState<CurrencyListWidget>
           double aValue = double.tryParse(a.satis.toString()) ?? 0.0;
           double bValue = double.tryParse(b.satis.toString()) ?? 0.0;
           comparison = aValue.compareTo(bValue);
+          break;
+
+        case SortType.type:
           break;
         case SortType.custom:
           // Custom sorting is handled above
