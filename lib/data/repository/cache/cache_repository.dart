@@ -78,4 +78,14 @@ final class CacheRepository implements ICacheRepository {
     final AppThemeModel model = AppThemeModel.fromEntity(entity);
     return await _hiveCacheService.saveTheme(model);
   }
+
+  @override
+  Future<List<String>?> getCustomOrder() async {
+    return await _hiveCacheService.getCustomOrder();
+  }
+
+  @override
+  Future<void> saveCustomOrder(List<String> order) async {
+    return await _hiveCacheService.saveCustomOrder(order);
+  }
 }

@@ -18,4 +18,8 @@ abstract interface class ICacheRepository {
   Future<void> saveThemeMode(AppThemeEntity entity);
 
   Future<AppThemeEntity> getThemeMode();
+
+  Future<void> saveCustomOrder(List<String> order);
+
+  Future<List<String>?> getCustomOrder();
 }

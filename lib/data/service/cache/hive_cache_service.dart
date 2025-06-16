@@ -12,11 +12,13 @@ import 'package:path_provider/path_provider.dart';
 final class HiveCacheService implements ICacheService {
   late final Box _offlineActionsBox;
   late final Box _themeBox;
+  late final Box _customOrderBox;
 
   static final HiveCacheService _instance = HiveCacheService._internal();
   static HiveCacheService get instance => _instance;
   static const String _offlineActionsName = "offline_actions";
   static const String _themeName = "theme_box";
+  static const String _customOrderKey = 'currency_custom_order_box';
 
   HiveCacheService._internal();
 
@@ -29,6 +31,7 @@ final class HiveCacheService implements ICacheService {
     Hive.init(appDir.path);
     _offlineActionsBox = await Hive.openBox(_offlineActionsName);
     _themeBox = await Hive.openBox(_themeName);
+    _customOrderBox = await Hive.openBox(_customOrderKey);
   }
 
   @override
@@ -162,5 +165,15 @@ final class HiveCacheService implements ICacheService {
     await box.put("app_theme_key", model.toJson());
     debugPrint("Saved Theme Mode : ${model.themeMode.toString()}");
     return;
+  }
+  @override
+  Future<void> saveCustomOrder(List<String> order) async {
+    await _customOrderBox.put("currency_custom_order", order);
+    return;
+  }
+
+  @override
+  Future<List<String>?> getCustomOrder() async {
+    return await _customOrderBox.get("currency_custom_order");
   }
 }
