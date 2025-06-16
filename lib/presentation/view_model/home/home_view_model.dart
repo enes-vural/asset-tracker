@@ -1,12 +1,5 @@
-// ignore_for_file: use_build_context_synchronously
-
 import 'dart:async';
-
-import 'package:asset_tracker/core/config/theme/extension/currency_widget_title_extension.dart';
-//import 'package:asset_tracker/core/helpers/snackbar.dart';
 import 'package:asset_tracker/core/routers/router.dart' show Routers;
-import 'package:asset_tracker/domain/entities/web/socket/currency_entity.dart';
-import 'package:asset_tracker/domain/usecase/auth/auth_use_case.dart';
 import 'package:asset_tracker/domain/usecase/web/web_use_case.dart';
 import 'package:asset_tracker/injection.dart';
 import 'package:dartz/dartz.dart';
@@ -21,7 +14,6 @@ class HomeViewModel extends ChangeNotifier {
 
   HomeViewModel({required this.getSocketStreamUseCase});
 
-  final TextEditingController searchBarController = TextEditingController();
 
   StreamController? dataStreamController;
   Stream? socketDataStream;
@@ -32,11 +24,6 @@ class HomeViewModel extends ChangeNotifier {
   final StreamController<String> _searchBarStreamController =
       StreamController<String>.broadcast();
 
-  initHomeView() {
-    searchBarController.addListener(() {
-      _searchBarStreamController.add(searchBarController.text);
-    });
-  }
 
   Future<void> getData(WidgetRef ref) async {
     //if stream is already open, we don't need to open it again
@@ -57,23 +44,6 @@ class HomeViewModel extends ChangeNotifier {
     notifyListeners();
   }
 
-  // void calculateProfitBalance(WidgetRef ref) {
-  //   ref.read(appGlobalProvider).scheduleCalculation();
-  //   notifyListeners();
-  // }
-
-  Future<void> signOut(WidgetRef ref, BuildContext context) async {
-    await getIt<SignInUseCase>().signOut();
-    await ref.read(appGlobalProvider.notifier).clearData();
-    //clear old routes before pushing new route
-    //Routers.instance.replaceAll(context, const LoginRoute());
-    //Routers.instance.pushAndRemoveUntil(context, const LoginRoute());
-    notifyListeners();
-  }
-
-  void clearText() {
-    searchBarController.clear();
-  }
 
   Future<void> getErrorStream({required BuildContext parentContext}) async {
     final Stream<Either<SocketErrorEntity, SocketStateResponseModel>>? data =
@@ -87,28 +57,6 @@ class HomeViewModel extends ChangeNotifier {
         debugPrint("Connection STATE : ${success.message}");
       });
     });
-  }
-
-  filterCurrencyData(List<CurrencyEntity>? data, String searchedCurrency) {
-    //filter the list via controller's value
-    if (searchedCurrency.isNotEmpty && searchedCurrency != "") {
-      final filteredData = data?.where((CurrencyEntity element) {
-        return element.code
-                .toLowerCase()
-                .contains(searchedCurrency.toLowerCase()) ||
-            setCurrencyLabel(element.code)
-                .toLowerCase()
-                .contains(searchedCurrency.toLowerCase());
-      }).toList();
-
-      return filteredData;
-    }
-    return data;
-  }
-
-  void routeTradePage(BuildContext context, CurrencyEntity? currency) {
-    // Routers.instance.pushWithInfo(context,
-    //     TradeRoute(currecyCode: currency?.code ?? "", price: currency?.satis));
   }
 
   void routeWalletPage(BuildContext context) {

@@ -82,7 +82,6 @@ class _CurrencyListWidgetState extends ConsumerState<CurrencyListWidget>
     final appGlobal = ref.watch(appGlobalProvider);
 
     List<CurrencyEntity>? globalAssets = appGlobal.globalAssets;
-    final searchStream = viewModel.searchBarStreamController;
     final isDark = Theme.of(context).brightness == Brightness.dark;
 
     return Container(
@@ -123,7 +122,7 @@ class _CurrencyListWidgetState extends ConsumerState<CurrencyListWidget>
             color: DefaultColorPalette.grey300,
           ),
           // List
-          _buildCurrencyList(globalAssets, searchStream, viewModel),
+          _buildCurrencyList(globalAssets, viewModel),
         ],
       ),
     );
@@ -131,55 +130,19 @@ class _CurrencyListWidgetState extends ConsumerState<CurrencyListWidget>
 
   Widget _buildCurrencyList(
     List<CurrencyEntity>? globalAssets,
-    Stream? searchStream,
     HomeViewModel viewModel,
   ) {
     if (globalAssets == null || globalAssets.isEmpty) {
       return const LoadingSkeletonizerWidget();
     }
 
-    return StreamBuilder<String>(
-      stream: searchStream?.cast<String>(),
-      initialData: DefaultLocalStrings.emptyText,
-      builder: (context, searchSnapshot) {
-        String searchQuery =
-            searchSnapshot.data ?? DefaultLocalStrings.emptyText;
+    final sortedData = _sortCurrencyData(globalAssets);
 
-        List<CurrencyEntity>? filteredData = viewModel.filterCurrencyData(
-          globalAssets,
-          searchQuery,
-        );
-
-        // Sıralama uygula
-        filteredData = _sortCurrencyData(filteredData ?? []);
-
-        if (filteredData.isEmpty) {
-          return Padding(
-            padding: const EdgeInsets.all(AppSize.mediumPadd),
-            child: Center(
-              child: Text(
-                searchQuery.isNotEmpty
-                    ? "Arama sonucu bulunamadı"
-                    : "Hiç para birimi bulunamadı",
-                style: TextStyle(
-                  color: DefaultColorPalette.grey400,
-                  fontSize: AppSize.mediumText,
-                ),
-              ),
-            ),
-          );
-        }
-
-        // Eğer custom order modundaysa ReorderableListView kullan
-        if (currentSortType == SortType.custom &&
-            searchQuery.isEmpty &&
-            _isEditMode) {
-          return _buildReorderableList(filteredData, viewModel);
-        } else {
-          return _buildNormalList(filteredData, viewModel);
-        }
-      },
-    );
+    if (currentSortType == SortType.custom && _isEditMode) {
+      return _buildReorderableList(sortedData, viewModel);
+    } else {
+      return _buildNormalList(sortedData, viewModel);
+    }
   }
 
   Widget _buildReorderableList(
@@ -472,11 +435,6 @@ class _CurrencyListWidgetState extends ConsumerState<CurrencyListWidget>
     bool isPlaceholder = false,
   }) {
     return InkWell(
-      onTap: isInDrag
-          ? null
-          : () {
-              viewModel.routeTradePage(context, currency.entity);
-            },
       child: Container(
         padding: const EdgeInsets.symmetric(
             horizontal: AppSize.mediumPadd, vertical: AppSize.smallPadd + 2),
