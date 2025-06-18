@@ -17,34 +17,43 @@ class BalanceTextWidget extends ConsumerWidget {
       return const CustomSizedBox.empty();
     }
 
-    String currenctBalance =
-        ref.watch(appGlobalProvider.notifier).getLatestBalance.toString();
+    String toFormat(String number, bool isWholePart) {
+      // Ondalık ayırma
+      List<String> parts = number.split(".");
+      String wholePart = parts[0]; // Tam sayı kısmı
 
-    DefaultLocalStrings.emptyBalance;
-    // Ondalık ayırma
-    List<String> parts = currenctBalance.split(".");
-    String wholePart = parts[0]; // Tam sayı kısmı
+      String fractionPart =
+          parts.length > 1 ? parts[1] : DefaultLocalStrings.emptyFraction;
 
-    String fractionPart =
-        parts.length > 1 ? parts[1] : DefaultLocalStrings.emptyFraction;
+      //remove fraction part if its length is greater than 2 mean its 3 or more
+      fractionPart =
+          fractionPart.length > 2 ? fractionPart.substring(0, 2) : fractionPart;
 
-    //remove fraction part if its length is greater than 2 mean its 3 or more
-    fractionPart =
-        fractionPart.length > 2 ? fractionPart.substring(0, 2) : fractionPart;
+      //Divide whole part with 3 digits
+      String formattedWholePart = wholePart.replaceAllMapped(
+          RegExpConstant.divideBalance, (Match match) => '${match[1]}.');
 
-    //Divide whole part with 3 digits
-    String formattedWholePart = wholePart.replaceAllMapped(
-        RegExpConstant.divideBalance, (Match match) => '${match[1]}.');
+      if (isWholePart)
+        return formattedWholePart;
+      else
+        return fractionPart;
+    }
 
     return Text.rich(
       TextSpan(
         children: [
           TextSpan(
-            text: "₺$formattedWholePart",
+            text: "₺" +
+                toFormat(
+                    ref.watch(appGlobalProvider).getLatestBalance.toString(),
+                    true),
             style: CustomTextStyle.balanceTextStyle(context, false),
           ),
           TextSpan(
-            text: ",$fractionPart",
+            text: "," +
+                toFormat(
+                    ref.watch(appGlobalProvider).getLatestBalance.toString(),
+                    false),
             style: CustomTextStyle.balanceTextStyle(context, true),
           ),
         ],

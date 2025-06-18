@@ -214,8 +214,10 @@ class AppGlobalProvider extends ChangeNotifier {
       debugPrint(_totalProfit.toString());
 
       final updatedUserData = userData.copyWith(
-          profit: _totalProfitPercent, latestBalance: newBalance);
+          profit: _totalProfitPercent, latestBalance: _latestBalance);
       _userData = updatedUserData;
+
+      //updateUserData(updatedUserData);
 
       notifyListeners();
     } finally {
