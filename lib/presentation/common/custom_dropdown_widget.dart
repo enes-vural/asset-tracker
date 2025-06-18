@@ -1,6 +1,4 @@
 import 'package:asset_tracker/core/config/theme/extension/currency_widget_title_extension.dart';
-import 'package:asset_tracker/core/config/theme/style_theme.dart';
-import 'package:asset_tracker/core/config/theme/default_theme.dart';
 import 'package:asset_tracker/core/config/theme/app_size.dart';
 import 'package:asset_tracker/core/widgets/custom_padding.dart';
 import 'package:asset_tracker/core/widgets/custom_sized_box.dart';
@@ -135,8 +133,21 @@ class _CustomDropDownWidgetState<T>
     });
   }
 
+  // Border rengini tema durumuna göre belirleyen fonksiyon
+  Color _getInputBorderColor(ThemeData theme, bool isDarkMode) {
+    if (isDarkMode) {
+      return theme.colorScheme.outline.withOpacity(0.5);
+    } else {
+      return Colors.grey.shade300;
+    }
+  }
+
   @override
   Widget build(BuildContext context) {
+    // Tema ve dark mode bilgilerini al
+    final theme = Theme.of(context);
+    final isDarkMode = theme.brightness == Brightness.dark;
+    
     // ViewModel'daki selectedCurrency değişikliklerini dinle
     final currentSelectedCurrency = widget.viewModel.selectedCurrency;
 
@@ -154,9 +165,8 @@ class _CustomDropDownWidgetState<T>
         crossAxisAlignment: CrossAxisAlignment.start,
         children: [
           Text(
-            "Asset Type",
+            "Birim",
             style: TextStyle(
-              color: DefaultColorPalette.mainTextBlack,
               fontFamily: 'Manrope',
               fontSize: AppSize.smallText2,
               fontWeight: FontWeight.normal,
@@ -169,12 +179,27 @@ class _CustomDropDownWidgetState<T>
             child: TextFormField(
               controller: _controller,
               decoration: InputDecoration(
-                filled: true,
-                fillColor: DefaultColorPalette.customGreyLightX,
-                enabledBorder: CustomInputDecoration.defaultInputBorder(),
-                focusedBorder: CustomInputDecoration.focusedInputBorder(),
-                errorBorder: CustomInputDecoration.errorInputBorder(),
-                focusedErrorBorder: CustomInputDecoration.errorInputBorder(),
+                border: OutlineInputBorder(
+                  borderRadius: BorderRadius.circular(AppSize.mediumRadius),
+                  borderSide: BorderSide(
+                    color: _getInputBorderColor(theme, isDarkMode),
+                    width: 2.0,
+                  ),
+                ),
+                enabledBorder: OutlineInputBorder(
+                  borderRadius: BorderRadius.circular(AppSize.mediumRadius),
+                  borderSide: BorderSide(
+                    color: _getInputBorderColor(theme, isDarkMode),
+                    width: 2.0,
+                  ),
+                ),
+                focusedBorder: OutlineInputBorder(
+                  borderRadius: BorderRadius.circular(AppSize.mediumRadius),
+                  borderSide: BorderSide(
+                    color: theme.colorScheme.primary,
+                    width: 2.0,
+                  ),
+                ),
               ),
               onChanged: _onChanged,
             ),
@@ -185,8 +210,6 @@ class _CustomDropDownWidgetState<T>
             Container(
               constraints: BoxConstraints(maxHeight: 200.h),
               decoration: BoxDecoration(
-                color: DefaultColorPalette.vanillaWhite,
-                border: Border.all(color: DefaultColorPalette.customGreyLight),
                 borderRadius: BorderRadius.circular(AppSize.mediumRadius),
               ),
               child: ListView.builder(

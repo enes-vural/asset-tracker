@@ -15,7 +15,6 @@ import 'package:asset_tracker/presentation/view/widgets/loading_skeletonizer_wid
 import 'package:asset_tracker/presentation/view_model/home/home_view_model.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
-import 'package:shared_preferences/shared_preferences.dart';
 
 enum SortType {
   name,
@@ -39,18 +38,97 @@ class _CurrencyListWidgetState extends ConsumerState<CurrencyListWidget>
   SortType currentSortType = SortType.custom;
   SortOrder currentSortOrder = SortOrder.ascending;
 
-  // Cache için key
-  static const String _customOrderKey = 'currency_custom_order';
-
   // Kullanıcı özel sıralaması
   List<String> _customOrder = [];
   bool _isEditMode = false;
+
+  // Auto-scroll için
+  Timer? _autoScrollTimer;
+  bool _isDragging = false;
+  double _currentDragY = 0; // Şu anki drag pozisyonu
 
   @override
   void initState() {
     super.initState();
     _loadCustomOrder();
   }
+
+  @override
+  void dispose() {
+    _autoScrollTimer?.cancel();
+    super.dispose();
+  }
+
+  // Ana scroll controller'ı bul
+  ScrollController? _findScrollController(BuildContext context) {
+    ScrollController? controller;
+    context.visitAncestorElements((element) {
+      if (element.widget is CustomScrollView) {
+        final scrollView = element.widget as CustomScrollView;
+        controller = scrollView.controller;
+        return false;
+      }
+      return true;
+    });
+    return controller;
+  }
+
+  void _updateAutoScroll() {
+    final scrollController = _findScrollController(context);
+    if (scrollController == null || !_isDragging) return;
+
+    final screenHeight = MediaQuery.of(context).size.height;
+    final scrollPosition = scrollController.position;
+
+    bool shouldScroll = false;
+    double scrollDelta = 0;
+
+    // Üst %20'de yukarı scroll
+    if (_currentDragY < screenHeight * 0.2) {
+      if (scrollPosition.pixels > scrollPosition.minScrollExtent) {
+        shouldScroll = true;
+        scrollDelta = -20; // Yukarı scroll
+      }
+    }
+    // Alt %20'de aşağı scroll
+    else if (_currentDragY > screenHeight * 0.8) {
+      if (scrollPosition.pixels < scrollPosition.maxScrollExtent) {
+        shouldScroll = true;
+        scrollDelta = 20; // Aşağı scroll
+      }
+    }
+
+    if (shouldScroll) {
+      scrollController.animateTo(
+        (scrollPosition.pixels + scrollDelta).clamp(
+          scrollPosition.minScrollExtent,
+          scrollPosition.maxScrollExtent,
+        ),
+        duration: Duration(milliseconds: 50),
+        curve: Curves.linear,
+      );
+    }
+  }
+
+  void _startAutoScrollTimer() {
+    if (_autoScrollTimer != null) return;
+
+    _autoScrollTimer = Timer.periodic(Duration(milliseconds: 100), (timer) {
+      if (!_isDragging) {
+        timer.cancel();
+        _autoScrollTimer = null;
+        return;
+      }
+      _updateAutoScroll();
+    });
+  }
+
+  void _stopAutoScroll() {
+    _autoScrollTimer?.cancel();
+    _autoScrollTimer = null;
+    _isDragging = false;
+  }
+
 
   // Özel sıralamayı kaydet
   Future<void> _saveCustomOrder(List<String> order) async {
@@ -67,8 +145,6 @@ class _CurrencyListWidgetState extends ConsumerState<CurrencyListWidget>
 
     setState(() {
       _customOrder = (customOrderJson ?? []);
-      // Başlangıçta her zaman custom order
-      //TODO: Gereksiz kod.
       currentSortType = SortType.custom;
     });
   }
@@ -152,6 +228,24 @@ class _CurrencyListWidgetState extends ConsumerState<CurrencyListWidget>
 
         return LongPressDraggable<int>(
           data: index,
+          onDragStarted: () {
+            setState(() {
+              _isDragging = true;
+            });
+            _startAutoScrollTimer(); // Timer'ı başlat
+          },
+          onDragEnd: (details) {
+            _stopAutoScroll();
+          },
+          onDragUpdate: (details) {
+            debugPrint("---------");
+
+            debugPrint(details.globalPosition.dy.toString());
+            debugPrint("---------");
+            if (_isDragging) {
+              _currentDragY = details.globalPosition.dy; // Pozisyonu güncelle
+            }
+          },
           feedback: Material(
             elevation: 8,
             borderRadius: BorderRadius.circular(AppSize.smallRadius),
@@ -282,7 +376,14 @@ class _CurrencyListWidgetState extends ConsumerState<CurrencyListWidget>
             ),
             onPressed: () {
               setState(() {
-                _isEditMode = !_isEditMode;
+                //avoid to open edit mode while sorting other types.
+                if (currentSortType == SortType.custom) {
+                  _isEditMode = !_isEditMode;
+                  // Edit mode kapanırken auto-scroll'u durdur
+                  if (!_isEditMode) {
+                    _stopAutoScroll();
+                  }
+                }
               });
             },
             tooltip: _isEditMode ? "Düzenlemeyi bitir" : "Sıralamayı düzenle",

@@ -33,27 +33,28 @@ class BalanceTextWidget extends ConsumerWidget {
       String formattedWholePart = wholePart.replaceAllMapped(
           RegExpConstant.divideBalance, (Match match) => '${match[1]}.');
 
-      if (isWholePart)
+      if (isWholePart) {
         return formattedWholePart;
-      else
+      } else {
         return fractionPart;
+      }
     }
 
     return Text.rich(
       TextSpan(
         children: [
           TextSpan(
-            text: "₺" +
-                toFormat(
+            text:
+                "₺${toFormat(
                     ref.watch(appGlobalProvider).getLatestBalance.toString(),
-                    true),
+                    true)}",
             style: CustomTextStyle.balanceTextStyle(context, false),
           ),
           TextSpan(
-            text: "," +
-                toFormat(
+            text:
+                ",${toFormat(
                     ref.watch(appGlobalProvider).getLatestBalance.toString(),
-                    false),
+                    false)}",
             style: CustomTextStyle.balanceTextStyle(context, true),
           ),
         ],
