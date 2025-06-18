@@ -147,7 +147,7 @@ class TradeViewModel extends ChangeNotifier {
 
     await request.fold((failure) {
       EasySnackBar.show(context, failure.message);
-    }, (success) async {
+    }, (BuyCurrencyEntity success) async {
       //TODO: Test edilecek
       getIt<CacheUseCase>().removeOfflineAction(offlineKey);
       EasySnackBar.show(
@@ -160,28 +160,21 @@ class TradeViewModel extends ChangeNotifier {
           },
         ),
       );
-      UserDataEntity? userData =
-          ref.watch(appGlobalProvider.notifier).getUserData;
 
       //alım satım durumlaında bizden kaynaklı olan veya olmayan bir durumdan
       //dolayı işlem başarılı zannedilirse ve kullanıcı bilgileri güncellenmezse
       //direkt olarak son bakiye hesaplamalarını provider üzerinden yönetiyoruz
       //ama bu durumlara karşıda bir güvenlik önlemi olarak kullanıcı bilgilerini
       //her işlem sonrasında database den çekerek güncelliyoruz.
-      final latestUserData = await getIt<DatabaseUseCase>()
-          .getUserData(UserUidEntity(userId: currentUserId));
+      if (success.userId == null) {
+        EasySnackBar.show(context, "Bir Hata Oluştu");
+        debugPrint("Line: 171 BuyCurrencyEntity userID is null");
+        return;
+      }
 
-      await latestUserData.fold(
-        (l) {
-          EasySnackBar.show(context, l.message);
-        },
-        (newUserData) async {
-          userData = newUserData;
-          await ref
-              .read(appGlobalProvider.notifier)
-              .updateUserData(newUserData.copyWith());
-        },
-      );
+      await ref
+          .read(appGlobalProvider)
+          .getLatestUserData(ref, UserUidEntity(userId: success.userId!));
 
       amountController.clear();
       priceUnitController.clear();
