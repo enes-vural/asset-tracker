@@ -69,7 +69,7 @@ class AppGlobalProvider extends ChangeNotifier {
 
   updateUserData(UserDataEntity entity) {
     _userData = entity;
-    _userBalance = entity.balance ?? 0.0; // User balance'ı burada set et
+    _userBalance = entity.balance; // User balance'ı burada set et
     _userCurrencies ??= []; // Null ise boş liste oluştur
     _userCurrencies!.clear(); // Önceki verileri temizle
 
@@ -175,7 +175,7 @@ class AppGlobalProvider extends ChangeNotifier {
       }
 
       List<UserCurrencyEntity> userCurrencyList = userData.currencyList ?? [];
-      double userBalance = userData.balance ?? 0.0;
+      double userBalance = userData.balance;
       double newBalance = userBalance;
 
       for (UserCurrencyEntity element in userCurrencyList) {

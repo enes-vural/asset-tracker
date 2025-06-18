@@ -1,5 +1,4 @@
 // ignore_for_file: prefer_const_constructors
-
 import 'package:asset_tracker/core/config/theme/app_size.dart';
 import 'package:asset_tracker/core/config/theme/style_theme.dart';
 import 'package:asset_tracker/core/widgets/custom_align.dart';
@@ -23,6 +22,9 @@ class HomeView extends ConsumerStatefulWidget {
 }
 
 class _HomeViewState extends ConsumerState<HomeView> {
+  late ScrollController _scrollController;
+  bool _isAtTop = true;
+
   Future<void> callData() async =>
       await ref.read(homeViewModelProvider).getData(ref);
 
@@ -32,18 +34,53 @@ class _HomeViewState extends ConsumerState<HomeView> {
 
   @override
   void initState() {
+    _scrollController = ScrollController();
+    _scrollController.addListener(_scrollListener);
     callData();
     getErrorStream();
     super.initState();
   }
 
   @override
+  void dispose() {
+    _scrollController.removeListener(_scrollListener);
+    _scrollController.dispose();
+    super.dispose();
+  }
+
+  void _scrollListener() {
+    setState(() {
+      _isAtTop = _scrollController.offset <= 100;
+    });
+  }
+
+  void _scrollToTopOrBottom() {
+    if (_isAtTop) {
+      // Aşağıya scroll
+      _scrollController.animateTo(
+        _scrollController.position.maxScrollExtent,
+        duration: Duration(milliseconds: 800),
+        curve: Curves.easeInOut,
+      );
+    } else {
+      // Yukarıya scroll
+      _scrollController.animateTo(
+        0,
+        duration: Duration(milliseconds: 800),
+        curve: Curves.easeInOut,
+      );
+    }
+  }
+
+  @override
   Widget build(BuildContext context) {
     final authState = ref.watch(authGlobalProvider);
+    
     return Scaffold(
       body: Stack(
         children: [
           CustomScrollView(
+            controller: _scrollController,
             physics: const BouncingScrollPhysics(),
             slivers: [
               SliverToBoxAdapter(
@@ -64,10 +101,11 @@ class _HomeViewState extends ConsumerState<HomeView> {
                       const CustomSizedBox.mediumGap(),
                       _dateTimeTextWidget(),
                       const CustomSizedBox.smallGap(),
-
                       const CurrencyListWidget(),
                       const CustomSizedBox.hugeGap(),
                       // Bottom navigation için ekstra boşluk
+                      const CustomSizedBox.hugeGap(),
+                      const CustomSizedBox.hugeGap(),
                     ],
                   ),
                 ),
@@ -75,6 +113,18 @@ class _HomeViewState extends ConsumerState<HomeView> {
             ],
           ),
         ],
+      ),
+      floatingActionButton: FloatingActionButton(
+        onPressed: _scrollToTopOrBottom,
+        backgroundColor: Theme.of(context).colorScheme.primary,
+        child: AnimatedSwitcher(
+          duration: Duration(milliseconds: 300),
+          child: Icon(
+            _isAtTop ? Icons.keyboard_arrow_down : Icons.keyboard_arrow_up,
+            key: ValueKey(_isAtTop),
+            color: Colors.white,
+          ),
+        ),
       ),
     );
   }
