@@ -5,13 +5,13 @@ import 'package:asset_tracker/core/config/theme/app_size.dart';
 import 'package:asset_tracker/core/config/theme/style_theme.dart';
 import 'package:asset_tracker/core/constants/enums/widgets/currency_card_widget_enums.dart';
 import 'package:asset_tracker/core/config/theme/extension/responsive_extension.dart';
+import 'package:asset_tracker/core/constants/string_constant.dart';
 import 'package:asset_tracker/core/mixins/get_currency_icon_mixin.dart';
 import 'package:asset_tracker/core/widgets/custom_sized_box.dart';
 import 'package:asset_tracker/domain/entities/web/socket/currency_entity.dart';
 import 'package:asset_tracker/domain/entities/web/socket/currency_widget_entity.dart';
 import 'package:asset_tracker/domain/usecase/cache/cache_use_case.dart';
 import 'package:asset_tracker/injection.dart';
-import 'package:asset_tracker/presentation/view/widgets/loading_skeletonizer_widget.dart';
 import 'package:asset_tracker/presentation/view_model/home/home_view_model.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
@@ -129,7 +129,6 @@ class _CurrencyListWidgetState extends ConsumerState<CurrencyListWidget>
     _isDragging = false;
   }
 
-
   // Özel sıralamayı kaydet
   Future<void> _saveCustomOrder(List<String> order) async {
     getIt<CacheUseCase>().saveCustomOrder(order);
@@ -156,6 +155,7 @@ class _CurrencyListWidgetState extends ConsumerState<CurrencyListWidget>
 
     List<CurrencyEntity>? globalAssets = appGlobal.globalAssets;
     final isDark = Theme.of(context).brightness == Brightness.dark;
+    final searchStream = viewModel.searchBarStreamController;
 
     return Container(
       width: ResponsiveSize(context).screenWidth,
@@ -195,7 +195,7 @@ class _CurrencyListWidgetState extends ConsumerState<CurrencyListWidget>
             color: DefaultColorPalette.grey300,
           ),
           // List
-          _buildCurrencyList(globalAssets, viewModel),
+          _buildCurrencyList(globalAssets, searchStream, viewModel),
         ],
       ),
     );
@@ -203,19 +203,50 @@ class _CurrencyListWidgetState extends ConsumerState<CurrencyListWidget>
 
   Widget _buildCurrencyList(
     List<CurrencyEntity>? globalAssets,
+    Stream? searchStream,
     HomeViewModel viewModel,
   ) {
-    if (globalAssets == null || globalAssets.isEmpty) {
-      return const LoadingSkeletonizerWidget();
-    }
+    return StreamBuilder<String>(
+        stream: searchStream?.cast<String>(),
+        initialData: DefaultLocalStrings.emptyText,
+        builder: (context, searchSnapshot) {
+          String searchQuery =
+              searchSnapshot.data ?? DefaultLocalStrings.emptyText;
 
-    final sortedData = _sortCurrencyData(globalAssets);
+          List<CurrencyEntity>? filteredData = viewModel.filterCurrencyData(
+            globalAssets,
+            searchQuery,
+          );
 
-    if (currentSortType == SortType.custom && _isEditMode) {
-      return _buildReorderableList(sortedData, viewModel);
-    } else {
-      return _buildNormalList(sortedData, viewModel);
-    }
+          // Sıralama uygula
+          filteredData = _sortCurrencyData(filteredData ?? []);
+
+          if (filteredData.isEmpty) {
+            return Padding(
+              padding: const EdgeInsets.all(AppSize.mediumPadd),
+              child: Center(
+                child: Text(
+                  searchQuery.isNotEmpty
+                      ? "Arama sonucu bulunamadı"
+                      : "Hiç para birimi bulunamadı",
+                  style: TextStyle(
+                    color: DefaultColorPalette.grey400,
+                    fontSize: AppSize.mediumText,
+                  ),
+                ),
+              ),
+            );
+          }
+
+          // Eğer custom order modundaysa ReorderableListView kullan
+          if (currentSortType == SortType.custom &&
+              searchQuery.isEmpty &&
+              _isEditMode) {
+            return _buildReorderableList(filteredData, viewModel);
+          } else {
+            return _buildNormalList(filteredData, viewModel);
+          }
+        });
   }
 
   Widget _buildReorderableList(
@@ -616,7 +647,7 @@ class _CurrencyListWidgetState extends ConsumerState<CurrencyListWidget>
                     currency.alis.toString(),
                     style: CustomTextStyle.blackColorBoldPoppins(
                       context,
-                      AppSize.small2Text,
+                      AppSize.smallText,
                     ),
                     textAlign: TextAlign.center,
                   ),

@@ -1,5 +1,7 @@
 import 'dart:async';
+import 'package:asset_tracker/core/config/theme/extension/currency_widget_title_extension.dart';
 import 'package:asset_tracker/core/routers/router.dart' show Routers;
+import 'package:asset_tracker/domain/entities/web/socket/currency_entity.dart';
 import 'package:asset_tracker/domain/usecase/web/web_use_case.dart';
 import 'package:asset_tracker/injection.dart';
 import 'package:dartz/dartz.dart';
@@ -14,6 +16,7 @@ class HomeViewModel extends ChangeNotifier {
 
   HomeViewModel({required this.getSocketStreamUseCase});
 
+  final TextEditingController searchBarController = TextEditingController();
 
   StreamController? dataStreamController;
   Stream? socketDataStream;
@@ -24,6 +27,11 @@ class HomeViewModel extends ChangeNotifier {
   final StreamController<String> _searchBarStreamController =
       StreamController<String>.broadcast();
 
+  initHomeView() {
+    searchBarController.addListener(() {
+      _searchBarStreamController.add(searchBarController.text);
+    });
+  }
 
   Future<void> getData(WidgetRef ref) async {
     //if stream is already open, we don't need to open it again
@@ -44,7 +52,6 @@ class HomeViewModel extends ChangeNotifier {
     notifyListeners();
   }
 
-
   Future<void> getErrorStream({required BuildContext parentContext}) async {
     final Stream<Either<SocketErrorEntity, SocketStateResponseModel>>? data =
         getSocketStreamUseCase.getErrorStream();
@@ -57,6 +64,27 @@ class HomeViewModel extends ChangeNotifier {
         debugPrint("Connection STATE : ${success.message}");
       });
     });
+  }
+
+  filterCurrencyData(List<CurrencyEntity>? data, String searchedCurrency) {
+    //filter the list via controller's value
+    if (searchedCurrency.isNotEmpty && searchedCurrency != "") {
+      final filteredData = data?.where((CurrencyEntity element) {
+        return element.code
+                .toLowerCase()
+                .contains(searchedCurrency.toLowerCase()) ||
+            setCurrencyLabel(element.code)
+                .toLowerCase()
+                .contains(searchedCurrency.toLowerCase());
+      }).toList();
+
+      return filteredData;
+    }
+    return data;
+  }
+
+  void clearText() {
+    searchBarController.clear();
   }
 
   void routeWalletPage(BuildContext context) {

@@ -28,8 +28,7 @@ class CustomIcon extends Icon {
   CustomIcon.exit({super.key})
       : super(IconDataConstants.exit, color: DefaultColorPalette.grey500);
 
-  CustomIcon.searchIcon({super.key})
-      : super(IconDataConstants.search, color: DefaultColorPalette.grey600);
+  const CustomIcon.searchIcon({super.key}) : super(IconDataConstants.search);
 }
 
 final class IconDataConstants {

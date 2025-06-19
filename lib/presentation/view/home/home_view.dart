@@ -11,7 +11,6 @@ import 'package:asset_tracker/injection.dart';
 import 'package:asset_tracker/presentation/view/home/widgets/balance_profit_text_widget.dart';
 import 'package:asset_tracker/presentation/view/home/widgets/balance_text_widget.dart';
 import 'package:asset_tracker/presentation/view/home/widgets/currency_card_widget.dart';
-import 'package:asset_tracker/presentation/view_model/home/home_view_model.dart';
 
 @RoutePage()
 class HomeView extends ConsumerStatefulWidget {
@@ -21,9 +20,14 @@ class HomeView extends ConsumerStatefulWidget {
   ConsumerState<ConsumerStatefulWidget> createState() => _HomeViewState();
 }
 
-class _HomeViewState extends ConsumerState<HomeView> {
+class _HomeViewState extends ConsumerState<HomeView>
+    with TickerProviderStateMixin {
   late ScrollController _scrollController;
-  bool _isAtTop = true;
+  late AnimationController _searchAnimationController;
+  late Animation<double> _searchAnimation;
+  late FocusNode _searchFocusNode;
+
+  bool _isSearchOpen = false;
 
   Future<void> callData() async =>
       await ref.read(homeViewModelProvider).getData(ref);
@@ -32,10 +36,37 @@ class _HomeViewState extends ConsumerState<HomeView> {
       .read(homeViewModelProvider)
       .getErrorStream(parentContext: context);
 
+  Future<void> initalizeVM() async =>
+      await ref.read(homeViewModelProvider).initHomeView();
+
   @override
   void initState() {
     _scrollController = ScrollController();
-    _scrollController.addListener(_scrollListener);
+    _searchFocusNode = FocusNode();
+
+    initalizeVM();
+    _searchAnimationController = AnimationController(
+      duration: Duration(milliseconds: 400),
+      vsync: this,
+    );
+
+    _searchAnimation = CurvedAnimation(
+      parent: _searchAnimationController,
+      curve: Curves.easeInOut,
+    );
+
+    // Animation listener - animasyon bitince focus ver
+    _searchAnimationController.addStatusListener((status) {
+      if (status == AnimationStatus.completed && _isSearchOpen) {
+        // Küçük bir delay ile focus ver (animasyon tamamen bitsin diye)
+        Future.delayed(Duration(milliseconds: 50), () {
+          if (mounted) {
+            _searchFocusNode.requestFocus();
+          }
+        });
+      }
+    });
+
     callData();
     getErrorStream();
     super.initState();
@@ -43,39 +74,32 @@ class _HomeViewState extends ConsumerState<HomeView> {
 
   @override
   void dispose() {
-    _scrollController.removeListener(_scrollListener);
     _scrollController.dispose();
+    _searchAnimationController.dispose();
+    _searchFocusNode.dispose();
     super.dispose();
   }
 
-  void _scrollListener() {
+  void _toggleSearch() {
     setState(() {
-      _isAtTop = _scrollController.offset <= 100;
+      _isSearchOpen = !_isSearchOpen;
     });
-  }
 
-  void _scrollToTopOrBottom() {
-    if (_isAtTop) {
-      // Aşağıya scroll
-      _scrollController.animateTo(
-        _scrollController.position.maxScrollExtent,
-        duration: Duration(milliseconds: 800),
-        curve: Curves.easeInOut,
-      );
+    if (_isSearchOpen) {
+      _searchAnimationController.forward();
     } else {
-      // Yukarıya scroll
-      _scrollController.animateTo(
-        0,
-        duration: Duration(milliseconds: 800),
-        curve: Curves.easeInOut,
-      );
+      _searchAnimationController.reverse();
+      _searchFocusNode.unfocus(); // Arama kapanırken focus'u kaldır
+      // ViewModel'den text'i temizle
+      ref.read(homeViewModelProvider).clearText();
     }
   }
 
   @override
   Widget build(BuildContext context) {
     final authState = ref.watch(authGlobalProvider);
-    
+    final viewModel = ref.read(homeViewModelProvider);
+
     return Scaffold(
       body: Stack(
         children: [
@@ -89,6 +113,84 @@ class _HomeViewState extends ConsumerState<HomeView> {
                     crossAxisAlignment: CrossAxisAlignment.start,
                     mainAxisAlignment: MainAxisAlignment.start,
                     children: [
+                      // Animated Search Bar
+                      AnimatedBuilder(
+                        animation: _searchAnimation,
+                        builder: (context, child) {
+                          return SizeTransition(
+                            sizeFactor: _searchAnimation,
+                            child: Container(
+                              margin: EdgeInsets.only(
+                                top: MediaQuery.of(context).padding.top + 16,
+                                bottom: 16,
+                              ),
+                              padding: EdgeInsets.symmetric(horizontal: 16),
+                              decoration: BoxDecoration(
+                                color: Theme.of(context).colorScheme.surface,
+                                borderRadius: BorderRadius.circular(25),
+                                boxShadow: [
+                                  BoxShadow(
+                                    color: Colors.black.withOpacity(0.1),
+                                    blurRadius: 10,
+                                    offset: Offset(0, 2),
+                                  ),
+                                ],
+                                border: Border.all(
+                                  color: Theme.of(context)
+                                      .colorScheme
+                                      .outline
+                                      .withOpacity(0.2),
+                                ),
+                              ),
+                              child: Row(
+                                children: [
+                                  Icon(
+                                    Icons.search,
+                                    color: Theme.of(context)
+                                        .colorScheme
+                                        .onSurface
+                                        .withOpacity(0.6),
+                                  ),
+                                  SizedBox(width: 12),
+                                  Expanded(
+                                    child: TextField(
+                                      controller: viewModel.searchBarController,
+                                      focusNode: _searchFocusNode,
+                                      decoration: InputDecoration(
+                                        hintText: "Döviz veya altın ara...",
+                                        border: InputBorder.none,
+                                        hintStyle: TextStyle(
+                                          color: Theme.of(context)
+                                              .colorScheme
+                                              .onSurface
+                                              .withOpacity(0.5),
+                                        ),
+                                      ),
+                                      style: TextStyle(
+                                        color: Theme.of(context)
+                                            .colorScheme
+                                            .onSurface,
+                                      ),
+                                    ),
+                                  ),
+                                  IconButton(
+                                    icon: Icon(
+                                      Icons.clear,
+                                      color: Theme.of(context)
+                                          .colorScheme
+                                          .onSurface
+                                          .withOpacity(0.6),
+                                    ),
+                                    onPressed: () {
+                                      viewModel.clearText();
+                                    },
+                                  ),
+                                ],
+                              ),
+                            ),
+                          );
+                        },
+                      ),
                       //const UserEmailTextWidget(),
                       //const CustomSizedBox.hugeGap(),
                       BalanceTextWidget(),
@@ -115,14 +217,20 @@ class _HomeViewState extends ConsumerState<HomeView> {
         ],
       ),
       floatingActionButton: FloatingActionButton(
-        onPressed: _scrollToTopOrBottom,
+        onPressed: _toggleSearch,
         backgroundColor: Theme.of(context).colorScheme.primary,
         child: AnimatedSwitcher(
-          duration: Duration(milliseconds: 300),
+          duration: Duration(milliseconds: 150),
+          transitionBuilder: (Widget child, Animation<double> animation) {
+            return RotationTransition(
+              turns: animation,
+              child: child,
+            );
+          },
           child: Icon(
-            _isAtTop ? Icons.keyboard_arrow_down : Icons.keyboard_arrow_up,
-            key: ValueKey(_isAtTop),
-            color: Colors.white,
+            _isSearchOpen ? Icons.close : Icons.search,
+            key: ValueKey(_isSearchOpen),
+            color: Theme.of(context).colorScheme.onPrimary,
           ),
         ),
       ),
