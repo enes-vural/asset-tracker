@@ -1,3 +1,4 @@
+import 'package:asset_tracker/core/config/theme/app_size.dart';
 import 'package:asset_tracker/core/constants/string_constant.dart';
 import 'package:asset_tracker/core/config/theme/default_theme.dart';
 import 'package:asset_tracker/core/config/theme/extension/responsive_extension.dart';
@@ -41,6 +42,7 @@ class SkeletonListTileWidget extends StatelessWidget {
       subtitle: const Text(DefaultLocalStrings.censoredText),
       leading: CircleAvatar(
         backgroundColor: DefaultColorPalette.grey300,
+        radius: AppSize.smallIcon,
       ),
     );
   }

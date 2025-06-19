@@ -1,3 +1,4 @@
+import 'package:asset_tracker/core/config/theme/extension/currency_widget_title_extension.dart';
 import 'package:asset_tracker/core/constants/database/transaction_type_enum.dart';
 import 'package:asset_tracker/core/constants/global/general_constants.dart';
 import 'package:asset_tracker/core/constants/string_constant.dart';
@@ -30,81 +31,55 @@ class TransactionCardLVBWidget extends ConsumerWidget {
       itemCount: entry.value.length,
       itemBuilder: (context, index) {
         var transaction = entry.value[index];
-        return Card(
-          shape: RoundedRectangleBorder(
-            borderRadius: BorderRadius.circular(AppSize.mediumRadius),
-          ),
-          elevation: 4,
-          child: ListTile(
-            title: Row(
-              mainAxisAlignment: MainAxisAlignment.spaceBetween,
-              children: [
-                Text(
-                  transaction.currencyCode,
-                  style: TextStyle(
-                    color: DefaultColorPalette.grey700,
-                    fontSize: AppSize.small2Text,
-                  ),
-                ),
-                _transactionDateTextWidget(transaction),
-              ],
+        return Container(
+          margin: const EdgeInsets.symmetric(horizontal: 16, vertical: 4),
+          child: Card(
+            elevation: 3,
+            shadowColor: Colors.black.withOpacity(0.1),
+            shape: RoundedRectangleBorder(
+              borderRadius: BorderRadius.circular(12),
             ),
-            subtitle: Row(
-              children: [
-                Column(
-                  crossAxisAlignment: CrossAxisAlignment.start,
-                  children: [
-                    _transactionAmountTextWidget(transaction),
-                    _transactionPerPriceTextWidget(transaction),
-                    const CustomSizedBox.mediumGap(),
-                    TextButton(
-                      style: TextButton.styleFrom(
-                        padding: EdgeInsets.zero,
-                        minimumSize: Size.zero,
-                        tapTargetSize: MaterialTapTargetSize.shrinkWrap,
-                      ),
-                      onPressed: () async {
-                        print("Remove button pressed");
-                        await viewModel.removeTransaction(ref, transaction);
-
-                        // Handle remove asset action
-                        // Handle sell asset action
-                      },
-                      child: const Text(
-                        "Remove",
-                        style: TextStyle(color: Colors.red),
-                      ),
-                    ),
-                  ],
-                ),
-                const Expanded(child: CustomSizedBox.empty()),
-                Column(
-                  crossAxisAlignment: CrossAxisAlignment.end,
-                  children: [
-                    const CustomSizedBox.smallGap(),
-                    _transactionPriceTextWidget(transaction),
-                    const CustomSizedBox.mediumGap(),
+            child: Container(
+              decoration: BoxDecoration(
+                borderRadius: BorderRadius.circular(12),
+                gradient: LinearGradient(
+                  begin: Alignment.centerLeft,
+                  end: Alignment.centerRight,
+                  colors: [
+                    Colors.white,
                     transaction.transactionType == TransactionTypeEnum.BUY
-                        ? TextButton(
-                            style: TextButton.styleFrom(
-                              padding: EdgeInsets.zero,
-                              minimumSize: Size.zero,
-                              tapTargetSize: MaterialTapTargetSize.shrinkWrap,
-                            ),
-                            onPressed: () async {
-                              print("Sell button pressed");
-                              await viewModel.sellAsset(ref, transaction);
-                            },
-                            child: const Text(
-                              "Sell",
-                              style:
-                                  TextStyle(color: Colors.green, fontSize: 16),
-                            ),
-                          )
-                        : const Text("Sold")
+                        ? Colors.blue.shade50.withOpacity(0.3)
+                        : Colors.green.shade50.withOpacity(0.3),
                   ],
                 ),
-              ],
+                border: Border.all(
+                  color: transaction.transactionType == TransactionTypeEnum.BUY
+                      ? Colors.blue.withOpacity(0.2)
+                      : Colors.green.withOpacity(0.2),
+                  width: 1,
+                ),
+              ),
+              child: Padding(
+                padding: const EdgeInsets.all(16),
+                child: Row(
+                  children: [
+                    // Left - Currency & Type
+                    _buildCurrencySection(transaction),
+
+                    const SizedBox(width: 16),
+
+                    // Center - Transaction Details
+                    Expanded(
+                      child: _buildTransactionDetails(transaction),
+                    ),
+
+                    const SizedBox(width: 12),
+
+                    // Right - Amount & Date
+                    _buildAmountSection(transaction),
+                  ],
+                ),
+              ),
             ),
           ),
         );
@@ -112,39 +87,119 @@ class TransactionCardLVBWidget extends ConsumerWidget {
     );
   }
 
-  Text _transactionPerPriceTextWidget(UserCurrencyEntity transaction) {
-    return Text(
-        "${LocaleKeys.dashboard_price.tr()}: ${transaction.price.toNumberWithTurkishFormat()}",
-        style: const TextStyle(color: Colors.grey, fontSize: 14));
-  }
-
-  Text _transactionAmountTextWidget(UserCurrencyEntity transaction) {
-    return Text(
-      "${LocaleKeys.dashboard_amount.tr()}: ${transaction.amount}",
-      style: const TextStyle(color: Colors.grey, fontSize: 14),
+  Widget _buildCurrencySection(UserCurrencyEntity transaction) {
+    final isBuy = transaction.transactionType == TransactionTypeEnum.BUY;
+    return Column(
+      children: [
+        const SizedBox(height: 6),
+        Text(
+          transaction.currencyCode.getCurrencyTitle(),
+          style: const TextStyle(
+            fontSize: 12,
+            fontWeight: FontWeight.bold,
+            color: Colors.black87,
+          ),
+        ),
+        Text(
+          isBuy ? "ALIŞ" : "SATIŞ",
+          style: TextStyle(
+            fontSize: 9,
+            fontWeight: FontWeight.w600,
+            color: isBuy ? Colors.blue.shade600 : Colors.green.shade600,
+          ),
+        ),
+      ],
     );
   }
 
-  Text _transactionDateTextWidget(UserCurrencyEntity transaction) {
-    return Text(GeneralConstants.dateFormat.format(transaction.buyDate));
+  Widget _buildTransactionDetails(UserCurrencyEntity transaction) {
+    return Column(
+      crossAxisAlignment: CrossAxisAlignment.start,
+      children: [
+        Row(
+          children: [
+            Icon(
+              Icons.account_balance_wallet,
+              size: 14,
+              color: Colors.grey.shade600,
+            ),
+            const SizedBox(width: 6),
+            Text(
+              "${transaction.amount}",
+              style: const TextStyle(
+                fontSize: 14,
+                fontWeight: FontWeight.w600,
+                color: Colors.black87,
+              ),
+            ),
+          ],
+        ),
+        const SizedBox(height: 8),
+        Row(
+          children: [
+     
+            const SizedBox(width: 6),
+            Text(
+              "₺${transaction.price.toNumberWithTurkishFormat()}",
+              style: const TextStyle(
+                fontSize: 13,
+                fontWeight: FontWeight.w500,
+                color: Colors.black87,
+              ),
+            ),
+            const SizedBox(width: 4),
+          ],
+        ),
+      ],
+    );
   }
 
-  Text _transactionPriceTextWidget(UserCurrencyEntity transaction) {
-    if (transaction.transactionType == TransactionTypeEnum.SELL) {
-      return Text(
-        DefaultLocalStrings.plus +
-            DefaultLocalStrings.turkishLira +
-            (transaction.price * transaction.amount)
-                .toNumberWithTurkishFormat(),
-        style: const TextStyle(
-            color: DefaultColorPalette.vanillaGreen, fontSize: 16),
-      );
-    }
-    return Text(
-      DefaultLocalStrings.minus +
-          DefaultLocalStrings.turkishLira +
-          (transaction.price * transaction.amount).toNumberWithTurkishFormat(),
-      style: const TextStyle(color: DefaultColorPalette.errorRed, fontSize: 16),
+  Widget _buildAmountSection(UserCurrencyEntity transaction) {
+    final totalAmount = transaction.price * transaction.amount;
+    final isProfit = transaction.transactionType == TransactionTypeEnum.SELL;
+    final color = isProfit
+        ? DefaultColorPalette.vanillaGreen
+        : DefaultColorPalette.errorRed;
+
+    return Column(
+      crossAxisAlignment: CrossAxisAlignment.end,
+      children: [
+        Container(
+          padding: const EdgeInsets.symmetric(horizontal: 8, vertical: 4),
+          decoration: BoxDecoration(
+            color: color.withOpacity(0.1),
+            borderRadius: BorderRadius.circular(8),
+            border: Border.all(
+              color: color.withOpacity(0.3),
+              width: 1,
+            ),
+          ),
+          child: Text(
+            "${isProfit ? '+' : '-'}₺${totalAmount.toNumberWithTurkishFormat()}",
+            style: TextStyle(
+              color: color,
+              fontSize: 14,
+              fontWeight: FontWeight.bold,
+            ),
+          ),
+        ),
+        const SizedBox(height: 8),
+        Container(
+          padding: const EdgeInsets.symmetric(horizontal: 6, vertical: 2),
+          decoration: BoxDecoration(
+            color: Colors.grey.shade100,
+            borderRadius: BorderRadius.circular(6),
+          ),
+          child: Text(
+            GeneralConstants.dateFormat.format(transaction.buyDate),
+            style: TextStyle(
+              color: Colors.grey.shade700,
+              fontSize: 10,
+              fontWeight: FontWeight.w500,
+            ),
+          ),
+        ),
+      ],
     );
   }
 }

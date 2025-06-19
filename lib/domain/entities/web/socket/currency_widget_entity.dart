@@ -42,12 +42,6 @@ class CurrencyWidgetEntity {
       final formatter = NumberFormat('#,##0.00', 'tr_TR');
       String formattedValue = formatter.format(numValue);
 
-      // Türkçe formatı: virgülü nokta ile değiştir (binlik ayırıcı için)
-      // Ve ondalık ayırıcıyı virgül yap
-      formattedValue = formattedValue.replaceAll(',', '|'); // Geçici
-      formattedValue = formattedValue.replaceAll('.', ','); // Ondalık ayırıcı
-      formattedValue = formattedValue.replaceAll('|', '.'); // Binlik ayırıcı
-
       return formattedValue + _currencyType(code);
     } catch (e) {
       // Hata durumunda orijinal değeri döndür
