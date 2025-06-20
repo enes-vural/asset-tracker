@@ -1,15 +1,13 @@
+import 'package:asset_tracker/core/constants/enums/widgets/trade_type_enum.dart';
 import 'package:asset_tracker/core/constants/string_constant.dart';
 import 'package:asset_tracker/core/config/localization/generated/locale_keys.g.dart';
 import 'package:asset_tracker/core/helpers/dialog_helper.dart';
 import 'package:asset_tracker/core/helpers/snackbar.dart';
 import 'package:asset_tracker/core/mixins/validation_mixin.dart';
-import 'package:asset_tracker/core/widgets/custom_padding.dart';
-import 'package:asset_tracker/core/widgets/custom_sized_box.dart';
 import 'package:asset_tracker/injection.dart';
 import 'package:asset_tracker/presentation/common/custom_datepicker_widget.dart';
 import 'package:asset_tracker/presentation/common/custom_dropdown_widget.dart';
 import 'package:asset_tracker/presentation/view/auth/widget/auth_form_widget.dart';
-import 'package:asset_tracker/presentation/view/auth/widget/auth_submit_widget.dart';
 import 'package:asset_tracker/presentation/view/home/widgets/unauthorized_widget.dart';
 import 'package:asset_tracker/presentation/view_model/home/trade/trade_view_model.dart';
 import 'package:auto_route/annotations.dart';
@@ -54,7 +52,6 @@ class _TradeViewState extends ConsumerState<TradeView> with ValidatorMixin {
     final viewModel = ref.watch(tradeViewModelProvider);
     final authState = ref.watch(authGlobalProvider);
     final isDark = Theme.of(context).brightness == Brightness.dark;
-
     EasyDialog.showDialogOnProcess(context, ref, tradeViewModelProvider);
 
     return PopScope(
@@ -68,7 +65,6 @@ class _TradeViewState extends ConsumerState<TradeView> with ValidatorMixin {
   Widget _buildTradeView(GlobalKey<FormState> tradeFormKey,
       TradeViewModel viewModel, BuildContext context, bool isDark) {
     return Scaffold(
-      backgroundColor: isDark ? const Color(0xFF1E1E1E) : Colors.grey[50],
       body: Form(
         key: tradeFormKey,
         child: SingleChildScrollView(
@@ -76,9 +72,11 @@ class _TradeViewState extends ConsumerState<TradeView> with ValidatorMixin {
           child: Column(
             crossAxisAlignment: CrossAxisAlignment.start,
             children: [
+              _buildTradeTypeToggle(isDark, viewModel),
+              const SizedBox(height: 16),
               _buildTradeForm(viewModel, isDark),
               const SizedBox(height: 24),
-              _buildBuyButton(tradeFormKey, viewModel, context, isDark),
+              _buildActionButton(tradeFormKey, viewModel, context, isDark),
               const SizedBox(height: 16),
             ],
           ),
@@ -87,7 +85,101 @@ class _TradeViewState extends ConsumerState<TradeView> with ValidatorMixin {
     );
   }
 
+  Widget _buildTradeTypeToggle(bool isDark, TradeViewModel viewModel) {
+    final currentTradeType = viewModel.currentTradeType;
+    return Container(
+      padding: const EdgeInsets.all(4),
+      decoration: BoxDecoration(
+        color: isDark ? const Color(0xFF2D2D2D) : Colors.white,
+        borderRadius: BorderRadius.circular(12),
+        border: Border.all(
+          color: isDark ? Colors.grey[700]! : Colors.grey[300]!,
+        ),
+      ),
+      child: Row(
+        children: [
+          Expanded(
+            child: GestureDetector(
+              onTap: () => viewModel.toggleTradeType(TradeType.buy),
+              child: Container(
+                padding: const EdgeInsets.symmetric(vertical: 12),
+                decoration: BoxDecoration(
+                  color: currentTradeType == TradeType.buy
+                      ? Colors.green[600]
+                      : Colors.transparent,
+                  borderRadius: BorderRadius.circular(8),
+                ),
+                child: Row(
+                  mainAxisAlignment: MainAxisAlignment.center,
+                  children: [
+                    Icon(
+                      Icons.trending_up,
+                      color: currentTradeType == TradeType.buy
+                          ? Colors.white
+                          : (isDark ? Colors.green[400] : Colors.green[600]),
+                      size: 20,
+                    ),
+                    const SizedBox(width: 8),
+                    Text(
+                      'ALIM',
+                      style: TextStyle(
+                        color: currentTradeType == TradeType.buy
+                            ? Colors.white
+                            : (isDark ? Colors.green[400] : Colors.green[600]),
+                        fontWeight: FontWeight.w600,
+                        fontSize: 14,
+                      ),
+                    ),
+                  ],
+                ),
+              ),
+            ),
+          ),
+          const SizedBox(width: 4),
+          Expanded(
+            child: GestureDetector(
+              onTap: () => viewModel.toggleTradeType(TradeType.sell),
+              child: Container(
+                padding: const EdgeInsets.symmetric(vertical: 12),
+                decoration: BoxDecoration(
+                  color: currentTradeType == TradeType.sell
+                      ? Colors.red[600]
+                      : Colors.transparent,
+                  borderRadius: BorderRadius.circular(8),
+                ),
+                child: Row(
+                  mainAxisAlignment: MainAxisAlignment.center,
+                  children: [
+                    Icon(
+                      Icons.trending_down,
+                      color: currentTradeType == TradeType.sell
+                          ? Colors.white
+                          : (isDark ? Colors.red[400] : Colors.red[600]),
+                      size: 20,
+                    ),
+                    const SizedBox(width: 8),
+                    Text(
+                      'SATIM',
+                      style: TextStyle(
+                        color: currentTradeType == TradeType.sell
+                            ? Colors.white
+                            : (isDark ? Colors.red[400] : Colors.red[600]),
+                        fontWeight: FontWeight.w600,
+                        fontSize: 14,
+                      ),
+                    ),
+                  ],
+                ),
+              ),
+            ),
+          ),
+        ],
+      ),
+    );
+  }
+
   Widget _buildTradeForm(TradeViewModel viewModel, bool isDark) {
+    final currentTradeType = viewModel.currentTradeType;
     return Container(
       padding: const EdgeInsets.all(20),
       decoration: BoxDecoration(
@@ -100,13 +192,29 @@ class _TradeViewState extends ConsumerState<TradeView> with ValidatorMixin {
       child: Column(
         crossAxisAlignment: CrossAxisAlignment.start,
         children: [
-          Text(
-            'İşlem Detayları',
-            style: TextStyle(
-              fontSize: 16,
-              fontWeight: FontWeight.w600,
-              color: isDark ? Colors.white : Colors.black87,
-            ),
+          Row(
+            children: [
+              Icon(
+                currentTradeType == TradeType.buy
+                    ? Icons.add_shopping_cart
+                    : Icons.sell,
+                color: currentTradeType == TradeType.buy
+                    ? Colors.green[600]
+                    : Colors.red[600],
+                size: 20,
+              ),
+              const SizedBox(width: 8),
+              Text(
+                currentTradeType == TradeType.buy
+                    ? 'Alım İşlemi Detayları'
+                    : 'Satım İşlemi Detayları',
+                style: TextStyle(
+                  fontSize: 16,
+                  fontWeight: FontWeight.w600,
+                  color: isDark ? Colors.white : Colors.black87,
+                ),
+              ),
+            ],
           ),
           const SizedBox(height: 16),
 
@@ -141,12 +249,12 @@ class _TradeViewState extends ConsumerState<TradeView> with ValidatorMixin {
               }
             },
           ),
-          
+
           const SizedBox(height: 16),
 
           // Adet Fiyatı
           AuthFormWidget(
-            label: "Adet Fiyatı (USD)",
+            label: "Adet Fiyatı (TL)",
             isObs: false,
             formController: viewModel.priceUnitController,
             onChanged: (value) {
@@ -171,9 +279,15 @@ class _TradeViewState extends ConsumerState<TradeView> with ValidatorMixin {
           Container(
             padding: const EdgeInsets.all(12),
             decoration: BoxDecoration(
-              color: Colors.blue[50],
+              color: currentTradeType == TradeType.buy
+                  ? Colors.green[50]
+                  : Colors.red[50],
               borderRadius: BorderRadius.circular(8),
-              border: Border.all(color: Colors.blue[200]!),
+              border: Border.all(
+                color: currentTradeType == TradeType.buy
+                    ? Colors.green[200]!
+                    : Colors.red[200]!,
+              ),
             ),
             child: Column(
               crossAxisAlignment: CrossAxisAlignment.start,
@@ -183,12 +297,14 @@ class _TradeViewState extends ConsumerState<TradeView> with ValidatorMixin {
                   style: TextStyle(
                     fontSize: 12,
                     fontWeight: FontWeight.w500,
-                    color: Colors.blue[800],
+                    color: currentTradeType == TradeType.buy
+                        ? Colors.green[800]
+                        : Colors.red[800],
                   ),
                 ),
                 const SizedBox(height: 4),
                 AuthFormWidget(
-                  label: "Toplam Fiyat (USD)",
+                  label: "Toplam Fiyat (TL)",
                   isObs: false,
                   formController: viewModel.priceTotalController,
                   validaor: (value) => checkAmount(value, true),
@@ -208,9 +324,9 @@ class _TradeViewState extends ConsumerState<TradeView> with ValidatorMixin {
               ],
             ),
           ),
-          
+
           const SizedBox(height: 16),
-          
+
           // Tarih Seçimi
           CustomDatePickerWidget(
             viewModel: viewModel,
@@ -221,8 +337,9 @@ class _TradeViewState extends ConsumerState<TradeView> with ValidatorMixin {
     );
   }
 
-  Widget _buildBuyButton(GlobalKey<FormState> tradeFormKey,
+  Widget _buildActionButton(GlobalKey<FormState> tradeFormKey,
       TradeViewModel viewModel, BuildContext context, bool isDark) {
+    final currentTradeType = viewModel.currentTradeType;
     return SizedBox(
       width: double.infinity,
       height: 56,
@@ -232,20 +349,34 @@ class _TradeViewState extends ConsumerState<TradeView> with ValidatorMixin {
             EasySnackBar.show(context, LocaleKeys.trade_fillAllFields.tr());
             return;
           }
-          viewModel.buyCurrency(ref: ref, context: context);
+
+          if (currentTradeType == TradeType.buy) {
+            await viewModel.buyCurrency(ref: ref, context: context);
+          } else if (currentTradeType == TradeType.sell) {
+            await viewModel.sellCurrency(ref: ref, context: context);
+          }
         },
         style: ElevatedButton.styleFrom(
-          backgroundColor: Colors.blue[600],
+          backgroundColor: currentTradeType == TradeType.buy
+              ? Colors.green[600]
+              : Colors.red[600],
           foregroundColor: Colors.white,
           shape: RoundedRectangleBorder(
             borderRadius: BorderRadius.circular(12),
           ),
           elevation: 2,
         ),
-        icon: const Icon(Icons.shopping_cart_outlined, size: 20),
-        label: const Text(
-          "Cüzdan'a ekle",
-          style: TextStyle(
+        icon: Icon(
+          currentTradeType == TradeType.buy
+              ? Icons.add_shopping_cart
+              : Icons.sell,
+          size: 20,
+        ),
+        label: Text(
+          currentTradeType == TradeType.buy
+              ? "Cüzdan'a Ekle"
+              : "Cüzdan'dan Sat",
+          style: const TextStyle(
             fontSize: 16,
             fontWeight: FontWeight.w600,
           ),

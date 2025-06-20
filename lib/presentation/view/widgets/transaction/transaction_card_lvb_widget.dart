@@ -1,15 +1,10 @@
 import 'package:asset_tracker/core/config/theme/extension/currency_widget_title_extension.dart';
 import 'package:asset_tracker/core/constants/database/transaction_type_enum.dart';
 import 'package:asset_tracker/core/constants/global/general_constants.dart';
-import 'package:asset_tracker/core/constants/string_constant.dart';
-import 'package:asset_tracker/core/config/localization/generated/locale_keys.g.dart';
 import 'package:asset_tracker/core/config/theme/default_theme.dart';
-import 'package:asset_tracker/core/config/theme/app_size.dart';
 import 'package:asset_tracker/core/config/theme/extension/number_format_extension.dart';
-import 'package:asset_tracker/core/widgets/custom_sized_box.dart';
 import 'package:asset_tracker/domain/entities/database/enttiy/user_currency_entity_model.dart';
 import 'package:asset_tracker/presentation/view_model/home/dashboard/dashboard_view_model.dart';
-import 'package:easy_localization/easy_localization.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 

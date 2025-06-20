@@ -4,6 +4,7 @@ import 'package:cloud_firestore/cloud_firestore.dart';
 
 //TODO: BuyCurrencyModel ile birleştirilebilir.
 final class UserCurrencyDataModel {
+  final String? docId;
   final String userId;
   final double amount;
   final String currencyCode;
@@ -13,7 +14,7 @@ final class UserCurrencyDataModel {
   final TransactionTypeEnum transactionType;
 
   UserCurrencyDataModel(
-      {
+    this.docId, {
     required this.userId,
     required this.amount,
     required this.currencyCode,
@@ -27,6 +28,7 @@ final class UserCurrencyDataModel {
     UserCurrencyEntity entity,
   ) {
     return UserCurrencyDataModel(
+      entity.docId,
       userId: entity.userId,
       amount: entity.amount,
       currencyCode: entity.currencyCode,
@@ -39,6 +41,7 @@ final class UserCurrencyDataModel {
 
   factory UserCurrencyDataModel.fromJson(Map<String, dynamic> json) {
     return UserCurrencyDataModel(
+      json['docId'],
       userId: json['userId'] ?? 'N/A',
       amount: json['amount'] ?? 0.0,
       currencyCode: json['currency'] ?? 'N/A',
@@ -51,6 +54,7 @@ final class UserCurrencyDataModel {
   }
 
   UserCurrencyDataModel copyWith({
+    String? docId,
     String? userId,
     double? amount,
     String? currencyCode,
@@ -60,6 +64,7 @@ final class UserCurrencyDataModel {
     TransactionTypeEnum? transactionType,
   }) {
     return UserCurrencyDataModel(
+      docId ?? this.docId,
       userId: userId ?? this.userId,
       amount: amount ?? this.amount,
       currencyCode: currencyCode ?? this.currencyCode,
