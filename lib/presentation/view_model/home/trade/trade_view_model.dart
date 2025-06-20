@@ -5,13 +5,15 @@ import 'package:asset_tracker/core/config/theme/extension/string_extension.dart'
 import 'package:asset_tracker/core/constants/database/transaction_type_enum.dart';
 import 'package:asset_tracker/core/constants/enums/cache/offline_action_enums.dart';
 import 'package:asset_tracker/core/constants/enums/widgets/app_pages_enum.dart';
+import 'package:asset_tracker/core/constants/enums/widgets/trade_type_enum.dart';
 import 'package:asset_tracker/core/constants/string_constant.dart';
 import 'package:asset_tracker/core/config/localization/generated/locale_keys.g.dart';
 import 'package:asset_tracker/core/helpers/snackbar.dart';
 import 'package:asset_tracker/data/model/database/response/asset_code_model.dart';
 import 'package:asset_tracker/domain/entities/database/enttiy/buy_currency_entity.dart';
-import 'package:asset_tracker/domain/entities/database/enttiy/user_data_entity.dart';
+import 'package:asset_tracker/domain/entities/database/enttiy/sell_currency_entity.dart';
 import 'package:asset_tracker/domain/entities/database/enttiy/user_uid_entity.dart';
+import 'package:asset_tracker/domain/entities/general/calculate_profit_entity.dart';
 import 'package:asset_tracker/domain/entities/web/socket/currency_widget_entity.dart';
 import 'package:asset_tracker/domain/usecase/cache/cache_use_case.dart';
 import 'package:asset_tracker/domain/usecase/database/buy_currency_use_case.dart';
@@ -26,11 +28,17 @@ class TradeViewModel extends ChangeNotifier {
   TextEditingController priceTotalController = TextEditingController();
   TextEditingController priceUnitController = TextEditingController();
   TextEditingController dateController = TextEditingController();
+  TradeType currentTradeType = TradeType.buy;
 
   String? selectedCurrency;
   DateTime? selectedDate;
 
   bool canPop = true;
+
+  void toggleTradeType(TradeType type) {
+    currentTradeType = type;
+    notifyListeners();
+  }
 
   void changePopState(bool state) {
     if (canPop != state) {
@@ -99,7 +107,55 @@ class TradeViewModel extends ChangeNotifier {
     }
   }
 
-//tamam
+  CalculateProfitEntity? calculateSelectedCurrencyTotalAmount(
+      WidgetRef ref, String currencyCode) {
+    return ref
+        .watch(appGlobalProvider.notifier)
+        .calculateProfitOrLoss(currencyCode);
+  }
+
+  Future<void> _updateLatestUserInfo(String userId, WidgetRef ref) async {
+    await ref
+        .read(appGlobalProvider.notifier)
+        .getLatestUserData(ref, UserUidEntity(userId: userId));
+    notifyListeners();
+  }
+
+  Future<void> sellCurrency({
+    required WidgetRef ref,
+    required BuildContext context,
+  }) async {
+    changePopState(false);
+
+    if (selectedCurrency == null) {
+      EasySnackBar.show(context, "Birim Seçiniz");
+      return;
+    }
+    if (selectedDate == null) {
+      return;
+    }
+
+    final sellCurrencyEntity = SellCurrencyEntity(
+      sellAmount: double.tryParse(amountController.text) ?? 0.0,
+      currencyCode: getCurrencyCodeFromLabel(selectedCurrency)!,
+      sellPrice: double.tryParse(priceUnitController.text) ?? 0.0,
+      date: selectedDate!,
+      userId: ref.read(authGlobalProvider).getCurrentUserId.toString(),
+    );
+
+    final status =
+        await getIt<DatabaseUseCase>().sellCurrency(sellCurrencyEntity);
+    await status.fold((error) async {
+      EasySnackBar.show(context, error.toString());
+    }, (success) async {
+      if (success) {
+        debugPrint("Transaction sold successfully");
+        await _updateLatestUserInfo(sellCurrencyEntity.userId, ref);
+      }
+    });
+    changePopState(true);
+  }
+
   List<AssetCodeModel> getCurrencyList(WidgetRef ref) =>
       ref.read(appGlobalProvider.notifier).assetCodes;
 
@@ -130,7 +186,7 @@ class TradeViewModel extends ChangeNotifier {
       return;
     }
 
-    final BuyCurrencyEntity buyCurrencyEntity = BuyCurrencyEntity(
+    final BuyCurrencyEntity buyCurrencyEntity = BuyCurrencyEntity(null,
         amount: amount,
         price: price,
         currency: currency,

@@ -125,6 +125,35 @@ class AppGlobalProvider extends ChangeNotifier {
     });
   }
 
+  CalculateProfitEntity? calculateProfitorLossWithAmount(
+    String currencyCode,
+    double amount,
+    double purchasePrice,
+    double sellPrice,
+  ) {
+    CurrencyEntity? globalIndex;
+
+    try {
+      globalIndex = globalAssets?.firstWhere(
+        (element) => element.code.toLowerCase() == currencyCode.toLowerCase(),
+      );
+    } catch (e) {
+      debugPrint("Error finding currency: $e");
+      return null;
+    }
+
+    if (globalIndex == null) {
+      return null;
+    }
+
+    return CalculateProfitEntity(
+      currencyCode: currencyCode,
+      purchasePriceTotal: purchasePrice * amount,
+      latestPriceTotal: sellPrice * amount,
+      amount: amount,
+    );
+  }
+
   CalculateProfitEntity? calculateProfitOrLoss(String currencyCode) {
     double totalPurchasePrice = 0.0;
     double userAmount = 0.0;

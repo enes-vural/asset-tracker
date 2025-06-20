@@ -2,6 +2,7 @@ import 'package:asset_tracker/data/model/database/error/database_error_model.dar
     show DatabaseErrorModel;
 import 'package:asset_tracker/data/model/database/request/buy_currency_model.dart';
 import 'package:asset_tracker/data/model/database/request/save_user_model.dart';
+import 'package:asset_tracker/data/model/database/request/sell_currency_model.dart';
 import 'package:asset_tracker/data/model/database/request/user_uid_model.dart';
 import 'package:asset_tracker/data/model/database/response/asset_code_model.dart'
     show AssetCodeModel;
@@ -32,5 +33,5 @@ abstract interface class IDatabaseService {
       UserCurrencyDataModel model);
 
   Future<Either<DatabaseErrorModel, bool>> sellCurrency(
-      UserCurrencyDataModel model);
+      SellCurrencyModel model);
 }

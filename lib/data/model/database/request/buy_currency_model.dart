@@ -1,11 +1,13 @@
 import 'package:asset_tracker/core/constants/database/transaction_type_enum.dart';
 import 'package:asset_tracker/data/model/base/base_model.dart';
+import 'package:asset_tracker/data/model/database/request/sell_currency_model.dart';
 import 'package:asset_tracker/data/model/database/response/user_currency_data_model.dart';
 import 'package:asset_tracker/domain/entities/database/enttiy/buy_currency_entity.dart';
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:equatable/equatable.dart';
 
 final class BuyCurrencyModel extends Equatable implements BaseModel {
+  final String? docId;
   final double amount;
   final double price;
   final String currency;
@@ -14,7 +16,8 @@ final class BuyCurrencyModel extends Equatable implements BaseModel {
   double get total => amount * price;
   final TransactionTypeEnum transactionType;
 
-  const BuyCurrencyModel({
+  const BuyCurrencyModel(
+    this.docId, {
     required this.amount,
     required this.price,
     required this.currency,
@@ -22,6 +25,20 @@ final class BuyCurrencyModel extends Equatable implements BaseModel {
     required this.transactionType,
     this.userId,
   });
+
+  BuyCurrencyModel changeWithDocId({
+    String? docId,
+  }) {
+    return BuyCurrencyModel(
+      docId ?? this.docId,
+      amount: amount,
+      price: price,
+      currency: currency,
+      date: date,
+      transactionType: transactionType,
+      userId: userId,
+    );
+  }
 
   //This json convert method is used for send data to firestore
   //The reason of use distract method from toJson
@@ -33,6 +50,7 @@ final class BuyCurrencyModel extends Equatable implements BaseModel {
   //so we are increase the amount, price and total.
   Map<String, dynamic> toFirebaseJson() {
     return {
+      'docId': docId,
       'amount': FieldValue.increment(amount),
       'price': FieldValue.increment(price),
       'currency': currency,
@@ -62,6 +80,7 @@ final class BuyCurrencyModel extends Equatable implements BaseModel {
   //This methods is only for hive and local storage for set business logics in offline
   factory BuyCurrencyModel.fromJson(Map<String, dynamic> json) {
     return BuyCurrencyModel(
+      null,
       amount: json['amount'] as double,
       price: json['price'] as double,
       currency: json['currency'] as String,
@@ -74,6 +93,7 @@ final class BuyCurrencyModel extends Equatable implements BaseModel {
 
   factory BuyCurrencyModel.fromEntity(BuyCurrencyEntity entity) {
     return BuyCurrencyModel(
+      entity.docId,
       amount: entity.amount,
       price: entity.price,
       currency: entity.currency,
@@ -87,6 +107,7 @@ final class BuyCurrencyModel extends Equatable implements BaseModel {
     UserCurrencyDataModel model,
   ) {
     return BuyCurrencyModel(
+      null,
       amount: model.amount,
       price: model.price,
       currency: model.currencyCode,
@@ -95,7 +116,18 @@ final class BuyCurrencyModel extends Equatable implements BaseModel {
       transactionType: model.transactionType,
     );
   }
-  
+
+  factory BuyCurrencyModel.fromSellCurrencyModel(SellCurrencyModel model) {
+    return BuyCurrencyModel(
+      model.docId,
+      amount: model.sellAmount,
+      price: model.sellPrice,
+      currency: model.currencyCode,
+      date: model.date,
+      transactionType: model.transactionTypeEnum,
+      userId: model.userId,
+    );
+  }
 
   @override
   List<Object?> get props => [

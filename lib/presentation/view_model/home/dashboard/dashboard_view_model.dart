@@ -1,4 +1,5 @@
 import 'package:asset_tracker/core/constants/database/transaction_type_enum.dart';
+import 'package:asset_tracker/domain/entities/database/enttiy/sell_currency_entity.dart';
 import 'package:asset_tracker/domain/entities/database/enttiy/user_data_entity.dart';
 import 'package:asset_tracker/domain/entities/database/enttiy/user_currency_entity_model.dart';
 import 'package:asset_tracker/domain/entities/database/enttiy/user_uid_entity.dart';
@@ -40,6 +41,7 @@ class DashboardViewModel extends ChangeNotifier {
       notifyListeners();
     });
   }
+  
 
   Future<void> sellAsset(WidgetRef ref, UserCurrencyEntity transaction) async {
     changePopState(false);
@@ -52,9 +54,17 @@ class DashboardViewModel extends ChangeNotifier {
         price: ((latestState?.latestPriceTotal ?? 0) / transaction.amount),
         transactionType: TransactionTypeEnum.SELL);
 
+    final sellCurrencyEntity = SellCurrencyEntity(
+      buyPrice: latestCurrencyData.price,
+      sellAmount: latestCurrencyData.amount,
+      currencyCode: latestCurrencyData.currencyCode,
+      sellPrice: latestState?.latestPriceTotal ?? 0,
+      date: DateTime.now(),
+      userId: latestCurrencyData.userId,
+    );
+
     final status =
-        await getIt<DatabaseUseCase>()
-        .sellCurrency(latestCurrencyData);
+        await getIt<DatabaseUseCase>().sellCurrency(sellCurrencyEntity);
     await status.fold((error) async {
       // Handle error
     }, (success) async {

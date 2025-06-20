@@ -3,12 +3,14 @@ import 'package:asset_tracker/core/constants/database/transaction_type_enum.dart
 import 'package:asset_tracker/data/model/database/error/database_error_model.dart';
 import 'package:asset_tracker/data/model/database/request/buy_currency_model.dart';
 import 'package:asset_tracker/data/model/database/request/save_user_model.dart';
+import 'package:asset_tracker/data/model/database/request/sell_currency_model.dart';
 import 'package:asset_tracker/data/model/database/request/user_uid_model.dart';
 import 'package:asset_tracker/data/model/database/response/asset_code_model.dart';
 import 'package:asset_tracker/data/model/database/response/user_data_model.dart';
 import 'package:asset_tracker/data/model/database/response/user_currency_data_model.dart';
 import 'package:asset_tracker/data/service/remote/database/firestore/ifirestore_service.dart';
 import 'package:asset_tracker/domain/entities/database/enttiy/buy_currency_entity.dart';
+import 'package:asset_tracker/domain/entities/database/enttiy/sell_currency_entity.dart';
 import 'package:asset_tracker/domain/entities/database/enttiy/user_data_entity.dart';
 import 'package:asset_tracker/domain/entities/database/enttiy/user_currency_entity_model.dart';
 import 'package:asset_tracker/domain/entities/database/enttiy/user_uid_entity.dart';
@@ -128,11 +130,10 @@ class FirestoreRepository implements IFirestoreRepository {
 
   @override
   Future<Either<DatabaseErrorEntity, bool>> sellCurrency(
-      UserCurrencyEntity entity) async {
-    final UserCurrencyDataModel model =
-        UserCurrencyDataModel.fromEntity(entity);
+      SellCurrencyEntity entity) async {
+
     try {
-      final status = await firestoreService.sellCurrency(model);
+      final status = await firestoreService.sellCurrency(entity.toModel());
       return status.fold(
         (failure) {
           return Left(DatabaseErrorEntity.fromModel(failure));

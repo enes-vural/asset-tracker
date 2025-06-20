@@ -2,6 +2,7 @@ import 'package:asset_tracker/core/constants/database/transaction_type_enum.dart
 import 'package:asset_tracker/data/model/database/response/user_currency_data_model.dart';
 
 final class UserCurrencyEntity {
+  final String? docId;
   final String userId;
   final double amount;
   final String currencyCode;
@@ -10,7 +11,8 @@ final class UserCurrencyEntity {
   final double total;
   final TransactionTypeEnum transactionType;
 
-  const UserCurrencyEntity({
+  const UserCurrencyEntity(
+    this.docId, {
     required this.userId,
     required this.amount,
     required this.currencyCode,
@@ -22,6 +24,7 @@ final class UserCurrencyEntity {
 
   factory UserCurrencyEntity.fromModel(UserCurrencyDataModel model) {
     return UserCurrencyEntity(
+      model.docId,
       userId: model.userId,
       amount: model.amount,
       currencyCode: model.currencyCode,
@@ -33,6 +36,7 @@ final class UserCurrencyEntity {
   }
 
   UserCurrencyEntity copyWith({
+    String? docId,
     String? userId,
     double? amount,
     String? currencyCode,
@@ -42,6 +46,7 @@ final class UserCurrencyEntity {
     TransactionTypeEnum? transactionType,
   }) {
     return UserCurrencyEntity(
+      docId ?? this.docId,
       userId: userId ?? this.userId,
       amount: amount ?? this.amount,
       currencyCode: currencyCode ?? this.currencyCode,
