@@ -154,13 +154,18 @@ class AppGlobalProvider extends ChangeNotifier {
     );
   }
 
-  CalculateProfitEntity? calculateProfitOrLoss(String currencyCode) {
+
+//Buradaki algoritma Claude'e yazdırıldı vibe coding. Şimdilik prod a aldım teker teker incelenmesi gerek.
+//TODO:
+CalculateProfitEntity? calculateProfitOrLoss(String currencyCode) {
     double totalPurchasePrice = 0.0;
     double totalCurrentValue = 0.0;
-    double userAmount = 0.0;
+    double totalBuyAmount = 0.0;
+    double totalSellAmount = 0.0;
     CurrencyEntity? globalIndex;
-    //kar-zarar hesaplaması alış işlemi üzerine mi satış işlemi üzerine yapılacak
-    bool isSoldItem = false;
+  
+    bool hasBuyTransactions = false;
+    bool hasSellTransactions = false;
 
     try {
       globalIndex = globalAssets?.firstWhere(
@@ -171,37 +176,59 @@ class AppGlobalProvider extends ChangeNotifier {
       return null;
     }
 
-    _userData?.currencyList.forEach((element) {
-      if (element.currencyCode.toLowerCase() == currencyCode.toLowerCase()) {
-        //eğer kullanıcının alış işlemi ise flagi false yap
-        isSoldItem = false;
-        totalPurchasePrice += element.price * element.amount;
-        userAmount += element.amount;
-      }
-    });
-
-    _userData?.soldCurrencyList?.forEach((element) {
-      if (element.currencyCode.toLowerCase() == currencyCode.toLowerCase()) {
-        //eğer kullanıcının alış işlemi ise flagi true yap
-        isSoldItem = true;
-        //purchasePrice in hesaplanmasında kullanılan oldPrice değişkeni
-        //satılan assetlerin oratlama alış fiyatı
-        totalPurchasePrice += (element.oldPrice ?? 0.0) * element.amount;
-        //eğer satış işlemi ise totalCurrentValue u satış fiyatı ile adeti çarparak heasapla.
-        totalCurrentValue += element.price * element.amount;
-        userAmount += element.amount;
-      }
-    });
-
     if (globalIndex == null) {
       return null;
-    } 
+    }
 
-    //Eğer kullanıcı elindeki varlığı satmadıysa anlık olarak dövizdeki fiyatını bul currentValue'e ata.
-    //ama zaten satılmış ise bu kodu atla çünkü az önce satır 191 de hesapladığımız satış fiyatını kullanacağız.
-    if (!isSoldItem) {
+    // 1. Alım işlemlerini kontrol et
+    _userData?.currencyList.forEach((element) {
+      if (element.currencyCode.toLowerCase() == currencyCode.toLowerCase()) {
+        hasBuyTransactions = true;
+        totalBuyAmount += element.amount;
+      }
+    });
+
+    // 2. Satım işlemlerini kontrol et
+    _userData?.soldCurrencyList?.forEach((element) {
+      if (element.currencyCode.toLowerCase() == currencyCode.toLowerCase()) {
+        hasSellTransactions = true;
+        totalSellAmount += element.amount;
+      }
+    });
+
+    // 3. Purchase Price Hesaplama
+    if (hasBuyTransactions) {
+      // Kullanıcıda alım işlemi varsa, satım işlemlerini pas geç
+      // Sadece alım işlemlerinin toplam fiyatını hesapla
+      _userData?.currencyList.forEach((element) {
+        if (element.currencyCode.toLowerCase() == currencyCode.toLowerCase()) {
+          totalPurchasePrice += element.price * element.amount;
+      }
+    });
+    } else if (hasSellTransactions && !hasBuyTransactions) {
+      // Kullanıcıda sadece satım işlemi varsa
+      // Satım işlemlerinin oldPrice'ını (ortalama alış fiyatı) kullan
+      _userData?.soldCurrencyList?.forEach((element) {
+        if (element.currencyCode.toLowerCase() == currencyCode.toLowerCase()) {
+          totalPurchasePrice += (element.oldPrice ?? 0.0) * element.amount;
+        }
+      });
+    }
+
+    // 4. Current Value Hesaplama
+    if (hasSellTransactions) {
+      // Satım işlemleri varsa bunları current value'ye ekle
+    _userData?.soldCurrencyList?.forEach((element) {
+        if (element.currencyCode.toLowerCase() == currencyCode.toLowerCase()) {
+          totalCurrentValue += element.price * element.amount;
+      }
+      });
+    }
+
+    if (hasBuyTransactions) {
+      // Alım işlemleri varsa bunların güncel değerini globalIndex'ten al
       double globalPrice = double.parse(globalIndex.alis);
-      totalCurrentValue = globalPrice * userAmount;
+      totalCurrentValue += globalPrice * totalBuyAmount;
     }
 
     return CalculateProfitEntity(

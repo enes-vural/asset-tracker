@@ -8,25 +8,27 @@
 // coverage:ignore-file
 
 // ignore_for_file: no_leading_underscores_for_library_prefixes
-import 'package:asset_tracker/presentation/view/auth/login_view.dart' as _i3;
-import 'package:asset_tracker/presentation/view/auth/register_view.dart' as _i5;
+import 'package:asset_tracker/presentation/view/auth/forgot_password_view.dart'
+    as _i2;
+import 'package:asset_tracker/presentation/view/auth/login_view.dart' as _i4;
+import 'package:asset_tracker/presentation/view/auth/register_view.dart' as _i6;
 import 'package:asset_tracker/presentation/view/home/dashboard/dashboard_view.dart'
     as _i1;
-import 'package:asset_tracker/presentation/view/home/home_view.dart' as _i2;
-import 'package:asset_tracker/presentation/view/home/menu_view.dart' as _i4;
+import 'package:asset_tracker/presentation/view/home/home_view.dart' as _i3;
+import 'package:asset_tracker/presentation/view/home/menu_view.dart' as _i5;
 import 'package:asset_tracker/presentation/view/home/settings/settings_view.dart'
-    as _i6;
+    as _i7;
 import 'package:asset_tracker/presentation/view/home/trade/trade_view.dart'
-    as _i8;
-import 'package:asset_tracker/presentation/view/splash/splash_view.dart' as _i7;
-import 'package:asset_tracker/presentation/view/trial.dart' as _i9;
-import 'package:auto_route/auto_route.dart' as _i10;
-import 'package:flutter/material.dart' as _i11;
+    as _i9;
+import 'package:asset_tracker/presentation/view/splash/splash_view.dart' as _i8;
+import 'package:asset_tracker/presentation/view/trial.dart' as _i10;
+import 'package:auto_route/auto_route.dart' as _i11;
+import 'package:flutter/material.dart' as _i12;
 
 /// generated route for
 /// [_i1.DashboardView]
-class DashboardRoute extends _i10.PageRouteInfo<void> {
-  const DashboardRoute({List<_i10.PageRouteInfo>? children})
+class DashboardRoute extends _i11.PageRouteInfo<void> {
+  const DashboardRoute({List<_i11.PageRouteInfo>? children})
       : super(
           DashboardRoute.name,
           initialChildren: children,
@@ -34,7 +36,7 @@ class DashboardRoute extends _i10.PageRouteInfo<void> {
 
   static const String name = 'DashboardRoute';
 
-  static _i10.PageInfo page = _i10.PageInfo(
+  static _i11.PageInfo page = _i11.PageInfo(
     name,
     builder: (data) {
       return const _i1.DashboardView();
@@ -43,9 +45,28 @@ class DashboardRoute extends _i10.PageRouteInfo<void> {
 }
 
 /// generated route for
-/// [_i2.HomeView]
-class HomeRoute extends _i10.PageRouteInfo<void> {
-  const HomeRoute({List<_i10.PageRouteInfo>? children})
+/// [_i2.ForgotPasswordView]
+class ForgotPasswordRoute extends _i11.PageRouteInfo<void> {
+  const ForgotPasswordRoute({List<_i11.PageRouteInfo>? children})
+      : super(
+          ForgotPasswordRoute.name,
+          initialChildren: children,
+        );
+
+  static const String name = 'ForgotPasswordRoute';
+
+  static _i11.PageInfo page = _i11.PageInfo(
+    name,
+    builder: (data) {
+      return const _i2.ForgotPasswordView();
+    },
+  );
+}
+
+/// generated route for
+/// [_i3.HomeView]
+class HomeRoute extends _i11.PageRouteInfo<void> {
+  const HomeRoute({List<_i11.PageRouteInfo>? children})
       : super(
           HomeRoute.name,
           initialChildren: children,
@@ -53,18 +74,18 @@ class HomeRoute extends _i10.PageRouteInfo<void> {
 
   static const String name = 'HomeRoute';
 
-  static _i10.PageInfo page = _i10.PageInfo(
+  static _i11.PageInfo page = _i11.PageInfo(
     name,
     builder: (data) {
-      return const _i2.HomeView();
+      return const _i3.HomeView();
     },
   );
 }
 
 /// generated route for
-/// [_i3.LoginView]
-class LoginRoute extends _i10.PageRouteInfo<void> {
-  const LoginRoute({List<_i10.PageRouteInfo>? children})
+/// [_i4.LoginView]
+class LoginRoute extends _i11.PageRouteInfo<void> {
+  const LoginRoute({List<_i11.PageRouteInfo>? children})
       : super(
           LoginRoute.name,
           initialChildren: children,
@@ -72,18 +93,18 @@ class LoginRoute extends _i10.PageRouteInfo<void> {
 
   static const String name = 'LoginRoute';
 
-  static _i10.PageInfo page = _i10.PageInfo(
+  static _i11.PageInfo page = _i11.PageInfo(
     name,
     builder: (data) {
-      return const _i3.LoginView();
+      return const _i4.LoginView();
     },
   );
 }
 
 /// generated route for
-/// [_i4.MenuView]
-class MenuRoute extends _i10.PageRouteInfo<void> {
-  const MenuRoute({List<_i10.PageRouteInfo>? children})
+/// [_i5.MenuView]
+class MenuRoute extends _i11.PageRouteInfo<void> {
+  const MenuRoute({List<_i11.PageRouteInfo>? children})
       : super(
           MenuRoute.name,
           initialChildren: children,
@@ -91,18 +112,18 @@ class MenuRoute extends _i10.PageRouteInfo<void> {
 
   static const String name = 'MenuRoute';
 
-  static _i10.PageInfo page = _i10.PageInfo(
+  static _i11.PageInfo page = _i11.PageInfo(
     name,
     builder: (data) {
-      return const _i4.MenuView();
+      return const _i5.MenuView();
     },
   );
 }
 
 /// generated route for
-/// [_i5.RegisterView]
-class RegisterRoute extends _i10.PageRouteInfo<void> {
-  const RegisterRoute({List<_i10.PageRouteInfo>? children})
+/// [_i6.RegisterView]
+class RegisterRoute extends _i11.PageRouteInfo<void> {
+  const RegisterRoute({List<_i11.PageRouteInfo>? children})
       : super(
           RegisterRoute.name,
           initialChildren: children,
@@ -110,18 +131,18 @@ class RegisterRoute extends _i10.PageRouteInfo<void> {
 
   static const String name = 'RegisterRoute';
 
-  static _i10.PageInfo page = _i10.PageInfo(
+  static _i11.PageInfo page = _i11.PageInfo(
     name,
     builder: (data) {
-      return const _i5.RegisterView();
+      return const _i6.RegisterView();
     },
   );
 }
 
 /// generated route for
-/// [_i6.SettingsView]
-class SettingsRoute extends _i10.PageRouteInfo<void> {
-  const SettingsRoute({List<_i10.PageRouteInfo>? children})
+/// [_i7.SettingsView]
+class SettingsRoute extends _i11.PageRouteInfo<void> {
+  const SettingsRoute({List<_i11.PageRouteInfo>? children})
       : super(
           SettingsRoute.name,
           initialChildren: children,
@@ -129,18 +150,18 @@ class SettingsRoute extends _i10.PageRouteInfo<void> {
 
   static const String name = 'SettingsRoute';
 
-  static _i10.PageInfo page = _i10.PageInfo(
+  static _i11.PageInfo page = _i11.PageInfo(
     name,
     builder: (data) {
-      return const _i6.SettingsView();
+      return const _i7.SettingsView();
     },
   );
 }
 
 /// generated route for
-/// [_i7.SplashView]
-class SplashRoute extends _i10.PageRouteInfo<void> {
-  const SplashRoute({List<_i10.PageRouteInfo>? children})
+/// [_i8.SplashView]
+class SplashRoute extends _i11.PageRouteInfo<void> {
+  const SplashRoute({List<_i11.PageRouteInfo>? children})
       : super(
           SplashRoute.name,
           initialChildren: children,
@@ -148,22 +169,22 @@ class SplashRoute extends _i10.PageRouteInfo<void> {
 
   static const String name = 'SplashRoute';
 
-  static _i10.PageInfo page = _i10.PageInfo(
+  static _i11.PageInfo page = _i11.PageInfo(
     name,
     builder: (data) {
-      return const _i7.SplashView();
+      return const _i8.SplashView();
     },
   );
 }
 
 /// generated route for
-/// [_i8.TradeView]
-class TradeRoute extends _i10.PageRouteInfo<TradeRouteArgs> {
+/// [_i9.TradeView]
+class TradeRoute extends _i11.PageRouteInfo<TradeRouteArgs> {
   TradeRoute({
-    _i11.Key? key,
+    _i12.Key? key,
     required String currencyCode,
     required String? price,
-    List<_i10.PageRouteInfo>? children,
+    List<_i11.PageRouteInfo>? children,
   }) : super(
           TradeRoute.name,
           args: TradeRouteArgs(
@@ -180,7 +201,7 @@ class TradeRoute extends _i10.PageRouteInfo<TradeRouteArgs> {
 
   static const String name = 'TradeRoute';
 
-  static _i10.PageInfo page = _i10.PageInfo(
+  static _i11.PageInfo page = _i11.PageInfo(
     name,
     builder: (data) {
       final pathParams = data.inheritedPathParams;
@@ -189,7 +210,7 @@ class TradeRoute extends _i10.PageRouteInfo<TradeRouteArgs> {
                 currencyCode: pathParams.getString('currency'),
                 price: pathParams.optString('price'),
               ));
-      return _i8.TradeView(
+      return _i9.TradeView(
         key: args.key,
         currencyCode: args.currencyCode,
         price: args.price,
@@ -205,7 +226,7 @@ class TradeRouteArgs {
     required this.price,
   });
 
-  final _i11.Key? key;
+  final _i12.Key? key;
 
   final String currencyCode;
 
@@ -218,9 +239,9 @@ class TradeRouteArgs {
 }
 
 /// generated route for
-/// [_i9.TrialView]
-class TrialRoute extends _i10.PageRouteInfo<void> {
-  const TrialRoute({List<_i10.PageRouteInfo>? children})
+/// [_i10.TrialView]
+class TrialRoute extends _i11.PageRouteInfo<void> {
+  const TrialRoute({List<_i11.PageRouteInfo>? children})
       : super(
           TrialRoute.name,
           initialChildren: children,
@@ -228,10 +249,10 @@ class TrialRoute extends _i10.PageRouteInfo<void> {
 
   static const String name = 'TrialRoute';
 
-  static _i10.PageInfo page = _i10.PageInfo(
+  static _i11.PageInfo page = _i11.PageInfo(
     name,
     builder: (data) {
-      return const _i9.TrialView();
+      return const _i10.TrialView();
     },
   );
 }

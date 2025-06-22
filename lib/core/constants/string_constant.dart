@@ -15,6 +15,7 @@ final class DefaultLocalStrings {
   //Router
   //dont localize here in future
   static const splashRoute = "/default_splash";
+  static const forgotPasswordRoute = "/forgot_password";
   static const loginRoute = "/app_login";
   static const registerRoute = "/app_register";
   static const homeRoute = "/home";

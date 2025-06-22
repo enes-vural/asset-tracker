@@ -46,6 +46,16 @@ class AuthViewModel extends ChangeNotifier {
     Routers.instance.pushNamed(context, Routers.registerPath);
   }
 
+  routeForgotPasswordView(BuildContext context) {
+    Routers.instance.pushNamed(context, Routers.forgotPasswordPath);
+  }
+
+  Future<void> sendResetEmailLink() async {
+    if (emailController.text.isNotEmpty) {
+      return await signInUseCase.sendResetPasswordLink(emailController.text);
+    }
+  }
+
   //We wont use offline support for register. The user may be confused
   Future registerUser(WidgetRef ref, BuildContext context) async {
     changePopState(false);
@@ -66,8 +76,7 @@ class AuthViewModel extends ChangeNotifier {
         final saveUserEntity = SaveUserEntity.fromAuthResponse(
             success, firstNameController.text, lastNameController.text);
         final status =
-            await getIt<DatabaseUseCase>()
-            .saveUserData(saveUserEntity);
+            await getIt<DatabaseUseCase>().saveUserData(saveUserEntity);
         _clearForms();
         changePopState(true);
         status.fold((error) {

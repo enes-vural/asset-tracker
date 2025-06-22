@@ -25,7 +25,6 @@ class LoginView extends ConsumerStatefulWidget {
 }
 
 class _TrialViewState extends ConsumerState<LoginView> with ValidatorMixin {
-
   FocusNode? _emailFocusNode;
   FocusNode? _passwordFocusNode;
 
@@ -40,7 +39,7 @@ class _TrialViewState extends ConsumerState<LoginView> with ValidatorMixin {
     _passwordFocusNode?.dispose();
     _passwordFocusNode = null;
   }
-  
+
   @override
   void initState() {
     super.initState();
@@ -59,7 +58,6 @@ class _TrialViewState extends ConsumerState<LoginView> with ValidatorMixin {
     final GlobalKey<FormState> loginFormsKey = GlobalKey<FormState>();
     return PopScope(
       canPop: viewModel.canPop,
-      
       child: Scaffold(
         resizeToAvoidBottomInset: false,
         appBar: AppBar(
@@ -75,10 +73,9 @@ class _TrialViewState extends ConsumerState<LoginView> with ValidatorMixin {
                 'Paranın Rotasını Sende',
                 textAlign: TextAlign.center,
                 style: TextStyle(
-                    
-                    fontFamily: 'Manrope',
-                    fontSize: 22.sp,
-                    letterSpacing: 0,
+                  fontFamily: 'Manrope',
+                  fontSize: 22.sp,
+                  letterSpacing: 0,
                   fontWeight: FontWeight.normal,
                 ),
               ),
@@ -88,11 +85,10 @@ class _TrialViewState extends ConsumerState<LoginView> with ValidatorMixin {
                   'Yatırımlarını canlı takip et, yatırım portföyünü yönet, kazançlarını artır.',
                   textAlign: TextAlign.center,
                   style: TextStyle(
-
-                      fontFamily: 'Manrope',
-                      fontSize: 16,
-                      letterSpacing: 0,
-                      fontWeight: FontWeight.normal,
+                    fontFamily: 'Manrope',
+                    fontSize: 16,
+                    letterSpacing: 0,
+                    fontWeight: FontWeight.normal,
                     height: 1.5,
                   ),
                 ),
@@ -174,7 +170,9 @@ class _TrialViewState extends ConsumerState<LoginView> with ValidatorMixin {
               CustomAlign.centerRight(
                 child: CustomPadding.hugeHorizontal(
                     widget: TextButton(
-                  onPressed: () {},
+                  onPressed: () {
+                    viewModel.routeForgotPasswordView(context);
+                  },
                   child: Text(
                     "Şifremi Unuttum",
                     style: CustomTextStyle.greyColorManrope(
@@ -182,7 +180,6 @@ class _TrialViewState extends ConsumerState<LoginView> with ValidatorMixin {
                   ),
                 )),
               ),
-            
             ],
           ),
         ),

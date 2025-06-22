@@ -16,4 +16,6 @@ abstract interface class IAuthRepository {
   Stream getUserStateChanges();
 
   Future<void> signOut();
+
+  Future<void> sendResetPasswordLink(String email);
 }
