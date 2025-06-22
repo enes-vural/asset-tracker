@@ -103,11 +103,8 @@ class _DashboardViewState extends ConsumerState<DashboardView>
                 _buildPortfolioSection(),
 
                 // Available Balance
-                Padding(
-                  padding: const EdgeInsets.all(16),
-                  child: availableTextWidget(),
-                ),
-
+                const CustomSizedBox.smallGap(),
+                availableTextWidget(),
                 // Balance Display
                 const BalanceTextWidget(),
 
@@ -137,29 +134,19 @@ class _DashboardViewState extends ConsumerState<DashboardView>
           Expanded(
             child: _buildQuickStatCard(
                 title: "Kar",
-                value: "₺" +
-                    ref
-                        .watch(appGlobalProvider)
-                        .getProfit
-                        .toNumberWithTurkishFormat()
-                        .toString(),
+                value:
+                    "₺${ref.watch(appGlobalProvider).getProfit.toNumberWithTurkishFormat()}",
                 icon: Icons.trending_up,
                 color: Colors.green,
-                percentage: "%" +
-                    ref
-                        .watch(appGlobalProvider)
-                        .getPercentProfit
-                        .toStringAsFixed(2)),
+                percentage:
+                    "%${ref.watch(appGlobalProvider).getPercentProfit.toStringAsFixed(2)}"),
           ),
           const SizedBox(width: 12),
           Expanded(
             child: _buildQuickStatCard(
               title: "Toplam Yatırım",
-              value: "₺" +
-                  ref
-                      .read(appGlobalProvider)
-                      .getUserBalance
-                      .toNumberWithTurkishFormat(),
+              value:
+                  "₺${ref.read(appGlobalProvider).getUserBalance.toNumberWithTurkishFormat()}",
               icon: Icons.account_balance_wallet,
               color: Colors.blue,
               percentage: "",
@@ -180,7 +167,10 @@ class _DashboardViewState extends ConsumerState<DashboardView>
     return Container(
       padding: const EdgeInsets.all(16),
       decoration: BoxDecoration(
-        color: Colors.white,
+        color: Theme.of(context).brightness == Brightness.light
+            ? Colors.white
+            : Colors.white.withOpacity(0.05),
+        //TODO:
         borderRadius: BorderRadius.circular(16),
         boxShadow: [
           BoxShadow(
@@ -332,19 +322,15 @@ class EnhancedUserAssetTransactionWidget extends ConsumerStatefulWidget {
 
 class _EnhancedUserAssetTransactionWidgetState
     extends ConsumerState<EnhancedUserAssetTransactionWidget> {
-  String _selectedFilter = "Tümü";
-  final List<String> _filters = [
-    "Tümü",
-    "Altın",
-    "Döviz",
-  ];
-
   @override
   Widget build(BuildContext context) {
+    final viewModel = ref.watch(dashboardViewModelProvider);
     return Container(
       margin: const EdgeInsets.symmetric(horizontal: 16),
       decoration: BoxDecoration(
-        color: Colors.white,
+        color: Theme.of(context).brightness == Brightness.light
+            ? Colors.white
+            : Colors.white.withOpacity(0.05),
         borderRadius: BorderRadius.circular(16),
         boxShadow: [
           BoxShadow(
@@ -363,20 +349,20 @@ class _EnhancedUserAssetTransactionWidgetState
             child: Column(
               crossAxisAlignment: CrossAxisAlignment.start,
               children: [
-                Row(
+                const Row(
                   mainAxisAlignment: MainAxisAlignment.spaceBetween,
                   children: [
-                    const Text(
+                    Text(
                       "Varlıklarım",
                       style: TextStyle(
                         fontSize: 20,
                         fontWeight: FontWeight.bold,
                       ),
                     ),
-                    IconButton(
-                      onPressed: () => _showSortOptions(),
-                      icon: const Icon(Icons.sort),
-                    ),
+                    // IconButton(
+                    //   onPressed: () => _showSortOptions(),
+                    //   icon: const Icon(Icons.sort),
+                    // ),
                   ],
                 ),
                 const SizedBox(height: 12),
@@ -385,29 +371,63 @@ class _EnhancedUserAssetTransactionWidgetState
                   height: 40,
                   child: ListView.builder(
                     scrollDirection: Axis.horizontal,
-                    itemCount: _filters.length,
+                    itemCount: viewModel.filters.length,
                     itemBuilder: (context, index) {
-                      final filter = _filters[index];
-                      final isSelected = filter == _selectedFilter;
+                      final filter = viewModel.filters[index];
+                      final isSelected = (filter == viewModel.selectedFilter);
+                      final isDark =
+                          Theme.of(context).brightness == Brightness.dark;
+
                       return Padding(
                         padding: const EdgeInsets.only(right: 8),
                         child: FilterChip(
-                          label: Text(filter),
+                          label: Text(filter.name.tr()),
                           selected: isSelected,
                           onSelected: (selected) {
-                            setState(() => _selectedFilter = filter);
+                            viewModel.changeSelectedFilter(filter);
                           },
-                          backgroundColor: Colors.grey[100],
-                          selectedColor:
-                              Theme.of(context).primaryColor.withOpacity(0.2),
-                          labelStyle: TextStyle(
+                          // Background color for unselected state
+                          backgroundColor:
+                              isDark ? Colors.grey[800] : Colors.grey[100],
+
+                          // Selected color
+                          selectedColor: isDark
+                              ? Theme.of(context).primaryColor.withOpacity(0.3)
+                              : Colors.white,
+
+                          // Checkmark color when selected
+                          checkmarkColor: isDark
+                              ? Theme.of(context).primaryColor
+                              : Theme.of(context).primaryColor,
+
+                          // Border styling
+                          side: BorderSide(
                             color: isSelected
                                 ? Theme.of(context).primaryColor
-                                : Colors.grey[700],
+                                : (isDark
+                                    ? Colors.grey[600]!
+                                    : Colors.grey[300]!),
+                            width: isSelected ? 2 : 1,
+                          ),
+
+                          // Label text styling
+                          labelStyle: TextStyle(
+                            color: isSelected
+                                ? (isDark
+                                    ? Colors.white
+                                    : Theme.of(context).primaryColor)
+                                : (isDark
+                                    ? Colors.grey[300]
+                                    : Colors.grey[700]),
                             fontWeight: isSelected
                                 ? FontWeight.bold
                                 : FontWeight.normal,
                           ),
+                          // Shadow and elevation
+                          elevation: isDark ? 2 : 1,
+                          shadowColor: isDark
+                              ? Colors.black.withOpacity(0.3)
+                              : Colors.black.withOpacity(0.1),
                         ),
                       );
                     },
@@ -420,40 +440,6 @@ class _EnhancedUserAssetTransactionWidgetState
           // Transaction List with enhanced cards
           const UserAssetTransactionWidget(),
         ],
-      ),
-    );
-  }
-
-  void _showSortOptions() {
-    showModalBottomSheet(
-      context: context,
-      builder: (context) => Container(
-        padding: const EdgeInsets.all(16),
-        child: Column(
-          mainAxisSize: MainAxisSize.min,
-          children: [
-            const Text(
-              "Sıralama",
-              style: TextStyle(fontSize: 18, fontWeight: FontWeight.bold),
-            ),
-            const SizedBox(height: 16),
-            ListTile(
-              leading: const Icon(Icons.trending_up),
-              title: const Text("Kar/Zarar'a göre"),
-              onTap: () => Navigator.pop(context),
-            ),
-            ListTile(
-              leading: const Icon(Icons.access_time),
-              title: const Text("Tarihe göre"),
-              onTap: () => Navigator.pop(context),
-            ),
-            ListTile(
-              leading: const Icon(Icons.attach_money),
-              title: const Text("Miktara göre"),
-              onTap: () => Navigator.pop(context),
-            ),
-          ],
-        ),
       ),
     );
   }

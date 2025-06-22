@@ -3,7 +3,6 @@ import 'package:asset_tracker/core/constants/database/transaction_type_enum.dart
 import 'package:asset_tracker/data/model/database/error/database_error_model.dart';
 import 'package:asset_tracker/data/model/database/request/buy_currency_model.dart';
 import 'package:asset_tracker/data/model/database/request/save_user_model.dart';
-import 'package:asset_tracker/data/model/database/request/sell_currency_model.dart';
 import 'package:asset_tracker/data/model/database/request/user_uid_model.dart';
 import 'package:asset_tracker/data/model/database/response/asset_code_model.dart';
 import 'package:asset_tracker/data/model/database/response/user_data_model.dart';

@@ -20,6 +20,8 @@ class TransactionCardLVBWidget extends ConsumerWidget {
 
   @override
   Widget build(BuildContext context, WidgetRef ref) {
+    final isDark = Theme.of(context).brightness == Brightness.dark;
+    
     return ListView.builder(
       shrinkWrap: true,
       physics: const NeverScrollableScrollPhysics(),
@@ -29,8 +31,10 @@ class TransactionCardLVBWidget extends ConsumerWidget {
         return Container(
           margin: const EdgeInsets.symmetric(horizontal: 16, vertical: 4),
           child: Card(
-            elevation: 3,
-            shadowColor: Colors.black.withOpacity(0.1),
+            elevation: isDark ? 8 : 3,
+            shadowColor: (isDark ? Colors.black : Colors.black)
+                .withOpacity(isDark ? 0.3 : 0.1),
+            color: isDark ? Colors.grey[800] : Colors.white,
             shape: RoundedRectangleBorder(
               borderRadius: BorderRadius.circular(12),
             ),
@@ -41,16 +45,20 @@ class TransactionCardLVBWidget extends ConsumerWidget {
                   begin: Alignment.centerLeft,
                   end: Alignment.centerRight,
                   colors: [
-                    Colors.white,
+                    isDark ? Colors.grey[800]! : Colors.white,
                     transaction.transactionType == TransactionTypeEnum.BUY
-                        ? Colors.blue.shade50.withOpacity(0.3)
-                        : Colors.green.shade50.withOpacity(0.3),
+                        ? (isDark
+                            ? Colors.blue.shade900.withOpacity(0.4)
+                            : Colors.blue.shade50.withOpacity(0.3))
+                        : (isDark
+                            ? Colors.green.shade900.withOpacity(0.4)
+                            : Colors.green.shade50.withOpacity(0.3)),
                   ],
                 ),
                 border: Border.all(
                   color: transaction.transactionType == TransactionTypeEnum.BUY
-                      ? Colors.blue.withOpacity(0.2)
-                      : Colors.green.withOpacity(0.2),
+                      ? Colors.blue.withOpacity(isDark ? 0.4 : 0.2)
+                      : Colors.green.withOpacity(isDark ? 0.4 : 0.2),
                   width: 1,
                 ),
               ),
@@ -59,19 +67,19 @@ class TransactionCardLVBWidget extends ConsumerWidget {
                 child: Row(
                   children: [
                     // Left - Currency & Type
-                    _buildCurrencySection(transaction),
+                    _buildCurrencySection(transaction, isDark),
 
                     const SizedBox(width: 16),
 
                     // Center - Transaction Details
                     Expanded(
-                      child: _buildTransactionDetails(transaction),
+                      child: _buildTransactionDetails(transaction, isDark),
                     ),
 
                     const SizedBox(width: 12),
 
                     // Right - Amount & Date
-                    _buildAmountSection(transaction),
+                    _buildAmountSection(transaction, isDark),
                   ],
                 ),
               ),
@@ -82,17 +90,17 @@ class TransactionCardLVBWidget extends ConsumerWidget {
     );
   }
 
-  Widget _buildCurrencySection(UserCurrencyEntity transaction) {
+  Widget _buildCurrencySection(UserCurrencyEntity transaction, bool isDark) {
     final isBuy = transaction.transactionType == TransactionTypeEnum.BUY;
     return Column(
       children: [
         const SizedBox(height: 6),
         Text(
           transaction.currencyCode.getCurrencyTitle(),
-          style: const TextStyle(
+          style: TextStyle(
             fontSize: 12,
             fontWeight: FontWeight.bold,
-            color: Colors.black87,
+            color: isDark ? Colors.white : Colors.black87,
           ),
         ),
         Text(
@@ -100,14 +108,16 @@ class TransactionCardLVBWidget extends ConsumerWidget {
           style: TextStyle(
             fontSize: 9,
             fontWeight: FontWeight.w600,
-            color: isBuy ? Colors.blue.shade600 : Colors.green.shade600,
+            color: isBuy
+                ? (isDark ? Colors.blue.shade300 : Colors.blue.shade600)
+                : (isDark ? Colors.green.shade300 : Colors.green.shade600),
           ),
         ),
       ],
     );
   }
 
-  Widget _buildTransactionDetails(UserCurrencyEntity transaction) {
+  Widget _buildTransactionDetails(UserCurrencyEntity transaction, bool isDark) {
     return Column(
       crossAxisAlignment: CrossAxisAlignment.start,
       children: [
@@ -116,15 +126,15 @@ class TransactionCardLVBWidget extends ConsumerWidget {
             Icon(
               Icons.account_balance_wallet,
               size: 14,
-              color: Colors.grey.shade600,
+              color: isDark ? Colors.grey.shade400 : Colors.grey.shade600,
             ),
             const SizedBox(width: 6),
             Text(
               "${transaction.amount}",
-              style: const TextStyle(
+              style: TextStyle(
                 fontSize: 14,
                 fontWeight: FontWeight.w600,
-                color: Colors.black87,
+                color: isDark ? Colors.white : Colors.black87,
               ),
             ),
           ],
@@ -132,14 +142,13 @@ class TransactionCardLVBWidget extends ConsumerWidget {
         const SizedBox(height: 8),
         Row(
           children: [
-     
             const SizedBox(width: 6),
             Text(
               "₺${transaction.price.toNumberWithTurkishFormat()}",
-              style: const TextStyle(
+              style: TextStyle(
                 fontSize: 13,
                 fontWeight: FontWeight.w500,
-                color: Colors.black87,
+                color: isDark ? Colors.grey[300] : Colors.black87,
               ),
             ),
             const SizedBox(width: 4),
@@ -149,12 +158,14 @@ class TransactionCardLVBWidget extends ConsumerWidget {
     );
   }
 
-  Widget _buildAmountSection(UserCurrencyEntity transaction) {
+  Widget _buildAmountSection(UserCurrencyEntity transaction, bool isDark) {
     final totalAmount = transaction.price * transaction.amount;
     final isProfit = transaction.transactionType == TransactionTypeEnum.SELL;
+    
+    // Dark theme için renk ayarlaması
     final color = isProfit
-        ? DefaultColorPalette.vanillaGreen
-        : DefaultColorPalette.errorRed;
+        ? (isDark ? Colors.green.shade400 : DefaultColorPalette.vanillaGreen)
+        : (isDark ? Colors.red.shade400 : DefaultColorPalette.errorRed);
 
     return Column(
       crossAxisAlignment: CrossAxisAlignment.end,
@@ -162,10 +173,10 @@ class TransactionCardLVBWidget extends ConsumerWidget {
         Container(
           padding: const EdgeInsets.symmetric(horizontal: 8, vertical: 4),
           decoration: BoxDecoration(
-            color: color.withOpacity(0.1),
+            color: color.withOpacity(isDark ? 0.2 : 0.1),
             borderRadius: BorderRadius.circular(8),
             border: Border.all(
-              color: color.withOpacity(0.3),
+              color: color.withOpacity(isDark ? 0.5 : 0.3),
               width: 1,
             ),
           ),
@@ -182,13 +193,13 @@ class TransactionCardLVBWidget extends ConsumerWidget {
         Container(
           padding: const EdgeInsets.symmetric(horizontal: 6, vertical: 2),
           decoration: BoxDecoration(
-            color: Colors.grey.shade100,
+            color: isDark ? Colors.grey.shade700 : Colors.grey.shade100,
             borderRadius: BorderRadius.circular(6),
           ),
           child: Text(
             GeneralConstants.dateFormat.format(transaction.buyDate),
             style: TextStyle(
-              color: Colors.grey.shade700,
+              color: isDark ? Colors.grey.shade300 : Colors.grey.shade700,
               fontSize: 10,
               fontWeight: FontWeight.w500,
             ),

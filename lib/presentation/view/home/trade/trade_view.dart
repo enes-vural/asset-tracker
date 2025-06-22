@@ -100,7 +100,7 @@ class _TradeViewState extends ConsumerState<TradeView> with ValidatorMixin {
         children: [
           Expanded(
             child: GestureDetector(
-              onTap: () => viewModel.toggleTradeType(TradeType.buy),
+              onTap: () => viewModel.toggleTradeType(ref, TradeType.buy),
               child: Container(
                 padding: const EdgeInsets.symmetric(vertical: 12),
                 decoration: BoxDecoration(
@@ -138,7 +138,7 @@ class _TradeViewState extends ConsumerState<TradeView> with ValidatorMixin {
           const SizedBox(width: 4),
           Expanded(
             child: GestureDetector(
-              onTap: () => viewModel.toggleTradeType(TradeType.sell),
+              onTap: () => viewModel.toggleTradeType(ref, TradeType.sell),
               child: Container(
                 padding: const EdgeInsets.symmetric(vertical: 12),
                 decoration: BoxDecoration(
@@ -180,6 +180,35 @@ class _TradeViewState extends ConsumerState<TradeView> with ValidatorMixin {
 
   Widget _buildTradeForm(TradeViewModel viewModel, bool isDark) {
     final currentTradeType = viewModel.currentTradeType;
+
+    // Dark theme için uygun renkler
+    final buyColors = isDark
+        ? {
+            'background': const Color(0xFF1A2E1A), // Koyu yeşil arkaplan
+            'border': const Color(0xFF2E5D2E), // Orta yeşil border
+            'text': const Color(0xFF4CAF50), // Açık yeşil text
+          }
+        : {
+            'background': Colors.green[50]!,
+            'border': Colors.green[200]!,
+            'text': Colors.green[800]!,
+          };
+
+    final sellColors = isDark
+        ? {
+            'background': const Color(0xFF2E1A1A), // Koyu kırmızı arkaplan
+            'border': const Color(0xFF5D2E2E), // Orta kırmızı border
+            'text': const Color(0xFFE57373), // Açık kırmızı text
+          }
+        : {
+            'background': Colors.red[50]!,
+            'border': Colors.red[200]!,
+            'text': Colors.red[800]!,
+          };
+
+    final currentColors =
+        currentTradeType == TradeType.buy ? buyColors : sellColors;
+
     return Container(
       padding: const EdgeInsets.all(20),
       decoration: BoxDecoration(
@@ -199,8 +228,8 @@ class _TradeViewState extends ConsumerState<TradeView> with ValidatorMixin {
                     ? Icons.add_shopping_cart
                     : Icons.sell,
                 color: currentTradeType == TradeType.buy
-                    ? Colors.green[600]
-                    : Colors.red[600],
+                    ? (isDark ? const Color(0xFF4CAF50) : Colors.green[600])
+                    : (isDark ? const Color(0xFFE57373) : Colors.red[600]),
                 size: 20,
               ),
               const SizedBox(width: 8),
@@ -223,6 +252,7 @@ class _TradeViewState extends ConsumerState<TradeView> with ValidatorMixin {
             pageCurrency: widget.currencyCode,
             viewModel: viewModel,
             onSelectedChanged: () {
+              debugPrint("aljfljasfn");
               viewModel.getPriceSelectedCurrency(ref);
             },
           ),
@@ -279,14 +309,10 @@ class _TradeViewState extends ConsumerState<TradeView> with ValidatorMixin {
           Container(
             padding: const EdgeInsets.all(12),
             decoration: BoxDecoration(
-              color: currentTradeType == TradeType.buy
-                  ? Colors.green[50]
-                  : Colors.red[50],
+              color: currentColors['background'] as Color,
               borderRadius: BorderRadius.circular(8),
               border: Border.all(
-                color: currentTradeType == TradeType.buy
-                    ? Colors.green[200]!
-                    : Colors.red[200]!,
+                color: currentColors['border'] as Color,
               ),
             ),
             child: Column(
@@ -297,9 +323,7 @@ class _TradeViewState extends ConsumerState<TradeView> with ValidatorMixin {
                   style: TextStyle(
                     fontSize: 12,
                     fontWeight: FontWeight.w500,
-                    color: currentTradeType == TradeType.buy
-                        ? Colors.green[800]
-                        : Colors.red[800],
+                    color: currentColors['text'] as Color,
                   ),
                 ),
                 const SizedBox(height: 4),
@@ -349,7 +373,6 @@ class _TradeViewState extends ConsumerState<TradeView> with ValidatorMixin {
             EasySnackBar.show(context, LocaleKeys.trade_fillAllFields.tr());
             return;
           }
-
           if (currentTradeType == TradeType.buy) {
             await viewModel.buyCurrency(ref: ref, context: context);
           } else if (currentTradeType == TradeType.sell) {

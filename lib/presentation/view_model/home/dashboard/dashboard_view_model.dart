@@ -1,5 +1,4 @@
-import 'package:asset_tracker/core/constants/database/transaction_type_enum.dart';
-import 'package:asset_tracker/domain/entities/database/enttiy/sell_currency_entity.dart';
+import 'package:asset_tracker/core/constants/enums/widgets/dashboard_filters_enum.dart';
 import 'package:asset_tracker/domain/entities/database/enttiy/user_data_entity.dart';
 import 'package:asset_tracker/domain/entities/database/enttiy/user_currency_entity_model.dart';
 import 'package:asset_tracker/domain/entities/database/enttiy/user_uid_entity.dart';
@@ -15,9 +14,30 @@ class DashboardViewModel extends ChangeNotifier {
 
   bool canPop = true;
 
+  DashboardFilterEnum selectedFilter = DashboardFilterEnum.ALL;
+  final List<DashboardFilterEnum> filters = [
+    DashboardFilterEnum.ALL,
+    DashboardFilterEnum.GOLD,
+    DashboardFilterEnum.FOREIGN_CURRENCY,
+    DashboardFilterEnum.PRECIOUS_METAL,
+  ];
+
+  void changeSelectedFilter(DashboardFilterEnum newFilter) {
+    if (newFilter != selectedFilter) {
+      selectedFilter = newFilter;
+      notifyListeners();
+    }
+  }
+
   void changePopState(bool state) {
     canPop = state;
     notifyListeners();
+  }
+
+  void routeTradeView(WidgetRef ref, bool isBuy, String currency) {
+    ref
+        .read(tradeViewModelProvider)
+        .routeTradeView(isBuy: isBuy, ref: ref, currency: currency);
   }
 
   final Map<String, List<UserCurrencyEntity>> _filteredTransactions = {};
@@ -40,40 +60,6 @@ class DashboardViewModel extends ChangeNotifier {
       }
       notifyListeners();
     });
-  }
-  
-
-  Future<void> sellAsset(WidgetRef ref, UserCurrencyEntity transaction) async {
-    changePopState(false);
-
-    CalculateProfitEntity? latestState =
-        calculateSelectedCurrencyTotalAmount(ref, transaction.currencyCode);
-
-    final latestCurrencyData = transaction.copyWith(
-        total: (latestState?.latestPriceTotal),
-        price: ((latestState?.latestPriceTotal ?? 0) / transaction.amount),
-        transactionType: TransactionTypeEnum.SELL);
-
-    final sellCurrencyEntity = SellCurrencyEntity(
-      buyPrice: latestCurrencyData.price,
-      sellAmount: latestCurrencyData.amount,
-      currencyCode: latestCurrencyData.currencyCode,
-      sellPrice: latestState?.latestPriceTotal ?? 0,
-      date: DateTime.now(),
-      userId: latestCurrencyData.userId,
-    );
-
-    final status =
-        await getIt<DatabaseUseCase>().sellCurrency(sellCurrencyEntity);
-    await status.fold((error) async {
-      // Handle error
-    }, (success) async {
-      if (success) {
-        debugPrint("Transaction sold successfully");
-        await _updateLatestUserInfo(transaction, ref);
-      }
-    });
-    changePopState(true);
   }
 
   Future<void> _updateLatestUserInfo(

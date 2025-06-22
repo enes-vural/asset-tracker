@@ -38,6 +38,10 @@
         }
     },
     "dashboard": {
+        "filterAll": "Tümü",
+        "filterGold": "Altın",
+        "filterForeignCurrency": "Döviz",
+        "filterPreciousMetal": "Değerli Metal",
         "assetDataNull": "Kullanıcının herhangi bir varlığı yok",
         "availableBalance": "Mevcut Bakiye",
         "totalBalance": "Toplam Bakiye",

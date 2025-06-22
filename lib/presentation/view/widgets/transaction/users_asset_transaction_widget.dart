@@ -1,6 +1,7 @@
 import 'package:asset_tracker/core/config/theme/extension/currency_widget_title_extension.dart';
 import 'package:asset_tracker/core/constants/database/transaction_type_enum.dart';
 import 'package:asset_tracker/core/config/theme/extension/number_format_extension.dart';
+import 'package:asset_tracker/core/constants/enums/widgets/dashboard_filters_enum.dart';
 import 'package:asset_tracker/core/mixins/get_currency_icon_mixin.dart';
 import 'package:asset_tracker/core/widgets/custom_padding.dart';
 import 'package:asset_tracker/domain/entities/database/enttiy/user_data_entity.dart';
@@ -55,14 +56,12 @@ class _UserAssetTransactionWidgetState
 
     WidgetsBinding.instance.addPostFrameCallback((_) async {
       ref.read(dashboardViewModelProvider.notifier).showAssetsAsStatistic(ref);
-      Future.delayed(const Duration(seconds: 1), () {
-        if (mounted) {
-          setState(() {
-            isLoading = false;
-          });
-          _animationController.forward();
-        }
-      });
+      if (mounted) {
+        setState(() {
+          isLoading = false;
+        });
+        _animationController.forward();
+      }
     });
   }
 
@@ -74,6 +73,7 @@ class _UserAssetTransactionWidgetState
 
   @override
   Widget build(BuildContext context) {
+    final isDark = Theme.of(context).brightness == Brightness.dark;
     UserDataEntity? entity = ref.watch(appGlobalProvider.notifier).getUserData;
     List<UserCurrencyEntity>? allTransactions =
         (entity?.currencyList ?? []) + (entity?.soldCurrencyList ?? []);
@@ -84,7 +84,11 @@ class _UserAssetTransactionWidgetState
 
     // Verileri gruplama işlemi
     allTransactions.forEach((UserCurrencyEntity transaction) {
-      if (!groupedData.containsKey(transaction.currencyCode)) {
+      if (!groupedData.containsKey(transaction.currencyCode) &&
+          //filtreleme işlemleri
+          ((currencyTypes[transaction.currencyCode] ==
+                  viewModel.selectedFilter) ||
+              viewModel.selectedFilter == DashboardFilterEnum.ALL)) {
         groupedData[transaction.currencyCode] = [];
       }
       groupedData[transaction.currencyCode]?.add(transaction);
@@ -95,7 +99,7 @@ class _UserAssetTransactionWidgetState
     }
 
     if (groupedData.isEmpty) {
-      return _buildEmptyState();
+      return _buildEmptyState(isDark);
     }
 
     return FadeTransition(
@@ -121,6 +125,7 @@ class _UserAssetTransactionWidgetState
                   stats: stats,
                   quantities: quantities,
                   viewModel: viewModel,
+                  isDark: isDark,
                 ),
               );
             }).toList(),
@@ -130,7 +135,7 @@ class _UserAssetTransactionWidgetState
     );
   }
 
-  Widget _buildEmptyState() {
+  Widget _buildEmptyState(bool isDark) {
     return Center(
       child: Container(
         padding: const EdgeInsets.all(32),
@@ -139,7 +144,7 @@ class _UserAssetTransactionWidgetState
             Icon(
               Icons.account_balance_wallet_outlined,
               size: 80,
-              color: Colors.grey[400],
+              color: isDark ? Colors.grey[600] : Colors.grey[400],
             ),
             const SizedBox(height: 16),
             Text(
@@ -147,7 +152,7 @@ class _UserAssetTransactionWidgetState
               style: TextStyle(
                 fontSize: 20,
                 fontWeight: FontWeight.bold,
-                color: Colors.grey[600],
+                color: isDark ? Colors.grey[300] : Colors.grey[600],
               ),
             ),
             const SizedBox(height: 8),
@@ -155,12 +160,12 @@ class _UserAssetTransactionWidgetState
               "İlk yatırımınızı yaparak başlayın",
               style: TextStyle(
                 fontSize: 16,
-                color: Colors.grey[500],
+                color: isDark ? Colors.grey[400] : Colors.grey[500],
               ),
             ),
             const SizedBox(height: 24),
             ElevatedButton.icon(
-              onPressed: () => _showAddTransactionDialog(),
+              onPressed: () => _showAddTransactionDialog(isDark),
               icon: const Icon(Icons.add),
               label: const Text("İşlem Ekle"),
               style: ElevatedButton.styleFrom(
@@ -169,6 +174,8 @@ class _UserAssetTransactionWidgetState
                 shape: RoundedRectangleBorder(
                   borderRadius: BorderRadius.circular(12),
                 ),
+                backgroundColor: isDark ? Colors.blueGrey[700] : null,
+                foregroundColor: isDark ? Colors.white : null,
               ),
             ),
           ],
@@ -182,24 +189,31 @@ class _UserAssetTransactionWidgetState
     required CalculateProfitEntity? stats,
     required double quantities,
     required dynamic viewModel,
+    required bool isDark,
   }) {
     final isProfit = (stats?.profit ?? 0) >= 0;
     final profitColor = isProfit ? Colors.green : Colors.red;
 
+    final cardColor = isDark ? Colors.grey[850] : Colors.white;
+    final borderColor = isDark
+        ? Colors.grey[700]!.withOpacity(0.3)
+        : Colors.grey.withOpacity(0.1);
+
     return Container(
       decoration: BoxDecoration(
-        color: Colors.white,
+        color: cardColor,
         borderRadius: BorderRadius.circular(16),
         boxShadow: [
           BoxShadow(
-            color: Colors.black.withOpacity(0.08),
+            color: (isDark ? Colors.black : Colors.black)
+                .withOpacity(isDark ? 0.3 : 0.08),
             blurRadius: 12,
             offset: const Offset(0, 4),
             spreadRadius: 0,
           ),
         ],
         border: Border.all(
-          color: Colors.grey.withOpacity(0.1),
+          color: borderColor,
           width: 1,
         ),
       ),
@@ -213,8 +227,8 @@ class _UserAssetTransactionWidgetState
               decoration: BoxDecoration(
                 gradient: LinearGradient(
                   colors: [
-                    profitColor.withOpacity(0.1),
-                    profitColor.withOpacity(0.05),
+                    profitColor.withOpacity(isDark ? 0.15 : 0.1),
+                    profitColor.withOpacity(isDark ? 0.08 : 0.05),
                   ],
                   begin: Alignment.topLeft,
                   end: Alignment.bottomRight,
@@ -241,9 +255,10 @@ class _UserAssetTransactionWidgetState
                           children: [
                             Text(
                               setCurrencyLabel(entry.key),
-                              style: const TextStyle(
+                              style: TextStyle(
                                 fontSize: 18,
                                 fontWeight: FontWeight.bold,
+                                color: isDark ? Colors.white : Colors.black,
                               ),
                             ),
                             const SizedBox(width: 8),
@@ -253,14 +268,18 @@ class _UserAssetTransactionWidgetState
                                 vertical: 4,
                               ),
                               decoration: BoxDecoration(
-                                color: Colors.grey[200],
+                                color: isDark
+                                    ? Colors.grey[700]
+                                    : Colors.grey[200],
                                 borderRadius: BorderRadius.circular(8),
                               ),
                               child: Text(
                                 "${entry.value.length} işlem",
                                 style: TextStyle(
                                   fontSize: 12,
-                                  color: Colors.grey[600],
+                                  color: isDark
+                                      ? Colors.grey[300]
+                                      : Colors.grey[600],
                                   fontWeight: FontWeight.w500,
                                 ),
                               ),
@@ -272,7 +291,7 @@ class _UserAssetTransactionWidgetState
                           "${quantities.toNumberWithTurkishFormat()} birim",
                           style: TextStyle(
                             fontSize: 14,
-                            color: Colors.grey[600],
+                            color: isDark ? Colors.grey[300] : Colors.grey[600],
                           ),
                         ),
                       ],
@@ -325,7 +344,7 @@ class _UserAssetTransactionWidgetState
               padding: const EdgeInsets.all(16),
               child: Column(
                 children: [
-                  _buildEnhancedStatsRow(stats),
+                  _buildEnhancedStatsRow(stats, isDark),
                   const SizedBox(height: 16),
 
                   // Action buttons
@@ -337,6 +356,7 @@ class _UserAssetTransactionWidgetState
                           Icons.remove_circle,
                           Colors.red[600]!,
                           () => _removeTransaction(entry.value.first),
+                          isDark,
                         ),
                       ),
                       const SizedBox(width: 12),
@@ -345,7 +365,9 @@ class _UserAssetTransactionWidgetState
                           "Sat",
                           Icons.sell_outlined,
                           Colors.red[600]!,
-                          () => _showSellDialog(entry.value.first),
+                          () => _routeTradeView(
+                              false, ref, entry.key.getCurrencyTitle()),
+                          isDark,
                         ),
                       ),
                       const SizedBox(width: 12),
@@ -354,7 +376,9 @@ class _UserAssetTransactionWidgetState
                           "Al",
                           Icons.add_circle_outline,
                           Colors.green[600]!,
-                          () => _showBuyDialog(entry.key),
+                          () => _routeTradeView(
+                              true, ref, entry.key.getCurrencyTitle()),
+                          isDark,
                         ),
                       ),
                     ],
@@ -364,17 +388,28 @@ class _UserAssetTransactionWidgetState
             ),
 
             // Expandable transaction list
-            ExpansionTile(
-              title: Text(
-                "İşlem Geçmişi (${entry.value.length})",
-                style: const TextStyle(
-                  fontWeight: FontWeight.w600,
-                  fontSize: 14,
-                ),
+            Theme(
+              data: Theme.of(context).copyWith(
+                dividerColor: Colors.transparent,
+                unselectedWidgetColor:
+                    isDark ? Colors.grey[400] : Colors.grey[600],
               ),
-              children: [
-                TransactionCardLVBWidget(entry: entry, viewModel: viewModel),
-              ],
+              child: ExpansionTile(
+                title: Text(
+                  "İşlem Geçmişi (${entry.value.length})",
+                  style: TextStyle(
+                    fontWeight: FontWeight.w600,
+                    fontSize: 14,
+                    color: isDark ? Colors.white : Colors.black,
+                  ),
+                ),
+                iconColor: isDark ? Colors.grey[400] : Colors.grey[600],
+                collapsedIconColor:
+                    isDark ? Colors.grey[400] : Colors.grey[600],
+                children: [
+                  TransactionCardLVBWidget(entry: entry, viewModel: viewModel),
+                ],
+              ),
             ),
           ],
         ),
@@ -382,7 +417,9 @@ class _UserAssetTransactionWidgetState
     );
   }
 
-  Widget _buildEnhancedStatsRow(CalculateProfitEntity? stats) {
+  Widget _buildEnhancedStatsRow(CalculateProfitEntity? stats, bool isDark) {
+    final dividerColor = isDark ? Colors.grey[600] : Colors.grey[300];
+
     return Row(
       children: [
         Expanded(
@@ -391,12 +428,13 @@ class _UserAssetTransactionWidgetState
             stats?.purchasePriceTotal ?? 0,
             Icons.shopping_cart_outlined,
             Colors.blue,
+            isDark,
           ),
         ),
         Container(
           width: 1,
           height: 40,
-          color: Colors.grey[300],
+          color: dividerColor,
         ),
         Expanded(
           child: _buildStatItem(
@@ -404,12 +442,13 @@ class _UserAssetTransactionWidgetState
             stats?.latestPriceTotal ?? 0,
             Icons.trending_up_outlined,
             Colors.orange,
+            isDark,
           ),
         ),
         Container(
           width: 1,
           height: 40,
-          color: Colors.grey[300],
+          color: dividerColor,
         ),
         Expanded(
           child: _buildStatItem(
@@ -419,6 +458,7 @@ class _UserAssetTransactionWidgetState
                 ? Icons.arrow_upward
                 : Icons.arrow_downward,
             (stats?.profit ?? 0) >= 0 ? Colors.green : Colors.red,
+            isDark,
           ),
         ),
       ],
@@ -426,7 +466,7 @@ class _UserAssetTransactionWidgetState
   }
 
   Widget _buildStatItem(
-      String label, double value, IconData icon, Color color) {
+      String label, double value, IconData icon, Color color, bool isDark) {
     return Column(
       children: [
         Icon(icon, color: color, size: 20),
@@ -435,7 +475,7 @@ class _UserAssetTransactionWidgetState
           label,
           style: TextStyle(
             fontSize: 12,
-            color: Colors.grey[600],
+            color: isDark ? Colors.grey[300] : Colors.grey[600],
             fontWeight: FontWeight.w500,
           ),
         ),
@@ -452,8 +492,8 @@ class _UserAssetTransactionWidgetState
     );
   }
 
-  Widget _buildActionButton(
-      String text, IconData icon, Color color, VoidCallback onPressed) {
+  Widget _buildActionButton(String text, IconData icon, Color color,
+      VoidCallback onPressed, bool isDark) {
     return TextButton.icon(
       onPressed: onPressed,
       icon: Icon(icon, size: 16, color: color),
@@ -469,22 +509,23 @@ class _UserAssetTransactionWidgetState
         padding: const EdgeInsets.symmetric(vertical: 8, horizontal: 12),
         shape: RoundedRectangleBorder(
           borderRadius: BorderRadius.circular(8),
-          side: BorderSide(color: color.withOpacity(0.3)),
+          side: BorderSide(color: color.withOpacity(isDark ? 0.5 : 0.3)),
         ),
+        backgroundColor: isDark ? color.withOpacity(0.1) : Colors.transparent,
       ),
     );
   }
 
-  void _showAddTransactionDialog() {
+  void _showAddTransactionDialog(bool isDark) {
     showModalBottomSheet(
       context: context,
       isScrollControlled: true,
       backgroundColor: Colors.transparent,
       builder: (context) => Container(
         height: MediaQuery.of(context).size.height * 0.8,
-        decoration: const BoxDecoration(
-          color: Colors.white,
-          borderRadius: BorderRadius.vertical(top: Radius.circular(20)),
+        decoration: BoxDecoration(
+          color: isDark ? Colors.grey[850] : Colors.white,
+          borderRadius: const BorderRadius.vertical(top: Radius.circular(20)),
         ),
         child: Column(
           children: [
@@ -493,15 +534,19 @@ class _UserAssetTransactionWidgetState
               width: 40,
               height: 4,
               decoration: BoxDecoration(
-                color: Colors.grey[300],
+                color: isDark ? Colors.grey[600] : Colors.grey[300],
                 borderRadius: BorderRadius.circular(2),
               ),
             ),
-            const Padding(
-              padding: EdgeInsets.all(16),
+            Padding(
+              padding: const EdgeInsets.all(16),
               child: Text(
                 "Yeni İşlem Ekle",
-                style: TextStyle(fontSize: 20, fontWeight: FontWeight.bold),
+                style: TextStyle(
+                  fontSize: 20,
+                  fontWeight: FontWeight.bold,
+                  color: isDark ? Colors.white : Colors.black,
+                ),
               ),
             ),
             // Transaction form here
@@ -511,132 +556,13 @@ class _UserAssetTransactionWidgetState
     );
   }
 
-  void _showTransactionDetails(
-      MapEntry<String, List<UserCurrencyEntity>> entry) {
-    showModalBottomSheet(
-      context: context,
-      isScrollControlled: true,
-      backgroundColor: Colors.transparent,
-      builder: (context) => Container(
-        height: MediaQuery.of(context).size.height * 0.8,
-        decoration: const BoxDecoration(
-          color: Colors.white,
-          borderRadius: BorderRadius.vertical(top: Radius.circular(20)),
-        ),
-        child: Column(
-          children: [
-            Container(
-              margin: const EdgeInsets.symmetric(vertical: 8),
-              width: 40,
-              height: 4,
-              decoration: BoxDecoration(
-                color: Colors.grey[300],
-                borderRadius: BorderRadius.circular(2),
-              ),
-            ),
-            Padding(
-              padding: const EdgeInsets.all(16),
-              child: Text(
-                "${setCurrencyLabel(entry.key)} Detayları",
-                style:
-                    const TextStyle(fontSize: 20, fontWeight: FontWeight.bold),
-              ),
-            ),
-            Expanded(
-              child: ListView.builder(
-                itemCount: entry.value.length,
-                itemBuilder: (context, index) {
-                  final transaction = entry.value[index];
-                  return _buildTransactionDetailCard(transaction);
-                },
-              ),
-            ),
-          ],
-        ),
-      ),
-    );
-  }
-
-  Widget _buildTransactionDetailCard(UserCurrencyEntity transaction) {
-    final isBuy = transaction.transactionType == TransactionTypeEnum.BUY;
-
-    return Container(
-      margin: const EdgeInsets.symmetric(horizontal: 16, vertical: 4),
-      padding: const EdgeInsets.all(16),
-      decoration: BoxDecoration(
-        color: Colors.grey[50],
-        borderRadius: BorderRadius.circular(12),
-        border: Border.all(color: Colors.grey[200]!),
-      ),
-      child: Row(
-        children: [
-          Container(
-            width: 40,
-            height: 40,
-            decoration: BoxDecoration(
-              color: isBuy ? Colors.green[100] : Colors.red[100],
-              borderRadius: BorderRadius.circular(8),
-            ),
-            child: Icon(
-              isBuy ? Icons.add : Icons.remove,
-              color: isBuy ? Colors.green[600] : Colors.red[600],
-            ),
-          ),
-          const SizedBox(width: 12),
-          Expanded(
-            child: Column(
-              crossAxisAlignment: CrossAxisAlignment.start,
-              children: [
-                Text(
-                  isBuy ? "Alış" : "Satış",
-                  style: const TextStyle(
-                    fontWeight: FontWeight.bold,
-                    fontSize: 16,
-                  ),
-                ),
-                Text(
-                  "${transaction.amount.toNumberWithTurkishFormat()} birim",
-                  style: TextStyle(
-                    color: Colors.grey[600],
-                    fontSize: 14,
-                  ),
-                ),
-              ],
-            ),
-          ),
-          Column(
-            crossAxisAlignment: CrossAxisAlignment.end,
-            children: [
-              Text(
-                "₺${transaction.price.toNumberWithTurkishFormat()}",
-                style: const TextStyle(
-                  fontWeight: FontWeight.bold,
-                  fontSize: 16,
-                ),
-              ),
-              Text(
-                "Birim fiyat",
-                style: TextStyle(
-                  color: Colors.grey[600],
-                  fontSize: 12,
-                ),
-              ),
-            ],
-          ),
-        ],
-      ),
-    );
-  }
-
-  void _showSellDialog(UserCurrencyEntity transaction) {
-    ref.read(dashboardViewModelProvider).sellAsset(ref, transaction);
+  void _routeTradeView(bool isBuy, WidgetRef ref, String currencyLabel) {
+    ref
+        .read(dashboardViewModelProvider)
+        .routeTradeView(ref, isBuy, currencyLabel);
   }
 
   void _removeTransaction(UserCurrencyEntity transaction) {
     ref.read(dashboardViewModelProvider).removeTransaction(ref, transaction);
-  }
-
-  void _showBuyDialog(String assetCode) {
-    // Implement buy dialog
   }
 }
