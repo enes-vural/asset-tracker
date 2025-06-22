@@ -48,4 +48,10 @@ class MockAuthService implements IMockAuthService {
     // TODO: implement registerUser
     throw UnimplementedError();
   }
+  
+  @override
+  Future<void> sendResetPasswordLink(String email) {
+    // TODO: implement sendResetPasswordLink
+    throw UnimplementedError();
+  }
 }

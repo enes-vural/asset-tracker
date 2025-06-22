@@ -12,4 +12,6 @@ abstract interface class IAuthService<L, R> {
   Future<void> signOutUser();
   // TODO: T Type verilecek
   Future<R>? registerUser(UserRegisterModel model);
+
+  Future<void> sendResetPasswordLink(String email);
 }

@@ -39,6 +39,12 @@ class FirebaseAuthService implements IFirebaseAuthService {
     return await authService.signOut();
   }
 
+  //gereksiz değil anlamlı soyutlama bi email stringi için entity model yazmayı gerek görmedim.
+  @override
+  Future<void> sendResetPasswordLink(String email) async {
+    return await authService.sendPasswordResetEmail(email: email);
+  }
+
   @override
   Future<UserCredential> registerUser(UserRegisterModel model) async {
     return await authService.createUserWithEmailAndPassword(

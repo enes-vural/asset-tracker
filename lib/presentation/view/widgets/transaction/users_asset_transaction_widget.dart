@@ -256,12 +256,17 @@ class _UserAssetTransactionWidgetState
                       children: [
                         Row(
                           children: [
-                            Text(
-                              setCurrencyLabel(entry.key),
-                              style: TextStyle(
-                                fontSize: 18,
-                                fontWeight: FontWeight.bold,
-                                color: isDark ? Colors.white : Colors.black,
+                            Expanded(
+                              child: Text(
+                                setCurrencyLabel(entry.key),
+                                style: TextStyle(
+                                  fontSize: 18,
+                                  fontWeight: FontWeight.bold,
+                                  color: isDark ? Colors.white : Colors.black,
+                                ),
+                                overflow: TextOverflow
+                                    .ellipsis, // Uzun metinleri keser
+                                maxLines: 1, // Tek satırda gösterir
                               ),
                             ),
                             const SizedBox(width: 8),
@@ -294,7 +299,6 @@ class _UserAssetTransactionWidgetState
                           isSold
                               ? "Satıldı"
                               : "${quantities.toNumberWithTurkishFormat()} birim",
-                              
                           style: TextStyle(
                             fontSize: 14,
                             color: isDark ? Colors.grey[300] : Colors.grey[600],

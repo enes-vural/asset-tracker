@@ -252,7 +252,7 @@ class _TradeViewState extends ConsumerState<TradeView> with ValidatorMixin {
             pageCurrency: widget.currencyCode,
             viewModel: viewModel,
             onSelectedChanged: () {
-              debugPrint("aljfljasfn");
+
               viewModel.getPriceSelectedCurrency(ref);
             },
           ),

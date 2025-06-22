@@ -26,4 +26,8 @@ class SignInUseCase implements BaseUseCase {
   Future<void> signOut() async {
     return await _authRepository.signOut();
   }
+
+  Future<void> sendResetPasswordLink(String email) async {
+    return await _authRepository.sendResetPasswordLink(email);
+  }
 }

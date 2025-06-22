@@ -132,4 +132,14 @@ class MockFirebaseAuthRepository extends _i1.Mock
         returnValue: _i5.Future<void>.value(),
         returnValueForMissingStub: _i5.Future<void>.value(),
       ) as _i5.Future<void>);
+
+  @override
+  _i5.Future<void> sendResetPasswordLink(String? email) => (super.noSuchMethod(
+        Invocation.method(
+          #sendResetPasswordLink,
+          [email],
+        ),
+        returnValue: _i5.Future<void>.value(),
+        returnValueForMissingStub: _i5.Future<void>.value(),
+      ) as _i5.Future<void>);
 }

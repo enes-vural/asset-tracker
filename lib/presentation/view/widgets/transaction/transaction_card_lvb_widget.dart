@@ -1,12 +1,15 @@
+import 'package:asset_tracker/core/config/theme/app_size.dart';
 import 'package:asset_tracker/core/config/theme/extension/currency_widget_title_extension.dart';
 import 'package:asset_tracker/core/constants/database/transaction_type_enum.dart';
 import 'package:asset_tracker/core/constants/global/general_constants.dart';
 import 'package:asset_tracker/core/config/theme/default_theme.dart';
 import 'package:asset_tracker/core/config/theme/extension/number_format_extension.dart';
+import 'package:asset_tracker/core/widgets/custom_sized_box.dart';
 import 'package:asset_tracker/domain/entities/database/enttiy/user_currency_entity_model.dart';
 import 'package:asset_tracker/presentation/view_model/home/dashboard/dashboard_view_model.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
+import 'package:flutter_screenutil/flutter_screenutil.dart';
 
 class TransactionCardLVBWidget extends ConsumerWidget {
   const TransactionCardLVBWidget({
@@ -66,20 +69,28 @@ class TransactionCardLVBWidget extends ConsumerWidget {
                 padding: const EdgeInsets.all(16),
                 child: Row(
                   children: [
-                    // Left - Currency & Type
-                    _buildCurrencySection(transaction, isDark),
+                    // Left - Currency & Type (Sabit genişlik)
+                    SizedBox(
+                      width: 60.w,
+                      child: _buildCurrencySection(transaction, isDark),
+                    ),
 
-                    const SizedBox(width: 16),
+const CustomSizedBox.smallWidth(),
 
-                    // Center - Transaction Details
+                    // Center - Transaction Details (Esnek genişlik)
                     Expanded(
+                      flex: 2,
                       child: _buildTransactionDetails(transaction, isDark),
                     ),
 
-                    const SizedBox(width: 12),
+                    const CustomSizedBox.smallWidth(),
 
-                    // Right - Amount & Date
-                    _buildAmountSection(transaction, isDark),
+                    // Right - Amount & Date (Sabit genişlik)
+                    Expanded(
+                      //width: 85.w,
+                      flex: 3,
+                      child: _buildAmountSection(transaction, isDark),
+                    ),
                   ],
                 ),
               ),
@@ -102,6 +113,9 @@ class TransactionCardLVBWidget extends ConsumerWidget {
             fontWeight: FontWeight.bold,
             color: isDark ? Colors.white : Colors.black87,
           ),
+          textAlign: TextAlign.center,
+          maxLines: 1,
+          overflow: TextOverflow.ellipsis,
         ),
         Text(
           isBuy ? "ALIŞ" : "SATIŞ",
@@ -121,6 +135,7 @@ class TransactionCardLVBWidget extends ConsumerWidget {
     return Column(
       crossAxisAlignment: CrossAxisAlignment.start,
       children: [
+        // Amount row - overflow koruması
         Row(
           children: [
             Icon(
@@ -129,12 +144,16 @@ class TransactionCardLVBWidget extends ConsumerWidget {
               color: isDark ? Colors.grey.shade400 : Colors.grey.shade600,
             ),
             const SizedBox(width: 6),
-            Text(
-              "${transaction.amount}",
-              style: TextStyle(
-                fontSize: 14,
-                fontWeight: FontWeight.w600,
-                color: isDark ? Colors.white : Colors.black87,
+            Expanded(
+              child: Text(
+                "${transaction.amount}",
+                style: TextStyle(
+                  fontSize: AppSize.smallText,
+                  fontWeight: FontWeight.w600,
+                  color: isDark ? Colors.white : Colors.black87,
+                ),
+                maxLines: 1,
+                overflow: TextOverflow.ellipsis,
               ),
             ),
           ],
@@ -143,15 +162,18 @@ class TransactionCardLVBWidget extends ConsumerWidget {
         Row(
           children: [
             const SizedBox(width: 6),
-            Text(
-              "₺${transaction.price.toNumberWithTurkishFormat()}",
-              style: TextStyle(
-                fontSize: 13,
-                fontWeight: FontWeight.w500,
-                color: isDark ? Colors.grey[300] : Colors.black87,
+            Expanded(
+              child: Text(
+                "₺${transaction.price.toNumberWithTurkishFormat()}",
+                style: TextStyle(
+                  fontSize: AppSize.smallText,
+                  fontWeight: FontWeight.w500,
+                  color: isDark ? Colors.grey[300] : Colors.black87,
+                ),
+                maxLines: 1,
+                overflow: TextOverflow.ellipsis,
               ),
             ),
-            const SizedBox(width: 4),
           ],
         ),
       ],
@@ -171,7 +193,7 @@ class TransactionCardLVBWidget extends ConsumerWidget {
       crossAxisAlignment: CrossAxisAlignment.end,
       children: [
         Container(
-          padding: const EdgeInsets.symmetric(horizontal: 8, vertical: 4),
+          padding: const EdgeInsets.symmetric(horizontal: 6, vertical: 4),
           decoration: BoxDecoration(
             color: color.withOpacity(isDark ? 0.2 : 0.1),
             borderRadius: BorderRadius.circular(8),
@@ -184,9 +206,11 @@ class TransactionCardLVBWidget extends ConsumerWidget {
             "${isProfit ? '+' : '-'}₺${totalAmount.toNumberWithTurkishFormat()}",
             style: TextStyle(
               color: color,
-              fontSize: 14,
+              fontSize: 12, // Biraz küçülttüm
               fontWeight: FontWeight.bold,
             ),
+            maxLines: 1,
+            overflow: TextOverflow.ellipsis,
           ),
         ),
         const SizedBox(height: 8),
@@ -203,6 +227,8 @@ class TransactionCardLVBWidget extends ConsumerWidget {
               fontSize: 10,
               fontWeight: FontWeight.w500,
             ),
+            maxLines: 1,
+            overflow: TextOverflow.ellipsis,
           ),
         ),
       ],

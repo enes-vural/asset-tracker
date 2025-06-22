@@ -113,4 +113,9 @@ class FirebaseAuthRepository implements IAuthRepository {
   Future<void> signOut() async {
     return authService.signOutUser();
   }
+
+  @override
+  Future<void> sendResetPasswordLink(String email) async {
+    return authService.sendResetPasswordLink(email);
+  }
 }
