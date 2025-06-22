@@ -240,9 +240,35 @@ class _HomeViewState extends ConsumerState<HomeView>
   CustomPadding _dateTimeTextWidget() {
     return CustomPadding.smallHorizontal(
       widget: CustomAlign.centerRight(
-        child: Text(
-          "🕙︎${ref.watch(appGlobalProvider).globalAssets?[0].tarih.split(' ')[1] ?? ""}",
-          style: CustomTextStyle.greyColorManrope(context, AppSize.smallText),
+        child: Builder(
+          builder: (context) {
+            final globalAssets = ref.watch(appGlobalProvider).globalAssets;
+
+            // Eğer globalAssets null, boş veya index 0 yoksa SizedBox döndür
+            if (globalAssets == null || globalAssets.isEmpty) {
+              return SizedBox.shrink();
+            }
+
+            try {
+              final tarihParts = globalAssets[0].tarih?.split(' ');
+              final saat = tarihParts != null && tarihParts.length > 1
+                  ? tarihParts[1]
+                  : null;
+
+              // Eğer saat bilgisi yoksa SizedBox döndür
+              if (saat == null || saat.isEmpty) {
+                return SizedBox.shrink();
+              }
+
+              return Text(
+                "🕙︎$saat",
+                style: CustomTextStyle.greyColorManrope(
+                    context, AppSize.smallText),
+              );
+            } catch (e) {
+              return SizedBox.shrink();
+            }
+          },
         ),
       ),
     );

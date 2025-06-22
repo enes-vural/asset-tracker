@@ -1,5 +1,4 @@
 // ignore_for_file: unused_local_variable
-
 import 'package:asset_tracker/core/config/theme/extension/currency_widget_title_extension.dart';
 import 'package:asset_tracker/core/config/theme/extension/string_extension.dart';
 import 'package:asset_tracker/core/constants/database/transaction_type_enum.dart';
@@ -35,9 +34,20 @@ class TradeViewModel extends ChangeNotifier {
 
   bool canPop = true;
 
-  void toggleTradeType(TradeType type) {
+  void toggleTradeType(WidgetRef ref, TradeType type) {
     currentTradeType = type;
+    getPriceSelectedCurrency(ref);
     notifyListeners();
+  }
+
+  void routeTradeView(
+      {required bool isBuy, required WidgetRef ref, required String currency}) {
+    currentTradeType = isBuy ? TradeType.buy : TradeType.sell;
+    selectedCurrency = currency;
+    amountController.text = "1";
+    ref
+        .read(appGlobalProvider)
+        .changeMenuNavigationIndex(AppPagesEnum.TRADE.pageIndex);
   }
 
   void changePopState(bool state) {
@@ -72,9 +82,18 @@ class TradeViewModel extends ChangeNotifier {
     rawAssets?.forEach((value) {
       assets.add(CurrencyWidgetEntity.fromCurrency(value));
     });
-    final CurrencyWidgetEntity? selectedAssetCode = assets.firstWhere(
-      (element) => element.name == selectedCurrency,
-    );
+
+    //name e göre sıralamak doğru bir yol değil. Şimdilik kalsın sonrasında map yapısı ile dropdown daki labellar ile 
+    //code ları eşleştirerek unique bir sisteme gidilmesi daha doğru olur. Aynı isimdeki assetler de hata fırlatabilir örn: "N/A"
+    //TODO:
+    CurrencyWidgetEntity? selectedAssetCode;
+    try {
+      selectedAssetCode = assets.firstWhere(
+        (element) => element.name == selectedCurrency,
+      );
+} catch (e) {
+      selectedAssetCode = null;
+    }
 
     if (selectedAssetCode != null) {
       // Debug için ekle
@@ -86,16 +105,20 @@ class TradeViewModel extends ChangeNotifier {
 
       priceTotalController.text = ((double.tryParse(amountController.text) ??
                   0.0) *
-              (double.tryParse(
-                      selectedAssetCode.entity.satis.removeTurkishLiraSign()) ??
+              //if trade type is buy automatically get sell price else fetch buy price
+              (double.tryParse(currentTradeType == TradeType.buy
+                      ? selectedAssetCode.entity.satis.removeTurkishLiraSign()
+                      : selectedAssetCode.entity.alis
+                          .removeTurkishLiraSign()) ??
                   0.0))
           .toString();
       //selectedAssetCode veya currency.entity yapmamızın nedeni
       //widget entity nin para biriminin '.' ve ',' ler ile basamak ayırması.
       //direkt ülke cinsi veya '.', ',' parse ile uğraşmamak için WidgetEntity içindeki
       //entity i kullanarak . ve vilgüre çevirilmeden önceki double halini kullandım.
-      final newUnitValue =
-          selectedAssetCode.entity.satis.removeTurkishLiraSign();
+      final newUnitValue = currentTradeType == TradeType.buy
+          ? selectedAssetCode.entity.satis.removeTurkishLiraSign()
+          : selectedAssetCode.entity.alis.removeTurkishLiraSign();
       debugPrint('New unit value: $newUnitValue');
 
       priceUnitController.text = newUnitValue;
@@ -151,6 +174,9 @@ class TradeViewModel extends ChangeNotifier {
       if (success) {
         debugPrint("Transaction sold successfully");
         await _updateLatestUserInfo(sellCurrencyEntity.userId, ref);
+        ref
+            .read(appGlobalProvider)
+            .changeMenuNavigationIndex(AppPagesEnum.WALLET.pageIndex);
       }
     });
     changePopState(true);

@@ -37,6 +37,10 @@ abstract class  LocaleKeys {
   static const auth_response_userTokenExpired = 'auth.response.userTokenExpired';
   static const auth_response = 'auth.response';
   static const auth = 'auth';
+  static const dashboard_filterAll = 'dashboard.filterAll';
+  static const dashboard_filterGold = 'dashboard.filterGold';
+  static const dashboard_filterForeignCurrency = 'dashboard.filterForeignCurrency';
+  static const dashboard_filterPreciousMetal = 'dashboard.filterPreciousMetal';
   static const dashboard_assetDataNull = 'dashboard.assetDataNull';
   static const dashboard_availableBalance = 'dashboard.availableBalance';
   static const dashboard_totalBalance = 'dashboard.totalBalance';

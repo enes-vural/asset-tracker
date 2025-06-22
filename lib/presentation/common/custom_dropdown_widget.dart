@@ -107,10 +107,6 @@ class _CustomDropDownWidgetState<T>
     // ViewModel'i güncelle
     widget.viewModel.changeSelectedCurrency(value);
 
-    // if (widget.onSelectedChanged != null) {
-    //   widget.onSelectedChanged!();
-    // }
-
     widget.viewModel.getPriceSelectedCurrency(ref);
 
     // Focus'u kaldır

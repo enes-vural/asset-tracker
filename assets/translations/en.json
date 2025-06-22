@@ -38,6 +38,10 @@
         }
     },
     "dashboard": {
+                "filterAll": "All",
+                "filterGold": "Gold",
+                "filterForeignCurrency": "Foreign Currency",
+                "filterPreciousMetal": "Precious Metal",
         "assetDataNull": "User has no any assets",
         "availableBalance": "Available Balance",
         "totalBalance": "Total Balance",

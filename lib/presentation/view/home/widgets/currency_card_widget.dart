@@ -6,6 +6,7 @@ import 'package:asset_tracker/core/config/theme/style_theme.dart';
 import 'package:asset_tracker/core/constants/enums/widgets/currency_card_widget_enums.dart';
 import 'package:asset_tracker/core/config/theme/extension/responsive_extension.dart';
 import 'package:asset_tracker/core/constants/string_constant.dart';
+import 'package:asset_tracker/core/helpers/snackbar.dart';
 import 'package:asset_tracker/core/mixins/get_currency_icon_mixin.dart';
 import 'package:asset_tracker/core/widgets/custom_sized_box.dart';
 import 'package:asset_tracker/domain/entities/web/socket/currency_entity.dart';
@@ -14,6 +15,7 @@ import 'package:asset_tracker/domain/usecase/cache/cache_use_case.dart';
 import 'package:asset_tracker/injection.dart';
 import 'package:asset_tracker/presentation/view_model/home/home_view_model.dart';
 import 'package:flutter/material.dart';
+import 'package:flutter/services.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 
 enum SortType {
@@ -270,7 +272,6 @@ class _CurrencyListWidgetState extends ConsumerState<CurrencyListWidget>
           },
           onDragUpdate: (details) {
             debugPrint("---------");
-
             debugPrint(details.globalPosition.dy.toString());
             debugPrint("---------");
             if (_isDragging) {
@@ -374,9 +375,8 @@ class _CurrencyListWidgetState extends ConsumerState<CurrencyListWidget>
           horizontal: AppSize.mediumPadd, vertical: AppSize.smallPadd),
       child: Row(
         children: [
-          // Currency & Icon
           Expanded(
-            flex: 3,
+            flex: 6,
             child: _buildSortableHeaderItem(
               title: "Birim",
               sortType: SortType.name,
@@ -390,7 +390,6 @@ class _CurrencyListWidgetState extends ConsumerState<CurrencyListWidget>
               textAlign: TextAlign.center,
             ),
           ),
-          // Sell Price
           Expanded(
             flex: 3,
             child: _buildSortableHeaderItem(
@@ -399,25 +398,38 @@ class _CurrencyListWidgetState extends ConsumerState<CurrencyListWidget>
               textAlign: TextAlign.center,
             ),
           ),
-          IconButton(
-            icon: Icon(
-              _isEditMode ? Icons.done : Icons.edit,
-              color: _isEditMode ? Colors.green : DefaultColorPalette.grey400,
-              size: 20,
-            ),
-            onPressed: () {
-              setState(() {
-                //avoid to open edit mode while sorting other types.
-                if (currentSortType == SortType.custom) {
-                  _isEditMode = !_isEditMode;
-                  // Edit mode kapanırken auto-scroll'u durdur
-                  if (!_isEditMode) {
-                    _stopAutoScroll();
-                  }
-                }
-              });
-            },
-            tooltip: _isEditMode ? "Düzenlemeyi bitir" : "Sıralamayı düzenle",
+          AnimatedContainer(
+            duration: const Duration(milliseconds: 300),
+            width: currentSortType == SortType.custom ? 32 : 0,
+            child: currentSortType == SortType.custom
+                ? IconButton(
+                    icon: Icon(
+                      _isEditMode ? Icons.done : Icons.edit,
+                      color: _isEditMode
+                          ? Colors.green
+                          : DefaultColorPalette.grey400,
+                      size: 20,
+                    ),
+                    onPressed: () {
+                      setState(() {
+                        //true => false
+                        _isEditMode = !_isEditMode;
+                        //in End
+                        if (!_isEditMode) {
+                          _stopAutoScroll();
+                        } else {
+                          WidgetsBinding.instance.addPostFrameCallback((_) {
+                            EasySnackBar.show(
+                                context, "Basılı tutarak kaydırabilirsiniz.");
+                          });
+                        }
+                      });
+                    },
+                    tooltip: _isEditMode
+                        ? "Düzenlemeyi bitir"
+                        : "Sıralamayı düzenle",
+                  )
+                : const SizedBox(),
           ),
         ],
       ),
@@ -573,12 +585,20 @@ class _CurrencyListWidgetState extends ConsumerState<CurrencyListWidget>
           children: [
             // Drag handle (sadece drag modunda göster)
             if (isDragMode) ...[
-              Icon(
-                Icons.drag_handle,
-                color: isPlaceholder
-                    ? DefaultColorPalette.grey200
-                    : (isInDrag ? Colors.pink : DefaultColorPalette.grey400),
-                size: 20,
+              IconButton(
+                onPressed: () {
+                  setState(() {
+                    _isDragging = true;
+                  });
+                  _startAutoScrollTimer(); // Timer'ı başlat
+                },
+                icon: Icon(
+                  Icons.drag_handle,
+                  color: isPlaceholder
+                      ? DefaultColorPalette.grey200
+                      : (isInDrag ? Colors.pink : DefaultColorPalette.grey400),
+                  size: 20,
+                ),
               ),
               const SizedBox(width: 8),
             ],
@@ -721,5 +741,91 @@ class _CurrencyListWidgetState extends ConsumerState<CurrencyListWidget>
       return DefaultColorPalette.errorRed;
     }
     return DefaultColorPalette.grey400;
+  }
+}
+
+class ShortLongPressDraggableWidget extends StatefulWidget {
+  final int index;
+  final Widget child;
+  final int longPressMilliseconds;
+  final VoidCallback onDragStarted;
+  final Function(DragEndDetails) onDragEnd;
+  final Function(DragUpdateDetails) onDragUpdate;
+  const ShortLongPressDraggableWidget(
+      {super.key,
+      required this.index,
+      required this.child,
+      this.longPressMilliseconds = 250,
+      required this.onDragStarted,
+      required this.onDragEnd,
+      required this.onDragUpdate});
+
+  @override
+  State<ShortLongPressDraggableWidget> createState() =>
+      _ShortLongPressDraggableWidgetState();
+}
+
+class _ShortLongPressDraggableWidgetState
+    extends State<ShortLongPressDraggableWidget> {
+  bool _canDrag = false;
+  Timer? _timer;
+
+  @override
+  void dispose() {
+    _timer?.cancel();
+    super.dispose();
+  }
+
+  @override
+  Widget build(BuildContext context) {
+    return GestureDetector(
+      onTapDown: (details) {
+        _timer =
+            Timer(Duration(milliseconds: widget.longPressMilliseconds), () {
+          setState(() {
+            _canDrag = true;
+          });
+          HapticFeedback.mediumImpact();
+        });
+      },
+      onTapUp: (details) {
+        _timer?.cancel();
+        setState(() {
+          _canDrag = false;
+        });
+      },
+      onTapCancel: () {
+        _timer?.cancel();
+        setState(() {
+          _canDrag = false;
+        });
+      },
+      child: _canDrag
+          ? Draggable<int>(
+              data: widget.index,
+              onDragStarted: widget.onDragStarted,
+              onDragEnd: (details) => widget.onDragEnd,
+              onDragUpdate: widget.onDragUpdate,
+              feedback: Material(
+                elevation: 4,
+                child: Container(
+                  width: MediaQuery.of(context).size.width - 32,
+                  child: widget.child,
+                ),
+              ),
+              childWhenDragging: Container(
+                height: 60,
+                color: Colors.grey.withOpacity(0.3),
+                child: Center(
+                  child: Text(
+                    "Taşınıyor...",
+                    style: TextStyle(color: Colors.grey[600]),
+                  ),
+                ),
+              ),
+              child: widget.child,
+            )
+          : widget.child,
+    );
   }
 }
