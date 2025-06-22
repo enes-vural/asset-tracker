@@ -14,13 +14,13 @@ import 'package:dartz/dartz.dart';
 
 //TODO: Use caseler databsae use case altına toplanacak.
 class DatabaseUseCase
-    extends BaseUseCase<BuyCurrencyEntity, BuyCurrencyEntity> {
+    extends BaseUseCase<SaveCurrencyEntity, SaveCurrencyEntity> {
   final IFirestoreRepository firestoreRepository;
 
   DatabaseUseCase({required this.firestoreRepository});
 
   @override
-  Future<Either<BaseErrorEntity, BuyCurrencyEntity>> call(params) async {
+  Future<Either<BaseErrorEntity, SaveCurrencyEntity>> call(params) async {
     return await firestoreRepository.buyCurrency(params);
   }
 

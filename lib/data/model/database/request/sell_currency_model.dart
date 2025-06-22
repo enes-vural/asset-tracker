@@ -32,6 +32,7 @@ final class SellCurrencyModel implements BaseModel {
     double? protif,
     double? amount,
     String? currencyCode,
+    double? buyPrice,
     DateTime? date,
     double? sellPrice,
     double? price,

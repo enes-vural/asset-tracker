@@ -169,7 +169,7 @@ class TradeViewModel extends ChangeNotifier {
     final status =
         await getIt<DatabaseUseCase>().sellCurrency(sellCurrencyEntity);
     await status.fold((error) async {
-      EasySnackBar.show(context, error.toString());
+      EasySnackBar.show(context, error.message.toString());
     }, (success) async {
       if (success) {
         debugPrint("Transaction sold successfully");
@@ -212,7 +212,7 @@ class TradeViewModel extends ChangeNotifier {
       return;
     }
 
-    final BuyCurrencyEntity buyCurrencyEntity = BuyCurrencyEntity(null,
+    final SaveCurrencyEntity saveCurrencyEntity = SaveCurrencyEntity(null,
         amount: amount,
         price: price,
         currency: currency,
@@ -223,13 +223,13 @@ class TradeViewModel extends ChangeNotifier {
     //Save to Offline Actions
     String? offlineKey = await getIt<CacheUseCase>().saveOfflineAction(Tuple2(
       OfflineActionType.BUY_ASSET,
-      buyCurrencyEntity,
+      saveCurrencyEntity,
     ));
-    final request = await getIt<DatabaseUseCase>().call(buyCurrencyEntity);
+    final request = await getIt<DatabaseUseCase>().call(saveCurrencyEntity);
 
     await request.fold((failure) {
       EasySnackBar.show(context, failure.message);
-    }, (BuyCurrencyEntity success) async {
+    }, (SaveCurrencyEntity success) async {
       getIt<CacheUseCase>().removeOfflineAction(offlineKey);
       EasySnackBar.show(
         context,
@@ -249,7 +249,7 @@ class TradeViewModel extends ChangeNotifier {
       //her işlem sonrasında database den çekerek güncelliyoruz.
       if (success.userId == null) {
         EasySnackBar.show(context, "Bir Hata Oluştu");
-        debugPrint("Line: 171 BuyCurrencyEntity userID is null");
+        debugPrint("Line: 171 SaveCurrencyEntity userID is null");
         return;
       }
 

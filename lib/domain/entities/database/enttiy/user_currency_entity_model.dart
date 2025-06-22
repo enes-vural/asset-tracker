@@ -4,6 +4,7 @@ import 'package:asset_tracker/data/model/database/response/user_currency_data_mo
 final class UserCurrencyEntity {
   final String? docId;
   final String userId;
+  final double? oldPrice;
   final double amount;
   final String currencyCode;
   final DateTime buyDate;
@@ -12,7 +13,9 @@ final class UserCurrencyEntity {
   final TransactionTypeEnum transactionType;
 
   const UserCurrencyEntity(
-    this.docId, {
+     {
+    this.docId,
+    this.oldPrice,
     required this.userId,
     required this.amount,
     required this.currencyCode,
@@ -24,7 +27,8 @@ final class UserCurrencyEntity {
 
   factory UserCurrencyEntity.fromModel(UserCurrencyDataModel model) {
     return UserCurrencyEntity(
-      model.docId,
+      docId: model.docId,
+      oldPrice: model.oldPrice,
       userId: model.userId,
       amount: model.amount,
       currencyCode: model.currencyCode,
@@ -43,10 +47,12 @@ final class UserCurrencyEntity {
     DateTime? buyDate,
     double? price,
     double? total,
+    double? oldPrice,
     TransactionTypeEnum? transactionType,
   }) {
     return UserCurrencyEntity(
-      docId ?? this.docId,
+      docId: docId ?? this.docId,
+      oldPrice: oldPrice ?? this.oldPrice,
       userId: userId ?? this.userId,
       amount: amount ?? this.amount,
       currencyCode: currencyCode ?? this.currencyCode,

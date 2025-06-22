@@ -2,8 +2,9 @@ import 'package:asset_tracker/core/constants/database/transaction_type_enum.dart
 import 'package:asset_tracker/data/model/base/base_model.dart';
 import 'package:asset_tracker/data/model/database/request/buy_currency_model.dart';
 
-final class BuyCurrencyEntity implements BaseEntity {
+final class SaveCurrencyEntity implements BaseEntity {
   final String? docId;
+  final double? oldPrice;
   final double amount;
   final double price;
   final String currency;
@@ -11,8 +12,9 @@ final class BuyCurrencyEntity implements BaseEntity {
   final String? userId;
   final TransactionTypeEnum transactionType;
 
-  const BuyCurrencyEntity(
+  const SaveCurrencyEntity(
     this.docId, {
+    this.oldPrice,
     required this.amount,
     required this.price,
     required this.currency,
@@ -21,8 +23,9 @@ final class BuyCurrencyEntity implements BaseEntity {
     this.userId,
   });
 
-  factory BuyCurrencyEntity.fromModel(BuyCurrencyModel model) {
-    return BuyCurrencyEntity(
+  factory SaveCurrencyEntity.fromModel(SaveCurrencyModel model) {
+    return SaveCurrencyEntity(
+      oldPrice: model.oldPrice,
       model.docId,
       amount: model.amount,
       price: model.price,
@@ -34,5 +37,5 @@ final class BuyCurrencyEntity implements BaseEntity {
   }
 
   @override
-  BuyCurrencyModel toModel() => BuyCurrencyModel.fromEntity(this);
+  SaveCurrencyModel toModel() => SaveCurrencyModel.fromEntity(this);
 }

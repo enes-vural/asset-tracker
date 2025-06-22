@@ -45,7 +45,7 @@ final class OfflineActionsModel<T> {
       'REGISTER' =>
         UserRegisterModel.fromJson(Map<String, dynamic>.from(params)),
       'BUY_ASSET' =>
-        BuyCurrencyModel.fromJson(Map<String, dynamic>.from(params)),
+        SaveCurrencyModel.fromJson(Map<String, dynamic>.from(params)),
       _ => null,
     };
   }
