@@ -23,8 +23,8 @@ final class FirestoreService implements IFirestoreService {
 
   @override
   //eğer işlem başarılıysa verdiğimiz modeli geri döndürsün istiyorum.
-  Future<Either<DatabaseErrorModel, BuyCurrencyModel>> saveTransaction(
-      BuyCurrencyModel model) async {
+  Future<Either<DatabaseErrorModel, SaveCurrencyModel>> saveTransaction(
+      SaveCurrencyModel model) async {
     if (model.userId == null) {
       Left(DatabaseErrorModel(message: LocaleKeys.trade_userIdNull.tr()));
     }
@@ -221,12 +221,13 @@ final class FirestoreService implements IFirestoreService {
       final profit = (sellPrice - avgBuyPrice) * sellAmount;
 
       final sellModel = model.copyWith(
+        buyPrice: avgBuyPrice,
         transactionType: TransactionTypeEnum.SELL,
         protif: profit,
         price: avgBuyPrice,
       );
 
-      await saveTransaction(BuyCurrencyModel.fromSellCurrencyModel(sellModel));
+      await saveTransaction(SaveCurrencyModel.fromSellCurrencyModel(sellModel));
       //Fakat kullanıcıdan silmek için önceki modeldeki transactionType'ı
       //BUY olarak güncelleyip silme işlemini yapıyoruz.
       //Böylece kullanıcıdan silinen işlem, db'de SELL olarak kalıyor.

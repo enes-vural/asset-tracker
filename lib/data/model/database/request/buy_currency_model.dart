@@ -6,8 +6,10 @@ import 'package:asset_tracker/domain/entities/database/enttiy/buy_currency_entit
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:equatable/equatable.dart';
 
-final class BuyCurrencyModel extends Equatable implements BaseModel {
+final class SaveCurrencyModel extends Equatable implements BaseModel {
   final String? docId;
+  //bought price parameter for sell currency models.
+  final double? oldPrice;
   final double amount;
   final double price;
   final String currency;
@@ -16,8 +18,9 @@ final class BuyCurrencyModel extends Equatable implements BaseModel {
   double get total => amount * price;
   final TransactionTypeEnum transactionType;
 
-  const BuyCurrencyModel(
+  const SaveCurrencyModel(
     this.docId, {
+    this.oldPrice,
     required this.amount,
     required this.price,
     required this.currency,
@@ -26,10 +29,11 @@ final class BuyCurrencyModel extends Equatable implements BaseModel {
     this.userId,
   });
 
-  BuyCurrencyModel changeWithDocId({
+  SaveCurrencyModel changeWithDocId({
     String? docId,
   }) {
-    return BuyCurrencyModel(
+    return SaveCurrencyModel(
+      oldPrice: oldPrice,
       docId ?? this.docId,
       amount: amount,
       price: price,
@@ -50,6 +54,7 @@ final class BuyCurrencyModel extends Equatable implements BaseModel {
   //so we are increase the amount, price and total.
   Map<String, dynamic> toFirebaseJson() {
     return {
+      if (oldPrice != null) 'oldPrice': oldPrice,
       'docId': docId,
       'amount': FieldValue.increment(amount),
       'price': FieldValue.increment(price),
@@ -63,6 +68,7 @@ final class BuyCurrencyModel extends Equatable implements BaseModel {
 
   Map<String, dynamic> toJson() {
     return {
+      'oldPrice': oldPrice,
       'amount': amount,
       'price': price,
       'currency': currency,
@@ -78,9 +84,11 @@ final class BuyCurrencyModel extends Equatable implements BaseModel {
   //and we are using this model for send data to firestore
   //so we are not using fromJson method for database logics.
   //This methods is only for hive and local storage for set business logics in offline
-  factory BuyCurrencyModel.fromJson(Map<String, dynamic> json) {
-    return BuyCurrencyModel(
-      null,
+  factory SaveCurrencyModel.fromJson(Map<String, dynamic> json) {
+    return SaveCurrencyModel(
+      //docId daha sonra service katmanından copyWith ile eklenecek
+      json['docId'],
+      oldPrice: json['oldPrice'],
       amount: json['amount'] as double,
       price: json['price'] as double,
       currency: json['currency'] as String,
@@ -91,8 +99,9 @@ final class BuyCurrencyModel extends Equatable implements BaseModel {
     );
   }
 
-  factory BuyCurrencyModel.fromEntity(BuyCurrencyEntity entity) {
-    return BuyCurrencyModel(
+  factory SaveCurrencyModel.fromEntity(SaveCurrencyEntity entity) {
+    return SaveCurrencyModel(
+      oldPrice: entity.oldPrice,
       entity.docId,
       amount: entity.amount,
       price: entity.price,
@@ -103,11 +112,12 @@ final class BuyCurrencyModel extends Equatable implements BaseModel {
     );
   }
 
-  factory BuyCurrencyModel.fromUserCurrencyModel(
+  factory SaveCurrencyModel.fromUserCurrencyModel(
     UserCurrencyDataModel model,
   ) {
-    return BuyCurrencyModel(
+    return SaveCurrencyModel(
       null,
+      oldPrice: null,
       amount: model.amount,
       price: model.price,
       currency: model.currencyCode,
@@ -117,8 +127,9 @@ final class BuyCurrencyModel extends Equatable implements BaseModel {
     );
   }
 
-  factory BuyCurrencyModel.fromSellCurrencyModel(SellCurrencyModel model) {
-    return BuyCurrencyModel(
+  factory SaveCurrencyModel.fromSellCurrencyModel(SellCurrencyModel model) {
+    return SaveCurrencyModel(
+      oldPrice: model.buyPrice,
       model.docId,
       amount: model.sellAmount,
       price: model.sellPrice,
@@ -142,5 +153,5 @@ final class BuyCurrencyModel extends Equatable implements BaseModel {
   bool? get stringify => true;
 
   @override
-  BuyCurrencyEntity toEntity() => BuyCurrencyEntity.fromModel(this);
+  SaveCurrencyEntity toEntity() => SaveCurrencyEntity.fromModel(this);
 }

@@ -4,6 +4,7 @@ import 'package:asset_tracker/core/config/theme/extension/number_format_extensio
 import 'package:asset_tracker/core/constants/enums/widgets/dashboard_filters_enum.dart';
 import 'package:asset_tracker/core/mixins/get_currency_icon_mixin.dart';
 import 'package:asset_tracker/core/widgets/custom_padding.dart';
+import 'package:asset_tracker/core/widgets/custom_sized_box.dart';
 import 'package:asset_tracker/domain/entities/database/enttiy/user_data_entity.dart';
 import 'package:asset_tracker/domain/entities/database/enttiy/user_currency_entity_model.dart';
 import 'package:asset_tracker/domain/entities/general/calculate_profit_entity.dart';
@@ -75,10 +76,10 @@ class _UserAssetTransactionWidgetState
   Widget build(BuildContext context) {
     final isDark = Theme.of(context).brightness == Brightness.dark;
     UserDataEntity? entity = ref.watch(appGlobalProvider.notifier).getUserData;
+    final viewModel = ref.watch(dashboardViewModelProvider);
+
     List<UserCurrencyEntity>? allTransactions =
         (entity?.currencyList ?? []) + (entity?.soldCurrencyList ?? []);
-
-    final viewModel = ref.watch(dashboardViewModelProvider);
 
     Map<String, List<UserCurrencyEntity>> groupedData = {};
 
@@ -194,6 +195,8 @@ class _UserAssetTransactionWidgetState
     final isProfit = (stats?.profit ?? 0) >= 0;
     final profitColor = isProfit ? Colors.green : Colors.red;
 
+    final isSold = quantities == 0;
+
     final cardColor = isDark ? Colors.grey[850] : Colors.white;
     final borderColor = isDark
         ? Colors.grey[700]!.withOpacity(0.3)
@@ -288,7 +291,10 @@ class _UserAssetTransactionWidgetState
                         ),
                         const SizedBox(height: 4),
                         Text(
-                          "${quantities.toNumberWithTurkishFormat()} birim",
+                          isSold
+                              ? "Satıldı"
+                              : "${quantities.toNumberWithTurkishFormat()} birim",
+                              
                           style: TextStyle(
                             fontSize: 14,
                             color: isDark ? Colors.grey[300] : Colors.grey[600],
@@ -299,7 +305,8 @@ class _UserAssetTransactionWidgetState
                   ),
 
                   // Profit indicator
-                  Column(
+                  (!isSold)
+                      ? Column(
                     crossAxisAlignment: CrossAxisAlignment.end,
                     children: [
                       Container(
@@ -311,7 +318,7 @@ class _UserAssetTransactionWidgetState
                           color: profitColor,
                           borderRadius: BorderRadius.circular(20),
                         ),
-                        child: Row(
+                              child: Row(
                           mainAxisSize: MainAxisSize.min,
                           children: [
                             Icon(
@@ -334,7 +341,8 @@ class _UserAssetTransactionWidgetState
                         ),
                       ),
                     ],
-                  ),
+                        )
+                      : const CustomSizedBox(),
                 ],
               ),
             ),

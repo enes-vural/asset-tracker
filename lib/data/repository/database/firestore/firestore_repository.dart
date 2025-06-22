@@ -51,15 +51,15 @@ class FirestoreRepository implements IFirestoreRepository {
   }
 
   @override
-  Future<Either<DatabaseErrorEntity, BuyCurrencyEntity>> buyCurrency(
-      BuyCurrencyEntity entity) async {
+  Future<Either<DatabaseErrorEntity, SaveCurrencyEntity>> buyCurrency(
+      SaveCurrencyEntity entity) async {
     final data = await firestoreService
-        .saveTransaction(BuyCurrencyModel.fromEntity(entity));
+        .saveTransaction(SaveCurrencyModel.fromEntity(entity));
 
     return data.fold((failure) {
       return Left(DatabaseErrorEntity.fromModel(failure));
     }, (success) {
-      return Right(BuyCurrencyEntity.fromModel(success));
+      return Right(SaveCurrencyEntity.fromModel(success));
     });
   }
 

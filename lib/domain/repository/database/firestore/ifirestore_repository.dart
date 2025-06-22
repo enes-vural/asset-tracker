@@ -12,8 +12,8 @@ import 'package:dartz/dartz.dart' show Either;
 abstract interface class IFirestoreRepository {
   Future<Either<DatabaseErrorEntity, List<AssetCodeModel>>> getAssetCodes();
 
-  Future<Either<DatabaseErrorEntity, BuyCurrencyEntity>> buyCurrency(
-      BuyCurrencyEntity entity);
+  Future<Either<DatabaseErrorEntity, SaveCurrencyEntity>> buyCurrency(
+      SaveCurrencyEntity entity);
 
   Future<Either<DatabaseErrorEntity, UserDataEntity>> getUserData(
       UserUidEntity model);

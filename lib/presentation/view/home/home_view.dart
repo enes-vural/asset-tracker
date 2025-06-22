@@ -1,4 +1,4 @@
-// ignore_for_file: prefer_const_constructors
+// ignore_for_file: prefer_const_constructors, unnecessary_null_comparison
 import 'package:asset_tracker/core/config/theme/app_size.dart';
 import 'package:asset_tracker/core/config/theme/style_theme.dart';
 import 'package:asset_tracker/core/widgets/custom_align.dart';
@@ -243,21 +243,17 @@ class _HomeViewState extends ConsumerState<HomeView>
         child: Builder(
           builder: (context) {
             final globalAssets = ref.watch(appGlobalProvider).globalAssets;
-
-            // Eğer globalAssets null, boş veya index 0 yoksa SizedBox döndür
             if (globalAssets == null || globalAssets.isEmpty) {
-              return SizedBox.shrink();
+              return CustomSizedBox.empty();
             }
 
             try {
-              final tarihParts = globalAssets[0].tarih?.split(' ');
+              final tarihParts = globalAssets[0].tarih.split(' ');
               final saat = tarihParts != null && tarihParts.length > 1
                   ? tarihParts[1]
                   : null;
-
-              // Eğer saat bilgisi yoksa SizedBox döndür
               if (saat == null || saat.isEmpty) {
-                return SizedBox.shrink();
+                return CustomSizedBox.empty();
               }
 
               return Text(
@@ -266,7 +262,7 @@ class _HomeViewState extends ConsumerState<HomeView>
                     context, AppSize.smallText),
               );
             } catch (e) {
-              return SizedBox.shrink();
+              return CustomSizedBox.empty();
             }
           },
         ),

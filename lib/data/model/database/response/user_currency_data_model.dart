@@ -2,10 +2,11 @@ import 'package:asset_tracker/core/constants/database/transaction_type_enum.dart
 import 'package:asset_tracker/domain/entities/database/enttiy/user_currency_entity_model.dart';
 import 'package:cloud_firestore/cloud_firestore.dart';
 
-//TODO: BuyCurrencyModel ile birleştirilebilir.
+//TODO: SaveCurrencyModel ile birleştirilebilir.
 final class UserCurrencyDataModel {
   final String? docId;
   final String userId;
+  final double? oldPrice;
   final double amount;
   final String currencyCode;
   final Timestamp buyDate;
@@ -14,7 +15,9 @@ final class UserCurrencyDataModel {
   final TransactionTypeEnum transactionType;
 
   UserCurrencyDataModel(
-    this.docId, {
+     {
+    this.docId,
+    this.oldPrice,
     required this.userId,
     required this.amount,
     required this.currencyCode,
@@ -28,7 +31,8 @@ final class UserCurrencyDataModel {
     UserCurrencyEntity entity,
   ) {
     return UserCurrencyDataModel(
-      entity.docId,
+      docId: entity.docId,
+      oldPrice: entity.oldPrice,
       userId: entity.userId,
       amount: entity.amount,
       currencyCode: entity.currencyCode,
@@ -41,7 +45,8 @@ final class UserCurrencyDataModel {
 
   factory UserCurrencyDataModel.fromJson(Map<String, dynamic> json) {
     return UserCurrencyDataModel(
-      json['docId'],
+      docId: json['docId'],
+      oldPrice: json['oldPrice'],
       userId: json['userId'] ?? 'N/A',
       amount: json['amount'] ?? 0.0,
       currencyCode: json['currency'] ?? 'N/A',
@@ -61,10 +66,12 @@ final class UserCurrencyDataModel {
     Timestamp? buyDate,
     double? price,
     double? total,
+    double? oldPrice,
     TransactionTypeEnum? transactionType,
   }) {
     return UserCurrencyDataModel(
-      docId ?? this.docId,
+      docId: docId ?? this.docId,
+      oldPrice: oldPrice ?? this.oldPrice,
       userId: userId ?? this.userId,
       amount: amount ?? this.amount,
       currencyCode: currencyCode ?? this.currencyCode,

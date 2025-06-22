@@ -13,8 +13,8 @@ import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:dartz/dartz.dart' show Either;
 
 abstract interface class IDatabaseService {
-  Future<Either<DatabaseErrorModel, BuyCurrencyModel>> saveTransaction(
-      BuyCurrencyModel model);
+  Future<Either<DatabaseErrorModel, SaveCurrencyModel>> saveTransaction(
+      SaveCurrencyModel model);
 
   Future<Either<DatabaseErrorModel, List<AssetCodeModel>>> getAssetCodes();
 

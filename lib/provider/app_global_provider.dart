@@ -156,8 +156,11 @@ class AppGlobalProvider extends ChangeNotifier {
 
   CalculateProfitEntity? calculateProfitOrLoss(String currencyCode) {
     double totalPurchasePrice = 0.0;
+    double totalCurrentValue = 0.0;
     double userAmount = 0.0;
     CurrencyEntity? globalIndex;
+    //kar-zarar hesaplaması alış işlemi üzerine mi satış işlemi üzerine yapılacak
+    bool isSoldItem = false;
 
     try {
       globalIndex = globalAssets?.firstWhere(
@@ -170,17 +173,36 @@ class AppGlobalProvider extends ChangeNotifier {
 
     _userData?.currencyList.forEach((element) {
       if (element.currencyCode.toLowerCase() == currencyCode.toLowerCase()) {
+        //eğer kullanıcının alış işlemi ise flagi false yap
+        isSoldItem = false;
         totalPurchasePrice += element.price * element.amount;
+        userAmount += element.amount;
+      }
+    });
+
+    _userData?.soldCurrencyList?.forEach((element) {
+      if (element.currencyCode.toLowerCase() == currencyCode.toLowerCase()) {
+        //eğer kullanıcının alış işlemi ise flagi true yap
+        isSoldItem = true;
+        //purchasePrice in hesaplanmasında kullanılan oldPrice değişkeni
+        //satılan assetlerin oratlama alış fiyatı
+        totalPurchasePrice += (element.oldPrice ?? 0.0) * element.amount;
+        //eğer satış işlemi ise totalCurrentValue u satış fiyatı ile adeti çarparak heasapla.
+        totalCurrentValue += element.price * element.amount;
         userAmount += element.amount;
       }
     });
 
     if (globalIndex == null) {
       return null;
-    }
+    } 
 
-    double globalPrice = double.parse(globalIndex.alis);
-    double totalCurrentValue = globalPrice * userAmount;
+    //Eğer kullanıcı elindeki varlığı satmadıysa anlık olarak dövizdeki fiyatını bul currentValue'e ata.
+    //ama zaten satılmış ise bu kodu atla çünkü az önce satır 191 de hesapladığımız satış fiyatını kullanacağız.
+    if (!isSoldItem) {
+      double globalPrice = double.parse(globalIndex.alis);
+      totalCurrentValue = globalPrice * userAmount;
+    }
 
     return CalculateProfitEntity(
       currencyCode: currencyCode,
