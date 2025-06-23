@@ -252,4 +252,19 @@ final class FirestoreService implements IFirestoreService {
       return Left(DatabaseErrorModel(message: e.toString()));
     }
   }
+
+  @override
+  Future<Either<DatabaseErrorModel, bool>> removeUser(
+      UserUidModel model) async {
+    try {
+      await instance
+          .collection(FirestoreConstants.usersCollection)
+          .doc(model.userId)
+          .delete();
+      return const Right(true);
+    } catch (e) {
+      debugPrint(e.toString());
+      return Left(DatabaseErrorModel(message: e.toString()));
+    }
+  }
 }

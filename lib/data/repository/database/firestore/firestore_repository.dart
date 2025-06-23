@@ -130,7 +130,6 @@ class FirestoreRepository implements IFirestoreRepository {
   @override
   Future<Either<DatabaseErrorEntity, bool>> sellCurrency(
       SellCurrencyEntity entity) async {
-
     try {
       final status = await firestoreService.sellCurrency(entity.toModel());
       return status.fold(
@@ -165,5 +164,18 @@ class FirestoreRepository implements IFirestoreRepository {
     } catch (e) {
       return Left(DatabaseErrorEntity(message: e.toString()));
     }
+  }
+
+  @override
+  Future<Either<DatabaseErrorEntity, bool>> removeUser(
+      UserUidEntity model) async {
+    final entity = UserUidModel.fromEnttiy(model);
+    final data = await firestoreService.removeUser(entity);
+    return data.fold((DatabaseErrorModel failure) {
+      return Left(DatabaseErrorEntity.fromModel(failure));
+    }, (success) {
+      debugPrint("User data has removed");
+      return Right(success);
+    });
   }
 }

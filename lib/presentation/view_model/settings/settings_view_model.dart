@@ -1,27 +1,96 @@
+import 'package:asset_tracker/core/constants/enums/widgets/app_pages_enum.dart';
+import 'package:asset_tracker/core/helpers/snackbar.dart';
+import 'package:asset_tracker/core/routers/router.dart';
+import 'package:asset_tracker/domain/entities/database/enttiy/user_uid_entity.dart';
 import 'package:asset_tracker/domain/usecase/auth/auth_use_case.dart';
+import 'package:asset_tracker/domain/usecase/database/database_use_case.dart';
 import 'package:asset_tracker/provider/app_global_provider.dart';
 import 'package:asset_tracker/provider/auth_global_provider.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 
 class SettingsViewModel extends ChangeNotifier {
-  final SignInUseCase signInUseCase;
+  final AuthUseCase authUseCase;
   final AppGlobalProvider appGlobalProvider;
   final AuthGlobalProvider authGlobalProvider;
+  final DatabaseUseCase databaseUseCase;
 
   SettingsViewModel(
-    this.signInUseCase,
+    this.authUseCase,
     this.appGlobalProvider,
     this.authGlobalProvider,
+    this.databaseUseCase,
   );
 
   Future<void> signOut(WidgetRef ref, BuildContext context) async {
-    await signInUseCase.signOut();
+    await authUseCase.signOut();
     await appGlobalProvider.clearData();
     //clear old routes before pushing new route
     //Routers.instance.replaceAll(context, const LoginRoute());
     //Routers.instance.pushAndRemoveUntil(context, const LoginRoute());
     notifyListeners();
+  }
+
+  //Buraya Offline first gelmeyecek.
+  Future<void> deleteAccount(BuildContext context) async {
+    try {
+      // İki işlemi paralel olarak başlat
+      final List<Future> futures = [];
+
+      // Auth silme işlemi
+      futures.add(authUseCase.deleteAccount());
+
+      // Database silme işlemi (eğer user ID varsa)
+      if (authGlobalProvider.getCurrentUserId != null) {
+        futures.add(databaseUseCase.removeUserData(
+            UserUidEntity(userId: authGlobalProvider.getCurrentUserId!)));
+      }
+
+      // Tüm işlemlerin tamamlanmasını bekle
+      final results = await Future.wait(futures, eagerError: false);
+
+      // Hata kontrolü
+      bool hasError = false;
+      String? errorMessage;
+
+      // Auth result kontrolü
+      final authResult = results[0];
+      authResult.fold(
+        (failure) {
+          hasError = true;
+          errorMessage = failure.message;
+        },
+        (success) => null,
+      );
+
+      // Database result kontrolü (eğer varsa)
+      if (results.length > 1) {
+        final dbResult = results[1];
+        dbResult.fold(
+          (failure) {
+            hasError = true;
+            errorMessage ??= failure.message;
+          },
+          (success) => null,
+        );
+      }
+
+      if (context.mounted) {
+        if (hasError) {
+          EasySnackBar.show(context, errorMessage!);
+        } else {
+          await appGlobalProvider.clearData();
+          Routers.instance.pop(context);
+          EasySnackBar.show(context, "Hesabınız Başarıyla Silindi");
+          appGlobalProvider
+              .changeMenuNavigationIndex(AppPagesEnum.HOME.pageIndex);
+        }
+      }
+    } catch (e) {
+      if (context.mounted) {
+        EasySnackBar.show(context, "Hesap silme işleminde hata oluştu");
+      }
+    }
   }
 
   bool get isAuthorized => authGlobalProvider.isUserAuthorized;

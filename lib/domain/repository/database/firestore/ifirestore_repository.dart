@@ -25,4 +25,6 @@ abstract interface class IFirestoreRepository {
       SellCurrencyEntity entity);
 
   Future<Either<DatabaseErrorEntity, bool>> saveUser(SaveUserEntity entity);
+
+  Future<Either<DatabaseErrorEntity, bool>> removeUser(UserUidEntity model);
 }

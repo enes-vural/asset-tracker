@@ -118,4 +118,17 @@ class FirebaseAuthRepository implements IAuthRepository {
   Future<void> sendResetPasswordLink(String email) async {
     return authService.sendResetPasswordLink(email);
   }
+
+  @override
+  Future<Either<AuthErrorEntity, bool>> deleteAccount() async {
+    final data = await authService.deleteAccount();
+    return data.fold(
+      (failure) {
+        return Left(AuthErrorEntity.fromModel(failure));
+      },
+      (success) {
+        return Right(success);
+      },
+    );
+  }
 }

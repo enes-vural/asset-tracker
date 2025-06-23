@@ -15,10 +15,10 @@ import 'usecase_test.mocks.dart';
 void main() {
   late MockFirebaseAuthRepository firebaseAuthRepository;
 
-  late SignInUseCase signInUseCase;
+  late AuthUseCase authUseCase;
   setUp(() {
     firebaseAuthRepository = MockFirebaseAuthRepository();
-    signInUseCase = SignInUseCase(firebaseAuthRepository);
+    authUseCase = AuthUseCase(firebaseAuthRepository);
   });
   group("Authentication Use Case Group", () {
     test("Sign In Use Case Success", () async {
@@ -26,7 +26,7 @@ void main() {
           .thenAnswer((_) async =>
               Right(UserLoginResponseEntity(uid: "success-token")));
 
-      final result = await signInUseCase.call(TestConstants.successLoginEntity);
+      final result = await authUseCase.call(TestConstants.successLoginEntity);
 
       expect(result, isA<Right<void, UserLoginResponseEntity>>());
       result.fold((_) => fail("Expected Right but got Left"),
@@ -40,7 +40,7 @@ void main() {
               AuthErrorState.NOT_FOUND,
               message: "User not found")));
 
-      final result = await signInUseCase.call(TestConstants.failureLoginEntity);
+      final result = await authUseCase.call(TestConstants.failureLoginEntity);
 
       expect(result, isA<Left<AuthErrorEntity, void>>());
       result.fold((testDone) => expect(testDone.message, "User not found"),

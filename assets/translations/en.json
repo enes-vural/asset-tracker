@@ -34,7 +34,8 @@
             "operationNotAllowed": "Operation not allowed",
             "tooManyRequests": "Too many requests, please try again later",
             "networkError": "Network error, please check your connection",
-            "userTokenExpired": "User token expired, please re-login"
+            "userTokenExpired": "User token expired, please re-login",
+            "userRelogin": "Please relogin."
         }
     },
     "dashboard": {

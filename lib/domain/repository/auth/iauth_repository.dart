@@ -18,4 +18,6 @@ abstract interface class IAuthRepository {
   Future<void> signOut();
 
   Future<void> sendResetPasswordLink(String email);
+
+  Future<Either<AuthErrorEntity, bool>> deleteAccount();
 }

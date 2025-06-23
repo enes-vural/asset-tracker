@@ -10,16 +10,16 @@ import 'package:asset_tracker/domain/entities/auth/response/user_register_repons
 import 'package:asset_tracker/domain/entities/database/request/save_user_entity.dart';
 import 'package:asset_tracker/domain/usecase/auth/auth_use_case.dart';
 import 'package:asset_tracker/domain/usecase/cache/cache_use_case.dart';
-import 'package:asset_tracker/domain/usecase/database/buy_currency_use_case.dart';
+import 'package:asset_tracker/domain/usecase/database/database_use_case.dart';
 import 'package:asset_tracker/injection.dart';
 import 'package:dartz/dartz.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 
 class AuthViewModel extends ChangeNotifier {
-  final SignInUseCase signInUseCase;
+  final AuthUseCase authUseCase;
 
-  AuthViewModel({required this.signInUseCase});
+  AuthViewModel({required this.authUseCase});
 
   final TextEditingController emailController = TextEditingController();
   final TextEditingController passwordController = TextEditingController();
@@ -52,7 +52,7 @@ class AuthViewModel extends ChangeNotifier {
 
   Future<void> sendResetEmailLink() async {
     if (emailController.text.isNotEmpty) {
-      return await signInUseCase.sendResetPasswordLink(emailController.text);
+      return await authUseCase.sendResetPasswordLink(emailController.text);
     }
   }
 
@@ -66,7 +66,7 @@ class AuthViewModel extends ChangeNotifier {
       password: passwordController.text,
     );
 
-    final result = await signInUseCase.registerUser(userEntity);
+    final result = await authUseCase.registerUser(userEntity);
     result.fold(
       (failure) {
         changePopState(true);
@@ -102,7 +102,7 @@ class AuthViewModel extends ChangeNotifier {
     final cachedKey = await getIt<CacheUseCase>()
         .saveOfflineAction(Tuple2(OfflineActionType.LOGIN, userEntity));
 
-    final result = await signInUseCase.call(userEntity);
+    final result = await authUseCase.call(userEntity);
 
     await result.fold((failure) {
       if (failure.state != AuthErrorState.NETWORK_ERROR) {

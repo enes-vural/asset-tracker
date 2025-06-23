@@ -35,6 +35,7 @@ abstract class  LocaleKeys {
   static const auth_response_tooManyRequests = 'auth.response.tooManyRequests';
   static const auth_response_networkError = 'auth.response.networkError';
   static const auth_response_userTokenExpired = 'auth.response.userTokenExpired';
+  static const auth_response_userRelogin = 'auth.response.userRelogin';
   static const auth_response = 'auth.response';
   static const auth = 'auth';
   static const dashboard_filterAll = 'dashboard.filterAll';

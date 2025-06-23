@@ -1,5 +1,8 @@
+import 'package:asset_tracker/data/model/auth/error/auth_response_model.dart'
+    show AuthErrorModel;
 import 'package:asset_tracker/data/model/auth/request/user_login_model.dart';
 import 'package:asset_tracker/data/model/auth/request/user_register_model.dart';
+import 'package:dartz/dartz.dart';
 
 //Tüm Servislerin toplandığı çatı görebi gören bir imza sınıfı.
 abstract interface class IAuthService<L, R> {
@@ -14,4 +17,6 @@ abstract interface class IAuthService<L, R> {
   Future<R>? registerUser(UserRegisterModel model);
 
   Future<void> sendResetPasswordLink(String email);
+
+  Future<Either<AuthErrorModel, bool>> deleteAccount();
 }
