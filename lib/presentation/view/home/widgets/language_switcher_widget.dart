@@ -47,7 +47,9 @@ class LanguageSwitcherWidget extends StatelessWidget {
         trailing: Container(
           padding: const EdgeInsets.symmetric(horizontal: 12, vertical: 6),
           decoration: BoxDecoration(
-            color: Colors.grey[100],
+            color: Theme.of(context).brightness == Brightness.light
+                ? Colors.grey[100]
+                : Colors.white.withOpacity(0.04),
             borderRadius: BorderRadius.circular(20),
           ),
           child: Text(
@@ -55,7 +57,9 @@ class LanguageSwitcherWidget extends StatelessWidget {
             style: TextStyle(
               fontSize: 14,
               fontWeight: FontWeight.w500,
-              color: Colors.grey[700],
+              color: Theme.of(context).brightness == Brightness.light
+                  ? Colors.grey[700]
+                  : Colors.white,
             ),
           ),
         ),

@@ -133,7 +133,7 @@ class _DashboardViewState extends ConsumerState<DashboardView>
         children: [
           Expanded(
             child: _buildQuickStatCard(
-                title: "Kar",
+                title: LocaleKeys.dashboard_profit.tr(),
                 value:
                     "₺${ref.watch(appGlobalProvider).getProfit.toNumberWithTurkishFormat()}",
                 icon: Icons.trending_up,
@@ -144,7 +144,7 @@ class _DashboardViewState extends ConsumerState<DashboardView>
           const SizedBox(width: 12),
           Expanded(
             child: _buildQuickStatCard(
-              title: "Toplam Yatırım",
+              title: LocaleKeys.dashboard_totalBalance.tr(),
               value:
                   "₺${ref.read(appGlobalProvider).getUserBalance.toNumberWithTurkishFormat()}",
               icon: Icons.account_balance_wallet,
@@ -233,16 +233,16 @@ class _DashboardViewState extends ConsumerState<DashboardView>
       child: Card(
         elevation: 4,
         shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(16)),
-        child: const Column(
+        child: Column(
           children: [
             Padding(
-              padding: EdgeInsets.all(16),
+              padding: const EdgeInsets.all(16),
               child: Row(
                 mainAxisAlignment: MainAxisAlignment.spaceBetween,
                 children: [
                   Text(
-                    "Portföy Dağılımı",
-                    style: TextStyle(
+                    LocaleKeys.dashboard_portfolio.tr(),
+                    style: const TextStyle(
                       fontSize: 18,
                       fontWeight: FontWeight.bold,
                     ),
@@ -250,12 +250,12 @@ class _DashboardViewState extends ConsumerState<DashboardView>
                 ],
               ),
             ),
-            SizedBox(
+            const SizedBox(
               height: 200,
               child: PieChartWidget(),
             ),
-            CustomSizedBox.hugeGap(),
-            CustomSizedBox.hugeGap(),
+            const CustomSizedBox.hugeGap(),
+            const CustomSizedBox.hugeGap(),
           ],
         ),
       ),
@@ -289,8 +289,9 @@ class _DashboardViewState extends ConsumerState<DashboardView>
                     .changeMenuNavigationIndex(AppPagesEnum.TRADE.pageIndex),
                 backgroundColor: Colors.green[600],
                 icon: const Icon(Icons.add, color: Colors.white),
-                label: const Text("Al", style: TextStyle(color: Colors.white)),
-                heroTag: "buy",
+                label: Text(LocaleKeys.dashboard_buyFloatingButton.tr(),
+                    style: const TextStyle(color: Colors.white)),
+                heroTag: LocaleKeys.dashboard_buyFloatingButton.tr(),
               ),
             ],
           ),
@@ -349,20 +350,16 @@ class _EnhancedUserAssetTransactionWidgetState
             child: Column(
               crossAxisAlignment: CrossAxisAlignment.start,
               children: [
-                const Row(
+                Row(
                   mainAxisAlignment: MainAxisAlignment.spaceBetween,
                   children: [
                     Text(
-                      "Varlıklarım",
-                      style: TextStyle(
+                      LocaleKeys.dashboard_myAssets.tr(),
+                      style: const TextStyle(
                         fontSize: 20,
                         fontWeight: FontWeight.bold,
                       ),
                     ),
-                    // IconButton(
-                    //   onPressed: () => _showSortOptions(),
-                    //   icon: const Icon(Icons.sort),
-                    // ),
                   ],
                 ),
                 const SizedBox(height: 12),

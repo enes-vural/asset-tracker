@@ -1,6 +1,8 @@
+import 'package:asset_tracker/core/config/localization/generated/locale_keys.g.dart';
 import 'package:asset_tracker/core/config/theme/default_theme.dart';
 import 'package:asset_tracker/core/constants/string_constant.dart';
 import 'package:asset_tracker/core/routers/router.dart';
+import 'package:easy_localization/easy_localization.dart';
 import 'package:flutter/material.dart';
 
 enum UnAuthorizedPage {
@@ -46,8 +48,8 @@ class UnAuthorizedWidget extends StatelessWidget {
 
                     // Başlık
                     Text(
-                      'Giriş Yapın',
-                      style: TextStyle(
+                      LocaleKeys.auth_signIn.tr(),
+                      style: const TextStyle(
                         fontSize: 32,
                         fontWeight: FontWeight.w700,
                         fontFamily: 'Manrope',
@@ -58,7 +60,11 @@ class UnAuthorizedWidget extends StatelessWidget {
 
                     // Açıklama
                     Text(
-                      '${page == UnAuthorizedPage.WALLET ? "Cüzdan" : "Al-Sat"} özelliklerine erişmek için\nhesabınıza giriş yapmanız gerekiyor.',
+                      '\t${LocaleKeys.unAuthPage_unAuthText.tr(args: [
+                            page == UnAuthorizedPage.WALLET
+                                ? LocaleKeys.dashboard_wallet.tr()
+                                : LocaleKeys.unAuthPage_trade.tr()
+                          ])}',
                       style: TextStyle(
                         fontSize: 16,
                         color: Colors.grey[600],
@@ -89,8 +95,8 @@ class UnAuthorizedWidget extends StatelessWidget {
                           ),
                         ),
                         child: Text(
-                          'Giriş Yap',
-                          style: TextStyle(
+                          LocaleKeys.unAuthPage_signIn.tr(),
+                          style: const TextStyle(
                             fontSize: 16,
                             fontWeight: FontWeight.w600,
                             fontFamily: 'Manrope',
@@ -121,7 +127,7 @@ class UnAuthorizedWidget extends StatelessWidget {
                           ),
                         ),
                         child: Text(
-                          'Hesap Oluştur',
+                          LocaleKeys.unAuthPage_createAccount.tr(),
                           style: TextStyle(
                             fontSize: 16,
                             fontWeight: FontWeight.w600,

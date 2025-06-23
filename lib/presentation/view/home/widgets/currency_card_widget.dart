@@ -1,5 +1,6 @@
 import 'dart:async';
 
+import 'package:asset_tracker/core/config/localization/generated/locale_keys.g.dart';
 import 'package:asset_tracker/core/config/theme/default_theme.dart';
 import 'package:asset_tracker/core/config/theme/app_size.dart';
 import 'package:asset_tracker/core/config/theme/style_theme.dart';
@@ -14,6 +15,7 @@ import 'package:asset_tracker/domain/entities/web/socket/currency_widget_entity.
 import 'package:asset_tracker/domain/usecase/cache/cache_use_case.dart';
 import 'package:asset_tracker/injection.dart';
 import 'package:asset_tracker/presentation/view_model/home/home_view_model.dart';
+import 'package:easy_localization/easy_localization.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
@@ -229,8 +231,8 @@ class _CurrencyListWidgetState extends ConsumerState<CurrencyListWidget>
               child: Center(
                 child: Text(
                   searchQuery.isNotEmpty
-                      ? "Arama sonucu bulunamadı"
-                      : "Hiç para birimi bulunamadı",
+                      ? LocaleKeys.home_notFoundSearch.tr()
+                      : LocaleKeys.home_notFoundErr.tr(),
                   style: TextStyle(
                     color: DefaultColorPalette.grey400,
                     fontSize: AppSize.mediumText,
@@ -378,14 +380,14 @@ class _CurrencyListWidgetState extends ConsumerState<CurrencyListWidget>
           Expanded(
             flex: 6,
             child: _buildSortableHeaderItem(
-              title: "Birim",
+              title: LocaleKeys.home_unit.tr(),
               sortType: SortType.name,
             ),
           ),
           Expanded(
             flex: 3,
             child: _buildSortableHeaderItem(
-              title: "Alış",
+              title: LocaleKeys.home_buy.tr(),
               sortType: SortType.buy,
               textAlign: TextAlign.center,
             ),
@@ -393,7 +395,7 @@ class _CurrencyListWidgetState extends ConsumerState<CurrencyListWidget>
           Expanded(
             flex: 3,
             child: _buildSortableHeaderItem(
-              title: "Satış",
+              title: LocaleKeys.home_sell.tr(),
               sortType: SortType.sell,
               textAlign: TextAlign.center,
             ),
@@ -420,14 +422,14 @@ class _CurrencyListWidgetState extends ConsumerState<CurrencyListWidget>
                         } else {
                           WidgetsBinding.instance.addPostFrameCallback((_) {
                             EasySnackBar.show(
-                                context, "Basılı tutarak kaydırabilirsiniz.");
+                                context, LocaleKeys.home_pressLong.tr());
                           });
                         }
                       });
                     },
                     tooltip: _isEditMode
-                        ? "Düzenlemeyi bitir"
-                        : "Sıralamayı düzenle",
+                        ? LocaleKeys.home_finishEdit.tr()
+                        : LocaleKeys.home_startEdit.tr(),
                   )
                 : const SizedBox(),
           ),
@@ -808,7 +810,7 @@ class _ShortLongPressDraggableWidgetState
               onDragUpdate: widget.onDragUpdate,
               feedback: Material(
                 elevation: 4,
-                child: Container(
+                child: SizedBox(
                   width: MediaQuery.of(context).size.width - 32,
                   child: widget.child,
                 ),
@@ -818,7 +820,7 @@ class _ShortLongPressDraggableWidgetState
                 color: Colors.grey.withOpacity(0.3),
                 child: Center(
                   child: Text(
-                    "Taşınıyor...",
+                    LocaleKeys.home_moving.tr(),
                     style: TextStyle(color: Colors.grey[600]),
                   ),
                 ),

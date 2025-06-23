@@ -1,5 +1,7 @@
+import 'package:asset_tracker/core/config/localization/generated/locale_keys.g.dart';
 import 'package:asset_tracker/core/config/theme/default_theme.dart';
 import 'package:asset_tracker/injection.dart';
+import 'package:easy_localization/easy_localization.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 
@@ -33,26 +35,26 @@ class MenuBottomNavigationBarWidget extends ConsumerWidget {
         selectedFontSize: 12,
         unselectedFontSize: 12,
         elevation: 0,
-        items: const [
+        items: [
           BottomNavigationBarItem(
-            icon: Icon(Icons.home_outlined),
-            activeIcon: Icon(Icons.home),
-            label: "Ana Sayfa",
+            icon: const Icon(Icons.home_outlined),
+            activeIcon: const Icon(Icons.home),
+            label: LocaleKeys.bottomNavBar_home.tr(),
           ),
           BottomNavigationBarItem(
-            icon: Icon(Icons.account_balance_wallet_outlined),
-            activeIcon: Icon(Icons.account_balance_wallet),
-            label: "Cüzdan",
+            icon: const Icon(Icons.account_balance_wallet_outlined),
+            activeIcon: const Icon(Icons.account_balance_wallet),
+            label: LocaleKeys.bottomNavBar_wallet.tr(),
           ),
           BottomNavigationBarItem(
-            icon: Icon(Icons.trending_down),
-            activeIcon: Icon(Icons.trending_up),
-            label: "Al-Sat",
+            icon: const Icon(Icons.trending_down),
+            activeIcon: const Icon(Icons.trending_up),
+            label: LocaleKeys.bottomNavBar_trade.tr(),
           ),
           BottomNavigationBarItem(
-            icon: Icon(Icons.settings),
-            activeIcon: Icon(Icons.settings_suggest_rounded),
-            label: "Ayarlar",
+            icon: const Icon(Icons.settings),
+            activeIcon: const Icon(Icons.settings_suggest_rounded),
+            label: LocaleKeys.bottomNavBar_settings.tr(),
           ),
         ],
       ),

@@ -1,8 +1,10 @@
+import 'package:asset_tracker/core/config/localization/generated/locale_keys.g.dart';
 import 'package:asset_tracker/core/config/theme/extension/currency_widget_title_extension.dart';
 import 'package:asset_tracker/core/config/theme/app_size.dart';
 import 'package:asset_tracker/core/widgets/custom_padding.dart';
 import 'package:asset_tracker/core/widgets/custom_sized_box.dart';
 import 'package:asset_tracker/presentation/view_model/home/trade/trade_view_model.dart';
+import 'package:easy_localization/easy_localization.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
@@ -161,7 +163,7 @@ class _CustomDropDownWidgetState<T>
         crossAxisAlignment: CrossAxisAlignment.start,
         children: [
           Text(
-            "Birim",
+            LocaleKeys.home_unit.tr(),
             style: TextStyle(
               fontFamily: 'Manrope',
               fontSize: AppSize.smallText2,

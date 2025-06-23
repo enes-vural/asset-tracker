@@ -1,3 +1,4 @@
+import 'package:asset_tracker/core/config/localization/generated/locale_keys.g.dart';
 import 'package:asset_tracker/core/config/theme/default_theme.dart';
 import 'package:asset_tracker/core/config/theme/app_size.dart';
 import 'package:asset_tracker/core/widgets/custom_padding.dart';
@@ -10,7 +11,7 @@ import 'package:flutter/services.dart';
 class CustomDatePickerWidget extends StatelessWidget {
   const CustomDatePickerWidget({
     super.key,
-    this.label = "Date",
+    this.label = LocaleKeys.trade_tradeDate,
     this.validator,
     required this.viewModel,
   });
@@ -36,7 +37,7 @@ class CustomDatePickerWidget extends StatelessWidget {
         crossAxisAlignment: CrossAxisAlignment.start,
         children: [
           Text(
-            label,
+            label.tr(),
             style: TextStyle(
               color: titleColor,
               fontFamily: 'Manrope',
@@ -106,7 +107,7 @@ class CustomDatePickerWidget extends StatelessWidget {
               },
               readOnly: false, // Elle yazmaya izin ver
               decoration: InputDecoration(
-                hintText: 'gün/ay/yıl',
+                hintText: LocaleKeys.trade_dateFormat.tr(),
                 hintStyle: TextStyle(
                   fontFamily: 'Manrope',
                   fontSize: AppSize.smallText2,

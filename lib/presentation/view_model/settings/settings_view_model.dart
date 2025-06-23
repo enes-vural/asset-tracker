@@ -1,3 +1,4 @@
+import 'package:asset_tracker/core/config/localization/generated/locale_keys.g.dart';
 import 'package:asset_tracker/core/constants/enums/widgets/app_pages_enum.dart';
 import 'package:asset_tracker/core/constants/string_constant.dart';
 import 'package:asset_tracker/core/helpers/snackbar.dart';
@@ -8,6 +9,7 @@ import 'package:asset_tracker/domain/usecase/auth/auth_use_case.dart';
 import 'package:asset_tracker/domain/usecase/database/database_use_case.dart';
 import 'package:asset_tracker/provider/app_global_provider.dart';
 import 'package:asset_tracker/provider/auth_global_provider.dart';
+import 'package:easy_localization/easy_localization.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 
@@ -59,10 +61,11 @@ class SettingsViewModel extends ChangeNotifier {
 
       data.fold(
         (failure) {
-          EasySnackBar.show(context, "İşleminiz gerçekleştirilemedi");
+          EasySnackBar.show(
+              context, LocaleKeys.home_settings_processError.tr());
         },
         (success) {
-          EasySnackBar.show(context, "Bilgileriniz güncellendi");
+          EasySnackBar.show(context, LocaleKeys.home_settings_infoUpdated.tr());
           Routers.instance.pop(context);
         },
       );
@@ -127,15 +130,19 @@ class SettingsViewModel extends ChangeNotifier {
           EasySnackBar.show(context, errorMessage!);
         } else {
           await appGlobalProvider.clearData();
+          if (context.mounted) {
+
           Routers.instance.pop(context);
-          EasySnackBar.show(context, "Hesabınız Başarıyla Silindi");
+            EasySnackBar.show(
+                context, LocaleKeys.home_settings_deleteSuccesfull.tr());
           appGlobalProvider
               .changeMenuNavigationIndex(AppPagesEnum.HOME.pageIndex);
+          }
         }
       }
     } catch (e) {
       if (context.mounted) {
-        EasySnackBar.show(context, "Hesap silme işleminde hata oluştu");
+        EasySnackBar.show(context, LocaleKeys.home_settings_deleteError.tr());
       }
     }
   }
