@@ -82,7 +82,7 @@ class AuthFormWidget extends StatelessWidget {
           onFieldSubmitted: onFieldSubmitted,
         );
 
-  const AuthFormWidget.firstName({
+  AuthFormWidget.firstName({
     Key? key,
     required TextEditingController? firstNameController,
     required FormFieldValidator<String>? firstNameValidator,
@@ -95,7 +95,7 @@ class AuthFormWidget extends StatelessWidget {
             key: key,
             formController: firstNameController,
             isObs: false,
-            label: "First name",
+          label: LocaleKeys.auth_firstName.tr(),
             validaor: firstNameValidator,
             hasTitle: hasTitle,
           hasLabel: hasLabel,
@@ -104,7 +104,7 @@ class AuthFormWidget extends StatelessWidget {
           onFieldSubmitted: onFieldSubmitted,
         );
 
-  const AuthFormWidget.lastName({
+  AuthFormWidget.lastName({
     Key? key,
     required TextEditingController? lastNameController,
     required FormFieldValidator<String>? lastNameValidator,
@@ -117,7 +117,7 @@ class AuthFormWidget extends StatelessWidget {
           key: key,
           formController: lastNameController,
           isObs: false,
-          label: "Last name",
+          label: LocaleKeys.auth_lastName.tr(),
           validaor: lastNameValidator,
           hasTitle: hasTitle,
           hasLabel: hasLabel, 

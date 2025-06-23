@@ -302,7 +302,7 @@ class _SettingsViewState extends ConsumerState<SettingsView> {
         backgroundColor: theme.dialogBackgroundColor,
         shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(16)),
         title: Text(
-          'İsim ve Soyisim Düzenle',
+          LocaleKeys.home_settings_editNameSurname.tr(),
           style: TextStyle(color: theme.colorScheme.onSurface),
         ),
         content: Column(
@@ -312,7 +312,7 @@ class _SettingsViewState extends ConsumerState<SettingsView> {
               controller: viewModel.nameController,
               style: TextStyle(color: theme.colorScheme.onSurface),
               decoration: InputDecoration(
-                labelText: 'İsim',
+                labelText: LocaleKeys.home_settings_name.tr(),
                 labelStyle: TextStyle(
                     color: theme.colorScheme.onSurface.withOpacity(0.7)),
                 border: OutlineInputBorder(
@@ -331,7 +331,7 @@ class _SettingsViewState extends ConsumerState<SettingsView> {
               controller: viewModel.surnameController,
               style: TextStyle(color: theme.colorScheme.onSurface),
               decoration: InputDecoration(
-                labelText: 'Soyisim',
+                labelText: LocaleKeys.home_settings_surname.tr(),
                 labelStyle: TextStyle(
                     color: theme.colorScheme.onSurface.withOpacity(0.7)),
                 border: OutlineInputBorder(
@@ -351,7 +351,7 @@ class _SettingsViewState extends ConsumerState<SettingsView> {
           TextButton(
             onPressed: () => Navigator.pop(context),
             child: Text(
-              'İptal',
+              LocaleKeys.home_settings_cancel.tr(),
               style: TextStyle(
                   color: theme.colorScheme.onSurface.withOpacity(0.7)),
             ),
@@ -364,7 +364,7 @@ class _SettingsViewState extends ConsumerState<SettingsView> {
             onPressed: () async {
               await viewModel.changeUserInfo(context);
             },
-            child: const Text('Kaydet'),
+            child: Text(LocaleKeys.home_settings_save.tr()),
           ),
         ],
       ),
@@ -380,18 +380,18 @@ class _SettingsViewState extends ConsumerState<SettingsView> {
         backgroundColor: theme.dialogBackgroundColor,
         shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(16)),
         title: Text(
-          'Hesabı Sil',
+          LocaleKeys.home_settings_remove.tr(),
           style: TextStyle(color: theme.colorScheme.onSurface),
         ),
         content: Text(
-          'Hesabınızı silmek istediğinizden emin misiniz? Bu işlem geri alınamaz.',
+          LocaleKeys.home_settings_removePopDesc.tr(),
           style: TextStyle(color: theme.colorScheme.onSurface.withOpacity(0.8)),
         ),
         actions: [
           TextButton(
             onPressed: () => Routers.instance.pop(context),
             child: Text(
-              'İptal',
+              LocaleKeys.home_settings_cancel.tr(),
               style: TextStyle(
                   color: theme.colorScheme.onSurface.withOpacity(0.7)),
             ),
@@ -404,7 +404,9 @@ class _SettingsViewState extends ConsumerState<SettingsView> {
             onPressed: () {
               viewModel.deleteAccount(context);
             },
-            child: const Text('Sil'),
+            child: Text(
+              LocaleKeys.home_settings_remove.tr(),
+            ),
           ),
         ],
       ),
@@ -420,18 +422,18 @@ class _SettingsViewState extends ConsumerState<SettingsView> {
         backgroundColor: theme.dialogBackgroundColor,
         shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(16)),
         title: Text(
-          'Çıkış Yap',
+          LocaleKeys.home_settings_signOut.tr(),
           style: TextStyle(color: theme.colorScheme.onSurface),
         ),
         content: Text(
-          'Hesabınızdan çıkış yapmak istediğinizden emin misiniz?',
+          LocaleKeys.home_settings_signoutPopDesc.tr(),
           style: TextStyle(color: theme.colorScheme.onSurface.withOpacity(0.8)),
         ),
         actions: [
           TextButton(
             onPressed: () => Navigator.pop(context),
             child: Text(
-              'İptal',
+              LocaleKeys.home_settings_cancel.tr(),
               style: TextStyle(
                   color: theme.colorScheme.onSurface.withOpacity(0.7)),
             ),
@@ -445,7 +447,7 @@ class _SettingsViewState extends ConsumerState<SettingsView> {
               viewModel.signOut(ref, context);
               Navigator.pop(context);
             },
-            child: const Text('Çıkış Yap'),
+            child: Text(LocaleKeys.home_settings_signOut.tr()),
           ),
         ],
       ),
@@ -461,7 +463,7 @@ class _SettingsViewState extends ConsumerState<SettingsView> {
         backgroundColor: theme.dialogBackgroundColor,
         shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(16)),
         title: Text(
-          'Kullanıcı Sözleşmesi',
+          LocaleKeys.home_settings_userAgreement.tr(),
           style: TextStyle(color: theme.colorScheme.onSurface),
         ),
         content: SizedBox(
@@ -503,7 +505,7 @@ Son güncelleme: ${DateTime.now().day}/${DateTime.now().month}/${DateTime.now().
           TextButton(
             onPressed: () => Navigator.pop(context),
             child: Text(
-              'Kapat',
+              LocaleKeys.home_settings_close.tr(),
               style: TextStyle(color: theme.colorScheme.primary),
             ),
           ),

@@ -1,8 +1,10 @@
 // ignore_for_file: prefer_const_constructors, unnecessary_null_comparison
+import 'package:asset_tracker/core/config/localization/generated/locale_keys.g.dart';
 import 'package:asset_tracker/core/config/theme/app_size.dart';
 import 'package:asset_tracker/core/config/theme/style_theme.dart';
 import 'package:asset_tracker/core/widgets/custom_align.dart';
 import 'package:auto_route/annotations.dart';
+import 'package:easy_localization/easy_localization.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:asset_tracker/core/widgets/custom_padding.dart';
@@ -157,7 +159,8 @@ class _HomeViewState extends ConsumerState<HomeView>
                                       controller: viewModel.searchBarController,
                                       focusNode: _searchFocusNode,
                                       decoration: InputDecoration(
-                                        hintText: "Döviz veya altın ara...",
+                                        hintText:
+                                            LocaleKeys.home_searchText.tr(),
                                         border: InputBorder.none,
                                         hintStyle: TextStyle(
                                           color: Theme.of(context)
@@ -272,7 +275,7 @@ class _HomeViewState extends ConsumerState<HomeView>
 
   Text _signInText() {
     return Text(
-      "PaRota ile altın ve dövizlerinizi kolayca takip etmek için giriş yapın.",
+      LocaleKeys.home_homeDesc.tr(),
       style: CustomTextStyle.greyColorManrope(context, AppSize.small2Text),
     );
   }

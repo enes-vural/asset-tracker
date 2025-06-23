@@ -121,7 +121,7 @@ class _TradeViewState extends ConsumerState<TradeView> with ValidatorMixin {
                     ),
                     const SizedBox(width: 8),
                     Text(
-                      'ALIM',
+                      LocaleKeys.trade_buyMode.tr(),
                       style: TextStyle(
                         color: currentTradeType == TradeType.buy
                             ? Colors.white
@@ -159,7 +159,7 @@ class _TradeViewState extends ConsumerState<TradeView> with ValidatorMixin {
                     ),
                     const SizedBox(width: 8),
                     Text(
-                      'SATIM',
+                      LocaleKeys.trade_sellMode.tr(),
                       style: TextStyle(
                         color: currentTradeType == TradeType.sell
                             ? Colors.white
@@ -235,8 +235,8 @@ class _TradeViewState extends ConsumerState<TradeView> with ValidatorMixin {
               const SizedBox(width: 8),
               Text(
                 currentTradeType == TradeType.buy
-                    ? 'Alım İşlemi Detayları'
-                    : 'Satım İşlemi Detayları',
+                    ? LocaleKeys.trade_buyDesc.tr()
+                    : LocaleKeys.trade_sellDesc.tr(),
                 style: TextStyle(
                   fontSize: 16,
                   fontWeight: FontWeight.w600,
@@ -261,7 +261,7 @@ class _TradeViewState extends ConsumerState<TradeView> with ValidatorMixin {
 
           // Miktar
           AuthFormWidget(
-            label: "Miktar",
+            label: LocaleKeys.trade_amount.tr(),
             isObs: false,
             formController: viewModel.amountController,
             validaor: (value) => checkAmount(value, false),
@@ -284,7 +284,7 @@ class _TradeViewState extends ConsumerState<TradeView> with ValidatorMixin {
 
           // Adet Fiyatı
           AuthFormWidget(
-            label: "Adet Fiyatı (TL)",
+            label: LocaleKeys.trade_perPrice.tr(),
             isObs: false,
             formController: viewModel.priceUnitController,
             onChanged: (value) {
@@ -319,7 +319,7 @@ class _TradeViewState extends ConsumerState<TradeView> with ValidatorMixin {
               crossAxisAlignment: CrossAxisAlignment.start,
               children: [
                 Text(
-                  'Toplam Fiyat',
+                  LocaleKeys.trade_totalPrice.tr(),
                   style: TextStyle(
                     fontSize: 12,
                     fontWeight: FontWeight.w500,
@@ -328,7 +328,7 @@ class _TradeViewState extends ConsumerState<TradeView> with ValidatorMixin {
                 ),
                 const SizedBox(height: 4),
                 AuthFormWidget(
-                  label: "Toplam Fiyat (TL)",
+                  label: LocaleKeys.trade_totalPriceLabel.tr(),
                   isObs: false,
                   formController: viewModel.priceTotalController,
                   validaor: (value) => checkAmount(value, true),
@@ -397,8 +397,8 @@ class _TradeViewState extends ConsumerState<TradeView> with ValidatorMixin {
         ),
         label: Text(
           currentTradeType == TradeType.buy
-              ? "Cüzdan'a Ekle"
-              : "Cüzdan'dan Sat",
+              ? LocaleKeys.trade_tradeButtonBuy.tr()
+              : LocaleKeys.trade_tradeButtonSell.tr(),
           style: const TextStyle(
             fontSize: 16,
             fontWeight: FontWeight.w600,

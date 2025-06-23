@@ -1,8 +1,11 @@
+import 'package:asset_tracker/core/config/localization/generated/locale_keys.g.dart';
 import 'package:asset_tracker/core/config/theme/default_theme.dart';
+import 'package:asset_tracker/core/mixins/validation_mixin.dart';
 import 'package:asset_tracker/core/routers/router.dart';
 import 'package:asset_tracker/injection.dart';
 import 'package:asset_tracker/presentation/view/auth/widget/auth_form_widget.dart';
 import 'package:auto_route/auto_route.dart';
+import 'package:easy_localization/easy_localization.dart';
 import 'package:flutter/material.dart';
 import 'package:asset_tracker/core/widgets/custom_padding.dart';
 import 'package:asset_tracker/core/widgets/custom_sized_box.dart';
@@ -17,19 +20,10 @@ class ForgotPasswordView extends ConsumerStatefulWidget {
       _ForgotPasswordViewState();
 }
 
-class _ForgotPasswordViewState extends ConsumerState<ForgotPasswordView> {
+class _ForgotPasswordViewState extends ConsumerState<ForgotPasswordView>
+    with ValidatorMixin {
   final _formKey = GlobalKey<FormState>();
   bool _isLoading = false;
-
-  String? _emailValidator(String? value) {
-    if (value == null || value.isEmpty) {
-      return 'E-posta adresi gerekli';
-    }
-    if (!RegExp(r'^[\w-\.]+@([\w-]+\.)+[\w-]{2,4}$').hasMatch(value)) {
-      return 'Geçerli bir e-posta adresi girin';
-    }
-    return null;
-  }
 
   Future<void> _onResetPassword(WidgetRef ref) async {
     if (!_formKey.currentState!.validate()) return;
@@ -67,15 +61,16 @@ class _ForgotPasswordViewState extends ConsumerState<ForgotPasswordView> {
         shape: RoundedRectangleBorder(
           borderRadius: BorderRadius.circular(16),
         ),
-        title: const Text(
-          'E-posta Gönderildi',
-          style: TextStyle(
+        title: Text(
+          LocaleKeys.auth_sentEmail.tr(),
+          style: const TextStyle(
             fontFamily: 'Manrope',
             fontWeight: FontWeight.w600,
           ),
         ),
         content: Text(
-          'Şifre sıfırlama bağlantısı ${ref.read(authViewModelProvider).emailController.text} adresine gönderildi. E-posta kutunuzu kontrol edin.',
+          LocaleKeys.auth_resetEmail
+              .tr(args: [ref.read(authViewModelProvider).emailController.text]),
           style: const TextStyle(
             fontFamily: 'Manrope',
           ),
@@ -86,9 +81,9 @@ class _ForgotPasswordViewState extends ConsumerState<ForgotPasswordView> {
               Navigator.of(context).pop();
               Routers.instance.pop(context);
             },
-            child: const Text(
-              'Tamam',
-              style: TextStyle(
+            child: Text(
+              LocaleKeys.auth_ok.tr(),
+              style: const TextStyle(
                 fontFamily: 'Manrope',
                 fontWeight: FontWeight.w600,
               ),
@@ -170,7 +165,7 @@ class _ForgotPasswordViewState extends ConsumerState<ForgotPasswordView> {
 
                             // Title
                             Text(
-                              'Şifremi Unuttum',
+                              LocaleKeys.auth_forgot.tr(),
                               style: TextStyle(
                                 fontSize: 28,
                                 fontWeight: FontWeight.bold,
@@ -187,7 +182,7 @@ class _ForgotPasswordViewState extends ConsumerState<ForgotPasswordView> {
                               padding:
                                   const EdgeInsets.symmetric(horizontal: 20),
                               child: Text(
-                                'E-posta adresinizi girin, size şifre sıfırlama bağlantısı gönderelim.',
+                                LocaleKeys.auth_forgotDesc.tr(),
                                 style: TextStyle(
                                   fontSize: 16,
                                   color: isDarkMode
@@ -213,7 +208,7 @@ class _ForgotPasswordViewState extends ConsumerState<ForgotPasswordView> {
                           children: [
                             AuthFormWidget.email(
                               emailController: viewModel.emailController,
-                              emailValidator: _emailValidator,
+                              emailValidator: checkEmail,
                               hasTitle: true,
                               hasLabel: true,
                               textInputAction: TextInputAction.done,
@@ -249,9 +244,9 @@ class _ForgotPasswordViewState extends ConsumerState<ForgotPasswordView> {
                                           ),
                                         ),
                                       )
-                                    : const Text(
-                                        'Sıfırlama Bağlantısı Gönder',
-                                        style: TextStyle(
+                                    : Text(
+                                        LocaleKeys.auth_forgotButton.tr(),
+                                        style: const TextStyle(
                                           fontSize: 16,
                                           fontWeight: FontWeight.w600,
                                           fontFamily: 'Manrope',
@@ -273,7 +268,7 @@ class _ForgotPasswordViewState extends ConsumerState<ForgotPasswordView> {
                     mainAxisAlignment: MainAxisAlignment.center,
                     children: [
                       Text(
-                        'Şifrenizi hatırladınız mı? ',
+                        LocaleKeys.auth_rememberPassword.tr(),
                         style: TextStyle(
                           color: isDarkMode
                               ? Colors.grey.shade300
@@ -282,10 +277,11 @@ class _ForgotPasswordViewState extends ConsumerState<ForgotPasswordView> {
                           fontSize: 14,
                         ),
                       ),
+                      const CustomSizedBox.smallWidth(),
                       GestureDetector(
                         onTap: () => Routers.instance.pop(context),
                         child: Text(
-                          'Giriş Yap',
+                          LocaleKeys.auth_signIn.tr(),
                           style: TextStyle(
                             color: DefaultColorPalette.mainBlue,
                             fontWeight: FontWeight.w600,

@@ -86,9 +86,9 @@ class _RegisterViewState extends ConsumerState<RegisterView>
                     children: [
                       // Title
                       const CustomSizedBox.largeGap(),
-                      const Text(
-                        'Hesap Oluştur',
-                        style: TextStyle(
+                      Text(
+                        LocaleKeys.auth_registerTitle.tr(),
+                        style: const TextStyle(
                           color: Color.fromRGBO(17, 20, 22, 1),
                           fontFamily: 'Manrope',
                           fontSize: 22,
@@ -97,7 +97,7 @@ class _RegisterViewState extends ConsumerState<RegisterView>
                         ),
                       ),
                       Text(
-                        "PaRota Hesabı oluşturmak için lütfen aşağıdaki bilgileri doldurun.",
+                        LocaleKeys.auth_registerDesc.tr(),
                         style: CustomTextStyle.greyColorManrope(
                             context, AppSize.small2Text),
                       ),

@@ -1,3 +1,4 @@
+import 'package:asset_tracker/core/config/localization/generated/locale_keys.g.dart';
 import 'package:asset_tracker/core/config/theme/extension/responsive_extension.dart';
 import 'package:asset_tracker/core/constants/string_constant.dart';
 import 'package:asset_tracker/core/widgets/custom_padding.dart';
@@ -9,6 +10,7 @@ import 'package:asset_tracker/presentation/view/home/trade/trade_view.dart';
 import 'package:asset_tracker/presentation/view/home/widgets/parota_logo_widget.dart';
 import 'package:asset_tracker/presentation/view/home/widgets/menu_bottom_navigation_bar_widget.dart';
 import 'package:auto_route/annotations.dart';
+import 'package:easy_localization/easy_localization.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:asset_tracker/core/config/theme/default_theme.dart';
@@ -63,14 +65,14 @@ class _MenuViewState extends ConsumerState<MenuView>
         scrolledUnderElevation: 0,
         actionsPadding: const CustomEdgeInstets.mediumHorizontal(),
         centerTitle: true,
-        title: PaRotaLogoWidget(),
+        title: const PaRotaLogoWidget(),
         actions: [
           authState.getCurrentUser?.user != null
               ? const CustomSizedBox.empty()
               : TextButton(
                   onPressed: () => viewModel.routeSignInPage(context),
                   child: Text(
-                    "Giriş Yap",
+                    LocaleKeys.auth_signIn.tr(),
                     style: TextStyle(
                       fontFamily: 'Manrope',
                       fontWeight: FontWeight.bold,

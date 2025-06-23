@@ -1,3 +1,4 @@
+import 'package:asset_tracker/core/config/localization/generated/locale_keys.g.dart';
 import 'package:asset_tracker/core/config/theme/extension/currency_widget_title_extension.dart';
 import 'package:asset_tracker/core/constants/database/transaction_type_enum.dart';
 import 'package:asset_tracker/core/config/theme/extension/number_format_extension.dart';
@@ -11,6 +12,7 @@ import 'package:asset_tracker/domain/entities/general/calculate_profit_entity.da
 import 'package:asset_tracker/injection.dart';
 import 'package:asset_tracker/presentation/view/widgets/loading_skeletonizer_widget.dart';
 import 'package:asset_tracker/presentation/view/widgets/transaction/transaction_card_lvb_widget.dart';
+import 'package:easy_localization/easy_localization.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 
@@ -149,7 +151,7 @@ class _UserAssetTransactionWidgetState
             ),
             const SizedBox(height: 16),
             Text(
-              "Henüz işlem yok",
+              LocaleKeys.dashboard_noTransaction.tr(),
               style: TextStyle(
                 fontSize: 20,
                 fontWeight: FontWeight.bold,
@@ -158,7 +160,7 @@ class _UserAssetTransactionWidgetState
             ),
             const SizedBox(height: 8),
             Text(
-              "İlk yatırımınızı yaparak başlayın",
+              LocaleKeys.dashboard_startTrade.tr(),
               style: TextStyle(
                 fontSize: 16,
                 color: isDark ? Colors.grey[400] : Colors.grey[500],
@@ -168,7 +170,7 @@ class _UserAssetTransactionWidgetState
             ElevatedButton.icon(
               onPressed: () => _showAddTransactionDialog(isDark),
               icon: const Icon(Icons.add),
-              label: const Text("İşlem Ekle"),
+              label: Text(LocaleKeys.dashboard_addTransaction.tr()),
               style: ElevatedButton.styleFrom(
                 padding:
                     const EdgeInsets.symmetric(horizontal: 24, vertical: 12),
@@ -282,7 +284,7 @@ class _UserAssetTransactionWidgetState
                                 borderRadius: BorderRadius.circular(8),
                               ),
                               child: Text(
-                                "${entry.value.length} işlem",
+                                "${entry.value.length} ${LocaleKeys.dashboard_transaction.tr()}",
                                 style: TextStyle(
                                   fontSize: 12,
                                   color: isDark
@@ -297,8 +299,8 @@ class _UserAssetTransactionWidgetState
                         const SizedBox(height: 4),
                         Text(
                           isSold
-                              ? "Satıldı"
-                              : "${quantities.toNumberWithTurkishFormat()} birim",
+                              ? LocaleKeys.dashboard_sold.tr()
+                              : "${quantities.toNumberWithTurkishFormat()} ${LocaleKeys.dashboard_unit.tr()}",
                           style: TextStyle(
                             fontSize: 14,
                             color: isDark ? Colors.grey[300] : Colors.grey[600],
@@ -364,7 +366,7 @@ class _UserAssetTransactionWidgetState
                     children: [
                       Expanded(
                         child: _buildActionButton(
-                          "Sil",
+                          LocaleKeys.dashboard_deleteButton.tr(),
                           Icons.remove_circle,
                           Colors.red[600]!,
                           () => _removeTransaction(entry.value.first),
@@ -374,7 +376,7 @@ class _UserAssetTransactionWidgetState
                       const SizedBox(width: 12),
                       Expanded(
                         child: _buildActionButton(
-                          "Sat",
+                          LocaleKeys.dashboard_sellButton.tr(),
                           Icons.sell_outlined,
                           Colors.red[600]!,
                           () => _routeTradeView(
@@ -385,7 +387,7 @@ class _UserAssetTransactionWidgetState
                       const SizedBox(width: 12),
                       Expanded(
                         child: _buildActionButton(
-                          "Al",
+                          LocaleKeys.dashboard_buyButton.tr(),
                           Icons.add_circle_outline,
                           Colors.green[600]!,
                           () => _routeTradeView(
@@ -408,7 +410,7 @@ class _UserAssetTransactionWidgetState
               ),
               child: ExpansionTile(
                 title: Text(
-                  "İşlem Geçmişi (${entry.value.length})",
+                  "${LocaleKeys.dashboard_transactionHistory.tr()} (${entry.value.length})",
                   style: TextStyle(
                     fontWeight: FontWeight.w600,
                     fontSize: 14,
@@ -436,7 +438,7 @@ class _UserAssetTransactionWidgetState
       children: [
         Expanded(
           child: _buildStatItem(
-            "Alış",
+            LocaleKeys.dashboard_buy.tr(),
             stats?.purchasePriceTotal ?? 0,
             Icons.shopping_cart_outlined,
             Colors.blue,
@@ -450,7 +452,7 @@ class _UserAssetTransactionWidgetState
         ),
         Expanded(
           child: _buildStatItem(
-            "Güncel",
+            LocaleKeys.dashboard_current.tr(),
             stats?.latestPriceTotal ?? 0,
             Icons.trending_up_outlined,
             Colors.orange,
@@ -464,7 +466,7 @@ class _UserAssetTransactionWidgetState
         ),
         Expanded(
           child: _buildStatItem(
-            "Kar/Zarar",
+            LocaleKeys.dashboard_profitOrLoss.tr(),
             stats?.profit ?? 0,
             (stats?.profit ?? 0) >= 0
                 ? Icons.arrow_upward
@@ -553,7 +555,7 @@ class _UserAssetTransactionWidgetState
             Padding(
               padding: const EdgeInsets.all(16),
               child: Text(
-                "Yeni İşlem Ekle",
+                LocaleKeys.dashboard_addTransaction.tr(),
                 style: TextStyle(
                   fontSize: 20,
                   fontWeight: FontWeight.bold,

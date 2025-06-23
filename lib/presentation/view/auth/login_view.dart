@@ -1,3 +1,4 @@
+import 'package:asset_tracker/core/config/localization/generated/locale_keys.g.dart';
 import 'package:asset_tracker/core/config/theme/default_theme.dart';
 import 'package:asset_tracker/core/config/theme/app_size.dart';
 import 'package:asset_tracker/core/config/theme/style_theme.dart';
@@ -12,6 +13,7 @@ import 'package:asset_tracker/presentation/view/auth/widget/half_login_button_wi
 import 'package:asset_tracker/presentation/view/home/widgets/parota_logo_widget.dart';
 import 'package:asset_tracker/presentation/view_model/auth/auth_view_model.dart';
 import 'package:auto_route/auto_route.dart';
+import 'package:easy_localization/easy_localization.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
@@ -70,7 +72,7 @@ class _TrialViewState extends ConsumerState<LoginView> with ValidatorMixin {
             mainAxisSize: MainAxisSize.min,
             children: <Widget>[
               Text(
-                'Paranın Rotasını Sende',
+                LocaleKeys.auth_loginTitle.tr(),
                 textAlign: TextAlign.center,
                 style: TextStyle(
                   fontFamily: 'Manrope',
@@ -82,9 +84,9 @@ class _TrialViewState extends ConsumerState<LoginView> with ValidatorMixin {
               const CustomSizedBox.hugeGap(),
               CustomPadding.largeHorizontal(
                 widget: Text(
-                  'Yatırımlarını canlı takip et, yatırım portföyünü yönet, kazançlarını artır.',
+                  LocaleKeys.auth_loginDesc.tr(),
                   textAlign: TextAlign.center,
-                  style: TextStyle(
+                  style: const TextStyle(
                     fontFamily: 'Manrope',
                     fontSize: 16,
                     letterSpacing: 0,
@@ -126,7 +128,7 @@ class _TrialViewState extends ConsumerState<LoginView> with ValidatorMixin {
                   mainAxisSize: MainAxisSize.min,
                   children: <Widget>[
                     Text(
-                      "Devam ederek PaRota'nın gizlilik politikasını ve kullanım koşullarını kabul etmiş olursun.",
+                      LocaleKeys.auth_loginSubtitle.tr(),
                       textAlign: TextAlign.center,
                       style: TextStyle(
                           fontFamily: 'Manrope',
@@ -143,7 +145,7 @@ class _TrialViewState extends ConsumerState<LoginView> with ValidatorMixin {
                 widget: Row(
                   children: [
                     HalfLoginButton(
-                      label: "Kayıt Ol",
+                      label: LocaleKeys.auth_registerButton.tr(),
                       color: DefaultColorPalette.customGreyLightX,
                       textStyle: CustomTextStyle.loginButtonTextStyle(
                         context,
@@ -154,7 +156,7 @@ class _TrialViewState extends ConsumerState<LoginView> with ValidatorMixin {
                     ),
                     const CustomSizedBox.smallWidth(),
                     HalfLoginButton(
-                      label: "Devam Et",
+                      label: LocaleKeys.auth_loginButton.tr(),
                       color: DefaultColorPalette.mainBlue,
                       textStyle: CustomTextStyle.loginButtonTextStyle(
                         context,
@@ -174,7 +176,7 @@ class _TrialViewState extends ConsumerState<LoginView> with ValidatorMixin {
                     viewModel.routeForgotPasswordView(context);
                   },
                   child: Text(
-                    "Şifremi Unuttum",
+                    LocaleKeys.auth_forgot.tr(),
                     style: CustomTextStyle.greyColorManrope(
                         context, AppSize.smallText),
                   ),
