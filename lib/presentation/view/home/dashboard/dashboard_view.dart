@@ -157,20 +157,26 @@ class _DashboardViewState extends ConsumerState<DashboardView>
     );
   }
 
-  Widget _buildQuickStatCard({
+Widget _buildQuickStatCard({
     required String title,
     required String value,
     required IconData icon,
     required Color color,
     required String percentage,
   }) {
+    // Percentage negatif mi kontrol et
+    bool isNegative = value.contains('-');
+
+    // Negatifse renkleri ve ikonu değiştir
+    Color finalColor = isNegative ? Colors.red : color;
+    IconData finalIcon = isNegative ? Icons.trending_down : icon;
+  
     return Container(
       padding: const EdgeInsets.all(16),
       decoration: BoxDecoration(
         color: Theme.of(context).brightness == Brightness.light
             ? Colors.white
             : Colors.white.withOpacity(0.05),
-        //TODO:
         borderRadius: BorderRadius.circular(16),
         boxShadow: [
           BoxShadow(
@@ -186,19 +192,19 @@ class _DashboardViewState extends ConsumerState<DashboardView>
           Row(
             mainAxisAlignment: MainAxisAlignment.spaceBetween,
             children: [
-              Icon(icon, color: color, size: 24),
+              Icon(finalIcon, color: finalColor, size: 24),
               if (percentage.isNotEmpty)
                 Container(
                   padding:
                       const EdgeInsets.symmetric(horizontal: 8, vertical: 4),
                   decoration: BoxDecoration(
-                    color: color.withOpacity(0.1),
+                    color: finalColor.withOpacity(0.1),
                     borderRadius: BorderRadius.circular(12),
                   ),
                   child: Text(
                     percentage,
                     style: TextStyle(
-                      color: color,
+                      color: finalColor,
                       fontSize: 12,
                       fontWeight: FontWeight.bold,
                     ),

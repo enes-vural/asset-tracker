@@ -18,7 +18,7 @@ if (configPropertiesFile.exists()) {
 
 
 android {
-    namespace = "com.asset_tracker.asset_tracker"
+    namespace = "com.sakasstudio.parota"
     compileSdk = flutter.compileSdkVersion
     ndkVersion = flutter.ndkVersion
 
@@ -32,7 +32,7 @@ android {
     }
 
     defaultConfig {
-        applicationId = "com.asset_tracker.asset_tracker"
+        applicationId = "com.sakasstudio.parota"
         minSdkVersion configProperties['minSdk']?.toInteger() ?: 21
         targetSdkVersion configProperties['targetSdk']?.toInteger() ?: 30
         versionCode configProperties['versionCode']?.toInteger() ?: 1
