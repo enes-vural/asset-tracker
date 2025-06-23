@@ -1,8 +1,10 @@
+import 'package:asset_tracker/data/model/auth/error/auth_response_model.dart';
 import 'package:asset_tracker/data/model/auth/mock_auth_user_model.dart';
 import 'package:asset_tracker/data/model/auth/mock_user_credentinal.dart';
 import 'package:asset_tracker/data/model/auth/request/user_login_model.dart';
 import 'package:asset_tracker/data/model/auth/request/user_register_model.dart';
 import 'package:asset_tracker/data/service/remote/auth/mock/imock_auth_service.dart';
+import 'package:dartz/dartz.dart';
 import 'package:flutter/material.dart';
 
 //MockAuthService sınıfı IAuthService sınıfını implemente eder.
@@ -52,6 +54,12 @@ class MockAuthService implements IMockAuthService {
   @override
   Future<void> sendResetPasswordLink(String email) {
     // TODO: implement sendResetPasswordLink
+    throw UnimplementedError();
+  }
+
+  @override
+  Future<Either<AuthErrorModel, bool>> deleteAccount() {
+    // TODO: implement deleteAccount
     throw UnimplementedError();
   }
 }

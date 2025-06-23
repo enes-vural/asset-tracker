@@ -16,7 +16,9 @@ enum AuthErrorState {
   OPERATION_NOT_ALLOWED("operation-not-allowed"),
   TOO_MANY_REQUESTS("too-many-requests"),
   NETWORK_ERROR("network-request-failed"),
-  USER_TOKEN_EXPIRED("user-token-expired");
+  USER_TOKEN_EXPIRED("user-token-expired"),
+  //------- USER DELETE ------------
+  USER_HAVE_TO_RELOGIN("requires-recent-login");
 
   final String value;
   const AuthErrorState(this.value);

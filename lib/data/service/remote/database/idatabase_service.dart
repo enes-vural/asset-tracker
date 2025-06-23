@@ -34,4 +34,6 @@ abstract interface class IDatabaseService {
 
   Future<Either<DatabaseErrorModel, bool>> sellCurrency(
       SellCurrencyModel model);
+
+  Future<Either<DatabaseErrorModel, bool>> removeUser(UserUidModel model);
 }

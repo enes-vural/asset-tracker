@@ -11,7 +11,6 @@ import 'package:asset_tracker/domain/repository/database/firestore/ifirestore_re
 import 'package:asset_tracker/domain/usecase/base/base_use_case.dart';
 import 'package:dartz/dartz.dart';
 
-
 //TODO: Use caseler databsae use case altına toplanacak.
 class DatabaseUseCase
     extends BaseUseCase<SaveCurrencyEntity, SaveCurrencyEntity> {
@@ -28,7 +27,6 @@ class DatabaseUseCase
       UserCurrencyEntity entity) async {
     return await firestoreRepository.deleteUserTransaction(entity);
   }
-
 
   Future<Either<BaseErrorEntity, bool>> sellCurrency(
       SellCurrencyEntity entity) async {
@@ -48,5 +46,10 @@ class DatabaseUseCase
   Future<Either<DatabaseErrorEntity, bool>> saveUserData(
       SaveUserEntity params) async {
     return await firestoreRepository.saveUser(params);
+  }
+
+  Future<Either<DatabaseErrorEntity, bool>> removeUserData(
+      UserUidEntity entity) async {
+    return await firestoreRepository.removeUser(entity);
   }
 }

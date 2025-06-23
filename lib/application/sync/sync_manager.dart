@@ -2,7 +2,7 @@ import 'package:asset_tracker/core/constants/enums/cache/offline_action_enums.da
 import 'package:asset_tracker/data/model/cache/offline_actions_model.dart';
 import 'package:asset_tracker/domain/usecase/auth/auth_use_case.dart';
 import 'package:asset_tracker/domain/usecase/cache/cache_use_case.dart';
-import 'package:asset_tracker/domain/usecase/database/buy_currency_use_case.dart';
+import 'package:asset_tracker/domain/usecase/database/database_use_case.dart';
 
 import 'package:asset_tracker/injection.dart';
 import 'package:flutter/material.dart' show debugPrint;
@@ -22,7 +22,7 @@ final class SyncManager {
         switch (action.type) {
           case OfflineActionType.LOGIN:
 
-            final result = await getIt<SignInUseCase>().call(action.params);
+            final result = await getIt<AuthUseCase>().call(action.params);
             if (result.isRight()) {
               await getIt<CacheUseCase>().removeOfflineAction(action.id);
             } else {
@@ -67,7 +67,7 @@ final class SyncManager {
         switch (action.type) {
           case OfflineActionType.LOGIN:
 
-            final result = await getIt<SignInUseCase>().call(action.params);
+            final result = await getIt<AuthUseCase>().call(action.params);
             if (result.isRight()) {
               await getIt<CacheUseCase>().removeOfflineAction(action.id);
             } else {

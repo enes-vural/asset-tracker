@@ -19,7 +19,7 @@ import 'package:asset_tracker/domain/repository/database/firestore/ifirestore_re
 import 'package:asset_tracker/domain/repository/web/iweb_socket_repository.dart';
 import 'package:asset_tracker/domain/usecase/auth/auth_use_case.dart';
 import 'package:asset_tracker/domain/usecase/cache/cache_use_case.dart';
-import 'package:asset_tracker/domain/usecase/database/buy_currency_use_case.dart';
+import 'package:asset_tracker/domain/usecase/database/database_use_case.dart';
 import 'package:asset_tracker/domain/usecase/web/web_use_case.dart';
 import 'package:asset_tracker/presentation/view_model/auth/auth_view_model.dart';
 import 'package:asset_tracker/presentation/view_model/home/dashboard/dashboard_view_model.dart';
@@ -67,8 +67,8 @@ Future<void> setupDependencies() async {
   getIt.registerLazySingleton<CacheUseCase>(
       () => CacheUseCase(cacheRepository: getIt<ICacheRepository>()));
 
-  getIt.registerLazySingleton<SignInUseCase>(
-      () => SignInUseCase(getIt<IAuthRepository>()));
+  getIt.registerLazySingleton<AuthUseCase>(
+      () => AuthUseCase(getIt<IAuthRepository>()));
 
   getIt.registerLazySingleton<DatabaseUseCase>(() =>
       DatabaseUseCase(firestoreRepository: getIt<IFirestoreRepository>()));
@@ -118,7 +118,7 @@ final appThemeProvider =
 //------------------ VIEW MODEL PROVIDERS ------------------
 
 final authViewModelProvider = ChangeNotifierProvider<AuthViewModel>((ref) {
-  return AuthViewModel(signInUseCase: getIt<SignInUseCase>());
+  return AuthViewModel(authUseCase: getIt<AuthUseCase>());
 });
 
 final splashViewModelProvider = ChangeNotifierProvider<SplashViewModel>((ref) {
@@ -141,9 +141,10 @@ final dashboardViewModelProvider =
 final settingsViewModelProvider =
     ChangeNotifierProvider<SettingsViewModel>((ref) {
   return SettingsViewModel(
-    getIt<SignInUseCase>(),
+    getIt<AuthUseCase>(),
     ref.read(appGlobalProvider),
     ref.read(authGlobalProvider),
+    getIt<DatabaseUseCase>(),
   );
 });
 

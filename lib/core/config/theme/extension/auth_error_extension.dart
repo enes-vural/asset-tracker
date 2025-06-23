@@ -50,7 +50,8 @@ extension ConvertAuthErrorType on AuthErrorState {
         return LocaleKeys.auth_response_networkError.tr();
       case AuthErrorState.USER_TOKEN_EXPIRED:
         return LocaleKeys.auth_response_userTokenExpired.tr();
-        
+      case AuthErrorState.USER_HAVE_TO_RELOGIN:
+        return LocaleKeys.auth_response_userRelogin.tr();
       default:
         return LocaleKeys.auth_response_generalErr.tr();
     }

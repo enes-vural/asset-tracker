@@ -1,4 +1,5 @@
 import 'package:asset_tracker/core/config/localization/generated/locale_keys.g.dart';
+import 'package:asset_tracker/core/routers/router.dart';
 import 'package:asset_tracker/core/widgets/custom_sized_box.dart';
 import 'package:asset_tracker/injection.dart';
 import 'package:asset_tracker/presentation/view/home/widgets/language_switcher_widget.dart';
@@ -83,7 +84,7 @@ class _SettingsViewState extends ConsumerState<SettingsView> {
                         icon: Icons.delete_outline,
                         title: LocaleKeys.home_settings_remove.tr(),
                         subtitle: LocaleKeys.home_settings_removeDesc.tr(),
-                        onTap: () => _showDeleteAccountDialog(),
+                        onTap: () => _showDeleteAccountDialog(viewModel),
                         isDestructive: true,
                       ),
                     ])
@@ -148,7 +149,7 @@ class _SettingsViewState extends ConsumerState<SettingsView> {
   Widget _buildSettingsCard(List<Widget> children) {
     final theme = Theme.of(context);
     final isDarkTheme = theme.brightness == Brightness.dark;
-    
+
     return Container(
       decoration: BoxDecoration(
         color: theme.cardColor,
@@ -178,7 +179,7 @@ class _SettingsViewState extends ConsumerState<SettingsView> {
     final theme = Theme.of(context);
     final primaryColor = theme.colorScheme.primary;
     final errorColor = theme.colorScheme.error;
-    
+
     return ListTile(
       contentPadding: const EdgeInsets.symmetric(horizontal: 20, vertical: 8),
       leading: Container(
@@ -240,7 +241,7 @@ class _SettingsViewState extends ConsumerState<SettingsView> {
   Widget _buildInfoCard() {
     final theme = Theme.of(context);
     final primaryColor = theme.colorScheme.primary;
-    
+
     return Container(
       padding: const EdgeInsets.all(20),
       decoration: BoxDecoration(
@@ -382,9 +383,9 @@ class _SettingsViewState extends ConsumerState<SettingsView> {
     );
   }
 
-  void _showDeleteAccountDialog() {
+  void _showDeleteAccountDialog(SettingsViewModel viewModel) {
     final theme = Theme.of(context);
-    
+
     showDialog(
       context: context,
       builder: (context) => AlertDialog(
@@ -400,7 +401,7 @@ class _SettingsViewState extends ConsumerState<SettingsView> {
         ),
         actions: [
           TextButton(
-            onPressed: () => Navigator.pop(context),
+            onPressed: () => Routers.instance.pop(context),
             child: Text(
               'İptal',
               style: TextStyle(
@@ -413,8 +414,7 @@ class _SettingsViewState extends ConsumerState<SettingsView> {
               foregroundColor: theme.colorScheme.onError,
             ),
             onPressed: () {
-              // TODO: Implement account deletion logic
-              Navigator.pop(context);
+              viewModel.deleteAccount(context);
             },
             child: const Text('Sil'),
           ),
@@ -425,7 +425,7 @@ class _SettingsViewState extends ConsumerState<SettingsView> {
 
   void _showLogoutDialog(SettingsViewModel viewModel, WidgetRef ref) {
     final theme = Theme.of(context);
-    
+
     showDialog(
       context: context,
       builder: (context) => AlertDialog(
@@ -466,7 +466,7 @@ class _SettingsViewState extends ConsumerState<SettingsView> {
 
   void _showUserAgreement() {
     final theme = Theme.of(context);
-    
+
     showDialog(
       context: context,
       builder: (context) => AlertDialog(
@@ -524,4 +524,3 @@ Son güncelleme: ${DateTime.now().day}/${DateTime.now().month}/${DateTime.now().
     );
   }
 }
-

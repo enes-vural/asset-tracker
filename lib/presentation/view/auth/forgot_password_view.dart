@@ -2,7 +2,6 @@ import 'package:asset_tracker/core/config/theme/default_theme.dart';
 import 'package:asset_tracker/core/routers/router.dart';
 import 'package:asset_tracker/injection.dart';
 import 'package:asset_tracker/presentation/view/auth/widget/auth_form_widget.dart';
-import 'package:asset_tracker/presentation/view_model/auth/auth_view_model.dart';
 import 'package:auto_route/auto_route.dart';
 import 'package:flutter/material.dart';
 import 'package:asset_tracker/core/widgets/custom_padding.dart';

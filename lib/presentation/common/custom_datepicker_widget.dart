@@ -122,7 +122,7 @@ class CustomDatePickerWidget extends StatelessWidget {
                       context: context,
                       initialDate: viewModel.selectedDate ?? DateTime.now(),
                       firstDate: DateTime(0000),
-                      lastDate: DateTime(9999),
+                      lastDate: DateTime.now(),
                     );
                     if (picked != null) {
                       viewModel.changeSelectedDate(picked);

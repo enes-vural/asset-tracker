@@ -15,7 +15,7 @@ import 'package:asset_tracker/domain/entities/database/enttiy/user_uid_entity.da
 import 'package:asset_tracker/domain/entities/general/calculate_profit_entity.dart';
 import 'package:asset_tracker/domain/entities/web/socket/currency_widget_entity.dart';
 import 'package:asset_tracker/domain/usecase/cache/cache_use_case.dart';
-import 'package:asset_tracker/domain/usecase/database/buy_currency_use_case.dart';
+import 'package:asset_tracker/domain/usecase/database/database_use_case.dart';
 import 'package:asset_tracker/injection.dart';
 import 'package:dartz/dartz.dart';
 import 'package:easy_localization/easy_localization.dart';

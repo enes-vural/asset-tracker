@@ -34,7 +34,8 @@
             "operationNotAllowed": "İşlem yapılamıyor",
             "tooManyRequests": "Çok fazla istek, lütfen daha sonra tekrar deneyin",
             "networkError": "Ağ hatası, lütfen bağlantınızı kontrol edin",
-            "userTokenExpired": "Oturum süresi doldu, lütfen tekrar giriş yapın"
+            "userTokenExpired": "Oturum süresi doldu, lütfen tekrar giriş yapın",
+            "userRelogin": "Tekrar giriş yapınız"
         }
     },
     "dashboard": {

@@ -28,7 +28,6 @@ mixin ValidatorMixin {
         : LocaleKeys.auth_validation_nonePassword.tr();
   }
 
-
 String? checkDateTime(String? text) {
     if (text == null || text.isEmpty) {
       return LocaleKeys.trade_fillAllFields.tr();
@@ -37,7 +36,6 @@ String? checkDateTime(String? text) {
     // dd/MM/yyyy formatını kontrol et
     final datePattern = RegExp(r'^\d{2}/\d{2}/\d{4}$');
     if (datePattern.hasMatch(text)) {
-      // Opsiyonel: Tarihin geçerli olup olmadığını da kontrol edebilirsiniz
       try {
         final parts = text.split('/');
         final day = int.parse(parts[0]);
@@ -51,17 +49,27 @@ String? checkDateTime(String? text) {
               .tr(); // Geçersiz tarih (örn: 31/02/2025)
         }
 
+        // Bugünkü tarihten büyük mü kontrolü
+        final today = DateTime.now();
+        final todayDateOnly = DateTime(today.year, today.month, today.day);
+        if (date.isAfter(todayDateOnly)) {
+          return LocaleKeys.trade_invalidDate.tr(); // Gelecek tarih
+        }
+
         return null; // Geçerli dd/MM/yyyy formatında ise null döndür
       } catch (e) {
         return LocaleKeys.trade_invalidDate.tr(); // Parse hatası
       }
     }
 
-    // Diğer durumlar için validasyon yap
+    // Diğer formatlar için validasyon yap
     try {
       final date = DateTime.parse(text);
-      if (date.isBefore(DateTime.now())) {
-        return LocaleKeys.trade_invalidDate.tr();
+      final today = DateTime.now();
+      final todayDateOnly = DateTime(today.year, today.month, today.day);
+
+      if (date.isAfter(todayDateOnly)) {
+        return LocaleKeys.trade_invalidDate.tr(); // Gelecek tarih
       }
     } catch (e) {
       return LocaleKeys.trade_invalidDate.tr();
