@@ -1,4 +1,4 @@
-package com.asset_tracker.asset_tracker
+package com.sakasstudio.parota
 
 import io.flutter.embedding.android.FlutterActivity
 
