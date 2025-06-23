@@ -10,6 +10,7 @@ import 'package:asset_tracker/data/model/database/request/sell_currency_model.da
 import 'package:asset_tracker/data/model/database/request/user_uid_model.dart';
 import 'package:asset_tracker/data/model/database/response/asset_code_model.dart';
 import 'package:asset_tracker/data/model/database/response/user_currency_data_model.dart';
+import 'package:asset_tracker/data/model/database/user_info_model.dart';
 import 'package:asset_tracker/data/service/remote/database/firestore/ifirestore_service.dart';
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:dartz/dartz.dart';
@@ -49,7 +50,6 @@ final class FirestoreService implements IFirestoreService {
         updatedModel.toFirebaseJson(),
         SetOptions(merge: true),
       );
-
       return Right(updatedModel);
     } catch (e) {
       return Left(DatabaseErrorModel(message: e.toString()));
@@ -57,15 +57,14 @@ final class FirestoreService implements IFirestoreService {
   }
 
   @override
-  Future<Either<DatabaseErrorModel, QuerySnapshot<Map<String, dynamic>>>>
-      getUserData(UserUidModel model) async {
+  Future<Either<DatabaseErrorModel, bool>> changeUserInfo(
+      UserInfoModel infoModel) async {
     try {
-      final data = await instance
+      await instance
           .collection(FirestoreConstants.usersCollection)
-          .doc(model.userId)
-          .collection(FirestoreConstants.assetsCollection)
-          .get();
-      return Right(data);
+          .doc(infoModel.uid)
+          .set(infoModel.toJson());
+      return const Right(true);
     } catch (e) {
       return Left(DatabaseErrorModel(message: e.toString()));
     }
@@ -165,6 +164,16 @@ final class FirestoreService implements IFirestoreService {
       debugPrint(e.toString());
       return Left(DatabaseErrorModel(message: e.toString()));
     }
+  }
+
+  @override
+  Future<Map<String, dynamic>?> getUserInfo(UserUidModel model) async {
+    final userPath = await instance
+        .collection(FirestoreConstants.usersCollection)
+        .doc(model.userId)
+        .get();
+
+    return userPath.data();
   }
 
   @override

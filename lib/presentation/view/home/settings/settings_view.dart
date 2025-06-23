@@ -69,7 +69,7 @@ class _SettingsViewState extends ConsumerState<SettingsView> {
                         title: LocaleKeys.home_settings_nameLastname.tr(),
                         subtitle:
                             LocaleKeys.home_settings_nameLastnameDesc.tr(),
-                        onTap: () => _showNameEditDialog(),
+                        onTap: () => _showNameEditDialog(viewModel),
                       ),
                       _buildDivider(),
                       _buildSettingsTile(
@@ -293,11 +293,9 @@ class _SettingsViewState extends ConsumerState<SettingsView> {
     );
   }
 
-  void _showNameEditDialog() {
-    final nameController = TextEditingController();
-    final surnameController = TextEditingController();
+  void _showNameEditDialog(SettingsViewModel viewModel) {
+    viewModel.initControllerText();
     final theme = Theme.of(context);
-
     showDialog(
       context: context,
       builder: (context) => AlertDialog(
@@ -311,7 +309,7 @@ class _SettingsViewState extends ConsumerState<SettingsView> {
           mainAxisSize: MainAxisSize.min,
           children: [
             TextField(
-              controller: nameController,
+              controller: viewModel.nameController,
               style: TextStyle(color: theme.colorScheme.onSurface),
               decoration: InputDecoration(
                 labelText: 'İsim',
@@ -330,7 +328,7 @@ class _SettingsViewState extends ConsumerState<SettingsView> {
             ),
             const SizedBox(height: 16),
             TextField(
-              controller: surnameController,
+              controller: viewModel.surnameController,
               style: TextStyle(color: theme.colorScheme.onSurface),
               decoration: InputDecoration(
                 labelText: 'Soyisim',
@@ -363,18 +361,8 @@ class _SettingsViewState extends ConsumerState<SettingsView> {
               backgroundColor: theme.colorScheme.primary,
               foregroundColor: theme.colorScheme.onPrimary,
             ),
-            onPressed: () {
-              // TODO: Implement name update logic
-              Navigator.pop(context);
-              ScaffoldMessenger.of(context).showSnackBar(
-                SnackBar(
-                  content: Text(
-                    'İsim güncellendi',
-                    style: TextStyle(color: theme.colorScheme.onInverseSurface),
-                  ),
-                  backgroundColor: theme.snackBarTheme.backgroundColor,
-                ),
-              );
+            onPressed: () async {
+              await viewModel.changeUserInfo(context);
             },
             child: const Text('Kaydet'),
           ),

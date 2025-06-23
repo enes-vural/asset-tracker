@@ -4,6 +4,7 @@ import 'package:asset_tracker/domain/entities/database/enttiy/buy_currency_entit
 import 'package:asset_tracker/domain/entities/database/enttiy/sell_currency_entity.dart';
 import 'package:asset_tracker/domain/entities/database/enttiy/user_data_entity.dart';
 import 'package:asset_tracker/domain/entities/database/enttiy/user_currency_entity_model.dart';
+import 'package:asset_tracker/domain/entities/database/enttiy/user_info_entity.dart';
 import 'package:asset_tracker/domain/entities/database/enttiy/user_uid_entity.dart';
 import 'package:asset_tracker/domain/entities/database/error/database_error_entity.dart';
 import 'package:asset_tracker/domain/entities/database/request/save_user_entity.dart';
@@ -27,4 +28,7 @@ abstract interface class IFirestoreRepository {
   Future<Either<DatabaseErrorEntity, bool>> saveUser(SaveUserEntity entity);
 
   Future<Either<DatabaseErrorEntity, bool>> removeUser(UserUidEntity model);
+
+  Future<Either<DatabaseErrorEntity, bool>> changeUserInfo(
+      UserInfoEntity infoModel);
 }

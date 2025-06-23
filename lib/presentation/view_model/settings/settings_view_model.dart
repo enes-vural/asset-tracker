@@ -1,6 +1,8 @@
 import 'package:asset_tracker/core/constants/enums/widgets/app_pages_enum.dart';
+import 'package:asset_tracker/core/constants/string_constant.dart';
 import 'package:asset_tracker/core/helpers/snackbar.dart';
 import 'package:asset_tracker/core/routers/router.dart';
+import 'package:asset_tracker/domain/entities/database/enttiy/user_info_entity.dart';
 import 'package:asset_tracker/domain/entities/database/enttiy/user_uid_entity.dart';
 import 'package:asset_tracker/domain/usecase/auth/auth_use_case.dart';
 import 'package:asset_tracker/domain/usecase/database/database_use_case.dart';
@@ -21,6 +23,51 @@ class SettingsViewModel extends ChangeNotifier {
     this.authGlobalProvider,
     this.databaseUseCase,
   );
+
+  final nameController = TextEditingController();
+  final surnameController = TextEditingController();
+
+  initControllerText() async {
+    final userData = appGlobalProvider.getUserData;
+    nameController.text =
+        userData?.userInfoEntity?.firstName ?? DefaultLocalStrings.emptyText;
+    surnameController.text =
+        userData?.userInfoEntity?.lastName ?? DefaultLocalStrings.emptyText;
+  }
+
+  Future<void> changeUserInfo(BuildContext context) async {
+    final userData = appGlobalProvider.getUserData;
+    final String? firstName = userData?.userInfoEntity?.firstName;
+    final String? lastName = userData?.userInfoEntity?.lastName;
+
+    if (nameController.text.isEmpty || surnameController.text.isEmpty) {
+      Routers.instance.pop(context);
+      return;
+    }
+
+    if (nameController.text == firstName &&
+        surnameController.text == lastName) {
+      Routers.instance.pop(context);
+      return;
+    }
+    if (userData?.userInfoEntity != null && userData != null) {
+      final UserInfoEntity userInfo = userData.userInfoEntity!.copyWith(
+          firstName: nameController.text, lastName: surnameController.text);
+      appGlobalProvider.updateUserInfo(userInfo);
+
+      final data = await databaseUseCase.changeUserInfo(userInfo);
+
+      data.fold(
+        (failure) {
+          EasySnackBar.show(context, "İşleminiz gerçekleştirilemedi");
+        },
+        (success) {
+          EasySnackBar.show(context, "Bilgileriniz güncellendi");
+          Routers.instance.pop(context);
+        },
+      );
+    }
+  }
 
   Future<void> signOut(WidgetRef ref, BuildContext context) async {
     await authUseCase.signOut();

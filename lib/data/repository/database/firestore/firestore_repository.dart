@@ -7,11 +7,13 @@ import 'package:asset_tracker/data/model/database/request/user_uid_model.dart';
 import 'package:asset_tracker/data/model/database/response/asset_code_model.dart';
 import 'package:asset_tracker/data/model/database/response/user_data_model.dart';
 import 'package:asset_tracker/data/model/database/response/user_currency_data_model.dart';
+import 'package:asset_tracker/data/model/database/user_info_model.dart';
 import 'package:asset_tracker/data/service/remote/database/firestore/ifirestore_service.dart';
 import 'package:asset_tracker/domain/entities/database/enttiy/buy_currency_entity.dart';
 import 'package:asset_tracker/domain/entities/database/enttiy/sell_currency_entity.dart';
 import 'package:asset_tracker/domain/entities/database/enttiy/user_data_entity.dart';
 import 'package:asset_tracker/domain/entities/database/enttiy/user_currency_entity_model.dart';
+import 'package:asset_tracker/domain/entities/database/enttiy/user_info_entity.dart';
 import 'package:asset_tracker/domain/entities/database/enttiy/user_uid_entity.dart';
 import 'package:asset_tracker/domain/entities/database/error/database_error_entity.dart';
 import 'package:asset_tracker/domain/entities/database/request/save_user_entity.dart';
@@ -69,10 +71,17 @@ class FirestoreRepository implements IFirestoreRepository {
     double totalBalance = 0.00;
     UserDataModel userDataModel = UserDataModel(
         currencyList: [], uid: model.userId, balance: totalBalance);
+    final uidEntity = UserUidModel.fromEnttiy(model);
 
     try {
-      final userAssetsData =
-          await firestoreService.getUserAssets(UserUidModel.fromEnttiy(model));
+      final userInfoData = await firestoreService.getUserInfo(uidEntity);
+      final userAssetsData = await firestoreService.getUserAssets(uidEntity);
+
+      if (userInfoData != null) {
+        userDataModel.userInfoModel = UserInfoModel.fromJson(userInfoData);
+      } else {
+        debugPrint("User data came null ??");
+      }
 
       if (userAssetsData == null || userAssetsData.isEmpty) {
         //If user has no assets, we will return empty list
@@ -177,5 +186,20 @@ class FirestoreRepository implements IFirestoreRepository {
       debugPrint("User data has removed");
       return Right(success);
     });
+  }
+
+  @override
+  Future<Either<DatabaseErrorEntity, bool>> changeUserInfo(
+      UserInfoEntity infoModel) async {
+    final data = await firestoreService.changeUserInfo(infoModel.toModel());
+
+    return data.fold(
+      (failure) {
+        return Left(DatabaseErrorEntity.fromModel(failure));
+      },
+      (success) {
+        return Right(success);
+      },
+    );
   }
 }
