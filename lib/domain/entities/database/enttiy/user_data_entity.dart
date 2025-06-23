@@ -1,8 +1,10 @@
 import 'package:asset_tracker/core/constants/database/transaction_type_enum.dart';
 import 'package:asset_tracker/data/model/database/response/user_data_model.dart';
 import 'package:asset_tracker/domain/entities/database/enttiy/user_currency_entity_model.dart';
+import 'package:asset_tracker/domain/entities/database/enttiy/user_info_entity.dart';
 
 final class UserDataEntity {
+  UserInfoEntity? userInfoEntity;
   final String userId;
   final List<UserCurrencyEntity> currencyList;
   List<UserCurrencyEntity>? soldCurrencyList;
@@ -11,7 +13,7 @@ final class UserDataEntity {
   final double? profit;
 
   UserDataEntity({
-    
+this.userInfoEntity,
     required this.userId,
     required this.currencyList,
     required this.balance,
@@ -22,6 +24,7 @@ final class UserDataEntity {
 
   factory UserDataEntity.fromModel(UserDataModel model) {
     return UserDataEntity(
+      userInfoEntity: model.userInfoModel?.toEntity(),
       userId: model.uid,
       currencyList: model.currencyList
           .where((e) => e.transactionType == TransactionTypeEnum.BUY)
@@ -40,10 +43,14 @@ final class UserDataEntity {
     String? uid,
     double? balance,
     double? profit,
+    String? firstName,
+    String? lastName,
     double? latestBalance,
     List<UserCurrencyEntity>? soldCurrencyList,
+    UserInfoEntity? userInfoEntity,
   }) {
     return UserDataEntity(
+      userInfoEntity: userInfoEntity ?? this.userInfoEntity,
       currencyList: currencyList ?? this.currencyList,
       userId: uid ?? userId,
       balance: balance ?? this.balance,

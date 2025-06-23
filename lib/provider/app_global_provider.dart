@@ -5,6 +5,7 @@ import 'package:asset_tracker/core/constants/enums/socket/socket_state_enums.dar
 import 'package:asset_tracker/data/model/database/response/asset_code_model.dart';
 import 'package:asset_tracker/domain/entities/database/enttiy/user_data_entity.dart';
 import 'package:asset_tracker/domain/entities/database/enttiy/user_currency_entity_model.dart';
+import 'package:asset_tracker/domain/entities/database/enttiy/user_info_entity.dart';
 import 'package:asset_tracker/domain/entities/database/enttiy/user_uid_entity.dart';
 import 'package:asset_tracker/domain/entities/general/calculate_profit_entity.dart';
 import 'package:asset_tracker/domain/entities/web/socket/currency_entity.dart'
@@ -67,6 +68,13 @@ class AppGlobalProvider extends ChangeNotifier {
     notifyListeners();
   }
 
+  updateUserInfo(UserInfoEntity entity) {
+    if (_userData?.userInfoEntity != entity) {
+      _userData?.userInfoEntity = entity;
+      notifyListeners();
+    }
+  }
+
   updateUserData(UserDataEntity entity) {
     _userData = entity;
     _userBalance = entity.balance; // User balance'ı burada set et
@@ -125,45 +133,15 @@ class AppGlobalProvider extends ChangeNotifier {
     });
   }
 
-  CalculateProfitEntity? calculateProfitorLossWithAmount(
-    String currencyCode,
-    double amount,
-    double purchasePrice,
-    double sellPrice,
-  ) {
-    CurrencyEntity? globalIndex;
-
-    try {
-      globalIndex = globalAssets?.firstWhere(
-        (element) => element.code.toLowerCase() == currencyCode.toLowerCase(),
-      );
-    } catch (e) {
-      debugPrint("Error finding currency: $e");
-      return null;
-    }
-
-    if (globalIndex == null) {
-      return null;
-    }
-
-    return CalculateProfitEntity(
-      currencyCode: currencyCode,
-      purchasePriceTotal: purchasePrice * amount,
-      latestPriceTotal: sellPrice * amount,
-      amount: amount,
-    );
-  }
-
-
 //Buradaki algoritma Claude'e yazdırıldı vibe coding. Şimdilik prod a aldım teker teker incelenmesi gerek.
 //TODO:
-CalculateProfitEntity? calculateProfitOrLoss(String currencyCode) {
+  CalculateProfitEntity? calculateProfitOrLoss(String currencyCode) {
     double totalPurchasePrice = 0.0;
     double totalCurrentValue = 0.0;
     double totalBuyAmount = 0.0;
     double totalSellAmount = 0.0;
     CurrencyEntity? globalIndex;
-  
+
     bool hasBuyTransactions = false;
     bool hasSellTransactions = false;
 
@@ -203,8 +181,8 @@ CalculateProfitEntity? calculateProfitOrLoss(String currencyCode) {
       _userData?.currencyList.forEach((element) {
         if (element.currencyCode.toLowerCase() == currencyCode.toLowerCase()) {
           totalPurchasePrice += element.price * element.amount;
-      }
-    });
+        }
+      });
     } else if (hasSellTransactions && !hasBuyTransactions) {
       // Kullanıcıda sadece satım işlemi varsa
       // Satım işlemlerinin oldPrice'ını (ortalama alış fiyatı) kullan
@@ -218,10 +196,10 @@ CalculateProfitEntity? calculateProfitOrLoss(String currencyCode) {
     // 4. Current Value Hesaplama
     if (hasSellTransactions) {
       // Satım işlemleri varsa bunları current value'ye ekle
-    _userData?.soldCurrencyList?.forEach((element) {
+      _userData?.soldCurrencyList?.forEach((element) {
         if (element.currencyCode.toLowerCase() == currencyCode.toLowerCase()) {
           totalCurrentValue += element.price * element.amount;
-      }
+        }
       });
     }
 

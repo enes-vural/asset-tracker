@@ -4,6 +4,7 @@ import 'package:asset_tracker/domain/entities/database/enttiy/buy_currency_entit
 import 'package:asset_tracker/domain/entities/database/enttiy/sell_currency_entity.dart';
 import 'package:asset_tracker/domain/entities/database/enttiy/user_currency_entity_model.dart';
 import 'package:asset_tracker/domain/entities/database/enttiy/user_data_entity.dart';
+import 'package:asset_tracker/domain/entities/database/enttiy/user_info_entity.dart';
 import 'package:asset_tracker/domain/entities/database/enttiy/user_uid_entity.dart';
 import 'package:asset_tracker/domain/entities/database/error/database_error_entity.dart';
 import 'package:asset_tracker/domain/entities/database/request/save_user_entity.dart';
@@ -51,5 +52,10 @@ class DatabaseUseCase
   Future<Either<DatabaseErrorEntity, bool>> removeUserData(
       UserUidEntity entity) async {
     return await firestoreRepository.removeUser(entity);
+  }
+
+  Future<Either<DatabaseErrorEntity, bool>> changeUserInfo(
+      UserInfoEntity entity) async {
+    return await firestoreRepository.changeUserInfo(entity);
   }
 }
