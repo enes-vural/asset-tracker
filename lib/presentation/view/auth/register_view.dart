@@ -9,6 +9,7 @@ import 'package:asset_tracker/injection.dart';
 import 'package:asset_tracker/presentation/view/auth/widget/auth_form_widget.dart';
 import 'package:asset_tracker/presentation/view/auth/widget/auth_submit_widget.dart';
 import 'package:asset_tracker/presentation/view/home/widgets/parota_logo_widget.dart';
+import 'package:asset_tracker/presentation/view_model/auth/auth_view_model.dart';
 import 'package:auto_route/auto_route.dart';
 import 'package:easy_localization/easy_localization.dart';
 import 'package:flutter/material.dart';
@@ -69,7 +70,7 @@ class _RegisterViewState extends ConsumerState<RegisterView>
     return PopScope(
       canPop: viewModel.canPop,
       child: Scaffold(
-          resizeToAvoidBottomInset: false,
+          resizeToAvoidBottomInset: true,
           appBar: AppBar(
             automaticallyImplyLeading: true,
             elevation: 0,
@@ -144,10 +145,11 @@ class _RegisterViewState extends ConsumerState<RegisterView>
                       // First Name Field
                       AuthFormWidget.lastName(
                         lastNameController: viewModel.lastNameController,
-                        lastNameValidator: checkText,
+                        lastNameValidator: null,
                         hasTitle: true,
                         hasLabel: true,
                         focusNode: _lastNameFocusNode,
+                        isRequired: false,
                       ),
                       const CustomSizedBox.hugeGap(),
                       AuthSubmitWidget(
@@ -165,7 +167,8 @@ class _RegisterViewState extends ConsumerState<RegisterView>
     );
   }
 
-  Future<void> _submitRegisterEvent(registerFormsKey, viewModel) async {
+  Future<void> _submitRegisterEvent(
+      registerFormsKey, AuthViewModel viewModel) async {
     if (!(registerFormsKey.currentState?.validate() ?? true)) {
       return;
     }

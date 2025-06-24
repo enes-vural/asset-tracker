@@ -26,6 +26,8 @@ class _SettingsViewState extends ConsumerState<SettingsView> {
   Widget build(BuildContext context) {
     final viewModel = ref.watch(settingsViewModelProvider);
     final theme = Theme.of(context);
+    final isEmailVerified =
+        ref.read(authGlobalProvider).getCurrentUser?.emailVerified ?? true;
 
     return Scaffold(
       backgroundColor: theme.scaffoldBackgroundColor,
@@ -53,15 +55,22 @@ class _SettingsViewState extends ConsumerState<SettingsView> {
                   color: theme.colorScheme.onSurface.withOpacity(0.7),
                 ),
               ),
+              
+              // Email Verification Notice
+              if (viewModel.isAuthorized && !isEmailVerified) ...[
+                const SizedBox(height: 24),
+                _buildEmailVerificationNotice(viewModel),
+              ],
+              
               const SizedBox(height: 40),
 
               // Account Section
               viewModel.isAuthorized
                   ? _buildSectionTitle(LocaleKeys.home_settings_account.tr())
-                  : CustomSizedBox.empty(),
+                  : const CustomSizedBox.empty(),
               viewModel.isAuthorized
-                  ? SizedBox(height: 16)
-                  : CustomSizedBox.empty(),
+                  ? const SizedBox(height: 16)
+                  : const CustomSizedBox.empty(),
               viewModel.isAuthorized
                   ? _buildSettingsCard([
                       _buildSettingsTile(
@@ -130,6 +139,79 @@ class _SettingsViewState extends ConsumerState<SettingsView> {
             ],
           ),
         ),
+      ),
+    );
+  }
+
+  Widget _buildEmailVerificationNotice(SettingsViewModel viewModel) {
+    final theme = Theme.of(context);
+
+    return Container(
+      padding: const EdgeInsets.all(16),
+      decoration: BoxDecoration(
+        color: Colors.orange.withOpacity(0.1),
+        borderRadius: BorderRadius.circular(12),
+        border: Border.all(
+          color: Colors.orange.withOpacity(0.3),
+          width: 1,
+        ),
+      ),
+      child: Row(
+        children: [
+          Container(
+            padding: const EdgeInsets.all(8),
+            decoration: BoxDecoration(
+              color: Colors.orange.withOpacity(0.2),
+              borderRadius: BorderRadius.circular(8),
+            ),
+            child: const Icon(
+              Icons.mark_email_unread_outlined,
+              color: Colors.orange,
+              size: 20,
+            ),
+          ),
+          const SizedBox(width: 12),
+          Expanded(
+            child: Column(
+              crossAxisAlignment: CrossAxisAlignment.start,
+              children: [
+                Text(
+                  'E-posta Adresinizi Doğrulayın',
+                  style: TextStyle(
+                    fontSize: 14,
+                    fontWeight: FontWeight.w600,
+                    color: Colors.orange.shade700,
+                  ),
+                ),
+                const SizedBox(height: 2),
+                Text(
+                  'Hesabınızın güvenliği için e-posta adresinizi doğrulamanız gerekiyor.',
+                  style: TextStyle(
+                    fontSize: 12,
+                    color: theme.colorScheme.onSurface.withOpacity(0.7),
+                  ),
+                ),
+              ],
+            ),
+          ),
+          const SizedBox(width: 8),
+          TextButton(
+            onPressed: () {
+              viewModel.sendEmailVerification(context);
+            },
+            style: TextButton.styleFrom(
+              foregroundColor: Colors.orange.shade700,
+              padding: const EdgeInsets.symmetric(horizontal: 12, vertical: 6),
+            ),
+            child: const Text(
+              'Doğrula',
+              style: TextStyle(
+                fontSize: 12,
+                fontWeight: FontWeight.w600,
+              ),
+            ),
+          ),
+        ],
       ),
     );
   }

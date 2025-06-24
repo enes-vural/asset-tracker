@@ -118,6 +118,7 @@ class _ForgotPasswordViewState extends ConsumerState<ForgotPasswordView>
     final viewModel = ref.read(authViewModelProvider);
 
     return Scaffold(
+      resizeToAvoidBottomInset: false,
       backgroundColor:
           isDarkMode ? theme.scaffoldBackgroundColor : Colors.grey.shade50,
       appBar: AppBar(

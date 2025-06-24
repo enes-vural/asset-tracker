@@ -61,128 +61,131 @@ class _TrialViewState extends ConsumerState<LoginView> with ValidatorMixin {
     return PopScope(
       canPop: viewModel.canPop,
       child: Scaffold(
-        resizeToAvoidBottomInset: false,
+        resizeToAvoidBottomInset: true,
         appBar: AppBar(
           title: const PaRotaLogoWidget(),
           centerTitle: true,
         ),
-        body: Form(
-          key: loginFormsKey,
-          child: Column(
-            mainAxisSize: MainAxisSize.min,
-            children: <Widget>[
-              Text(
-                LocaleKeys.auth_loginTitle.tr(),
-                textAlign: TextAlign.center,
-                style: TextStyle(
-                  fontFamily: 'Manrope',
-                  fontSize: 22.sp,
-                  letterSpacing: 0,
-                  fontWeight: FontWeight.normal,
-                ),
-              ),
-              const CustomSizedBox.hugeGap(),
-              CustomPadding.largeHorizontal(
-                widget: Text(
-                  LocaleKeys.auth_loginDesc.tr(),
+        body: SingleChildScrollView(
+          scrollDirection: Axis.vertical,
+          child: Form(
+            key: loginFormsKey,
+            child: Column(
+              mainAxisSize: MainAxisSize.min,
+              children: <Widget>[
+                Text(
+                  LocaleKeys.auth_loginTitle.tr(),
                   textAlign: TextAlign.center,
-                  style: const TextStyle(
+                  style: TextStyle(
                     fontFamily: 'Manrope',
-                    fontSize: 16,
+                    fontSize: 22.sp,
                     letterSpacing: 0,
                     fontWeight: FontWeight.normal,
-                    height: 1.5,
                   ),
                 ),
-              ),
-              const CustomSizedBox.hugeGap(),
-              CustomPadding.hugeHorizontal(
-                widget: AuthFormWidget.email(
-                  key: WidgetKeys.loginEmailTextFieldKey,
-                  emailController: viewModel.emailController,
-                  emailValidator: checkEmail,
-                  hasTitle: false,
-                  hasLabel: true,
-                  focusNode: _emailFocusNode,
-                  textInputAction: TextInputAction.next,
-                  onFieldSubmitted: (value) =>
-                      _passwordFocusNode?.requestFocus(),
-                ),
-              ),
-              CustomPadding.hugeHorizontal(
-                widget: AuthFormWidget.password(
-                  key: WidgetKeys.loginPasswordTextFieldKey,
-                  passwordController: viewModel.passwordController,
-                  passwordValidator: checkPassword,
-                  hasTitle: false,
-                  hasLabel: true,
-                  focusNode: _passwordFocusNode,
-                  textInputAction: TextInputAction.done,
-                  onFieldSubmitted: (value) =>
-                      _submitLoginForm(loginFormsKey, viewModel),
-                ),
-              ),
-              const CustomSizedBox.mediumGap(),
-              CustomPadding.largeHorizontal(
-                widget: Column(
-                  mainAxisSize: MainAxisSize.min,
-                  children: <Widget>[
-                    Text(
-                      LocaleKeys.auth_loginSubtitle.tr(),
-                      textAlign: TextAlign.center,
-                      style: TextStyle(
-                          fontFamily: 'Manrope',
-                          fontSize: AppSize.smallText,
-                          letterSpacing: 0,
-                          fontWeight: FontWeight.normal,
-                          height: 1.5),
+                const CustomSizedBox.hugeGap(),
+                CustomPadding.largeHorizontal(
+                  widget: Text(
+                    LocaleKeys.auth_loginDesc.tr(),
+                    textAlign: TextAlign.center,
+                    style: const TextStyle(
+                      fontFamily: 'Manrope',
+                      fontSize: 16,
+                      letterSpacing: 0,
+                      fontWeight: FontWeight.normal,
+                      height: 1.5,
                     ),
-                  ],
-                ),
-              ),
-              const CustomSizedBox.mediumGap(),
-              CustomPadding.hugeHorizontal(
-                widget: Row(
-                  children: [
-                    HalfLoginButton(
-                      label: LocaleKeys.auth_registerButton.tr(),
-                      color: DefaultColorPalette.customGreyLightX,
-                      textStyle: CustomTextStyle.loginButtonTextStyle(
-                        context,
-                        DefaultColorPalette.mainTextBlack,
-                      ),
-                      onPressed: () =>
-                          _navigateToRegisterView(viewModel, context),
-                    ),
-                    const CustomSizedBox.smallWidth(),
-                    HalfLoginButton(
-                      label: LocaleKeys.auth_loginButton.tr(),
-                      color: DefaultColorPalette.mainBlue,
-                      textStyle: CustomTextStyle.loginButtonTextStyle(
-                        context,
-                        DefaultColorPalette.mainWhite,
-                      ),
-                      onPressed: () =>
-                          _submitLoginForm(loginFormsKey, viewModel),
-                    ),
-                  ],
-                ),
-              ),
-              const CustomSizedBox.mediumGap(),
-              CustomAlign.centerRight(
-                child: CustomPadding.hugeHorizontal(
-                    widget: TextButton(
-                  onPressed: () {
-                    viewModel.routeForgotPasswordView(context);
-                  },
-                  child: Text(
-                    LocaleKeys.auth_forgot.tr(),
-                    style: CustomTextStyle.greyColorManrope(
-                        context, AppSize.smallText),
                   ),
-                )),
-              ),
-            ],
+                ),
+                const CustomSizedBox.hugeGap(),
+                CustomPadding.hugeHorizontal(
+                  widget: AuthFormWidget.email(
+                    key: WidgetKeys.loginEmailTextFieldKey,
+                    emailController: viewModel.emailController,
+                    emailValidator: checkEmail,
+                    hasTitle: false,
+                    hasLabel: true,
+                    focusNode: _emailFocusNode,
+                    textInputAction: TextInputAction.next,
+                    onFieldSubmitted: (value) =>
+                        _passwordFocusNode?.requestFocus(),
+                  ),
+                ),
+                CustomPadding.hugeHorizontal(
+                  widget: AuthFormWidget.password(
+                    key: WidgetKeys.loginPasswordTextFieldKey,
+                    passwordController: viewModel.passwordController,
+                    passwordValidator: checkPassword,
+                    hasTitle: false,
+                    hasLabel: true,
+                    focusNode: _passwordFocusNode,
+                    textInputAction: TextInputAction.done,
+                    onFieldSubmitted: (value) =>
+                        _submitLoginForm(loginFormsKey, viewModel),
+                  ),
+                ),
+                const CustomSizedBox.mediumGap(),
+                CustomPadding.largeHorizontal(
+                  widget: Column(
+                    mainAxisSize: MainAxisSize.min,
+                    children: <Widget>[
+                      Text(
+                        LocaleKeys.auth_loginSubtitle.tr(),
+                        textAlign: TextAlign.center,
+                        style: TextStyle(
+                            fontFamily: 'Manrope',
+                            fontSize: AppSize.smallText,
+                            letterSpacing: 0,
+                            fontWeight: FontWeight.normal,
+                            height: 1.5),
+                      ),
+                    ],
+                  ),
+                ),
+                const CustomSizedBox.mediumGap(),
+                CustomPadding.hugeHorizontal(
+                  widget: Row(
+                    children: [
+                      HalfLoginButton(
+                        label: LocaleKeys.auth_registerButton.tr(),
+                        color: DefaultColorPalette.customGreyLightX,
+                        textStyle: CustomTextStyle.loginButtonTextStyle(
+                          context,
+                          DefaultColorPalette.mainTextBlack,
+                        ),
+                        onPressed: () =>
+                            _navigateToRegisterView(viewModel, context),
+                      ),
+                      const CustomSizedBox.smallWidth(),
+                      HalfLoginButton(
+                        label: LocaleKeys.auth_loginButton.tr(),
+                        color: DefaultColorPalette.mainBlue,
+                        textStyle: CustomTextStyle.loginButtonTextStyle(
+                          context,
+                          DefaultColorPalette.mainWhite,
+                        ),
+                        onPressed: () =>
+                            _submitLoginForm(loginFormsKey, viewModel),
+                      ),
+                    ],
+                  ),
+                ),
+                const CustomSizedBox.mediumGap(),
+                CustomAlign.centerRight(
+                  child: CustomPadding.hugeHorizontal(
+                      widget: TextButton(
+                    onPressed: () {
+                      viewModel.routeForgotPasswordView(context);
+                    },
+                    child: Text(
+                      LocaleKeys.auth_forgot.tr(),
+                      style: CustomTextStyle.greyColorManrope(
+                          context, AppSize.smallText),
+                    ),
+                  )),
+                ),
+              ],
+            ),
           ),
         ),
       ),

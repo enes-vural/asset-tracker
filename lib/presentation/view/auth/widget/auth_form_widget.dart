@@ -24,6 +24,7 @@ class AuthFormWidget extends StatelessWidget {
     this.focusNode,
     this.textInputAction,
     this.onFieldSubmitted,
+    this.isRequired = true,
   });
 
   final String label;
@@ -36,6 +37,7 @@ class AuthFormWidget extends StatelessWidget {
   final ValueChanged<String>? onChanged;
   final FocusNode? focusNode;
   final TextInputAction? textInputAction;
+  final bool isRequired;
   final void Function(String)? onFieldSubmitted;
 
   AuthFormWidget.email({
@@ -92,12 +94,12 @@ class AuthFormWidget extends StatelessWidget {
     TextInputAction? textInputAction,
     void Function(String)? onFieldSubmitted,
   }) : this(
-            key: key,
-            formController: firstNameController,
-            isObs: false,
+          key: key,
+          formController: firstNameController,
+          isObs: false,
           label: LocaleKeys.auth_firstName.tr(),
-            validaor: firstNameValidator,
-            hasTitle: hasTitle,
+          validaor: firstNameValidator,
+          hasTitle: hasTitle,
           hasLabel: hasLabel,
           focusNode: focusNode,
           textInputAction: textInputAction,
@@ -113,14 +115,16 @@ class AuthFormWidget extends StatelessWidget {
     FocusNode? focusNode,
     TextInputAction? textInputAction,
     void Function(String)? onFieldSubmitted,
+    required bool isRequired,
   }) : this(
           key: key,
           formController: lastNameController,
           isObs: false,
           label: LocaleKeys.auth_lastName.tr(),
           validaor: lastNameValidator,
+          isRequired: false,
           hasTitle: hasTitle,
-          hasLabel: hasLabel, 
+          hasLabel: hasLabel,
           focusNode: focusNode,
           textInputAction: textInputAction,
           onFieldSubmitted: onFieldSubmitted,
@@ -138,14 +142,14 @@ class AuthFormWidget extends StatelessWidget {
     final inputBorderColor = _getInputBorderColor(theme, isDarkMode);
     final inputTextColor = _getInputTextColor(theme, isDarkMode);
     final hintColor = _getHintColor(theme, isDarkMode);
-    
+
     return CustomPadding.largeTop(
       widget: Column(
         crossAxisAlignment: CrossAxisAlignment.start,
         children: [
           if (hasTitle)
             Text(
-              label,
+              label + (isRequired ? "*" : ""),
               style: TextStyle(
                 color: titleColor,
                 fontFamily: 'Manrope',
@@ -158,10 +162,8 @@ class AuthFormWidget extends StatelessWidget {
           SizedBox(
             width: ResponsiveSize(context).screenWidth,
             child: Theme(
-
               data: theme.copyWith(
                 inputDecorationTheme: theme.inputDecorationTheme.copyWith(
-                  
                   fillColor: inputBackgroundColor,
                   enabledBorder: OutlineInputBorder(
                     borderRadius: BorderRadius.circular(12),
@@ -203,7 +205,6 @@ class AuthFormWidget extends StatelessWidget {
                     hasLabel ? label : DefaultLocalStrings.emptyText,
                   ),
                 ),
-                
                 textInputAction: textInputAction,
                 onFieldSubmitted: onFieldSubmitted,
                 focusNode: focusNode,
@@ -216,7 +217,6 @@ class AuthFormWidget extends StatelessWidget {
                   color: inputTextColor,
                   fontFamily: 'Manrope',
                 ),
-
               ),
             ),
           ),
@@ -265,5 +265,4 @@ class AuthFormWidget extends StatelessWidget {
       return Colors.grey.shade500;
     }
   }
-
 }
