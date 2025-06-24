@@ -90,6 +90,7 @@ class FirestoreRepository implements IFirestoreRepository {
           currencyList: [],
           userId: model.userId,
           balance: totalBalance,
+          userInfoEntity: userDataModel.userInfoModel?.toEntity(),
         ));
       }
 

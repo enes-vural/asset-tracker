@@ -37,12 +37,26 @@ class SettingsViewModel extends ChangeNotifier {
         userData?.userInfoEntity?.lastName ?? DefaultLocalStrings.emptyText;
   }
 
+  sendEmailVerification(BuildContext context) async {
+    final data = await authUseCase.sendEmailVerification();
+    data.fold(
+      (failure) {
+        debugPrint(failure.message);
+      },
+      (success) {
+        EasySnackBar.show(
+            context, "E-posta adresinize doğrulama linkini gönderdik.");
+      },
+    );
+  }
+
   Future<void> changeUserInfo(BuildContext context) async {
     final userData = appGlobalProvider.getUserData;
     final String? firstName = userData?.userInfoEntity?.firstName;
     final String? lastName = userData?.userInfoEntity?.lastName;
 
-    if (nameController.text.isEmpty || surnameController.text.isEmpty) {
+    //name can not be null or empty
+    if (nameController.text.isEmpty) {
       Routers.instance.pop(context);
       return;
     }
@@ -131,12 +145,11 @@ class SettingsViewModel extends ChangeNotifier {
         } else {
           await appGlobalProvider.clearData();
           if (context.mounted) {
-
-          Routers.instance.pop(context);
+            Routers.instance.pop(context);
             EasySnackBar.show(
                 context, LocaleKeys.home_settings_deleteSuccesfull.tr());
-          appGlobalProvider
-              .changeMenuNavigationIndex(AppPagesEnum.HOME.pageIndex);
+            appGlobalProvider
+                .changeMenuNavigationIndex(AppPagesEnum.HOME.pageIndex);
           }
         }
       }

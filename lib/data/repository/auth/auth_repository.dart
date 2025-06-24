@@ -11,6 +11,7 @@ import 'package:asset_tracker/domain/entities/auth/request/user_login_entity.dar
 import 'package:asset_tracker/domain/entities/auth/request/user_register_entity.dart';
 import 'package:asset_tracker/domain/entities/auth/response/user_login_response_entity.dart';
 import 'package:asset_tracker/domain/entities/auth/response/user_register_reponse_entity.dart';
+import 'package:asset_tracker/domain/entities/database/error/database_error_entity.dart';
 import 'package:asset_tracker/domain/repository/auth/iauth_repository.dart';
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:dartz/dartz.dart';
@@ -125,6 +126,20 @@ class FirebaseAuthRepository implements IAuthRepository {
     return data.fold(
       (failure) {
         return Left(AuthErrorEntity.fromModel(failure));
+      },
+      (success) {
+        return Right(success);
+      },
+    );
+  }
+
+  @override
+  Future<Either<DatabaseErrorEntity, bool>> sendEmailVerification() async {
+    final user = await authService.sendEmailVerification();
+
+    return user.fold(
+      (failure) {
+        return Left(DatabaseErrorEntity.fromModel(failure));
       },
       (success) {
         return Right(success);

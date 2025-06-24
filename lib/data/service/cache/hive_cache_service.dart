@@ -20,6 +20,28 @@ final class HiveCacheService implements ICacheService {
   static const String _themeName = "theme_box";
   static const String _customOrderKey = 'currency_custom_order_box';
 
+  final List<String> _defaultOrder = [
+    "USDTRY",
+    "EURTRY",
+    "GRAMALTIN",
+    "CEYREK_YENI",
+    "CEYREK_ESKI",
+    "GBPTRY",
+    "ALTIN",
+    "AYAR22",
+    "AYAR14",
+    "ATA5_YENI",
+    "ATA5_ESKI",
+    "ATA_YENI",
+    "ATA_ESKI",
+    "GREMESE_YENI",
+    "GREMESE_ESKI",
+    "CHFTRY",
+    "CADTRY",
+    "AUDTRY",
+    "DKKTRY",
+  ];
+
   HiveCacheService._internal();
 
   factory HiveCacheService() {
@@ -174,6 +196,6 @@ final class HiveCacheService implements ICacheService {
 
   @override
   Future<List<String>?> getCustomOrder() async {
-    return await _customOrderBox.get("currency_custom_order");
+    return await _customOrderBox.get("currency_custom_order") ?? _defaultOrder;
   }
 }

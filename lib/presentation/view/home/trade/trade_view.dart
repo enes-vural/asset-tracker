@@ -54,6 +54,10 @@ class _TradeViewState extends ConsumerState<TradeView> with ValidatorMixin {
     final isDark = Theme.of(context).brightness == Brightness.dark;
     EasyDialog.showDialogOnProcess(context, ref, tradeViewModelProvider);
 
+    WidgetsBinding.instance.addPostFrameCallback((_) {
+      viewModel.initializeWithToday();
+    });
+
     return PopScope(
       canPop: viewModel.canPop,
       child: authState.getCurrentUser?.user != null
@@ -252,7 +256,6 @@ class _TradeViewState extends ConsumerState<TradeView> with ValidatorMixin {
             pageCurrency: widget.currencyCode,
             viewModel: viewModel,
             onSelectedChanged: () {
-
               viewModel.getPriceSelectedCurrency(ref);
             },
           ),
@@ -267,6 +270,7 @@ class _TradeViewState extends ConsumerState<TradeView> with ValidatorMixin {
             validaor: (value) => checkAmount(value, false),
             hasLabel: true,
             hasTitle: false,
+            type: TextInputType.number,
             onChanged: (value) {
               double amount = double.tryParse(value) ?? 0.0;
               if (double.tryParse(viewModel.priceUnitController.text) != null) {
@@ -287,6 +291,7 @@ class _TradeViewState extends ConsumerState<TradeView> with ValidatorMixin {
             label: LocaleKeys.trade_perPrice.tr(),
             isObs: false,
             formController: viewModel.priceUnitController,
+            type: TextInputType.number,
             onChanged: (value) {
               double amount =
                   double.tryParse(viewModel.amountController.text) ?? 0.0;
@@ -330,6 +335,7 @@ class _TradeViewState extends ConsumerState<TradeView> with ValidatorMixin {
                 AuthFormWidget(
                   label: LocaleKeys.trade_totalPriceLabel.tr(),
                   isObs: false,
+                  type: TextInputType.number,
                   formController: viewModel.priceTotalController,
                   validaor: (value) => checkAmount(value, true),
                   onChanged: (value) {

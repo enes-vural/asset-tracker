@@ -137,6 +137,14 @@ class TradeViewModel extends ChangeNotifier {
         .calculateProfitOrLoss(currencyCode);
   }
 
+  void initializeWithToday() {
+    if (dateController.text.isEmpty) {
+      final today = DateTime.now();
+      changeSelectedDate(today);
+      dateController.text = DateFormat('dd/MM/yyyy').format(today);
+    }
+  }
+
   Future<void> _updateLatestUserInfo(String userId, WidgetRef ref) async {
     await ref
         .read(appGlobalProvider.notifier)

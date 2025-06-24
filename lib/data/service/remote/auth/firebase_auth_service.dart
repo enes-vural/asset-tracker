@@ -2,6 +2,7 @@ import 'package:asset_tracker/data/model/auth/error/auth_response_model.dart';
 import 'package:asset_tracker/data/model/auth/firebase_auth_user_model.dart';
 import 'package:asset_tracker/data/model/auth/request/user_login_model.dart';
 import 'package:asset_tracker/data/model/auth/request/user_register_model.dart';
+import 'package:asset_tracker/data/model/database/error/database_error_model.dart';
 import 'package:asset_tracker/data/service/remote/auth/ifirebase_auth_service.dart';
 import 'package:dartz/dartz.dart';
 import 'package:firebase_auth/firebase_auth.dart';
@@ -26,6 +27,19 @@ class FirebaseAuthService implements IFirebaseAuthService {
   @override
   Stream getUserStateChanges() {
     return authService.authStateChanges();
+  }
+
+  @override
+  Future<Either<DatabaseErrorModel, bool>> sendEmailVerification() async {
+    try {
+      await authService.currentUser?.sendEmailVerification();
+      //Bug çıkabilir burada...
+      //reload after click on link.
+      await authService.currentUser?.reload();
+      return const Right(true);
+    } catch (e) {
+      return Left(DatabaseErrorModel(message: e.toString()));
+    }
   }
 
   Future<FirebaseAuthUser> _combineUserData(UserCredential creds) async {

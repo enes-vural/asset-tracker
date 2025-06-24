@@ -1,5 +1,6 @@
 import 'package:asset_tracker/domain/entities/auth/request/user_login_entity.dart';
 import 'package:asset_tracker/domain/entities/auth/request/user_register_entity.dart';
+import 'package:asset_tracker/domain/entities/database/error/database_error_entity.dart';
 import 'package:dartz/dartz.dart';
 
 import '../../entities/auth/error/auth_error_entity.dart';
@@ -20,4 +21,6 @@ abstract interface class IAuthRepository {
   Future<void> sendResetPasswordLink(String email);
 
   Future<Either<AuthErrorEntity, bool>> deleteAccount();
+
+  Future<Either<DatabaseErrorEntity, bool>> sendEmailVerification();
 }

@@ -665,13 +665,19 @@ class _CurrencyListWidgetState extends ConsumerState<CurrencyListWidget>
                         .withOpacity(isPlaceholder ? 0.05 : 0.1),
                     borderRadius: BorderRadius.circular(AppSize.smallRadius),
                   ),
-                  child: Text(
-                    currency.alis.toString(),
-                    style: CustomTextStyle.blackColorBoldPoppins(
-                      context,
-                      AppSize.smallText,
+                  child: InkWell(
+                    onTap: () {
+                      ref.read(tradeViewModelProvider).routeTradeView(
+                          isBuy: false, ref: ref, currency: currency.name);
+                    },
+                    child: Text(
+                      currency.alis.toString(),
+                      style: CustomTextStyle.blackColorBoldPoppins(
+                        context,
+                        AppSize.smallText,
+                      ),
+                      textAlign: TextAlign.center,
                     ),
-                    textAlign: TextAlign.center,
                   ),
                 ),
               ),
@@ -692,13 +698,22 @@ class _CurrencyListWidgetState extends ConsumerState<CurrencyListWidget>
                         .withOpacity(isPlaceholder ? 0.05 : 0.1),
                     borderRadius: BorderRadius.circular(AppSize.smallRadius),
                   ),
-                  child: Text(
+                  child: InkWell(
+                    onTap: () {
+                      ref.read(tradeViewModelProvider).routeTradeView(
+                            isBuy: true,
+                            ref: ref,
+                            currency: currency.name,
+                          );
+                    },
+                    child: Text(
                     currency.satis.toString(),
                     style: CustomTextStyle.blackColorBoldPoppins(
                       context,
                       AppSize.small2Text,
                     ),
                     textAlign: TextAlign.center,
+                  ),
                   ),
                 ),
               ),

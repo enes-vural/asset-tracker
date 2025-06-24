@@ -2,6 +2,7 @@ import 'package:asset_tracker/core/config/localization/generated/locale_keys.g.d
 import 'package:asset_tracker/core/config/theme/extension/currency_widget_title_extension.dart';
 import 'package:asset_tracker/core/constants/database/transaction_type_enum.dart';
 import 'package:asset_tracker/core/config/theme/extension/number_format_extension.dart';
+import 'package:asset_tracker/core/constants/enums/widgets/app_pages_enum.dart';
 import 'package:asset_tracker/core/constants/enums/widgets/dashboard_filters_enum.dart';
 import 'package:asset_tracker/core/mixins/get_currency_icon_mixin.dart';
 import 'package:asset_tracker/core/widgets/custom_padding.dart';
@@ -102,7 +103,7 @@ class _UserAssetTransactionWidgetState
     }
 
     if (groupedData.isEmpty) {
-      return _buildEmptyState(isDark);
+      return _buildEmptyState(isDark, ref);
     }
 
     return FadeTransition(
@@ -138,7 +139,7 @@ class _UserAssetTransactionWidgetState
     );
   }
 
-  Widget _buildEmptyState(bool isDark) {
+  Widget _buildEmptyState(bool isDark, WidgetRef ref) {
     return Center(
       child: Container(
         padding: const EdgeInsets.all(32),
@@ -168,7 +169,9 @@ class _UserAssetTransactionWidgetState
             ),
             const SizedBox(height: 24),
             ElevatedButton.icon(
-              onPressed: () => _showAddTransactionDialog(isDark),
+              onPressed: () => ref
+                  .read(appGlobalProvider)
+                  .changeMenuNavigationIndex(AppPagesEnum.TRADE.pageIndex),
               icon: const Icon(Icons.add),
               label: Text(LocaleKeys.dashboard_addTransaction.tr()),
               style: ElevatedButton.styleFrom(
@@ -526,46 +529,6 @@ class _UserAssetTransactionWidgetState
           side: BorderSide(color: color.withOpacity(isDark ? 0.5 : 0.3)),
         ),
         backgroundColor: isDark ? color.withOpacity(0.1) : Colors.transparent,
-      ),
-    );
-  }
-
-  void _showAddTransactionDialog(bool isDark) {
-    showModalBottomSheet(
-      context: context,
-      isScrollControlled: true,
-      backgroundColor: Colors.transparent,
-      builder: (context) => Container(
-        height: MediaQuery.of(context).size.height * 0.8,
-        decoration: BoxDecoration(
-          color: isDark ? Colors.grey[850] : Colors.white,
-          borderRadius: const BorderRadius.vertical(top: Radius.circular(20)),
-        ),
-        child: Column(
-          children: [
-            Container(
-              margin: const EdgeInsets.symmetric(vertical: 8),
-              width: 40,
-              height: 4,
-              decoration: BoxDecoration(
-                color: isDark ? Colors.grey[600] : Colors.grey[300],
-                borderRadius: BorderRadius.circular(2),
-              ),
-            ),
-            Padding(
-              padding: const EdgeInsets.all(16),
-              child: Text(
-                LocaleKeys.dashboard_addTransaction.tr(),
-                style: TextStyle(
-                  fontSize: 20,
-                  fontWeight: FontWeight.bold,
-                  color: isDark ? Colors.white : Colors.black,
-                ),
-              ),
-            ),
-            // Transaction form here
-          ],
-        ),
       ),
     );
   }
