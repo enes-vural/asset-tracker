@@ -8,8 +8,12 @@ PaRota, gerçek zamanlı altın ve döviz kurlarını takip edebileceğiniz, por
 
 <div align="center">
 
-[![App Store](https://tools.applemediaservices.com/api/badges/download-on-the-app-store/black/tr-tr?size=250x83&releaseDate=1640995200)](https://apps.apple.com/tr/app/parota-alt%C4%B1n-d%C3%B6viz/id6747687974)
-[![Google Play](https://play.google.com/intl/en_us/badges/static/images/badges/tr_badge_web_generic.png)](https://play.google.com/store/apps/details?id=com.sakasstudio.parota)
+<a href="https://apps.apple.com/tr/app/parota-alt%C4%B1n-d%C3%B6viz/id6747687974">
+  <img src="https://tools.applemediaservices.com/api/badges/download-on-the-app-store/black/tr-tr?size=250x83&releaseDate=1640995200" height="80" alt="App Store'dan İndir">
+</a>
+<a href="https://play.google.com/store/apps/details?id=com.sakasstudio.parota">
+  <img src="https://play.google.com/intl/en_us/badges/static/images/badges/tr_badge_web_generic.png" height="80" alt="Google Play'den İndir">
+</a>
 
 </div>
 
@@ -142,7 +146,6 @@ flutter run --release
 
 - **Kişisel Veriler**: Minimal veri toplama prensibi
 - **Finansal Bilgiler**: Güvenli veri işleme
-- **KVKK Uyumlu**: Türk mevzuatına uygun veri işleme
 - **Gizlilik Politikası**: [Detaylı bilgi](https://sakasstudio.blogspot.com/2025/06/parota-gizlilik-sozlesmesi-tr.html)
 
 ## 🌟 Katkıda Bulunma
@@ -184,8 +187,8 @@ Bu proje telif hakları ile korunmaktadır.
 - [ ] Daha fazla finansal araç desteği
 - [ ] Gelişmiş analiz araçları
 - [ ] Push notification özellikleri
-- [ ] Dark mode desteği
-- [ ] Multi-language support
+- [X] Dark mode desteği
+- [X] Multi-language support
 - [ ] Widget desteği (iOS/Android)
 
 ---
@@ -194,4 +197,11 @@ Bu proje telif hakları ile korunmaktadır.
 
 **PaRota ile akıllı yatırım yapın! 💎**
 
-[App Store'dan İndir](https://apps.apple.com/tr/app/parota-alt%C4%B1n-d%C3%B6viz/id6747687974) • [Google Play'den İndir](https://play.google.com/store/apps/details?id=com.sakasstudio.parota)
+<a href="https://apps.apple.com/tr/app/parota-alt%C4%B1n-d%C3%B6viz/id6747687974">
+  <img src="https://tools.applemediaservices.com/api/badges/download-on-the-app-store/black/tr-tr?size=250x83&releaseDate=1640995200" height="65" alt="App Store'dan İndir">
+</a>
+<a href="https://play.google.com/store/apps/details?id=com.sakasstudio.parota">
+  <img src="https://play.google.com/intl/en_us/badges/static/images/badges/tr_badge_web_generic.png" height="65" alt="Google Play'den İndir">
+</a>
+
+</div>
