@@ -1,32 +1,197 @@
-# **Asset Tracker**
+# 📱 PaRota - Altın & Döviz Takip Uygulaması
 
-The **Asset Tracker** application helps users track their assets. It provides a system that interacts with the backend to manage assets and offers a user-friendly interface on the front-end. This project is developed using **Flutter** and follows modern software development approaches like **Clean Architecture** and the **Repository Pattern**.
+![PaRota Banner](https://img.shields.io/badge/PaRota-Asset%20Tracker-gold?style=for-the-badge&logo=flutter)
 
-## **Project Structure**
+PaRota, gerçek zamanlı altın ve döviz kurlarını takip edebileceğiniz, portföy yönetimi yapabileceğiniz ve yatırım kararlarınızı destekleyecek modern bir mobil uygulamadır. Flutter ile geliştirilmiş olan uygulama, Clean Architecture ve Repository Pattern gibi modern yazılım geliştirme yaklaşımlarını benimser.
 
-This project has the following directory structure:
+## 🚀 Mağaza Linkleri
 
-### **Folders**
+<div align="center">
 
-- **core**: Contains the foundational elements of the app like configurations, helpers, mixins, routing, and custom widgets.
-- **data**: Houses models, repositories, and services. This layer is responsible for data handling and interaction with external resources.
-- **domain**: Contains the business logic, including use cases and entities.
-- **env**: Stores environment variables and configurations.
-- **presentation**: Includes the user interface views and view models that manage state and business logic.
+[![App Store](https://tools.applemediaservices.com/api/badges/download-on-the-app-store/black/tr-tr?size=250x83&releaseDate=1640995200)](https://apps.apple.com/tr/app/parota-alt%C4%B1n-d%C3%B6viz/id6747687974)
+[![Google Play](https://play.google.com/intl/en_us/badges/static/images/badges/tr_badge_web_generic.png)](https://play.google.com/store/apps/details?id=com.sakasstudio.parota)
 
-## **Setup and Running**
+</div>
 
-Follow these steps to run the project:
+## ✨ Özellikler
 
-1. **Clone the project**:
+### 📊 Gerçek Zamanlı Veri Takibi
+- **Anlık Güncellemeler**: Altın fiyatları ve döviz kurları saniye saniye güncellenir
+- **Canlı Veriler**: Piyasa hareketlerini kaçırmadan anlık değişimleri takip edin
+- **Doğru Timing**: Gerçek zamanlı verilerle yatırım kararlarınızı optimize edin
+
+### 💼 Portföy Yönetimi
+- **Kolay Portföy Oluşturma**: Dakikalar içinde kişisel yatırım portföyünüzü oluşturun
+- **Otomatik Hesaplama**: Toplam değerinizi anlık görüntüleyin
+- **Kategori Bazında Görüntüleme**: Altın, döviz, kripto para kategorilerine göre ayrım
+- **Diversifikasyon Takibi**: Her kategorinin portföydeki ağırlığını yüzde olarak görün
+
+### 📈 İşlem Takibi
+- **Al-Sat İşlem Kayıtları**: Tüm alım satım işlemlerinizi kaydedin
+- **Kar-Zarar Hesaplama**: Otomatik kar-zarar hesaplamaları
+- **Detaylı İşlem Geçmişi**: Geçmiş işlemlerinizi analiz edin
+- **Performans Analizi**: Yatırım stratejinizi geliştirin
+
+### 🎨 Kullanıcı Dostu Tasarım
+- **Sade Arayüz**: Anlaşılır ve kullanımı kolay tasarım
+- **Tek Ekran Erişim**: İhtiyacınız olan tüm bilgiler tek ekranda
+- **Yaş Grubu Bağımsız**: Her yaştan kullanıcı için uygun tasarım
+
+## 💰 Desteklenen Finansal Araçlar
+
+### 🥇 Altın Fiyatları
+- Gram altın fiyatı
+- Çeyrek altın fiyatı
+- Yarım altın fiyatı
+- Tam altın fiyatı
+- Cumhuriyet altını fiyatı
+- 22 ayar bilezik altın
+- Külçe altın fiyatları
+
+### 💱 Döviz Kurları
+- USD/TL (Dolar kuru)
+- EUR/TL (Euro kuru)
+- GBP/TL (Sterlin kuru)
+- CHF/TL (İsviçre Frangı)
+- CAD/TL (Kanada Doları)
+- AUD/TL (Avustralya Doları)
+- JPY/TL (Japon Yeni)
+- NOK/TL (Norveç Kronu)
+- SEK/TL (İsveç Kronu)
+- DKK/TL (Danimarka Kronu)
+
+## 🏗️ Teknik Mimari
+
+Bu proje modern yazılım geliştirme prensiplerini benimser:
+
+### 📁 Proje Yapısı
+```
+lib/
+├── core/                    # Uygulama temelleri
+│   ├── configurations/      # Konfigürasyonlar
+│   ├── helpers/            # Yardımcı fonksiyonlar
+│   ├── mixins/             # Mixin'ler
+│   ├── routing/            # Yönlendirme
+│   └── widgets/            # Özel widget'lar
+├── data/                   # Veri katmanı
+│   ├── models/             # Veri modelleri
+│   ├── repositories/       # Repository implementasyonları
+│   └── services/           # Servis katmanı
+├── domain/                 # İş mantığı katmanı
+│   ├── entities/           # Domain varlıkları
+│   └── use_cases/          # Kullanım senaryoları
+├── env/                    # Çevre değişkenleri
+└── presentation/           # Sunum katmanı
+    ├── views/              # UI görünümleri
+    └── view_models/        # Durum yönetimi
+```
+
+### 🔧 Kullanılan Teknolojiler
+- **Framework**: Flutter
+- **Mimari**: Clean Architecture
+- **Pattern**: Repository Pattern
+- **Platform**: iOS & Android
+- **Dil**: Dart
+
+### 📦 Minimum Gereksinimler
+- **iOS**: 13.0 veya üzeri
+- **Android**: API level 21 (Android 5.0) veya üzeri
+- **Flutter**: 3.0.0 veya üzeri
+- **Dart**: 2.17.0 veya üzeri
+
+## 🛠️ Kurulum ve Çalıştırma
+
+### Geliştirici Kurulumu
+
+1. **Repository'yi klonlayın:**
    ```bash
-   git clone https://github.com/your-username/asset_tracker.git
-2. **Flutter pub get**:
+   git clone https://github.com/enes-vural/asset-tracker.git
+   cd asset-tracker
+   ```
+
+2. **Bağımlılıkları yükleyin:**
    ```bash
    flutter pub get
+   ```
 
-3. **Run the app**
+3. **Çevre değişkenlerini ayarlayın:**
+   ```bash
+   # env/ klasöründeki konfigürasyon dosyalarını düzenleyin
+   ```
+
+4. **Uygulamayı çalıştırın:**
    ```bash
    flutter run
+   ```
 
-   
+### Debug Modu
+```bash
+flutter run --debug
+```
+
+### Release Modu
+```bash
+flutter run --release
+```
+
+## 📱 Uygulama Ekran Görüntüleri
+
+> Uygulama mağazalarından ekran görüntülerini inceleyebilirsiniz.
+
+## 🔐 Gizlilik ve Güvenlik
+
+- **Kişisel Veriler**: Minimal veri toplama prensibi
+- **Finansal Bilgiler**: Güvenli veri işleme
+- **KVKK Uyumlu**: Türk mevzuatına uygun veri işleme
+- **Gizlilik Politikası**: [Detaylı bilgi](https://sakasstudio.blogspot.com/2025/06/parota-gizlilik-sozlesmesi-tr.html)
+
+## 🌟 Katkıda Bulunma
+
+Bu projeye katkıda bulunmak istiyorsanız:
+
+1. Fork yapın
+2. Feature branch oluşturun (`git checkout -b feature/amazing-feature`)
+3. Değişikliklerinizi commit edin (`git commit -m 'Add some amazing feature'`)
+4. Branch'inizi push edin (`git push origin feature/amazing-feature`)
+5. Pull Request oluşturun
+
+### 📋 Katkı Kuralları
+- Clean Code prensiplerini takip edin
+- Unit testler yazın
+- Kod dokumentasyonu ekleyin
+- Flutter best practices'leri uygulayın
+
+## 🐛 Hata Bildirimi
+
+Bir hata ile karşılaştıysanız:
+- [GitHub Issues](https://github.com/enes-vural/asset-tracker/issues) sayfasından bildirebilirsiniz
+- Hata açıklaması, adımlar ve ekran görüntüleri ekleyin
+- Cihaz ve versiyon bilgilerini belirtin
+
+## 📞 İletişim
+
+- **Geliştirici**: Enes Vural
+- **Publisher**: Alper Vural (Sakas Studio)
+- **Email**: İletişim bilgileri için mağaza sayfalarını kontrol edin
+
+## 📄 Lisans
+
+Bu proje telif hakları ile korunmaktadır.
+© 2025 Alper Vural - Tüm hakları saklıdır.
+
+## 🎯 Gelecek Planları
+
+- [ ] Daha fazla finansal araç desteği
+- [ ] Gelişmiş analiz araçları
+- [ ] Push notification özellikleri
+- [ ] Dark mode desteği
+- [ ] Multi-language support
+- [ ] Widget desteği (iOS/Android)
+
+---
+
+<div align="center">
+
+**PaRota ile akıllı yatırım yapın! 💎**
+
+[App Store'dan İndir](https://apps.apple.com/tr/app/parota-alt%C4%B1n-d%C3%B6viz/id6747687974) • [Google Play'den İndir](https://play.google.com/store/apps/details?id=com.sakasstudio.parota)
