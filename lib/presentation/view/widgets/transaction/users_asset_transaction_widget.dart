@@ -383,7 +383,7 @@ class _UserAssetTransactionWidgetState
                           Icons.sell_outlined,
                           Colors.red[600]!,
                           () => _routeTradeView(
-                              false, ref, entry.key.getCurrencyTitle()),
+                              false, ref, entry.key.getCurrencyTitle().tr()),
                           isDark,
                         ),
                       ),
@@ -394,7 +394,7 @@ class _UserAssetTransactionWidgetState
                           Icons.add_circle_outline,
                           Colors.green[600]!,
                           () => _routeTradeView(
-                              true, ref, entry.key.getCurrencyTitle()),
+                              true, ref, entry.key.getCurrencyTitle().tr()),
                           isDark,
                         ),
                       ),

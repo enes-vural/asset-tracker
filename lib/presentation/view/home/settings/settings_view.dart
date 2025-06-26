@@ -1,4 +1,5 @@
 import 'package:asset_tracker/core/config/localization/generated/locale_keys.g.dart';
+import 'package:asset_tracker/core/helpers/snackbar.dart';
 import 'package:asset_tracker/core/routers/router.dart';
 import 'package:asset_tracker/core/widgets/custom_sized_box.dart';
 import 'package:asset_tracker/injection.dart';
@@ -8,6 +9,7 @@ import 'package:asset_tracker/presentation/view_model/settings/settings_view_mod
 import 'package:auto_route/annotations.dart';
 import 'package:easy_localization/easy_localization.dart';
 import 'package:flutter/material.dart';
+import 'package:flutter/services.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 
 @RoutePage()
@@ -21,6 +23,7 @@ class SettingsView extends ConsumerStatefulWidget {
 class _SettingsViewState extends ConsumerState<SettingsView> {
   bool isDarkMode = false;
   String selectedLanguage = 'Türkçe';
+  bool _showSupportCode = false;
 
   @override
   Widget build(BuildContext context) {
@@ -28,6 +31,7 @@ class _SettingsViewState extends ConsumerState<SettingsView> {
     final theme = Theme.of(context);
     final isEmailVerified =
         ref.read(authGlobalProvider).getCurrentUser?.emailVerified ?? true;
+    final currentUser = ref.read(authGlobalProvider).getCurrentUser;
 
     return Scaffold(
       backgroundColor: theme.scaffoldBackgroundColor,
@@ -55,13 +59,13 @@ class _SettingsViewState extends ConsumerState<SettingsView> {
                   color: theme.colorScheme.onSurface.withOpacity(0.7),
                 ),
               ),
-              
+
               // Email Verification Notice
               if (viewModel.isAuthorized && !isEmailVerified) ...[
                 const SizedBox(height: 24),
                 _buildEmailVerificationNotice(viewModel),
               ],
-              
+
               const SizedBox(height: 40),
 
               // Account Section
@@ -135,10 +139,141 @@ class _SettingsViewState extends ConsumerState<SettingsView> {
               // Info Section
               _buildInfoCard(),
 
+              // Support Section (Only for authorized users)
+              if (viewModel.isAuthorized && currentUser?.uid != null) ...[
+                const SizedBox(height: 32),
+                _buildSupportSection(currentUser?.uid),
+              ],
+
               const SizedBox(height: 40),
             ],
           ),
         ),
+      ),
+    );
+  }
+
+  Widget _buildSupportSection(String? uid) {
+    final theme = Theme.of(context);
+    final primaryColor = theme.colorScheme.primary;
+
+    return Container(
+      padding: const EdgeInsets.all(20),
+      decoration: BoxDecoration(
+        color: theme.cardColor,
+        borderRadius: BorderRadius.circular(16),
+        boxShadow: [
+          BoxShadow(
+            color: theme.brightness == Brightness.dark
+                ? Colors.black.withOpacity(0.3)
+                : Colors.black.withOpacity(0.08),
+            blurRadius: 10,
+            offset: const Offset(0, 2),
+          ),
+        ],
+      ),
+      child: Column(
+        crossAxisAlignment: CrossAxisAlignment.start,
+        children: [
+          InkWell(
+            onTap: () {
+              setState(() {
+                _showSupportCode = !_showSupportCode;
+              });
+            },
+            borderRadius: BorderRadius.circular(8),
+            child: Padding(
+              padding: const EdgeInsets.all(8.0),
+              child: Row(
+                children: [
+                  Icon(
+                    Icons.support_agent_outlined,
+                    color: primaryColor,
+                    size: 20,
+                  ),
+                  const SizedBox(width: 12),
+                  Text(
+                    LocaleKeys.home_settings_supportTitle.tr(),
+                    style: TextStyle(
+                      fontSize: 16,
+                      fontWeight: FontWeight.w500,
+                      color: theme.colorScheme.onSurface,
+                    ),
+                  ),
+                  const Spacer(),
+                  Icon(
+                    _showSupportCode
+                        ? Icons.keyboard_arrow_up
+                        : Icons.keyboard_arrow_down,
+                    color: theme.colorScheme.onSurface.withOpacity(0.6),
+                    size: 20,
+                  ),
+                ],
+              ),
+            ),
+          ),
+          if (_showSupportCode) ...[
+            const SizedBox(height: 12),
+            Container(
+              padding: const EdgeInsets.all(12),
+              decoration: BoxDecoration(
+                color: theme.colorScheme.surface,
+                borderRadius: BorderRadius.circular(8),
+                border: Border.all(
+                  color: theme.dividerColor,
+                  width: 1,
+                ),
+              ),
+              child: Column(
+                crossAxisAlignment: CrossAxisAlignment.start,
+                children: [
+                  Text(
+                    LocaleKeys.home_settings_supportDesc.tr(),
+                    style: TextStyle(
+                      fontSize: 12,
+                      color: theme.colorScheme.onSurface.withOpacity(0.7),
+                    ),
+                  ),
+                  const SizedBox(height: 8),
+                  Row(
+                    children: [
+                      Expanded(
+                        child: SelectableText(
+                          uid ?? "",
+                          style: TextStyle(
+                            fontSize: 14,
+                            fontFamily: 'monospace',
+                            fontWeight: FontWeight.w500,
+                            color: primaryColor,
+                          ),
+                        ),
+                      ),
+                      const SizedBox(width: 8),
+                      IconButton(
+                        onPressed: () {
+                          Clipboard.setData(ClipboardData(text: uid ?? ""));
+                          EasySnackBar.show(context,
+                              LocaleKeys.home_settings_supportCopy.tr());
+                        },
+                        icon: Icon(
+                          Icons.copy_outlined,
+                          size: 18,
+                          color: primaryColor,
+                        ),
+                        tooltip: 'Kopyala',
+                        padding: EdgeInsets.zero,
+                        constraints: const BoxConstraints(
+                          minWidth: 32,
+                          minHeight: 32,
+                        ),
+                      ),
+                    ],
+                  ),
+                ],
+              ),
+            ),
+          ],
+        ],
       ),
     );
   }
@@ -176,7 +311,7 @@ class _SettingsViewState extends ConsumerState<SettingsView> {
               crossAxisAlignment: CrossAxisAlignment.start,
               children: [
                 Text(
-                  'E-posta Adresinizi Doğrulayın',
+                  LocaleKeys.home_settings_validateEmail.tr(),
                   style: TextStyle(
                     fontSize: 14,
                     fontWeight: FontWeight.w600,
@@ -185,7 +320,7 @@ class _SettingsViewState extends ConsumerState<SettingsView> {
                 ),
                 const SizedBox(height: 2),
                 Text(
-                  'Hesabınızın güvenliği için e-posta adresinizi doğrulamanız gerekiyor.',
+                  LocaleKeys.home_settings_validateEmailText.tr(),
                   style: TextStyle(
                     fontSize: 12,
                     color: theme.colorScheme.onSurface.withOpacity(0.7),
@@ -203,9 +338,9 @@ class _SettingsViewState extends ConsumerState<SettingsView> {
               foregroundColor: Colors.orange.shade700,
               padding: const EdgeInsets.symmetric(horizontal: 12, vertical: 6),
             ),
-            child: const Text(
-              'Doğrula',
-              style: TextStyle(
+            child: Text(
+              LocaleKeys.home_settings_validate.tr(),
+              style: const TextStyle(
                 fontSize: 12,
                 fontWeight: FontWeight.w600,
               ),

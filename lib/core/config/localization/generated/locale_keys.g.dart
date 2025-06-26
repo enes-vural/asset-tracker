@@ -124,6 +124,7 @@ abstract class  LocaleKeys {
   static const trade_userIdNull = 'trade.userIdNull';
   static const trade_nullAssetCodes = 'trade.nullAssetCodes';
   static const trade = 'trade';
+  static const home_diff = 'home.diff';
   static const home_notFoundErr = 'home.notFoundErr';
   static const home_notFoundSearch = 'home.notFoundSearch';
   static const home_pressLong = 'home.pressLong';
@@ -139,6 +140,7 @@ abstract class  LocaleKeys {
   static const home_search = 'home.search';
   static const home_socketConnectionInit = 'home.socketConnectionInit';
   static const home_unit = 'home.unit';
+  static const home_unitTitle = 'home.unitTitle';
   static const home_buy = 'home.buy';
   static const home_sell = 'home.sell';
   static const home_balance = 'home.balance';
@@ -147,6 +149,12 @@ abstract class  LocaleKeys {
   static const home_wait = 'home.wait';
   static const home_none = 'home.none';
   static const home_clear = 'home.clear';
+  static const home_settings_supportTitle = 'home.settings.supportTitle';
+  static const home_settings_supportDesc = 'home.settings.supportDesc';
+  static const home_settings_supportCopy = 'home.settings.supportCopy';
+  static const home_settings_validateEmail = 'home.settings.validateEmail';
+  static const home_settings_validateEmailText = 'home.settings.validateEmailText';
+  static const home_settings_validate = 'home.settings.validate';
   static const home_settings_infoUpdated = 'home.settings.infoUpdated';
   static const home_settings_processError = 'home.settings.processError';
   static const home_settings_deleteSuccesfull = 'home.settings.deleteSuccesfull';

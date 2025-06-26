@@ -7,10 +7,10 @@ import 'package:asset_tracker/core/config/theme/extension/number_format_extensio
 import 'package:asset_tracker/core/widgets/custom_sized_box.dart';
 import 'package:asset_tracker/domain/entities/database/enttiy/user_currency_entity_model.dart';
 import 'package:asset_tracker/presentation/view_model/home/dashboard/dashboard_view_model.dart';
+import 'package:easy_localization/easy_localization.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
-
 class TransactionCardLVBWidget extends ConsumerWidget {
   const TransactionCardLVBWidget({
     super.key,
@@ -25,12 +25,16 @@ class TransactionCardLVBWidget extends ConsumerWidget {
   Widget build(BuildContext context, WidgetRef ref) {
     final isDark = Theme.of(context).brightness == Brightness.dark;
     
+    // Tarihe göre sıralama - en yeni yukarıda, en eski aşağıda
+    final sortedTransactions = List<UserCurrencyEntity>.from(entry.value)
+      ..sort((a, b) => b.buyDate.compareTo(a.buyDate));
+    
     return ListView.builder(
       shrinkWrap: true,
       physics: const NeverScrollableScrollPhysics(),
-      itemCount: entry.value.length,
+      itemCount: sortedTransactions.length,
       itemBuilder: (context, index) {
-        var transaction = entry.value[index];
+        var transaction = sortedTransactions[index];
         return Container(
           margin: const EdgeInsets.symmetric(horizontal: 16, vertical: 4),
           child: Card(
@@ -107,7 +111,7 @@ const CustomSizedBox.smallWidth(),
       children: [
         const SizedBox(height: 6),
         Text(
-          transaction.currencyCode.getCurrencyTitle(),
+          transaction.currencyCode.getCurrencyTitle().tr(),
           style: TextStyle(
             fontSize: 12,
             fontWeight: FontWeight.bold,

@@ -23,7 +23,7 @@ final class HiveCacheService implements ICacheService {
   final List<String> _defaultOrder = [
     "USDTRY",
     "EURTRY",
-    "GRAMALTIN",
+    "KULCEALTIN",
     "CEYREK_YENI",
     "CEYREK_ESKI",
     "GBPTRY",

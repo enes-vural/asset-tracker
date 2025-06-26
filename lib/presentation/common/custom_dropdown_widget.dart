@@ -43,11 +43,14 @@ class _CustomDropDownWidgetState<T>
   }
 
   void _initializeCurrencies() {
-    _allCurrencies =
-        widget.viewModel
+    // Currency listesini al ve çevir
+    final currencyLabels = widget.viewModel
         .getCurrencyList(ref)
         .map((e) => setCurrencyLabel(e.code))
         .toList();
+    
+    // Tekrar eden değerleri temizle
+    _allCurrencies = currencyLabels.toSet().toList();
     _filteredList = List.from(_allCurrencies);
     _updateSelectedValue(widget.pageCurrency);
   }
@@ -82,8 +85,10 @@ class _CustomDropDownWidgetState<T>
   void _onChanged(String value) {
     _isUserTyping = true;
     setState(() {
+      // Filtreleme yaparken de tekrar eden değerleri temizle
       _filteredList = _allCurrencies
           .where((item) => item.toLowerCase().contains(value.toLowerCase()))
+          .toSet() // Tekrar eden değerleri temizle
           .toList();
 
       if (_filteredList.length == 1 &&
@@ -117,8 +122,12 @@ class _CustomDropDownWidgetState<T>
 
   void _onFocusChanged(bool hasFocus) {
     setState(() {
+      // Focus aldığında tüm listeyi göster (ilk tıklamada itemler çıksın)
       _showSuggestions = hasFocus;
-      if (!hasFocus) {
+      if (hasFocus) {
+        // Focus alındığında tüm listeyi göster
+        _filteredList = _allCurrencies;
+      } else {
         _isUserTyping = false;
         _filteredList = _allCurrencies;
         // Focus kaybedildiğinde, eğer geçerli bir seçim yoksa controller'ı düzelt
@@ -198,29 +207,69 @@ class _CustomDropDownWidgetState<T>
                     width: 2.0,
                   ),
                 ),
+                suffixIcon: Icon(
+                  Icons.arrow_drop_down,
+                  color: theme.colorScheme.onSurface.withOpacity(0.6),
+                ),
               ),
               onChanged: _onChanged,
             ),
           ),
-          if (_showSuggestions &&
-              _controller.text.isNotEmpty &&
-              _filteredList.isNotEmpty)
+          if (_showSuggestions && _filteredList.isNotEmpty)
             Container(
               constraints: BoxConstraints(maxHeight: 200.h),
               decoration: BoxDecoration(
+                color: theme.cardColor,
                 borderRadius: BorderRadius.circular(AppSize.mediumRadius),
+                boxShadow: [
+                  BoxShadow(
+                    color: Colors.black.withOpacity(0.1),
+                    blurRadius: 8,
+                    offset: const Offset(0, 2),
+                  ),
+                ],
               ),
-              child: ListView.builder(
-                shrinkWrap: true,
-                itemCount: _filteredList.length,
-                itemBuilder: (context, index) {
-                  final value = _filteredList[index];
-                  return ListTile(
-                    title: Text(value),
-                    onTap: () => _onItemTap(value),
-                    selected: value == _selectedValue,
-                  );
-                },
+              child: Column(
+                children: [
+                  // Kaydırma ipucu - sadece liste çok uzunsa göster
+                  if (_filteredList.length > 4)
+                    Container(
+                      padding: const EdgeInsets.symmetric(vertical: 8),
+                      child: Row(
+                        mainAxisAlignment: MainAxisAlignment.center,
+                        children: [
+                          Icon(
+                            Icons.swipe_vertical,
+                            size: 16,
+                            color: theme.colorScheme.onSurface.withOpacity(0.5),
+                          ),
+                          const SizedBox(width: 4),
+                          Text(
+                            "Kaydırın",
+                            style: TextStyle(
+                              fontSize: 12,
+                              color:
+                                  theme.colorScheme.onSurface.withOpacity(0.5),
+                            ),
+                          ),
+                        ],
+                      ),
+                    ),
+                  Expanded(
+                    child: ListView.builder(
+                      shrinkWrap: true,
+                      itemCount: _filteredList.length,
+                      itemBuilder: (context, index) {
+                        final value = _filteredList[index];
+                        return ListTile(
+                          title: Text(value),
+                          onTap: () => _onItemTap(value),
+                          selected: value == _selectedValue,
+                        );
+                      },
+                    ),
+                  ),
+                ],
               ),
             ),
         ],
