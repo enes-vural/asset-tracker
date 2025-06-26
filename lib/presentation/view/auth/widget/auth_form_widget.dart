@@ -50,6 +50,7 @@ class AuthFormWidget extends StatelessWidget {
     TextInputAction? textInputAction,
     void Function(String)? onFieldSubmitted,
   }) : this(
+          type: TextInputType.emailAddress,
           key: key,
           formController: emailController,
           isObs: false,

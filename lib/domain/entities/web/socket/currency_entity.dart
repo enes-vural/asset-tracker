@@ -11,6 +11,7 @@ class CurrencyEntity {
   final String dusuk;
   final String yuksek;
   final String kapanis;
+
   const CurrencyEntity({
     required this.code,
     required this.alis,
@@ -58,4 +59,14 @@ class CurrencyEntity {
 
   // Hash kodu hesaplama
   String get hash => '$code-$alis-$satis-'.hashCode.toString();
+
+  double get fark {
+    try {
+      final double kapanisValue = double.parse(kapanis);
+      final double satisValue = double.parse(satis);
+      return ((satisValue - kapanisValue) / kapanisValue) * 100;
+    } catch (e) {
+      return 0.0;
+    }
+  }
 }

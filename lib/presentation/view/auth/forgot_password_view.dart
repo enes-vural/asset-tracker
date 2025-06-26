@@ -133,168 +133,173 @@ class _ForgotPasswordViewState extends ConsumerState<ForgotPasswordView>
         ),
       ),
       body: SafeArea(
-        child: SizedBox(
-          height: screenHeight - 100,
-          child: CustomPadding.mediumHorizontal(
-            widget: Column(
-              children: [
-                Expanded(
-                  child: Column(
-                    mainAxisAlignment: MainAxisAlignment.center,
-                    crossAxisAlignment: CrossAxisAlignment.start,
-                    children: [
-                      // Header Section
-                      Container(
-                        width: double.infinity,
-                        child: Column(
-                          crossAxisAlignment: CrossAxisAlignment.center,
-                          children: [
-                            // Icon
-                            Container(
-                              padding: const EdgeInsets.all(20),
-                              decoration: BoxDecoration(
-                                color: theme.primaryColor.withOpacity(0.1),
-                                shape: BoxShape.circle,
+        child: SingleChildScrollView(
+          scrollDirection: Axis.vertical,
+          child: SizedBox(
+            height: screenHeight - 100,
+            child: CustomPadding.mediumHorizontal(
+              widget: Column(
+                children: [
+                  Expanded(
+                    child: Column(
+                      mainAxisAlignment: MainAxisAlignment.center,
+                      crossAxisAlignment: CrossAxisAlignment.start,
+                      children: [
+                        // Header Section
+                        Container(
+                          width: double.infinity,
+                          child: Column(
+                            crossAxisAlignment: CrossAxisAlignment.center,
+                            children: [
+                              // Icon
+                              Container(
+                                padding: const EdgeInsets.all(20),
+                                decoration: BoxDecoration(
+                                  color: theme.primaryColor.withOpacity(0.1),
+                                  shape: BoxShape.circle,
+                                ),
+                                child: Icon(
+                                  Icons.lock_reset,
+                                  size: 50,
+                                  color: theme.primaryColor,
+                                ),
                               ),
-                              child: Icon(
-                                Icons.lock_reset,
-                                size: 50,
-                                color: theme.primaryColor,
-                              ),
-                            ),
-                            const CustomSizedBox.largeGap(),
+                              const CustomSizedBox.largeGap(),
 
-                            // Title
-                            Text(
-                              LocaleKeys.auth_forgot.tr(),
-                              style: TextStyle(
-                                fontSize: 28,
-                                fontWeight: FontWeight.bold,
-                                color:
-                                    isDarkMode ? Colors.white : Colors.black87,
-                                fontFamily: 'Manrope',
-                              ),
-                              textAlign: TextAlign.center,
-                            ),
-                            const CustomSizedBox.smallGap(),
-
-                            // Subtitle
-                            Padding(
-                              padding:
-                                  const EdgeInsets.symmetric(horizontal: 20),
-                              child: Text(
-                                LocaleKeys.auth_forgotDesc.tr(),
+                              // Title
+                              Text(
+                                LocaleKeys.auth_forgot.tr(),
                                 style: TextStyle(
-                                  fontSize: 16,
+                                  fontSize: 28,
+                                  fontWeight: FontWeight.bold,
                                   color: isDarkMode
-                                      ? Colors.grey.shade300
-                                      : Colors.grey.shade600,
+                                      ? Colors.white
+                                      : Colors.black87,
                                   fontFamily: 'Manrope',
-                                  height: 1.5,
                                 ),
                                 textAlign: TextAlign.center,
                               ),
-                            ),
-                          ],
-                        ),
-                      ),
+                              const CustomSizedBox.smallGap(),
 
-                      const CustomSizedBox.hugeGap(),
-
-                      // Form Section
-                      Form(
-                        key: _formKey,
-                        child: Column(
-                          crossAxisAlignment: CrossAxisAlignment.start,
-                          children: [
-                            AuthFormWidget.email(
-                              emailController: viewModel.emailController,
-                              emailValidator: checkEmail,
-                              hasTitle: true,
-                              hasLabel: true,
-                              textInputAction: TextInputAction.done,
-                              onFieldSubmitted: (_) => _onResetPassword(ref),
-                            ),
-                            const CustomSizedBox.hugeGap(),
-                            // Reset Button
-                            SizedBox(
-                              width: double.infinity,
-                              height: 56,
-                              child: ElevatedButton(
-                                onPressed: () =>
-                                    _isLoading ? null : _onResetPassword(ref),
-                                style: ElevatedButton.styleFrom(
-                                  backgroundColor: DefaultColorPalette.mainBlue,
-                                  foregroundColor: Colors.white,
-                                  elevation: 0,
-                                  shape: RoundedRectangleBorder(
-                                    borderRadius: BorderRadius.circular(12),
+                              // Subtitle
+                              Padding(
+                                padding:
+                                    const EdgeInsets.symmetric(horizontal: 20),
+                                child: Text(
+                                  LocaleKeys.auth_forgotDesc.tr(),
+                                  style: TextStyle(
+                                    fontSize: 16,
+                                    color: isDarkMode
+                                        ? Colors.grey.shade300
+                                        : Colors.grey.shade600,
+                                    fontFamily: 'Manrope',
+                                    height: 1.5,
                                   ),
-                                  disabledBackgroundColor:
-                                      theme.primaryColor.withOpacity(0.6),
+                                  textAlign: TextAlign.center,
                                 ),
-                                child: _isLoading
-                                    ? const SizedBox(
-                                        height: 20,
-                                        width: 20,
-                                        child: CircularProgressIndicator(
-                                          strokeWidth: 2,
-                                          valueColor:
-                                              AlwaysStoppedAnimation<Color>(
-                                            Colors.white,
+                              ),
+                            ],
+                          ),
+                        ),
+
+                        const CustomSizedBox.hugeGap(),
+
+                        // Form Section
+                        Form(
+                          key: _formKey,
+                          child: Column(
+                            crossAxisAlignment: CrossAxisAlignment.start,
+                            children: [
+                              AuthFormWidget.email(
+                                emailController: viewModel.emailController,
+                                emailValidator: checkEmail,
+                                hasTitle: true,
+                                hasLabel: true,
+                                textInputAction: TextInputAction.done,
+                                onFieldSubmitted: (_) => _onResetPassword(ref),
+                              ),
+                              const CustomSizedBox.hugeGap(),
+                              // Reset Button
+                              SizedBox(
+                                width: double.infinity,
+                                height: 56,
+                                child: ElevatedButton(
+                                  onPressed: () =>
+                                      _isLoading ? null : _onResetPassword(ref),
+                                  style: ElevatedButton.styleFrom(
+                                    backgroundColor:
+                                        DefaultColorPalette.mainBlue,
+                                    foregroundColor: Colors.white,
+                                    elevation: 0,
+                                    shape: RoundedRectangleBorder(
+                                      borderRadius: BorderRadius.circular(12),
+                                    ),
+                                    disabledBackgroundColor:
+                                        theme.primaryColor.withOpacity(0.6),
+                                  ),
+                                  child: _isLoading
+                                      ? const SizedBox(
+                                          height: 20,
+                                          width: 20,
+                                          child: CircularProgressIndicator(
+                                            strokeWidth: 2,
+                                            valueColor:
+                                                AlwaysStoppedAnimation<Color>(
+                                              Colors.white,
+                                            ),
+                                          ),
+                                        )
+                                      : Text(
+                                          LocaleKeys.auth_forgotButton.tr(),
+                                          style: const TextStyle(
+                                            fontSize: 16,
+                                            fontWeight: FontWeight.w600,
+                                            fontFamily: 'Manrope',
                                           ),
                                         ),
-                                      )
-                                    : Text(
-                                        LocaleKeys.auth_forgotButton.tr(),
-                                        style: const TextStyle(
-                                          fontSize: 16,
-                                          fontWeight: FontWeight.w600,
-                                          fontFamily: 'Manrope',
-                                        ),
-                                      ),
+                                ),
                               ),
-                            ),
-                          ],
+                            ],
+                          ),
                         ),
-                      ),
-                    ],
+                      ],
+                    ),
                   ),
-                ),
 
-                // Bottom Section
-                Container(
-                  padding: const EdgeInsets.only(bottom: 20),
-                  child: Row(
-                    mainAxisAlignment: MainAxisAlignment.center,
-                    children: [
-                      Text(
-                        LocaleKeys.auth_rememberPassword.tr(),
-                        style: TextStyle(
-                          color: isDarkMode
-                              ? Colors.grey.shade300
-                              : Colors.grey.shade600,
-                          fontFamily: 'Manrope',
-                          fontSize: 14,
-                        ),
-                      ),
-                      const CustomSizedBox.smallWidth(),
-                      GestureDetector(
-                        onTap: () => Routers.instance.pop(context),
-                        child: Text(
-                          LocaleKeys.auth_signIn.tr(),
+                  // Bottom Section
+                  Container(
+                    padding: const EdgeInsets.only(bottom: 20),
+                    child: Row(
+                      mainAxisAlignment: MainAxisAlignment.center,
+                      children: [
+                        Text(
+                          LocaleKeys.auth_rememberPassword.tr(),
                           style: TextStyle(
-                            color: DefaultColorPalette.mainBlue,
-                            fontWeight: FontWeight.w600,
+                            color: isDarkMode
+                                ? Colors.grey.shade300
+                                : Colors.grey.shade600,
                             fontFamily: 'Manrope',
                             fontSize: 14,
                           ),
                         ),
-                      ),
-                    ],
+                        const CustomSizedBox.smallWidth(),
+                        GestureDetector(
+                          onTap: () => Routers.instance.pop(context),
+                          child: Text(
+                            LocaleKeys.auth_signIn.tr(),
+                            style: TextStyle(
+                              color: DefaultColorPalette.mainBlue,
+                              fontWeight: FontWeight.w600,
+                              fontFamily: 'Manrope',
+                              fontSize: 14,
+                            ),
+                          ),
+                        ),
+                      ],
+                    ),
                   ),
-                ),
-              ],
+                ],
+              ),
             ),
           ),
         ),

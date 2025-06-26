@@ -24,6 +24,7 @@ enum SortType {
   name,
   buy,
   sell,
+  diff,
   custom,
   type,
 }
@@ -378,10 +379,18 @@ class _CurrencyListWidgetState extends ConsumerState<CurrencyListWidget>
       child: Row(
         children: [
           Expanded(
-            flex: 6,
+            flex: 5,
             child: _buildSortableHeaderItem(
-              title: LocaleKeys.home_unit.tr(),
+              title: LocaleKeys.home_unitTitle.tr(),
               sortType: SortType.name,
+            ),
+          ),
+          Expanded(
+            flex: 3,
+            child: _buildSortableHeaderItem(
+              title: LocaleKeys.home_diff.tr(),
+              sortType: SortType.diff,
+              textAlign: TextAlign.center,
             ),
           ),
           Expanded(
@@ -557,6 +566,10 @@ class _CurrencyListWidgetState extends ConsumerState<CurrencyListWidget>
           double bValue = double.tryParse(b.satis.toString()) ?? 0.0;
           comparison = aValue.compareTo(bValue);
           break;
+        case SortType.diff:
+          double aDiff = double.tryParse(a.fark.toString()) ?? 0.0;
+          double bDiff = double.tryParse(b.fark.toString()) ?? 0.0;
+          comparison = aDiff.compareTo(bDiff);
 
         case SortType.type:
           break;
@@ -606,7 +619,7 @@ class _CurrencyListWidgetState extends ConsumerState<CurrencyListWidget>
             ],
             // Currency Info & Icon
             Expanded(
-              flex: 3,
+              flex: 30,
               child: Row(
                 children: [
                   CircleAvatar(
@@ -650,9 +663,22 @@ class _CurrencyListWidgetState extends ConsumerState<CurrencyListWidget>
                 ],
               ),
             ),
+            Expanded(
+              flex: 16,
+              child: Text(
+                "%${currency.entity.fark.toStringAsFixed(2)}",
+                style: TextStyle(
+                  color: _getChangeColor(currency.entity.dir.satisDir),
+                  fontWeight: FontWeight.bold,
+                ),
+                textAlign: TextAlign.center,
+              ),
+            ),
+            const CustomSizedBox.smallWidth(),
+            // Sell Price
             // Buy Price
             Expanded(
-              flex: 2,
+              flex: 22,
               child: Opacity(
                 opacity: isPlaceholder ? 0.5 : 1.0,
                 child: Container(
@@ -685,7 +711,7 @@ class _CurrencyListWidgetState extends ConsumerState<CurrencyListWidget>
             const CustomSizedBox.smallWidth(),
             // Sell Price
             Expanded(
-              flex: 2,
+              flex: 22,
               child: Opacity(
                 opacity: isPlaceholder ? 0.5 : 1.0,
                 child: Container(
@@ -707,13 +733,13 @@ class _CurrencyListWidgetState extends ConsumerState<CurrencyListWidget>
                           );
                     },
                     child: Text(
-                    currency.satis.toString(),
-                    style: CustomTextStyle.blackColorBoldPoppins(
-                      context,
-                      AppSize.small2Text,
+                      currency.satis.toString(),
+                      style: CustomTextStyle.blackColorBoldPoppins(
+                        context,
+                        AppSize.small2Text,
+                      ),
+                      textAlign: TextAlign.center,
                     ),
-                    textAlign: TextAlign.center,
-                  ),
                   ),
                 ),
               ),
