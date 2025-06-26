@@ -142,10 +142,29 @@ flutter run --release
 
 > Uygulama mağazalarından ekran görüntülerini inceleyebilirsiniz.
 
+## 📱 Ekran Görüntüleri
+
+<div align="center">
+
+### Ana Ekran & Portföy Yönetimi
+<img src="screenshots/home_screen1.png" width="200" alt="Ana Ekran">
+<img src="screenshots/home_screen2.png" width="200" alt="Portföy Yönetimi">
+<img src="screenshots/wallet.png" width="200" alt="Varlık Ekleme">
+
+### Gerçek Zamanlı Fiyatlar & İşlem Geçmişi
+<img src="screenshots/trade_screen.png" width="200" alt="Canlı Fiyatlar">
+<img src="screenshots/languages.png" width="200" alt="İşlem Geçmişi">
+<img src="screenshots/dark_theme.png" width="200" alt="Analiz Ekranı">
+
+</div>
+
+> **Not**: Daha fazla ekran görüntüsü için [App Store](https://apps.apple.com/tr/app/parota-alt%C4%B1n-d%C3%B6viz/id6747687974) ve [Google Play](https://play.google.com/store/apps/details?id=com.sakasstudio.parota) sayfalarını ziyaret edebilirsiniz.
+
 ## 🔐 Gizlilik ve Güvenlik
 
 - **Kişisel Veriler**: Minimal veri toplama prensibi
 - **Finansal Bilgiler**: Güvenli veri işleme
+- **KVKK Uyumlu**: Türk mevzuatına uygun veri işleme
 - **Gizlilik Politikası**: [Detaylı bilgi](https://sakasstudio.blogspot.com/2025/06/parota-gizlilik-sozlesmesi-tr.html)
 
 ## 🌟 Katkıda Bulunma
@@ -187,8 +206,8 @@ Bu proje telif hakları ile korunmaktadır.
 - [ ] Daha fazla finansal araç desteği
 - [ ] Gelişmiş analiz araçları
 - [ ] Push notification özellikleri
-- [X] Dark mode desteği
-- [X] Multi-language support
+- [ ] Dark mode desteği
+- [ ] Multi-language support
 - [ ] Widget desteği (iOS/Android)
 
 ---
