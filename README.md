@@ -17,6 +17,25 @@ PaRota, gerçek zamanlı altın ve döviz kurlarını takip edebileceğiniz, por
 
 </div>
 
+
+## 📱 Uygulama Ekran Görüntüleri
+
+<div align="center">
+
+### Ana Ekran & Portföy Yönetimi
+<img src="screenshots/home_screen1.png" width="200" alt="Ana Ekran">
+<img src="screenshots/home_screen2.png" width="200" alt="Portföy Yönetimi">
+<img src="screenshots/wallet.png" width="200" alt="Varlık Ekleme">
+
+### Gerçek Zamanlı Fiyatlar & İşlem Geçmişi
+<img src="screenshots/trade_screen.png" width="200" alt="Canlı Fiyatlar">
+<img src="screenshots/languages.png" width="200" alt="İşlem Geçmişi">
+<img src="screenshots/dark_theme.png" width="200" alt="Analiz Ekranı">
+
+</div>
+
+> **Not**: Daha fazla ekran görüntüsü için [App Store](https://apps.apple.com/tr/app/parota-alt%C4%B1n-d%C3%B6viz/id6747687974) ve [Google Play](https://play.google.com/store/apps/details?id=com.sakasstudio.parota) sayfalarını ziyaret edebilirsiniz.
+
 ## ✨ Özellikler
 
 ### 📊 Gerçek Zamanlı Veri Takibi
@@ -41,29 +60,7 @@ PaRota, gerçek zamanlı altın ve döviz kurlarını takip edebileceğiniz, por
 - **Tek Ekran Erişim**: İhtiyacınız olan tüm bilgiler tek ekranda
 - **Yaş Grubu Bağımsız**: Her yaştan kullanıcı için uygun tasarım
 
-## 💰 Desteklenen Finansal Araçlar
-
-### 🥇 Altın Fiyatları
-- Gram altın fiyatı
-- Çeyrek altın fiyatı
-- Yarım altın fiyatı
-- Tam altın fiyatı
-- Cumhuriyet altını fiyatı
-- 22 ayar bilezik altın
-- Külçe altın fiyatları
-
-### 💱 Döviz Kurları
-- USD/TL (Dolar kuru)
-- EUR/TL (Euro kuru)
-- GBP/TL (Sterlin kuru)
-- CHF/TL (İsviçre Frangı)
-- CAD/TL (Kanada Doları)
-- AUD/TL (Avustralya Doları)
-- JPY/TL (Japon Yeni)
-- NOK/TL (Norveç Kronu)
-- SEK/TL (İsveç Kronu)
-- DKK/TL (Danimarka Kronu)
-
+  
 ## 🏗️ Teknik Mimari
 
 Bu proje modern yazılım geliştirme prensiplerini benimser:
@@ -138,28 +135,6 @@ flutter run --debug
 flutter run --release
 ```
 
-## 📱 Uygulama Ekran Görüntüleri
-
-> Uygulama mağazalarından ekran görüntülerini inceleyebilirsiniz.
-
-## 📱 Ekran Görüntüleri
-
-<div align="center">
-
-### Ana Ekran & Portföy Yönetimi
-<img src="screenshots/home_screen1.png" width="200" alt="Ana Ekran">
-<img src="screenshots/home_screen2.png" width="200" alt="Portföy Yönetimi">
-<img src="screenshots/wallet.png" width="200" alt="Varlık Ekleme">
-
-### Gerçek Zamanlı Fiyatlar & İşlem Geçmişi
-<img src="screenshots/trade_screen.png" width="200" alt="Canlı Fiyatlar">
-<img src="screenshots/languages.png" width="200" alt="İşlem Geçmişi">
-<img src="screenshots/dark_theme.png" width="200" alt="Analiz Ekranı">
-
-</div>
-
-> **Not**: Daha fazla ekran görüntüsü için [App Store](https://apps.apple.com/tr/app/parota-alt%C4%B1n-d%C3%B6viz/id6747687974) ve [Google Play](https://play.google.com/store/apps/details?id=com.sakasstudio.parota) sayfalarını ziyaret edebilirsiniz.
-
 ## 🔐 Gizlilik ve Güvenlik
 
 - **Kişisel Veriler**: Minimal veri toplama prensibi
@@ -206,8 +181,8 @@ Bu proje telif hakları ile korunmaktadır.
 - [ ] Daha fazla finansal araç desteği
 - [ ] Gelişmiş analiz araçları
 - [ ] Push notification özellikleri
-- [ ] Dark mode desteği
-- [ ] Multi-language support
+- [X] Dark mode desteği
+- [X] Multi-language support
 - [ ] Widget desteği (iOS/Android)
 
 ---
