@@ -12,6 +12,7 @@ import '../../../firebase_options.dart';
 final class AppInit {
   static Future<void> initialize() async {
     WidgetsBinding widgetsBinding = WidgetsFlutterBinding.ensureInitialized();
+    Env(); //Envied Initialize
     FlutterNativeSplash.preserve(widgetsBinding: widgetsBinding);
     SystemChrome.setPreferredOrientations([
       DeviceOrientation.portraitUp,
@@ -24,7 +25,6 @@ final class AppInit {
     await Firebase.initializeApp(
       options: DefaultFirebaseOptions.currentPlatform,
     );
-    Env.setup(); //Envied Initialize
     debugPrint("All services initialized");
   }
 }

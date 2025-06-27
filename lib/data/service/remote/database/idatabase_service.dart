@@ -4,8 +4,6 @@ import 'package:asset_tracker/data/model/database/request/buy_currency_model.dar
 import 'package:asset_tracker/data/model/database/request/save_user_model.dart';
 import 'package:asset_tracker/data/model/database/request/sell_currency_model.dart';
 import 'package:asset_tracker/data/model/database/request/user_uid_model.dart';
-import 'package:asset_tracker/data/model/database/response/asset_code_model.dart'
-    show AssetCodeModel;
 import 'package:asset_tracker/data/model/database/response/user_currency_data_model.dart'
     show UserCurrencyDataModel;
 import 'package:asset_tracker/data/model/database/user_info_model.dart';
@@ -14,8 +12,6 @@ import 'package:dartz/dartz.dart' show Either;
 abstract interface class IDatabaseService {
   Future<Either<DatabaseErrorModel, SaveCurrencyModel>> saveTransaction(
       SaveCurrencyModel model);
-
-  Future<Either<DatabaseErrorModel, List<AssetCodeModel>>> getAssetCodes();
 
   //burada document snapshot verilmemeli ortak sınıftan türetilmeli yoksa SOLID e aykırı olur
   //TODO:

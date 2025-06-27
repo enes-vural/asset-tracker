@@ -6,6 +6,7 @@ import 'package:asset_tracker/core/routers/router.dart';
 import 'package:asset_tracker/domain/entities/database/enttiy/user_info_entity.dart';
 import 'package:asset_tracker/domain/entities/database/enttiy/user_uid_entity.dart';
 import 'package:asset_tracker/domain/usecase/auth/auth_use_case.dart';
+import 'package:asset_tracker/domain/usecase/cache/cache_use_case.dart';
 import 'package:asset_tracker/domain/usecase/database/database_use_case.dart';
 import 'package:asset_tracker/provider/app_global_provider.dart';
 import 'package:asset_tracker/provider/auth_global_provider.dart';
@@ -18,12 +19,14 @@ class SettingsViewModel extends ChangeNotifier {
   final AppGlobalProvider appGlobalProvider;
   final AuthGlobalProvider authGlobalProvider;
   final DatabaseUseCase databaseUseCase;
+  final CacheUseCase cacheUseCase;
 
   SettingsViewModel(
     this.authUseCase,
     this.appGlobalProvider,
     this.authGlobalProvider,
     this.databaseUseCase,
+    this.cacheUseCase,
   );
 
   final nameController = TextEditingController();
@@ -89,6 +92,8 @@ class SettingsViewModel extends ChangeNotifier {
   Future<void> signOut(WidgetRef ref, BuildContext context) async {
     await authUseCase.signOut();
     await appGlobalProvider.clearData();
+    //Firebase rules gereği, kullanıcı oturumu kapatıldığında offline işlemler silinmeli.
+    await cacheUseCase.clearAllOfflineActions();
     //clear old routes before pushing new route
     //Routers.instance.replaceAll(context, const LoginRoute());
     //Routers.instance.pushAndRemoveUntil(context, const LoginRoute());

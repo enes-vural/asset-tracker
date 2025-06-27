@@ -1,5 +1,6 @@
 import 'package:asset_tracker/data/model/base/base_model.dart';
 import 'package:asset_tracker/domain/entities/database/enttiy/user_info_entity.dart';
+import 'package:asset_tracker/env/envied.dart';
 
 final class UserInfoModel implements BaseModel {
   final String email;
@@ -23,21 +24,23 @@ final class UserInfoModel implements BaseModel {
       );
 
   static UserInfoModel fromJson(Map<String, dynamic> json) {
+    final env = Env();
     return UserInfoModel(
       //username eklentisi gelirse email yerine farlklı olarak firebase e kaydedilebilir.
-      uid: json['uid'] ?? "",
-      email: json['userName'] ?? "",
-      firstName: json['firstName'] ?? "",
-      lastName: json['lastName'] ?? "",
+      uid: json['uid'],
+      email: env.tryDecrypt(json['userName'] ?? ""),
+      firstName: env.tryDecrypt(json['firstName'] ?? ""),
+      lastName: env.tryDecrypt(json['lastName'] ?? ""),
     );
   }
 
   Map<String, dynamic> toJson() {
+    final env = Env();
     return {
       'uid': uid,
-      'userName': email,
-      'firstName': firstName,
-      'lastName': lastName,
+      'userName': env.encryptText(email),
+      'firstName': env.encryptText(firstName),
+      'lastName': env.encryptText(lastName),
     };
   }
 }

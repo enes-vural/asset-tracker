@@ -1,10 +1,8 @@
-import 'package:asset_tracker/core/config/localization/generated/locale_keys.g.dart';
 import 'package:asset_tracker/core/constants/database/transaction_type_enum.dart';
 import 'package:asset_tracker/data/model/database/error/database_error_model.dart';
 import 'package:asset_tracker/data/model/database/request/buy_currency_model.dart';
 import 'package:asset_tracker/data/model/database/request/save_user_model.dart';
 import 'package:asset_tracker/data/model/database/request/user_uid_model.dart';
-import 'package:asset_tracker/data/model/database/response/asset_code_model.dart';
 import 'package:asset_tracker/data/model/database/response/user_data_model.dart';
 import 'package:asset_tracker/data/model/database/response/user_currency_data_model.dart';
 import 'package:asset_tracker/data/model/database/user_info_model.dart';
@@ -19,38 +17,12 @@ import 'package:asset_tracker/domain/entities/database/error/database_error_enti
 import 'package:asset_tracker/domain/entities/database/request/save_user_entity.dart';
 import 'package:asset_tracker/domain/repository/database/firestore/ifirestore_repository.dart';
 import 'package:dartz/dartz.dart';
-import 'package:easy_localization/easy_localization.dart';
 import 'package:flutter/material.dart';
 
 class FirestoreRepository implements IFirestoreRepository {
   final IFirestoreService firestoreService;
 
   const FirestoreRepository({required this.firestoreService});
-
-  @override
-  Future<Either<DatabaseErrorEntity, List<AssetCodeModel>>>
-      getAssetCodes() async {
-    final currencyCodeList = await firestoreService.getAssetCodes();
-    //we setted our default empty error
-    DatabaseErrorEntity emptyError =
-        DatabaseErrorEntity(message: LocaleKeys.trade_nullAssetCodes.tr());
-
-    return currencyCodeList.fold(
-      (DatabaseErrorModel failure) {
-        return Left(DatabaseErrorEntity.fromModel(failure));
-      },
-      (List<AssetCodeModel> success) {
-        //the error statement if value was empty
-        if (success.isEmpty) {
-          debugPrint("Asset codes are empty ERROR: Line 27: DEVELOPER ERROR");
-          return Left(emptyError);
-        }
-
-        //another cases we will return the success value
-        return Right(success);
-      },
-    );
-  }
 
   @override
   Future<Either<DatabaseErrorEntity, SaveCurrencyEntity>> buyCurrency(
@@ -97,6 +69,10 @@ class FirestoreRepository implements IFirestoreRepository {
       for (Map<String, dynamic>? dataIndex in userAssetsData) {
         // debugPrint("User assets data: ${dataIndex.toString()}");
         if (dataIndex != null) {
+          if (dataIndex.isEmpty) {
+            debugPrint("User assets data is empty, skipping...");
+            continue;
+          }
           userDataModel.currencyList
               .add(UserCurrencyDataModel.fromJson(dataIndex));
         }

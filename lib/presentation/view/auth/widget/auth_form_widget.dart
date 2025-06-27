@@ -61,6 +61,7 @@ class AuthFormWidget extends StatelessWidget {
           focusNode: focusNode,
           textInputAction: textInputAction,
           onFieldSubmitted: onFieldSubmitted,
+          
         );
 
   AuthFormWidget.password({

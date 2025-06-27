@@ -156,15 +156,20 @@ class TradeViewModel extends ChangeNotifier {
     required WidgetRef ref,
     required BuildContext context,
   }) async {
-    changePopState(false);
 
     if (selectedCurrency == null) {
       EasySnackBar.show(context, "Birim Seçiniz");
       return;
     }
     if (selectedDate == null) {
+      EasySnackBar.show(context, LocaleKeys.trade_invalidDate.tr());
       return;
     }
+    if (selectedCurrency == null) {
+      EasySnackBar.show(context, LocaleKeys.trade_invalidType.tr());
+      return;
+    }
+    changePopState(false);
 
     final sellCurrencyEntity = SellCurrencyEntity(
       sellAmount: double.tryParse(amountController.text) ?? 0.0,
@@ -195,7 +200,6 @@ class TradeViewModel extends ChangeNotifier {
 
   Future<void> buyCurrency(
       {required WidgetRef ref, required BuildContext context}) async {
-    changePopState(false);
     final amount = double.tryParse(amountController.text) ?? 0.0;
     final price = double.tryParse(priceUnitController.text) ?? 0.0;
     //Localize edilmiş title dan seçilen değerin Code u alındı.
@@ -219,6 +223,7 @@ class TradeViewModel extends ChangeNotifier {
       EasySnackBar.show(context, LocaleKeys.trade_relogin.tr());
       return;
     }
+    changePopState(false);
 
     final SaveCurrencyEntity saveCurrencyEntity = SaveCurrencyEntity(null,
         amount: amount,

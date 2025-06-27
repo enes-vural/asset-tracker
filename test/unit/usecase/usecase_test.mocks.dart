@@ -18,6 +18,8 @@ import 'package:asset_tracker/domain/entities/auth/response/user_login_response_
     as _i7;
 import 'package:asset_tracker/domain/entities/auth/response/user_register_reponse_entity.dart'
     as _i9;
+import 'package:asset_tracker/domain/entities/database/error/database_error_entity.dart'
+    as _i11;
 import 'package:dartz/dartz.dart' as _i3;
 import 'package:mockito/mockito.dart' as _i1;
 
@@ -142,4 +144,39 @@ class MockFirebaseAuthRepository extends _i1.Mock
         returnValue: _i5.Future<void>.value(),
         returnValueForMissingStub: _i5.Future<void>.value(),
       ) as _i5.Future<void>);
+
+  @override
+  _i5.Future<_i3.Either<_i6.AuthErrorEntity, bool>> deleteAccount() =>
+      (super.noSuchMethod(
+        Invocation.method(
+          #deleteAccount,
+          [],
+        ),
+        returnValue: _i5.Future<_i3.Either<_i6.AuthErrorEntity, bool>>.value(
+            _FakeEither_1<_i6.AuthErrorEntity, bool>(
+          this,
+          Invocation.method(
+            #deleteAccount,
+            [],
+          ),
+        )),
+      ) as _i5.Future<_i3.Either<_i6.AuthErrorEntity, bool>>);
+
+  @override
+  _i5.Future<_i3.Either<_i11.DatabaseErrorEntity, bool>>
+      sendEmailVerification() => (super.noSuchMethod(
+            Invocation.method(
+              #sendEmailVerification,
+              [],
+            ),
+            returnValue:
+                _i5.Future<_i3.Either<_i11.DatabaseErrorEntity, bool>>.value(
+                    _FakeEither_1<_i11.DatabaseErrorEntity, bool>(
+              this,
+              Invocation.method(
+                #sendEmailVerification,
+                [],
+              ),
+            )),
+          ) as _i5.Future<_i3.Either<_i11.DatabaseErrorEntity, bool>>);
 }

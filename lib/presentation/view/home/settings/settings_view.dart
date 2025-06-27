@@ -11,6 +11,8 @@ import 'package:easy_localization/easy_localization.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
+import 'package:url_launcher/url_launcher.dart' show launchUrl;
+import 'package:url_launcher/url_launcher_string.dart';
 
 @RoutePage()
 class SettingsView extends ConsumerStatefulWidget {
@@ -671,63 +673,13 @@ class _SettingsViewState extends ConsumerState<SettingsView> {
     );
   }
 
-  void _showUserAgreement() {
-    final theme = Theme.of(context);
-
-    showDialog(
-      context: context,
-      builder: (context) => AlertDialog(
-        backgroundColor: theme.dialogBackgroundColor,
-        shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(16)),
-        title: Text(
-          LocaleKeys.home_settings_userAgreement.tr(),
-          style: TextStyle(color: theme.colorScheme.onSurface),
-        ),
-        content: SizedBox(
-          width: double.maxFinite,
-          height: 400,
-          child: SingleChildScrollView(
-            child: Text(
-              '''
-KULLANICI SÖZLEŞMESİ
-
-1. GENEL HÜKÜMLER
-Bu sözleşme, PaRota uygulamasının kullanım şartlarını belirler.
-
-2. UYGULAMANIN AMACI
-PaRota, yalnızca bilgilendirme amaçlı geliştirilmiş bir uygulamadır. Ticari bir geçerliliği bulunmamaktadır.
-
-3. KULLANICI SORUMLULUKLARI
-- Uygulama içerisindeki bilgileri kendi sorumluluğunuzda kullanın
-- Uygulamayı yasa dışı amaçlarla kullanmayın
-- Diğer kullanıcıların haklarına saygı gösterin
-
-4. SORUMLULUK REDDİ
-Uygulama geliştiricileri, uygulamadan kaynaklanan herhangi bir zarar için sorumluluk kabul etmez.
-
-5. DEĞİŞİKLİKLER
-Bu sözleşme herhangi bir zamanda güncellenebilir.
-
-Son güncelleme: ${DateTime.now().day}/${DateTime.now().month}/${DateTime.now().year}
-              ''',
-              style: TextStyle(
-                fontSize: 14,
-                height: 1.4,
-                color: theme.colorScheme.onSurface.withOpacity(0.8),
-              ),
-            ),
-          ),
-        ),
-        actions: [
-          TextButton(
-            onPressed: () => Navigator.pop(context),
-            child: Text(
-              LocaleKeys.home_settings_close.tr(),
-              style: TextStyle(color: theme.colorScheme.primary),
-            ),
-          ),
-        ],
-      ),
+  void _showUserAgreement() async {
+    final Uri _privacyUrl = Uri.parse(
+      'https://sakasstudio.blogspot.com/2025/06/parota-gizlilik-sozlesmesi-tr.html',
     );
+
+    if (!await launchUrl(_privacyUrl, mode: LaunchMode.externalApplication)) {
+      throw 'Link açılamadı: $_privacyUrl';
+    }
   }
 }
