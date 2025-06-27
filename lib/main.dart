@@ -10,8 +10,8 @@ import 'package:asset_tracker/injection.dart';
 import 'package:asset_tracker/provider/theme_provider.dart';
 import 'package:background_fetch/background_fetch.dart';
 import 'package:easy_localization/easy_localization.dart';
-import 'package:flutter/foundation.dart';
-import 'package:flutter/material.dart';
+import 'package:flutter/foundation.dart' hide Key;
+import 'package:flutter/material.dart' hide Key;
 import 'package:flutter/services.dart';
 import 'package:flutter_native_splash/flutter_native_splash.dart'
     show FlutterNativeSplash;

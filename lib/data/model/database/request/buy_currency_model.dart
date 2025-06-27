@@ -3,7 +3,7 @@ import 'package:asset_tracker/data/model/base/base_model.dart';
 import 'package:asset_tracker/data/model/database/request/sell_currency_model.dart';
 import 'package:asset_tracker/data/model/database/response/user_currency_data_model.dart';
 import 'package:asset_tracker/domain/entities/database/enttiy/buy_currency_entity.dart';
-import 'package:cloud_firestore/cloud_firestore.dart';
+import 'package:asset_tracker/env/envied.dart';
 import 'package:equatable/equatable.dart';
 
 final class SaveCurrencyModel extends Equatable implements BaseModel {
@@ -53,16 +53,17 @@ final class SaveCurrencyModel extends Equatable implements BaseModel {
   //we should update without create new document or overrite the old one
   //so we are increase the amount, price and total.
   Map<String, dynamic> toFirebaseJson() {
+    final Env env = Env();
     return {
-      if (oldPrice != null) 'oldPrice': oldPrice,
+      if (oldPrice != null) 'oldPrice': env.encryptText(oldPrice.toString()),
       'docId': docId,
-      'amount': FieldValue.increment(amount),
-      'price': FieldValue.increment(price),
-      'currency': currency,
+      'amount': env.encryptText(amount.toString()),
+      'price': env.encryptText(price.toString()),
+      'currency': env.encryptText(currency),
       'date': date,
-      'userId': userId,
-      'total': FieldValue.increment(total),
-      'type': transactionType.value,
+      'userId': userId.toString(),
+      'total': env.encryptText(total.toString()),
+      'type': env.encryptText(transactionType.value),
     };
   }
 
@@ -85,17 +86,18 @@ final class SaveCurrencyModel extends Equatable implements BaseModel {
   //so we are not using fromJson method for database logics.
   //This methods is only for hive and local storage for set business logics in offline
   factory SaveCurrencyModel.fromJson(Map<String, dynamic> json) {
+    final Env env = Env();
     return SaveCurrencyModel(
       //docId daha sonra service katmanından copyWith ile eklenecek
       json['docId'],
-      oldPrice: json['oldPrice'],
-      amount: json['amount'] as double,
-      price: json['price'] as double,
-      currency: json['currency'] as String,
+      oldPrice: double.tryParse(env.tryDecrypt(json['oldPrice'])) ?? 0.0,
+      amount: double.tryParse(env.tryDecrypt(json['amount'])) ?? 0.0,
+      price: double.tryParse(env.tryDecrypt(json['price'])) ?? 0.0,
+      currency: env.tryDecrypt(json['currency'] as String),
       date: json['date'] as DateTime,
-      userId: json['userId'] as String?,
+      userId: json['userId'],
       transactionType: TransactionTypeEnum.values
-          .firstWhere((e) => e.name == json['type'] as String),
+          .firstWhere((e) => e.name == env.tryDecrypt(json['type'] as String)),
     );
   }
 

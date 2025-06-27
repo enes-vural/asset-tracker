@@ -65,7 +65,6 @@ final Map<String, String> _currencyTitleMap = {
   "huftry": LocaleKeys.home_widget_huftry,
   "sektry": LocaleKeys.home_widget_sektry,
   "zartry": LocaleKeys.home_widget_zartry,
-  "gramaltin": LocaleKeys.home_widget_gramaltin,
 };
 
 // Lazy initialization ile reverse map

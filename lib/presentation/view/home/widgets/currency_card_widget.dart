@@ -378,38 +378,8 @@ class _CurrencyListWidgetState extends ConsumerState<CurrencyListWidget>
           horizontal: AppSize.mediumPadd, vertical: AppSize.smallPadd),
       child: Row(
         children: [
-          Expanded(
-            flex: 5,
-            child: _buildSortableHeaderItem(
-              title: LocaleKeys.home_unitTitle.tr(),
-              sortType: SortType.name,
-            ),
-          ),
-          Expanded(
-            flex: 3,
-            child: _buildSortableHeaderItem(
-              title: LocaleKeys.home_diff.tr(),
-              sortType: SortType.diff,
-              textAlign: TextAlign.center,
-            ),
-          ),
-          Expanded(
-            flex: 3,
-            child: _buildSortableHeaderItem(
-              title: LocaleKeys.home_buy.tr(),
-              sortType: SortType.buy,
-              textAlign: TextAlign.center,
-            ),
-          ),
-          Expanded(
-            flex: 3,
-            child: _buildSortableHeaderItem(
-              title: LocaleKeys.home_sell.tr(),
-              sortType: SortType.sell,
-              textAlign: TextAlign.center,
-            ),
-          ),
           AnimatedContainer(
+            curve: Curves.easeInOut,
             duration: const Duration(milliseconds: 300),
             width: currentSortType == SortType.custom ? 32 : 0,
             child: currentSortType == SortType.custom
@@ -442,6 +412,39 @@ class _CurrencyListWidgetState extends ConsumerState<CurrencyListWidget>
                   )
                 : const SizedBox(),
           ),
+          const CustomSizedBox.mediumWidth(),
+          Expanded(
+            flex: 3,
+            child: _buildSortableHeaderItem(
+              title: LocaleKeys.home_unitTitle.tr(),
+              sortType: SortType.name,
+            ),
+          ),
+          Expanded(
+            flex: 4,
+            child: _buildSortableHeaderItem(
+              title: LocaleKeys.home_buy.tr(),
+              sortType: SortType.buy,
+              textAlign: TextAlign.center,
+            ),
+          ),
+          Expanded(
+            flex: 4,
+            child: _buildSortableHeaderItem(
+              title: LocaleKeys.home_sell.tr(),
+              sortType: SortType.sell,
+              textAlign: TextAlign.center,
+            ),
+          ),
+          Expanded(
+            flex: 2,
+            child: _buildSortableHeaderItem(
+              title: LocaleKeys.home_diff.tr(),
+              sortType: SortType.diff,
+              textAlign: TextAlign.center,
+            ),
+          ),
+          
         ],
       ),
     );
@@ -653,7 +656,7 @@ class _CurrencyListWidgetState extends ConsumerState<CurrencyListWidget>
                           child: Text(
                             currency.code.toString(),
                             style: CustomTextStyle.greyColorPoppins(
-                                context, AppSize.small2Text),
+                                context, AppSize.xSmallText),
                             overflow: TextOverflow.ellipsis,
                           ),
                         ),
@@ -663,18 +666,6 @@ class _CurrencyListWidgetState extends ConsumerState<CurrencyListWidget>
                 ],
               ),
             ),
-            Expanded(
-              flex: 16,
-              child: Text(
-                "%${currency.entity.fark.toStringAsFixed(2)}",
-                style: TextStyle(
-                  color: _getChangeColor(currency.entity.dir.satisDir),
-                  fontWeight: FontWeight.bold,
-                ),
-                textAlign: TextAlign.center,
-              ),
-            ),
-            const CustomSizedBox.smallWidth(),
             // Sell Price
             // Buy Price
             Expanded(
@@ -742,6 +733,18 @@ class _CurrencyListWidgetState extends ConsumerState<CurrencyListWidget>
                     ),
                   ),
                 ),
+              ),
+            ),
+            const CustomSizedBox.smallWidth(),
+            Expanded(
+              flex: 12,
+              child: Text(
+                "%${currency.entity.fark.toStringAsFixed(2)}",
+                style: TextStyle(
+                  color: _getChangeColor(currency.entity.dir.satisDir),
+                  fontWeight: FontWeight.bold,
+                ),
+                textAlign: TextAlign.center,
               ),
             ),
           ],

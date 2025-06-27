@@ -4,7 +4,7 @@ description: "PaRota mobil uygulaması ile varlıklarınızı takip edin, yönet
 # Remove this line if you wish to publish to pub.dev
 publish_to: 'none' 
 
-version: 1.0.2+11
+version: 1.0.4+15
 
 environment:
   sdk: ^3.5.4
@@ -55,6 +55,8 @@ dependencies:
   flutter_native_splash: ^2.4.6
   flutter_launcher_icons: ^0.14.3
   get_it: ^8.0.3
+  encrypt: ^5.0.3
+  url_launcher: ^6.3.1
 
 dev_dependencies:
 

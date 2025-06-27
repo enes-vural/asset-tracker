@@ -145,6 +145,7 @@ final settingsViewModelProvider =
     ref.read(appGlobalProvider),
     ref.read(authGlobalProvider),
     getIt<DatabaseUseCase>(),
+    getIt<CacheUseCase>(),
   );
 });
 

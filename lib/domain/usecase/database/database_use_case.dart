@@ -1,4 +1,3 @@
-import 'package:asset_tracker/data/model/database/response/asset_code_model.dart';
 import 'package:asset_tracker/domain/entities/auth/base/error/base_error_entity.dart';
 import 'package:asset_tracker/domain/entities/database/enttiy/buy_currency_entity.dart';
 import 'package:asset_tracker/domain/entities/database/enttiy/sell_currency_entity.dart';
@@ -34,10 +33,7 @@ class DatabaseUseCase
     return await firestoreRepository.sellCurrency(entity);
   }
 
-  Future<Either<DatabaseErrorEntity, List<AssetCodeModel>>> getAssetCodes(
-      params) async {
-    return await firestoreRepository.getAssetCodes();
-  }
+
 
   Future<Either<DatabaseErrorEntity, UserDataEntity>> getUserData(
       UserUidEntity params) async {

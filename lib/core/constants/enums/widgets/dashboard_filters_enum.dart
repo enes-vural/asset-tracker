@@ -15,7 +15,6 @@ final Map<String, DashboardFilterEnum> currencyTypes = {
   "ayar14": DashboardFilterEnum.GOLD,
   "ayar22": DashboardFilterEnum.GOLD,
   "kulcealtin": DashboardFilterEnum.GOLD,
-  "gramaltin": DashboardFilterEnum.GOLD,
   "ceyrek_yeni": DashboardFilterEnum.GOLD,
   "ceyrek_eski": DashboardFilterEnum.GOLD,
   "yarim_yeni": DashboardFilterEnum.GOLD,

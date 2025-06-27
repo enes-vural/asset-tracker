@@ -1,4 +1,5 @@
 import 'package:asset_tracker/domain/entities/database/request/save_user_entity.dart';
+import 'package:asset_tracker/env/envied.dart';
 
 final class SaveUserModel {
   final String uid;
@@ -23,11 +24,12 @@ final class SaveUserModel {
   }
 
   Map<String, dynamic> toJson() {
+    final Env env = Env();
     return {
       'uid': uid,
-      'userName': userName,
-      'firstName': firstName,
-      'lastName': lastName,
+      'userName': env.encryptText(userName),
+      'firstName': env.encryptText(firstName),
+      'lastName': env.encryptText(lastName),
     };
   }
 }

@@ -1,5 +1,6 @@
 import 'package:asset_tracker/core/constants/database/transaction_type_enum.dart';
 import 'package:asset_tracker/domain/entities/database/enttiy/user_currency_entity_model.dart';
+import 'package:asset_tracker/env/envied.dart';
 import 'package:cloud_firestore/cloud_firestore.dart';
 
 //TODO: SaveCurrencyModel ile birleştirilebilir.
@@ -44,17 +45,21 @@ final class UserCurrencyDataModel {
   }
 
   factory UserCurrencyDataModel.fromJson(Map<String, dynamic> json) {
+    final Env env = Env();
     return UserCurrencyDataModel(
       docId: json['docId'],
-      oldPrice: json['oldPrice'],
+      oldPrice:
+          double.tryParse(env.tryDecrypt(json['oldPrice'].toString())) ?? 0.0,
       userId: json['userId'] ?? 'N/A',
-      amount: json['amount'] ?? 0.0,
-      currencyCode: json['currency'] ?? 'N/A',
+      amount: double.tryParse(env.tryDecrypt(json['amount'].toString())) ?? 0.0,
+      currencyCode: env.tryDecrypt(json['currency'] ?? 'N/A'),
       buyDate: json['date'] ?? Timestamp.now(),
-      price: json['price'] ?? 0.0,
-      total: json['total'] ?? 0.0,
+      price: double.tryParse(env.tryDecrypt(json['price'].toString())) ?? 0.0,
+      total: double.tryParse(env.tryDecrypt(json['total'].toString())) ?? 0.0,
       transactionType:
-          TransactionTypeEnum.values.firstWhere((e) => e.name == json['type']),
+          TransactionTypeEnum.values.firstWhere((e) =>
+          e.value.toString().toLowerCase() ==
+          env.tryDecrypt(json['type']).toLowerCase()),
     );
   }
 

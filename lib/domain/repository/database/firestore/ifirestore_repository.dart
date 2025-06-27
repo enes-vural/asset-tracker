@@ -1,5 +1,3 @@
-import 'package:asset_tracker/data/model/database/response/asset_code_model.dart'
-    show AssetCodeModel;
 import 'package:asset_tracker/domain/entities/database/enttiy/buy_currency_entity.dart';
 import 'package:asset_tracker/domain/entities/database/enttiy/sell_currency_entity.dart';
 import 'package:asset_tracker/domain/entities/database/enttiy/user_data_entity.dart';
@@ -11,7 +9,6 @@ import 'package:asset_tracker/domain/entities/database/request/save_user_entity.
 import 'package:dartz/dartz.dart' show Either;
 
 abstract interface class IFirestoreRepository {
-  Future<Either<DatabaseErrorEntity, List<AssetCodeModel>>> getAssetCodes();
 
   Future<Either<DatabaseErrorEntity, SaveCurrencyEntity>> buyCurrency(
       SaveCurrencyEntity entity);

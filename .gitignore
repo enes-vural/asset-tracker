@@ -52,6 +52,7 @@ parota_key.jks
 .pub-cache/
 .pub/
 /build/
+**/*.g.dart
 
 # Symbolication related
 app.*.symbols

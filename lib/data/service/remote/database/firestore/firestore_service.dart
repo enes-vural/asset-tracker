@@ -8,10 +8,10 @@ import 'package:asset_tracker/data/model/database/request/buy_currency_model.dar
 import 'package:asset_tracker/data/model/database/request/save_user_model.dart';
 import 'package:asset_tracker/data/model/database/request/sell_currency_model.dart';
 import 'package:asset_tracker/data/model/database/request/user_uid_model.dart';
-import 'package:asset_tracker/data/model/database/response/asset_code_model.dart';
 import 'package:asset_tracker/data/model/database/response/user_currency_data_model.dart';
 import 'package:asset_tracker/data/model/database/user_info_model.dart';
 import 'package:asset_tracker/data/service/remote/database/firestore/ifirestore_service.dart';
+import 'package:asset_tracker/env/envied.dart';
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:dartz/dartz.dart';
 import 'package:easy_localization/easy_localization.dart';
@@ -51,7 +51,9 @@ final class FirestoreService implements IFirestoreService {
         SetOptions(merge: true),
       );
       return Right(updatedModel);
-    } catch (e) {
+    } catch (e, stackTrace) {
+      debugPrint('CRASH ERROR: $e');
+      debugPrint('Stack trace: $stackTrace');
       return Left(DatabaseErrorModel(message: e.toString()));
     }
   }
@@ -75,6 +77,7 @@ final class FirestoreService implements IFirestoreService {
     UserUidModel model,
   ) async {
     List<Map<String, dynamic>?> assetDataList = [];
+
     try {
       final assetPath = await _assetCollection(model).get();
 
@@ -86,7 +89,7 @@ final class FirestoreService implements IFirestoreService {
 
         for (final type in [
           TransactionTypeEnum.BUY.value,
-          TransactionTypeEnum.SELL.value
+          TransactionTypeEnum.SELL.value,
         ]) {
           final datePath =
               _assetCollection(model).doc(currencyName).collection(type);
@@ -126,28 +129,6 @@ final class FirestoreService implements IFirestoreService {
   }
 
   @override
-  Future<Either<DatabaseErrorModel, List<AssetCodeModel>>>
-      getAssetCodes() async {
-    List<AssetCodeModel> assetCodeList = [];
-
-    try {
-      await instance
-          .collection(FirestoreConstants.assetsCollection)
-          .get()
-          .then((value) {
-        value.docs.forEach((element) {
-          assetCodeList.add(AssetCodeModel.fromJson(element.data()));
-        });
-      });
-
-      return Right(assetCodeList);
-    } catch (e) {
-      debugPrint(e.toString());
-      return Left(DatabaseErrorModel(message: e.toString()));
-    }
-  }
-
-  @override
   Future<Either<DatabaseErrorModel, bool>> deleteUserTransaction(
       UserCurrencyDataModel model) async {
     try {
@@ -156,7 +137,7 @@ final class FirestoreService implements IFirestoreService {
           .doc(model.userId)
           .collection(FirestoreConstants.assetsCollection)
           .doc(model.currencyCode)
-          .collection(model.transactionType.value.toString())
+          .collection(model.transactionType.value)
           .doc(model.docId)
           .delete();
       return const Right(true);
@@ -179,6 +160,7 @@ final class FirestoreService implements IFirestoreService {
   @override
   Future<Either<DatabaseErrorModel, bool>> sellCurrency(
       SellCurrencyModel model) async {
+    final Env env = Env();
     try {
       final userId = model.userId;
       final currency = model.currencyCode;
@@ -194,14 +176,16 @@ final class FirestoreService implements IFirestoreService {
           .doc(userId)
           .collection(FirestoreConstants.assetsCollection)
           .doc(currency)
-          .collection(TransactionTypeEnum.BUY.value.toString())
+          .collection(TransactionTypeEnum.BUY.value)
           .orderBy("date")
           .get();
 
       for (final doc in buyDocs.docs) {
         final data = doc.data();
-        final double amount = (data["amount"] as num).toDouble();
-        final double price = (data["price"] as num).toDouble();
+        final double amount =
+            double.tryParse(env.tryDecrypt(data["amount"].toString())) ?? 0.0;
+        final double price =
+            double.tryParse(env.tryDecrypt((data["price"].toString()))) ?? 0.0;
 
         if (remaining <= 0) break;
 
@@ -213,8 +197,8 @@ final class FirestoreService implements IFirestoreService {
         } else {
           final newAmount = amount - remaining;
           await doc.reference.update({
-            "amount": newAmount,
-            "total": newAmount * price,
+            "amount": env.encryptText(newAmount.toString()),
+            "total": env.encryptText((newAmount * price).toString()),
           });
 
           totalBuyCost += remaining * price;

@@ -30,7 +30,7 @@ class WebSocketService implements IWebSocketService {
       //error state yenileniyor init durumuna geçiyor
       //ek olarak connection done olunca errorState yenilenebilir ama basit düzeyde
       //sadece error dinlediğimiz için şu an gerek yok.
-      socket ??= await WebSocket.connect(Env.setup().socketApi);
+      socket ??= await WebSocket.connect(Env().socketApi);
       await _listenSocket();
     } catch (error) {
       //şimdilik direkt olarka error str yi veriyoruz ama api a bağlı olarak
