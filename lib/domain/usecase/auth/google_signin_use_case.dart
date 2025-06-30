@@ -1,3 +1,4 @@
+import 'package:asset_tracker/data/model/auth/firebase_auth_user_model.dart';
 import 'package:asset_tracker/domain/entities/auth/base/error/base_error_entity.dart';
 import 'package:asset_tracker/domain/repository/auth/igoogle_sign_in_repository.dart';
 import 'package:asset_tracker/domain/usecase/base/base_use_case.dart';
@@ -17,7 +18,7 @@ class GoogleSigninUseCase implements BaseUseCase {
     await _authRepository.initialize();
   }
 
-  Future<Either<BaseErrorEntity, dynamic>> signInWithGoogle() async {
+  Future<Either<BaseErrorEntity, FirebaseAuthUser?>> signInWithGoogle() async {
     try {
       final result = await _authRepository.signInWithGoogle();
       if (result != null) {

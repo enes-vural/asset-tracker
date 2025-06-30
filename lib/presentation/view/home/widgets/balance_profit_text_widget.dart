@@ -5,19 +5,37 @@ import 'package:asset_tracker/injection.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 
-class BalanceProfitTextWidget extends ConsumerWidget {
+class BalanceProfitTextWidget extends ConsumerStatefulWidget {
   const BalanceProfitTextWidget({super.key});
 
   @override
-  Widget build(BuildContext context, WidgetRef ref) {
+  ConsumerState<ConsumerStatefulWidget> createState() =>
+      _BalanceProfitTextWidgetState();
+}
+
+class _BalanceProfitTextWidgetState
+    extends ConsumerState<BalanceProfitTextWidget> {
+  @override
+  void initState() {
+    super.initState();
+  }
+
+  @override
+  void dispose() {
+    super.dispose();
+  }
+
+  @override
+  Widget build(BuildContext context) {
+    //authGlobal e direkt getter ile isAuthorized kontrolü eklenmesi lazım.
+    //TODO:
     final currentUserId = ref.read(authGlobalProvider).getCurrentUser?.uid;
 
     if (currentUserId == null) {
       return const CustomSizedBox.empty();
     }
 
-    double? profitPercent =
-        ref.watch(appGlobalProvider).getPercentProfit;
+    double? profitPercent = ref.watch(appGlobalProvider).getPercentProfit;
 
     bool isNegative() {
       if (profitPercent.toString().contains("-")) {

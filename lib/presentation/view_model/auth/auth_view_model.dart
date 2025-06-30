@@ -16,7 +16,6 @@ import 'package:asset_tracker/injection.dart';
 import 'package:dartz/dartz.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
-import 'package:google_sign_in/google_sign_in.dart';
 
 class AuthViewModel extends ChangeNotifier {
   final AuthUseCase authUseCase;
@@ -121,7 +120,12 @@ class AuthViewModel extends ChangeNotifier {
     });
   }
 
-  Future signInWithGoogle() async {
-    return await googleSigninUseCase.signInWithGoogle();
+  Future signInWithGoogle(BuildContext context) async {
+    final data = await googleSigninUseCase.signInWithGoogle();
+    data.fold((failure) {}, (success) {
+      if (success?.user?.uid != null) {
+        Routers.instance.pushAndRemoveUntil(context, const SplashRoute());
+      }
+    });
   }
 }

@@ -59,16 +59,6 @@ class GoogleSignInService implements ISignInService<GoogleSignInAccount> {
       debugPrint("User signed out");
       user = null;
     }
-
-    // Check for existing authorization.
-    // #docregion CheckAuthorization
-    final GoogleSignInClientAuthorization? authorization =
-        await user?.authorizationClient.authorizationForScopes(scopes);
-    // #enddocregion CheckAuthorization
-
-    if (user != null && authorization != null) {
-      debugPrint("USER OK");
-    }
   }
 
   String _handleAuthenticationError(Object e) {

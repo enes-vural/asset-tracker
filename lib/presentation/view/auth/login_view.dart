@@ -274,6 +274,6 @@ class _TrialViewState extends ConsumerState<LoginView> with ValidatorMixin {
 
   void _signInWithGoogle(
       AuthViewModel authViewModel, BuildContext context) async {
-    await authViewModel.signInWithGoogle();
+    await authViewModel.signInWithGoogle(context);
   }
 }

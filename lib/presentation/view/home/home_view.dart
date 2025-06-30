@@ -1,4 +1,6 @@
 // ignore_for_file: prefer_const_constructors, unnecessary_null_comparison
+import 'dart:async';
+
 import 'package:asset_tracker/core/config/localization/generated/locale_keys.g.dart';
 import 'package:asset_tracker/core/config/theme/app_size.dart';
 import 'package:asset_tracker/core/config/theme/style_theme.dart';
@@ -13,6 +15,7 @@ import 'package:asset_tracker/injection.dart';
 import 'package:asset_tracker/presentation/view/home/widgets/balance_profit_text_widget.dart';
 import 'package:asset_tracker/presentation/view/home/widgets/balance_text_widget.dart';
 import 'package:asset_tracker/presentation/view/home/widgets/currency_card_widget.dart';
+import 'package:skeletonizer/skeletonizer.dart';
 
 @RoutePage()
 class HomeView extends ConsumerStatefulWidget {
@@ -29,14 +32,10 @@ class _HomeViewState extends ConsumerState<HomeView>
   late Animation<double> _searchAnimation;
   late FocusNode _searchFocusNode;
 
+  Timer? _skeletonTimer;
+  bool _showSkeleton = true;
+
   bool _isSearchOpen = false;
-
-  Future<void> callData() async =>
-      await ref.read(homeViewModelProvider).getData(ref);
-
-  Future<void> getErrorStream() async => await ref
-      .read(homeViewModelProvider)
-      .getErrorStream(parentContext: context);
 
   Future<void> initalizeVM() async =>
       await ref.read(homeViewModelProvider).initHomeView();
@@ -68,9 +67,14 @@ class _HomeViewState extends ConsumerState<HomeView>
         });
       }
     });
+    _skeletonTimer = Timer(const Duration(seconds: 1), () {
+      if (mounted) {
+        setState(() {
+          _showSkeleton = false;
+        });
+      }
+    });
 
-    callData();
-    getErrorStream();
     super.initState();
   }
 
@@ -102,138 +106,146 @@ class _HomeViewState extends ConsumerState<HomeView>
     final authState = ref.watch(authGlobalProvider);
     final viewModel = ref.read(homeViewModelProvider);
 
-    return Scaffold(
-      body: Stack(
-        children: [
-          CustomScrollView(
-            controller: _scrollController,
-            physics: const BouncingScrollPhysics(),
-            slivers: [
-              SliverToBoxAdapter(
-                child: CustomPadding.largeHorizontal(
-                  widget: Column(
-                    crossAxisAlignment: CrossAxisAlignment.start,
-                    mainAxisAlignment: MainAxisAlignment.start,
-                    children: [
-                      // Animated Search Bar
-                      AnimatedBuilder(
-                        animation: _searchAnimation,
-                        builder: (context, child) {
-                          return SizeTransition(
-                            sizeFactor: _searchAnimation,
-                            child: Container(
-                              margin: EdgeInsets.only(
-                                top: MediaQuery.of(context).padding.top + 16,
-                                bottom: 16,
-                              ),
-                              padding: EdgeInsets.symmetric(horizontal: 16),
-                              decoration: BoxDecoration(
-                                color: Theme.of(context).colorScheme.surface,
-                                borderRadius: BorderRadius.circular(25),
-                                boxShadow: [
-                                  BoxShadow(
-                                    color: Colors.black.withOpacity(0.1),
-                                    blurRadius: 10,
-                                    offset: Offset(0, 2),
-                                  ),
-                                ],
-                                border: Border.all(
-                                  color: Theme.of(context)
-                                      .colorScheme
-                                      .outline
-                                      .withOpacity(0.2),
+    bool isDataLoaded = ref.read(appGlobalProvider).globalAssets != null &&
+        ref.read(appGlobalProvider).globalAssets!.isNotEmpty;
+    bool isLoading = !isDataLoaded || _showSkeleton;
+
+    return Skeletonizer(
+      enabled: isLoading,
+      child: Scaffold(
+        body: Stack(
+          children: [
+            CustomScrollView(
+              controller: _scrollController,
+              physics: const BouncingScrollPhysics(),
+              slivers: [
+                SliverToBoxAdapter(
+                  child: CustomPadding.largeHorizontal(
+                    widget: Column(
+                      crossAxisAlignment: CrossAxisAlignment.start,
+                      mainAxisAlignment: MainAxisAlignment.start,
+                      children: [
+                        // Animated Search Bar
+                        AnimatedBuilder(
+                          animation: _searchAnimation,
+                          builder: (context, child) {
+                            return SizeTransition(
+                              sizeFactor: _searchAnimation,
+                              child: Container(
+                                margin: EdgeInsets.only(
+                                  top: MediaQuery.of(context).padding.top + 16,
+                                  bottom: 16,
                                 ),
-                              ),
-                              child: Row(
-                                children: [
-                                  Icon(
-                                    Icons.search,
+                                padding: EdgeInsets.symmetric(horizontal: 16),
+                                decoration: BoxDecoration(
+                                  color: Theme.of(context).colorScheme.surface,
+                                  borderRadius: BorderRadius.circular(25),
+                                  boxShadow: [
+                                    BoxShadow(
+                                      color: Colors.black.withOpacity(0.1),
+                                      blurRadius: 10,
+                                      offset: Offset(0, 2),
+                                    ),
+                                  ],
+                                  border: Border.all(
                                     color: Theme.of(context)
                                         .colorScheme
-                                        .onSurface
-                                        .withOpacity(0.6),
+                                        .outline
+                                        .withOpacity(0.2),
                                   ),
-                                  SizedBox(width: 12),
-                                  Expanded(
-                                    child: TextField(
-                                      controller: viewModel.searchBarController,
-                                      focusNode: _searchFocusNode,
-                                      decoration: InputDecoration(
-                                        hintText:
-                                            LocaleKeys.home_searchText.tr(),
-                                        border: InputBorder.none,
-                                        hintStyle: TextStyle(
-                                          color: Theme.of(context)
-                                              .colorScheme
-                                              .onSurface
-                                              .withOpacity(0.5),
-                                        ),
-                                      ),
-                                      style: TextStyle(
-                                        color: Theme.of(context)
-                                            .colorScheme
-                                            .onSurface,
-                                      ),
-                                    ),
-                                  ),
-                                  IconButton(
-                                    icon: Icon(
-                                      Icons.clear,
+                                ),
+                                child: Row(
+                                  children: [
+                                    Icon(
+                                      Icons.search,
                                       color: Theme.of(context)
                                           .colorScheme
                                           .onSurface
                                           .withOpacity(0.6),
                                     ),
-                                    onPressed: () {
-                                      viewModel.clearText();
-                                    },
-                                  ),
-                                ],
+                                    SizedBox(width: 12),
+                                    Expanded(
+                                      child: TextField(
+                                        controller:
+                                            viewModel.searchBarController,
+                                        focusNode: _searchFocusNode,
+                                        decoration: InputDecoration(
+                                          hintText:
+                                              LocaleKeys.home_searchText.tr(),
+                                          border: InputBorder.none,
+                                          hintStyle: TextStyle(
+                                            color: Theme.of(context)
+                                                .colorScheme
+                                                .onSurface
+                                                .withOpacity(0.5),
+                                          ),
+                                        ),
+                                        style: TextStyle(
+                                          color: Theme.of(context)
+                                              .colorScheme
+                                              .onSurface,
+                                        ),
+                                      ),
+                                    ),
+                                    IconButton(
+                                      icon: Icon(
+                                        Icons.clear,
+                                        color: Theme.of(context)
+                                            .colorScheme
+                                            .onSurface
+                                            .withOpacity(0.6),
+                                      ),
+                                      onPressed: () {
+                                        viewModel.clearText();
+                                      },
+                                    ),
+                                  ],
+                                ),
                               ),
-                            ),
-                          );
-                        },
-                      ),
-                      //const UserEmailTextWidget(),
-                      //const CustomSizedBox.hugeGap(),
-                      BalanceTextWidget(),
-                      BalanceProfitTextWidget(),
-                      //if user is not authorized show _signInText Widget
-                      //else return sizedbox with no volume.
-                      authState.getCurrentUser?.user == null
-                          ? _signInText()
-                          : const CustomSizedBox.empty(),
-                      const CustomSizedBox.mediumGap(),
-                      _dateTimeTextWidget(),
-                      const CustomSizedBox.smallGap(),
-                      const CurrencyListWidget(),
-                      const CustomSizedBox.hugeGap(),
-                      // Bottom navigation için ekstra boşluk
-                      const CustomSizedBox.hugeGap(),
-                      const CustomSizedBox.hugeGap(),
-                    ],
+                            );
+                          },
+                        ),
+                        //const UserEmailTextWidget(),
+                        //const CustomSizedBox.hugeGap(),
+                        BalanceTextWidget(),
+                        BalanceProfitTextWidget(),
+                        //if user is not authorized show _signInText Widget
+                        //else return sizedbox with no volume.
+                        authState.getCurrentUser?.user == null
+                            ? _signInText()
+                            : const CustomSizedBox.empty(),
+                        const CustomSizedBox.mediumGap(),
+                        _dateTimeTextWidget(),
+                        const CustomSizedBox.smallGap(),
+                        const CurrencyListWidget(),
+                        const CustomSizedBox.hugeGap(),
+                        // Bottom navigation için ekstra boşluk
+                        const CustomSizedBox.hugeGap(),
+                        const CustomSizedBox.hugeGap(),
+                      ],
+                    ),
                   ),
                 ),
-              ),
-            ],
-          ),
-        ],
-      ),
-      floatingActionButton: FloatingActionButton(
-        onPressed: _toggleSearch,
-        backgroundColor: Theme.of(context).colorScheme.primary,
-        child: AnimatedSwitcher(
-          duration: Duration(milliseconds: 150),
-          transitionBuilder: (Widget child, Animation<double> animation) {
-            return RotationTransition(
-              turns: animation,
-              child: child,
-            );
-          },
-          child: Icon(
-            _isSearchOpen ? Icons.close : Icons.search,
-            key: ValueKey(_isSearchOpen),
-            color: Theme.of(context).colorScheme.onPrimary,
+              ],
+            ),
+          ],
+        ),
+        floatingActionButton: FloatingActionButton(
+          onPressed: _toggleSearch,
+          backgroundColor: Theme.of(context).colorScheme.primary,
+          child: AnimatedSwitcher(
+            duration: Duration(milliseconds: 150),
+            transitionBuilder: (Widget child, Animation<double> animation) {
+              return RotationTransition(
+                turns: animation,
+                child: child,
+              );
+            },
+            child: Icon(
+              _isSearchOpen ? Icons.close : Icons.search,
+              key: ValueKey(_isSearchOpen),
+              color: Theme.of(context).colorScheme.onPrimary,
+            ),
           ),
         ),
       ),
