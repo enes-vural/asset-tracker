@@ -1,5 +1,4 @@
 import 'package:asset_tracker/core/config/localization/generated/locale_keys.g.dart';
-import 'package:asset_tracker/core/config/theme/extension/responsive_extension.dart';
 import 'package:asset_tracker/core/constants/string_constant.dart';
 import 'package:asset_tracker/core/widgets/custom_padding.dart';
 import 'package:asset_tracker/core/widgets/custom_sized_box.dart';
@@ -54,42 +53,55 @@ class _MenuViewState extends ConsumerState<MenuView>
   Widget build(BuildContext context) {
     final HomeViewModel viewModel = ref.watch(homeViewModelProvider);
     final authState = ref.watch(authGlobalProvider);
-    int menuIndex = ref.watch(appGlobalProvider).menuNavigationIndex;
+    int currentIndex = ref.watch(appGlobalProvider).menuNavigationIndex;
 
-    return Scaffold(
-      appBar: AppBar(
-        //surfaceTintColor: DefaultColorPalette.grey100,
-        //backgroundColor: DefaultColorPalette.grey100,
-        //shadowColor: DefaultColorPalette.vanillaBlack,
-        elevation: 0,
-        scrolledUnderElevation: 0,
-        actionsPadding: const CustomEdgeInstets.mediumHorizontal(),
-        centerTitle: true,
-        title: const PaRotaLogoWidget(),
-        actions: [
-          authState.getCurrentUser?.user != null
-              ? const CustomSizedBox.empty()
-              : TextButton(
-                  onPressed: () => viewModel.routeSignInPage(context),
-                  child: Text(
-                    LocaleKeys.auth_signIn.tr(),
-                    style: TextStyle(
-                      fontFamily: 'Manrope',
-                      fontWeight: FontWeight.bold,
-                      color: DefaultColorPalette.mainBlue,
+    return PopScope(
+      canPop: false, // Varsayılan pop davranışını engelle
+      onPopInvoked: (didPop) async {
+        if (didPop) return;
+
+        // Eğer Home tab'inde değilsek, Home'a dön
+        if (currentIndex != 0) {
+          ref.read(appGlobalProvider).changeMenuNavigationIndex(0);
+          return;
+        }
+      },
+      child: Scaffold(
+        appBar: AppBar(
+          //surfaceTintColor: DefaultColorPalette.grey100,
+          //backgroundColor: DefaultColorPalette.grey100,
+          //shadowColor: DefaultColorPalette.vanillaBlack,
+          elevation: 0,
+          scrolledUnderElevation: 0,
+          actionsPadding: const CustomEdgeInstets.mediumHorizontal(),
+          centerTitle: true,
+          title: const PaRotaLogoWidget(),
+          actions: [
+            authState.getCurrentUser?.user != null
+                ? const CustomSizedBox.empty()
+                : TextButton(
+                    onPressed: () => viewModel.routeSignInPage(context),
+                    child: Text(
+                      LocaleKeys.auth_signIn.tr(),
+                      style: TextStyle(
+                        fontFamily: 'Manrope',
+                        fontWeight: FontWeight.bold,
+                        color: DefaultColorPalette.mainBlue,
+                      ),
                     ),
                   ),
-                ),
-        ],
+          ],
+        ),
+        body: IndexedStack(
+          index: ref.watch(appGlobalProvider).menuNavigationIndex,
+          children: [
+            ...pages,
+          ],
+        ),
+        bottomNavigationBar: const MenuBottomNavigationBarWidget(),
       ),
-      body: SizedBox(
-        height: ResponsiveSize(context).screenHeight,
-        child: pages[menuIndex],
-      ),
-      bottomNavigationBar: const MenuBottomNavigationBarWidget(),
     );
   }
-
   IconButton exitAppIconButton(VoidCallback fn) => IconButton(
         onPressed: fn,
         icon: CustomIcon.exit(),

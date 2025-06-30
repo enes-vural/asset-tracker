@@ -5,7 +5,6 @@ import 'package:asset_tracker/domain/entities/database/error/database_error_enti
 import 'package:asset_tracker/domain/repository/auth/iauth_repository.dart';
 import 'package:asset_tracker/domain/usecase/base/base_use_case.dart';
 import 'package:dartz/dartz.dart';
-
 import '../../entities/auth/response/user_login_response_entity.dart';
 
 class AuthUseCase implements BaseUseCase {

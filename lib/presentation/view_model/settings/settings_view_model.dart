@@ -6,8 +6,10 @@ import 'package:asset_tracker/core/routers/router.dart';
 import 'package:asset_tracker/domain/entities/database/enttiy/user_info_entity.dart';
 import 'package:asset_tracker/domain/entities/database/enttiy/user_uid_entity.dart';
 import 'package:asset_tracker/domain/usecase/auth/auth_use_case.dart';
+import 'package:asset_tracker/domain/usecase/auth/google_signin_use_case.dart';
 import 'package:asset_tracker/domain/usecase/cache/cache_use_case.dart';
 import 'package:asset_tracker/domain/usecase/database/database_use_case.dart';
+import 'package:asset_tracker/injection.dart';
 import 'package:asset_tracker/provider/app_global_provider.dart';
 import 'package:asset_tracker/provider/auth_global_provider.dart';
 import 'package:easy_localization/easy_localization.dart';
@@ -91,6 +93,7 @@ class SettingsViewModel extends ChangeNotifier {
 
   Future<void> signOut(WidgetRef ref, BuildContext context) async {
     await authUseCase.signOut();
+    await getIt<GoogleSigninUseCase>().signOut();
     await appGlobalProvider.clearData();
     //Firebase rules gereği, kullanıcı oturumu kapatıldığında offline işlemler silinmeli.
     await cacheUseCase.clearAllOfflineActions();

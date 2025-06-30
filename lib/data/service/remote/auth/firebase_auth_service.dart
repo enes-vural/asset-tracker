@@ -1,3 +1,5 @@
+import 'dart:async';
+
 import 'package:asset_tracker/data/model/auth/error/auth_response_model.dart';
 import 'package:asset_tracker/data/model/auth/firebase_auth_user_model.dart';
 import 'package:asset_tracker/data/model/auth/request/user_login_model.dart';
@@ -22,6 +24,13 @@ class FirebaseAuthService implements IFirebaseAuthService {
   @override
   String? getUserId() {
     return authService.currentUser?.uid;
+  }
+
+  @override
+  Future<FirebaseAuthUser?> signInWithCredential(
+      AuthCredential credential) async {
+    final response = await authService.signInWithCredential(credential);
+    return _combineUserData(response);
   }
 
   @override
@@ -61,6 +70,7 @@ class FirebaseAuthService implements IFirebaseAuthService {
     return await authService.sendPasswordResetEmail(email: email);
   }
 
+  @override
   Future<Either<AuthErrorModel, bool>> deleteAccount() async {
     final user = authService.currentUser;
     if (user != null) {

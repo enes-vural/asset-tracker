@@ -69,4 +69,10 @@ class MockAuthService implements IMockAuthService {
     // TODO: implement sendEmailVerification
     throw UnimplementedError();
   }
+  
+  @override
+  Future<MockAuthUserModel?> signInWithCredential(credential) {
+    // TODO: implement signInWithCredential
+    throw UnimplementedError();
+  }
 }

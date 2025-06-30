@@ -437,14 +437,13 @@ class _CurrencyListWidgetState extends ConsumerState<CurrencyListWidget>
             ),
           ),
           Expanded(
-            flex: 2,
+            flex: 3,
             child: _buildSortableHeaderItem(
               title: LocaleKeys.home_diff.tr(),
               sortType: SortType.diff,
               textAlign: TextAlign.center,
             ),
           ),
-          
         ],
       ),
     );
@@ -741,8 +740,9 @@ class _CurrencyListWidgetState extends ConsumerState<CurrencyListWidget>
               child: Text(
                 "%${currency.entity.fark.toStringAsFixed(2)}",
                 style: TextStyle(
-                  color: _getChangeColor(currency.entity.dir.satisDir),
+                  color: _getChangeColor(currency.entity.fark.toString()),
                   fontWeight: FontWeight.bold,
+                  fontSize: AppSize.xSmallText + 2,
                 ),
                 textAlign: TextAlign.center,
               ),

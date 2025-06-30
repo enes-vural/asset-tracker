@@ -9,17 +9,20 @@ import 'package:asset_tracker/domain/entities/auth/request/user_register_entity.
 import 'package:asset_tracker/domain/entities/auth/response/user_register_reponse_entity.dart';
 import 'package:asset_tracker/domain/entities/database/request/save_user_entity.dart';
 import 'package:asset_tracker/domain/usecase/auth/auth_use_case.dart';
+import 'package:asset_tracker/domain/usecase/auth/google_signin_use_case.dart';
 import 'package:asset_tracker/domain/usecase/cache/cache_use_case.dart';
 import 'package:asset_tracker/domain/usecase/database/database_use_case.dart';
 import 'package:asset_tracker/injection.dart';
 import 'package:dartz/dartz.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
+import 'package:google_sign_in/google_sign_in.dart';
 
 class AuthViewModel extends ChangeNotifier {
   final AuthUseCase authUseCase;
+  final GoogleSigninUseCase googleSigninUseCase;
 
-  AuthViewModel({required this.authUseCase});
+  AuthViewModel({required this.authUseCase, required this.googleSigninUseCase});
 
   final TextEditingController emailController = TextEditingController();
   final TextEditingController passwordController = TextEditingController();
@@ -116,5 +119,9 @@ class AuthViewModel extends ChangeNotifier {
       changePopState(true);
       Routers.instance.pushAndRemoveUntil(context, const SplashRoute());
     });
+  }
+
+  Future signInWithGoogle() async {
+    return await googleSigninUseCase.signInWithGoogle();
   }
 }
