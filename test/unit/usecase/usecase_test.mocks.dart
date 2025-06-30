@@ -3,24 +3,26 @@
 // Do not manually edit this file.
 
 // ignore_for_file: no_leading_underscores_for_library_prefixes
-import 'dart:async' as _i5;
+import 'dart:async' as _i6;
 
-import 'package:asset_tracker/data/repository/auth/auth_repository.dart' as _i4;
+import 'package:asset_tracker/data/repository/auth/auth_repository.dart' as _i5;
+import 'package:asset_tracker/data/service/remote/auth/google_sign_in_service.dart'
+    as _i3;
 import 'package:asset_tracker/data/service/remote/auth/iauth_service.dart'
     as _i2;
 import 'package:asset_tracker/domain/entities/auth/error/auth_error_entity.dart'
-    as _i6;
-import 'package:asset_tracker/domain/entities/auth/request/user_login_entity.dart'
-    as _i8;
-import 'package:asset_tracker/domain/entities/auth/request/user_register_entity.dart'
-    as _i10;
-import 'package:asset_tracker/domain/entities/auth/response/user_login_response_entity.dart'
     as _i7;
-import 'package:asset_tracker/domain/entities/auth/response/user_register_reponse_entity.dart'
+import 'package:asset_tracker/domain/entities/auth/request/user_login_entity.dart'
     as _i9;
-import 'package:asset_tracker/domain/entities/database/error/database_error_entity.dart'
+import 'package:asset_tracker/domain/entities/auth/request/user_register_entity.dart'
     as _i11;
-import 'package:dartz/dartz.dart' as _i3;
+import 'package:asset_tracker/domain/entities/auth/response/user_login_response_entity.dart'
+    as _i8;
+import 'package:asset_tracker/domain/entities/auth/response/user_register_reponse_entity.dart'
+    as _i10;
+import 'package:asset_tracker/domain/entities/database/error/database_error_entity.dart'
+    as _i12;
+import 'package:dartz/dartz.dart' as _i4;
 import 'package:mockito/mockito.dart' as _i1;
 
 // ignore_for_file: type=lint
@@ -37,8 +39,8 @@ import 'package:mockito/mockito.dart' as _i1;
 // ignore_for_file: camel_case_types
 // ignore_for_file: subtype_of_sealed_class
 
-class _FakeIAuthService_0<L, R> extends _i1.SmartFake
-    implements _i2.IAuthService<L, R> {
+class _FakeIAuthService_0<L, R, E> extends _i1.SmartFake
+    implements _i2.IAuthService<L, R, E> {
   _FakeIAuthService_0(
     Object parent,
     Invocation parentInvocation,
@@ -48,8 +50,19 @@ class _FakeIAuthService_0<L, R> extends _i1.SmartFake
         );
 }
 
-class _FakeEither_1<L, R> extends _i1.SmartFake implements _i3.Either<L, R> {
-  _FakeEither_1(
+class _FakeGoogleSignInService_1 extends _i1.SmartFake
+    implements _i3.GoogleSignInService {
+  _FakeGoogleSignInService_1(
+    Object parent,
+    Invocation parentInvocation,
+  ) : super(
+          parent,
+          parentInvocation,
+        );
+}
+
+class _FakeEither_2<L, R> extends _i1.SmartFake implements _i4.Either<L, R> {
+  _FakeEither_2(
     Object parent,
     Invocation parentInvocation,
   ) : super(
@@ -62,121 +75,131 @@ class _FakeEither_1<L, R> extends _i1.SmartFake implements _i3.Either<L, R> {
 ///
 /// See the documentation for Mockito's code generation for more information.
 class MockFirebaseAuthRepository extends _i1.Mock
-    implements _i4.FirebaseAuthRepository {
+    implements _i5.FirebaseAuthRepository {
   MockFirebaseAuthRepository() {
     _i1.throwOnMissingStub(this);
   }
 
   @override
-  _i2.IAuthService<dynamic, dynamic> get authService => (super.noSuchMethod(
+  _i2.IAuthService<dynamic, dynamic, dynamic> get authService =>
+      (super.noSuchMethod(
         Invocation.getter(#authService),
-        returnValue: _FakeIAuthService_0<dynamic, dynamic>(
+        returnValue: _FakeIAuthService_0<dynamic, dynamic, dynamic>(
           this,
           Invocation.getter(#authService),
         ),
-      ) as _i2.IAuthService<dynamic, dynamic>);
+      ) as _i2.IAuthService<dynamic, dynamic, dynamic>);
 
   @override
-  _i5.Future<_i3.Either<_i6.AuthErrorEntity, _i7.UserLoginResponseEntity>>
-      signIn(_i8.UserLoginEntity? entity) => (super.noSuchMethod(
+  _i3.GoogleSignInService get googleSignInService => (super.noSuchMethod(
+        Invocation.getter(#googleSignInService),
+        returnValue: _FakeGoogleSignInService_1(
+          this,
+          Invocation.getter(#googleSignInService),
+        ),
+      ) as _i3.GoogleSignInService);
+
+  @override
+  _i6.Future<_i4.Either<_i7.AuthErrorEntity, _i8.UserLoginResponseEntity>>
+      signIn(_i9.UserLoginEntity? entity) => (super.noSuchMethod(
             Invocation.method(
               #signIn,
               [entity],
             ),
-            returnValue: _i5.Future<
-                    _i3.Either<_i6.AuthErrorEntity,
-                        _i7.UserLoginResponseEntity>>.value(
-                _FakeEither_1<_i6.AuthErrorEntity, _i7.UserLoginResponseEntity>(
+            returnValue: _i6.Future<
+                    _i4.Either<_i7.AuthErrorEntity,
+                        _i8.UserLoginResponseEntity>>.value(
+                _FakeEither_2<_i7.AuthErrorEntity, _i8.UserLoginResponseEntity>(
               this,
               Invocation.method(
                 #signIn,
                 [entity],
               ),
             )),
-          ) as _i5.Future<
-              _i3.Either<_i6.AuthErrorEntity, _i7.UserLoginResponseEntity>>);
+          ) as _i6.Future<
+              _i4.Either<_i7.AuthErrorEntity, _i8.UserLoginResponseEntity>>);
 
   @override
-  _i5.Future<_i3.Either<_i6.AuthErrorEntity, _i9.UserRegisterReponseEntity>>
-      registerUser(_i10.UserRegisterEntity? entity) => (super.noSuchMethod(
+  _i6.Future<_i4.Either<_i7.AuthErrorEntity, _i10.UserRegisterReponseEntity>>
+      registerUser(_i11.UserRegisterEntity? entity) => (super.noSuchMethod(
             Invocation.method(
               #registerUser,
               [entity],
             ),
-            returnValue: _i5.Future<
-                _i3.Either<_i6.AuthErrorEntity,
-                    _i9.UserRegisterReponseEntity>>.value(_FakeEither_1<
-                _i6.AuthErrorEntity, _i9.UserRegisterReponseEntity>(
+            returnValue: _i6.Future<
+                _i4.Either<_i7.AuthErrorEntity,
+                    _i10.UserRegisterReponseEntity>>.value(_FakeEither_2<
+                _i7.AuthErrorEntity, _i10.UserRegisterReponseEntity>(
               this,
               Invocation.method(
                 #registerUser,
                 [entity],
               ),
             )),
-          ) as _i5.Future<
-              _i3.Either<_i6.AuthErrorEntity, _i9.UserRegisterReponseEntity>>);
+          ) as _i6.Future<
+              _i4.Either<_i7.AuthErrorEntity, _i10.UserRegisterReponseEntity>>);
 
   @override
-  _i5.Stream<dynamic> getUserStateChanges() => (super.noSuchMethod(
+  _i6.Stream<dynamic> getUserStateChanges() => (super.noSuchMethod(
         Invocation.method(
           #getUserStateChanges,
           [],
         ),
-        returnValue: _i5.Stream<dynamic>.empty(),
-      ) as _i5.Stream<dynamic>);
+        returnValue: _i6.Stream<dynamic>.empty(),
+      ) as _i6.Stream<dynamic>);
 
   @override
-  _i5.Future<void> signOut() => (super.noSuchMethod(
+  _i6.Future<void> signOut() => (super.noSuchMethod(
         Invocation.method(
           #signOut,
           [],
         ),
-        returnValue: _i5.Future<void>.value(),
-        returnValueForMissingStub: _i5.Future<void>.value(),
-      ) as _i5.Future<void>);
+        returnValue: _i6.Future<void>.value(),
+        returnValueForMissingStub: _i6.Future<void>.value(),
+      ) as _i6.Future<void>);
 
   @override
-  _i5.Future<void> sendResetPasswordLink(String? email) => (super.noSuchMethod(
+  _i6.Future<void> sendResetPasswordLink(String? email) => (super.noSuchMethod(
         Invocation.method(
           #sendResetPasswordLink,
           [email],
         ),
-        returnValue: _i5.Future<void>.value(),
-        returnValueForMissingStub: _i5.Future<void>.value(),
-      ) as _i5.Future<void>);
+        returnValue: _i6.Future<void>.value(),
+        returnValueForMissingStub: _i6.Future<void>.value(),
+      ) as _i6.Future<void>);
 
   @override
-  _i5.Future<_i3.Either<_i6.AuthErrorEntity, bool>> deleteAccount() =>
+  _i6.Future<_i4.Either<_i7.AuthErrorEntity, bool>> deleteAccount() =>
       (super.noSuchMethod(
         Invocation.method(
           #deleteAccount,
           [],
         ),
-        returnValue: _i5.Future<_i3.Either<_i6.AuthErrorEntity, bool>>.value(
-            _FakeEither_1<_i6.AuthErrorEntity, bool>(
+        returnValue: _i6.Future<_i4.Either<_i7.AuthErrorEntity, bool>>.value(
+            _FakeEither_2<_i7.AuthErrorEntity, bool>(
           this,
           Invocation.method(
             #deleteAccount,
             [],
           ),
         )),
-      ) as _i5.Future<_i3.Either<_i6.AuthErrorEntity, bool>>);
+      ) as _i6.Future<_i4.Either<_i7.AuthErrorEntity, bool>>);
 
   @override
-  _i5.Future<_i3.Either<_i11.DatabaseErrorEntity, bool>>
+  _i6.Future<_i4.Either<_i12.DatabaseErrorEntity, bool>>
       sendEmailVerification() => (super.noSuchMethod(
             Invocation.method(
               #sendEmailVerification,
               [],
             ),
             returnValue:
-                _i5.Future<_i3.Either<_i11.DatabaseErrorEntity, bool>>.value(
-                    _FakeEither_1<_i11.DatabaseErrorEntity, bool>(
+                _i6.Future<_i4.Either<_i12.DatabaseErrorEntity, bool>>.value(
+                    _FakeEither_2<_i12.DatabaseErrorEntity, bool>(
               this,
               Invocation.method(
                 #sendEmailVerification,
                 [],
               ),
             )),
-          ) as _i5.Future<_i3.Either<_i11.DatabaseErrorEntity, bool>>);
+          ) as _i6.Future<_i4.Either<_i12.DatabaseErrorEntity, bool>>);
 }

@@ -5,6 +5,7 @@ import 'package:asset_tracker/data/model/auth/iauth_user_model.dart';
 import 'package:asset_tracker/data/model/auth/request/user_login_model.dart';
 import 'package:asset_tracker/data/model/auth/request/user_register_model.dart';
 import 'package:asset_tracker/data/model/auth/response/user_login_response_model.dart';
+import 'package:asset_tracker/data/service/remote/auth/google_sign_in_service.dart';
 import 'package:asset_tracker/data/service/remote/auth/iauth_service.dart';
 import 'package:asset_tracker/domain/entities/auth/error/auth_error_entity.dart';
 import 'package:asset_tracker/domain/entities/auth/request/user_login_entity.dart';
@@ -25,8 +26,10 @@ import 'package:dartz/dartz.dart';
 
 class FirebaseAuthRepository implements IAuthRepository {
   final IAuthService authService;
+  final GoogleSignInService googleSignInService;
 
-  FirebaseAuthRepository({required this.authService});
+  FirebaseAuthRepository(
+      {required this.authService, required this.googleSignInService});
 
   @override
   Future<Either<AuthErrorEntity, UserLoginResponseEntity>> signIn(
@@ -145,5 +148,5 @@ class FirebaseAuthRepository implements IAuthRepository {
         return Right(success);
       },
     );
-  }
+  }  
 }

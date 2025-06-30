@@ -10,4 +10,4 @@ import 'package:asset_tracker/data/service/remote/auth/iauth_service.dart';
 //CustomAuthModel sınıfı da oluşturabilir.
 
 abstract interface class IMockAuthService
-    implements IAuthService<MockAuthUserModel, MockUserCredentinal> {}
+    implements IAuthService<MockAuthUserModel, MockUserCredentinal, dynamic> {}

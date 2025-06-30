@@ -171,6 +171,70 @@ class _TrialViewState extends ConsumerState<LoginView> with ValidatorMixin {
                   ),
                 ),
                 const CustomSizedBox.mediumGap(),
+                // Divider with "OR" text
+                CustomPadding.hugeHorizontal(
+                  widget: Row(
+                    children: [
+                      const Expanded(
+                        child: Divider(
+                          color: Colors.grey,
+                          thickness: 1,
+                        ),
+                      ),
+                      Padding(
+                        padding: const EdgeInsets.symmetric(horizontal: 16.0),
+                        child: Text(
+                          'VEYA', // You can add this to your locale keys
+                          style: TextStyle(
+                            fontFamily: 'Manrope',
+                            fontSize: AppSize.smallText,
+                            color: Colors.grey,
+                            fontWeight: FontWeight.w500,
+                          ),
+                        ),
+                      ),
+                      const Expanded(
+                        child: Divider(
+                          color: Colors.grey,
+                          thickness: 1,
+                        ),
+                      ),
+                    ],
+                  ),
+                ),
+                const CustomSizedBox.mediumGap(),
+                // Google Sign-In Button
+                CustomPadding.hugeHorizontal(
+                  widget: SizedBox(
+                    width: double.infinity,
+                    height: 48,
+                    child: OutlinedButton.icon(
+                      onPressed: () => _signInWithGoogle(viewModel, context),
+                      icon: Image.network(
+                        'https://developers.google.com/identity/images/g-logo.png',
+                        height: 20,
+                        width: 20,
+                      ),
+                      label: Text(
+                        'Google ile Giriş Yap',
+                        style: TextStyle(
+                          fontFamily: 'Manrope',
+                          fontSize: 16,
+                          fontWeight: FontWeight.w500,
+                          color: DefaultColorPalette.mainTextBlack,
+                        ),
+                      ),
+                      style: OutlinedButton.styleFrom(
+                        backgroundColor: Colors.white,
+                        side: const BorderSide(color: Colors.grey, width: 1),
+                        shape: RoundedRectangleBorder(
+                          borderRadius: BorderRadius.circular(8),
+                        ),
+                      ),
+                    ),
+                  ),
+                ),
+                const CustomSizedBox.mediumGap(),
                 CustomAlign.centerRight(
                   child: CustomPadding.hugeHorizontal(
                       widget: TextButton(
@@ -206,5 +270,10 @@ class _TrialViewState extends ConsumerState<LoginView> with ValidatorMixin {
 
   void _submit(AuthViewModel authViewModel, BuildContext context) async {
     await authViewModel.signInUser(ref, context);
+  }
+
+  void _signInWithGoogle(
+      AuthViewModel authViewModel, BuildContext context) async {
+    await authViewModel.signInWithGoogle();
   }
 }

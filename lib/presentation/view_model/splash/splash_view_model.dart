@@ -16,6 +16,9 @@ class SplashViewModel extends ChangeNotifier {
       
       // Önce hızlı kontrolleri yap
       final String? userId = authGlobal.getCurrentUserId;
+      //bunlardan hangisi varsa onu kullan
+      final String? effectiveUserId = userId;
+
       final bool isLoggedIn = _isLoginedBefore(userId);
 
       // Eğer giriş yapılmamışsa, diğer işlemleri yapma
@@ -38,9 +41,10 @@ class SplashViewModel extends ChangeNotifier {
       }
 
       // User data kontrolü (sadece gerekirse)
-      if (userId != null) {
+      if (effectiveUserId != null) {
         final userDataStatus =
-            await _getUserDataWithTimeout(ref, UserUidEntity(userId: userId));
+            await _getUserDataWithTimeout(
+            ref, UserUidEntity(userId: effectiveUserId));
         
         if (!userDataStatus) {
           _navigateHomeOrLogin(context, access: false);
