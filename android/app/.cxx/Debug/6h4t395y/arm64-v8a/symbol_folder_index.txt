@@ -1,1 +1,0 @@
-/Users/sakastudio/development/projects/asset_tracker/build/app/intermediates/cxx/Debug/6h4t395y/obj/arm64-v8a
