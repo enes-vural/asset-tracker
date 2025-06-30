@@ -21,9 +21,9 @@ class AuthGlobalProvider extends ChangeNotifier {
       _currentUserId = event?.uid;
       _currentUser = FirebaseAuthUser(user: event, idToken: null);
       debugPrint("Current User ID: $_currentUserId");
-      notifyListeners();
     });
     await getIt<GoogleSigninUseCase>().initializeGoogleSignIn();  
+    notifyListeners();
   }
 
   String? get getCurrentUserId => _currentUserId;

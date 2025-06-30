@@ -5,12 +5,26 @@ import 'package:asset_tracker/core/widgets/custom_sized_box.dart';
 import 'package:asset_tracker/injection.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
-
-class BalanceTextWidget extends ConsumerWidget {
+class BalanceTextWidget extends ConsumerStatefulWidget {
   const BalanceTextWidget({super.key});
 
   @override
-  Widget build(BuildContext context, WidgetRef ref) {
+  ConsumerState<BalanceTextWidget> createState() => _BalanceTextWidgetState();
+}
+
+class _BalanceTextWidgetState extends ConsumerState<BalanceTextWidget> {
+  @override
+  void initState() {
+    super.initState();
+  }
+
+  @override
+  void dispose() {
+    super.dispose();
+  }
+
+  @override
+  Widget build(BuildContext context) {
     final currentUserId = ref.read(authGlobalProvider).getCurrentUser?.uid;
 
     if (currentUserId == null) {
@@ -21,7 +35,6 @@ class BalanceTextWidget extends ConsumerWidget {
       // Ondalık ayırma
       List<String> parts = number.split(".");
       String wholePart = parts[0]; // Tam sayı kısmı
-
       String fractionPart =
           parts.length > 1 ? parts[1] : DefaultLocalStrings.emptyFraction;
 
@@ -45,16 +58,12 @@ class BalanceTextWidget extends ConsumerWidget {
         children: [
           TextSpan(
             text:
-                "₺${toFormat(
-                    ref.watch(appGlobalProvider).getLatestBalance.toString(),
-                    true)}",
+                "₺${toFormat(ref.watch(appGlobalProvider).getLatestBalance.toString(), true)}",
             style: CustomTextStyle.balanceTextStyle(context, false),
           ),
           TextSpan(
             text:
-                ",${toFormat(
-                    ref.watch(appGlobalProvider).getLatestBalance.toString(),
-                    false)}",
+                ",${toFormat(ref.watch(appGlobalProvider).getLatestBalance.toString(), false)}",
             style: CustomTextStyle.balanceTextStyle(context, true),
           ),
         ],

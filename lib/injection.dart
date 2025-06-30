@@ -33,6 +33,7 @@ import 'package:asset_tracker/presentation/view_model/settings/settings_view_mod
 import 'package:asset_tracker/presentation/view_model/splash/splash_view_model.dart';
 import 'package:asset_tracker/provider/app_global_provider.dart';
 import 'package:asset_tracker/provider/auth_global_provider.dart';
+import 'package:asset_tracker/provider/web_socket_notifier.dart';
 import 'package:asset_tracker/provider/theme_provider.dart';
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:firebase_auth/firebase_auth.dart';
@@ -166,5 +167,9 @@ final settingsViewModelProvider =
   );
 });
 
+final webSocketProvider =
+    StateNotifierProvider<WebSocketNotifier, WebSocketState>((ref) {
+  return WebSocketNotifier();
+});
 //-------------------CUSTOM PROVIDERS-------------------
 //test@gmail.com

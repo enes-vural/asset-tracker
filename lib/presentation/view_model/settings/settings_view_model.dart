@@ -94,6 +94,7 @@ class SettingsViewModel extends ChangeNotifier {
   Future<void> signOut(WidgetRef ref, BuildContext context) async {
     await authUseCase.signOut();
     await getIt<GoogleSigninUseCase>().signOut();
+    
     await appGlobalProvider.clearData();
     //Firebase rules gereği, kullanıcı oturumu kapatıldığında offline işlemler silinmeli.
     await cacheUseCase.clearAllOfflineActions();

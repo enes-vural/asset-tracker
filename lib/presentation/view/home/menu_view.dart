@@ -27,12 +27,15 @@ class MenuView extends ConsumerStatefulWidget {
 
 class _MenuViewState extends ConsumerState<MenuView>
     with TickerProviderStateMixin {
-  Future<void> callData() async =>
-      await ref.read(homeViewModelProvider).getData(ref);
+  // Future<void> callData() async =>
+  //     await ref.read(homeViewModelProvider).getData(ref);
 
-  Future<void> getErrorStream() async => await ref
-      .read(homeViewModelProvider)
-      .getErrorStream(parentContext: context);
+  // Future<void> getErrorStream() async => await ref
+  //     .read(homeViewModelProvider)
+  //     .getErrorStream(parentContext: context);
+
+  void listenSocketData() =>
+      ref.read(homeViewModelProvider).listenToSocketData(ref);
 
   List<dynamic> pages = [
     const HomeView(),
@@ -43,11 +46,13 @@ class _MenuViewState extends ConsumerState<MenuView>
 
   @override
   void initState() {
-    callData();
-    getErrorStream();
+    // callData();
+    // getErrorStream();
+    WidgetsBinding.instance.addPostFrameCallback((_) {
+      listenSocketData();
+    });
     super.initState();
   }
-
 
   @override
   Widget build(BuildContext context) {
@@ -102,6 +107,7 @@ class _MenuViewState extends ConsumerState<MenuView>
       ),
     );
   }
+
   IconButton exitAppIconButton(VoidCallback fn) => IconButton(
         onPressed: fn,
         icon: CustomIcon.exit(),

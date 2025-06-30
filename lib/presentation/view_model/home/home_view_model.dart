@@ -33,38 +33,53 @@ class HomeViewModel extends ChangeNotifier {
     });
   }
 
-  Future<void> getData(WidgetRef ref) async {
-    //if stream is already open, we don't need to open it again
-    if (dataStreamController?.stream != null) {
-      return;
+  void listenToSocketData(WidgetRef ref) {
+    // Riverpod yaklaşımı:
+    final socketState = ref.watch(webSocketProvider);
+    if (socketState.socketDataStream != null) {
+      ref
+          .read(appGlobalProvider.notifier)
+          .updateSocketCurrency(socketState.socketDataStream);
     }
-
-    final data = await getSocketStreamUseCase.call(null);
-    // debugPrint(data.toString());
-    data.fold((failure) => debugPrint(failure.message), (success) {
-      debugPrint("Connection STATE : ${success.state}");
-    });
-
-    dataStreamController = getSocketStreamUseCase.controller;
-    socketDataStream = dataStreamController?.stream.asBroadcastStream();
-
-    ref.read(appGlobalProvider.notifier).updateSocketCurrency(socketDataStream);
-    notifyListeners();
+    
+    // veya Singleton yaklaşımı:
+    // if (SocketService().socketDataStream != null) {
+    //   ref.read(appGlobalProvider.notifier).updateSocketCurrency(SocketService().socketDataStream);
+    // }
   }
 
-  Future<void> getErrorStream({required BuildContext parentContext}) async {
-    final Stream<Either<SocketErrorEntity, SocketStateResponseModel>>? data =
-        getSocketStreamUseCase.getErrorStream();
-    data?.listen((event) {
-      event.fold((failure) {
-        //commented for UX
-        //EasySnackBar.show(parentContext, failure.message);
-      }, (success) {
-        debugPrint("Connection STATE : ${success.state}");
-        debugPrint("Connection STATE : ${success.message}");
-      });
-    });
-  }
+  // Future<void> getData(WidgetRef ref) async {
+  //   //if stream is already open, we don't need to open it again
+  //   if (dataStreamController?.stream != null) {
+  //     return;
+  //   }
+
+  //   final data = await getSocketStreamUseCase.call(null);
+  //   // debugPrint(data.toString());
+  //   data.fold((failure) => debugPrint(failure.message), (success) {
+  //     debugPrint("Connection STATE : ${success.state}");
+  //   });
+
+  //   dataStreamController = getSocketStreamUseCase.controller;
+  //   socketDataStream = dataStreamController?.stream.asBroadcastStream();
+
+  //   ref.read(appGlobalProvider.notifier).updateSocketCurrency(socketDataStream);
+  //   notifyListeners();
+  // }
+
+  // Future<void> getErrorStream({required BuildContext parentContext}) async {
+  //   final Stream<Either<SocketErrorEntity, SocketStateResponseModel>>? data =
+  //       getSocketStreamUseCase.getErrorStream();
+  //   data?.listen((event) {
+  //     event.fold((failure) {
+  //       //commented for UX
+  //       //EasySnackBar.show(parentContext, failure.message);
+  //     }, (success) {
+  //       debugPrint("Connection STATE : ${success.state}");
+  //       debugPrint("Connection STATE : ${success.message}");
+  //     });
+  //   });
+  // }
 
   filterCurrencyData(List<CurrencyEntity>? data, String searchedCurrency) {
     //filter the list via controller's value

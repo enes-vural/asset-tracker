@@ -1,23 +1,25 @@
+import 'dart:async';
+import 'package:asset_tracker/application/sync/sync_manager.dart';
 import 'package:asset_tracker/core/routers/app_router.gr.dart';
 import 'package:asset_tracker/core/routers/router.dart';
 import 'package:asset_tracker/domain/entities/database/enttiy/user_uid_entity.dart';
+import 'package:asset_tracker/domain/entities/database/request/save_user_entity.dart';
+import 'package:asset_tracker/domain/usecase/database/database_use_case.dart';
 import 'package:asset_tracker/injection.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 
 class SplashViewModel extends ChangeNotifier {
-
   static DateTime? _lastSyncTime;
-  
+
   Future<void> init(WidgetRef ref, BuildContext context) async {
     try {
+      await ref.read(webSocketProvider.notifier).initializeSocket();
       final authGlobal = ref.read(authGlobalProvider.notifier);
       final syncUser = ref.read(syncManagerProvider);
-      
       // Önce hızlı kontrolleri yap
-      final String? userId = authGlobal.getCurrentUserId;
-      //bunlardan hangisi varsa onu kullan
-      final String? effectiveUserId = userId;
+      final currentUser = authGlobal.getCurrentUser;
+      final String? userId = currentUser?.user?.uid;
 
       final bool isLoggedIn = _isLoginedBefore(userId);
 
@@ -41,11 +43,21 @@ class SplashViewModel extends ChangeNotifier {
       }
 
       // User data kontrolü (sadece gerekirse)
-      if (effectiveUserId != null) {
+      if (userId != null && currentUser != null) {
         final userDataStatus =
-            await _getUserDataWithTimeout(
-            ref, UserUidEntity(userId: effectiveUserId));
-        
+            await _getUserDataWithTimeout(ref, UserUidEntity(userId: userId));
+
+        if (ref.read(appGlobalProvider).getUserData?.userInfoEntity == null) {
+          await getIt<DatabaseUseCase>().saveUserData(
+            SaveUserEntity(
+              uid: userId,
+              userName: currentUser.email.toString(),
+              firstName: currentUser.displayName.toString(),
+              lastName: currentUser.displayName.toString(),
+            ),
+          );
+        }
+
         if (!userDataStatus) {
           _navigateHomeOrLogin(context, access: false);
           return;
@@ -54,7 +66,6 @@ class SplashViewModel extends ChangeNotifier {
 
       // Başarılı durumda home'a git
       _navigateHomeOrLogin(context, access: true);
-      
     } catch (e) {
       debugPrint('Splash init error: $e');
       // Hata durumunda login'e yönlendir
@@ -63,7 +74,7 @@ class SplashViewModel extends ChangeNotifier {
   }
 
   // Sync işlemini throttle ile
-  Future<void> _syncWithThrottle(dynamic syncUser) async {
+  Future<void> _syncWithThrottle(SyncManager syncUser) async {
     try {
       await syncUser.syncOfflineActions().timeout(
         const Duration(seconds: 10), // 10 saniye timeout
@@ -92,7 +103,7 @@ class SplashViewModel extends ChangeNotifier {
           .read(appGlobalProvider)
           .getLatestUserData(ref, userEntity)
           .timeout(
-        const Duration(seconds: 8), // 8 saniye timeout
+        const Duration(seconds: 10), // 8 saniye timeout
         onTimeout: () {
           debugPrint('GetLatestUserData timeout');
           return false;
