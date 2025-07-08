@@ -45,6 +45,8 @@ class TradeViewModel extends ChangeNotifier {
     currentTradeType = isBuy ? TradeType.buy : TradeType.sell;
     selectedCurrency = currency;
     amountController.text = "1";
+    getPriceSelectedCurrency(ref);
+    notifyListeners();
     ref
         .read(appGlobalProvider)
         .changeMenuNavigationIndex(AppPagesEnum.TRADE.pageIndex);
@@ -74,7 +76,7 @@ class TradeViewModel extends ChangeNotifier {
   }
 
   void getPriceSelectedCurrency(WidgetRef ref) {
-    if (selectedCurrency == null) {
+    if (selectedCurrency == null || selectedCurrency == "") {
       return;
     }
     final rawAssets = ref.read(appGlobalProvider.notifier).globalAssets;
@@ -83,7 +85,7 @@ class TradeViewModel extends ChangeNotifier {
       assets.add(CurrencyWidgetEntity.fromCurrency(value));
     });
 
-    //name e göre sıralamak doğru bir yol değil. Şimdilik kalsın sonrasında map yapısı ile dropdown daki labellar ile 
+    //name e göre sıralamak doğru bir yol değil. Şimdilik kalsın sonrasında map yapısı ile dropdown daki labellar ile
     //code ları eşleştirerek unique bir sisteme gidilmesi daha doğru olur. Aynı isimdeki assetler de hata fırlatabilir örn: "N/A"
     //TODO:
     CurrencyWidgetEntity? selectedAssetCode;
@@ -91,7 +93,7 @@ class TradeViewModel extends ChangeNotifier {
       selectedAssetCode = assets.firstWhere(
         (element) => element.name == selectedCurrency,
       );
-} catch (e) {
+    } catch (e) {
       selectedAssetCode = null;
     }
 
@@ -156,7 +158,6 @@ class TradeViewModel extends ChangeNotifier {
     required WidgetRef ref,
     required BuildContext context,
   }) async {
-
     if (selectedCurrency == null) {
       EasySnackBar.show(context, "Birim Seçiniz");
       return;

@@ -1,33 +1,33 @@
 import 'dart:async';
-
+import 'dart:io' show Platform;
+import 'package:asset_tracker/data/model/auth/firebase_auth_user_model.dart';
 import 'package:asset_tracker/data/service/remote/auth/isign_in_service.dart';
 import 'package:flutter/material.dart';
 import 'package:google_sign_in/google_sign_in.dart';
 
-class GoogleSignInService implements ISignInService<GoogleSignInAccount> {
-  final GoogleSignIn _googleSignIn = GoogleSignIn.instance;
+final class GoogleSignInService implements ISignInService {
+  final GoogleSignIn googleSignIn;
 
-  GoogleSignInAccount? _currentUser;
+  GoogleSignInService(this.googleSignIn);
+
+  FirebaseAuthUser? _currentUser;
 
   // Initialize metodunu constructor veya initState'te çağır
   @override
   Future<void> initialize() async {
-    unawaited(_googleSignIn.initialize().then((_) {
-      _googleSignIn.authenticationEvents
-          .listen(_handleAuthenticationEvent)
-          .onError(_handleAuthenticationError);
-
-      /// This example always uses the stream-based approach to determining
-      /// which UI state to show, rather than using the future returned here,
-      /// if any, to conditionally skip directly to the signed-in state.
-      _googleSignIn.attemptLightweightAuthentication();
-    }));
+    unawaited(googleSignIn.initialize(
+      clientId: Platform.isAndroid
+          ? '720693227761-jlo1i0q84h9i1uhon614e1hqbgq2sasl.apps.googleusercontent.com'
+          : null,
+    ));
   }
 
   @override
-  Future<GoogleSignInAccount?> signIn() async {
+  Future<FirebaseAuthUser?> signIn() async {
     try {
-      final account = await _googleSignIn.authenticate();
+      final gAccount = await googleSignIn.authenticate();
+      final account = FirebaseAuthUser.fromGoogle(
+          googleUser: gAccount, idToken: gAccount.authentication.idToken);
       return account;
     } catch (error) {
       debugPrint('Sign-in error: $error');
@@ -37,35 +37,10 @@ class GoogleSignInService implements ISignInService<GoogleSignInAccount> {
 
   @override
   Future<void> signOut() async {
-    await _googleSignIn.signOut();
+    await googleSignIn.signOut();
     _currentUser = null;
   }
 
-  Future<void> _handleAuthenticationEvent(
-      GoogleSignInAuthenticationEvent event) async {
-    const List<String> scopes = <String>[
-      'https://www.googleapis.com/auth/userinfo.email',
-      'https://www.googleapis.com/auth/userinfo.profile',
-    ];
-    // #docregion CheckAuthorization
-    GoogleSignInAccount? user;
-    // #enddocregion CheckAuthorization
-    if (event is GoogleSignInAuthenticationEventSignIn) {
-      _currentUser = event.user;
-      debugPrint("User signed in: ${event.user.email}");
-      user = event.user;
-    } else if (event is GoogleSignInAuthenticationEventSignOut) {
-      _currentUser = null;
-      debugPrint("User signed out");
-      user = null;
-    }
-  }
-
-  String _handleAuthenticationError(Object e) {
-    return e is GoogleSignInException
-        ? 'GoogleSignInException ${e.code}: ${e.description}'
-        : 'Unknown error: $e';
-  }
-
-  GoogleSignInAccount? get currentUser => _currentUser;
+  @override
+  FirebaseAuthUser? get currentUser => _currentUser;
 }

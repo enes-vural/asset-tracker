@@ -52,10 +52,16 @@ class MenuBottomNavigationBarWidget extends ConsumerWidget {
             label: LocaleKeys.bottomNavBar_trade.tr(),
           ),
           BottomNavigationBarItem(
+            icon: const Icon(Icons.alarm_add_outlined),
+            activeIcon: const Icon(Icons.alarm_on_sharp),
+            label: "Alarm",
+          ),
+          BottomNavigationBarItem(
             icon: const Icon(Icons.settings),
             activeIcon: const Icon(Icons.settings_suggest_rounded),
             label: LocaleKeys.bottomNavBar_settings.tr(),
           ),
+          
         ],
       ),
     );

@@ -3,6 +3,7 @@ import 'dart:async';
 import 'package:asset_tracker/core/constants/database/transaction_type_enum.dart';
 import 'package:asset_tracker/core/constants/enums/socket/socket_state_enums.dart';
 import 'package:asset_tracker/data/model/database/response/asset_code_model.dart';
+import 'package:asset_tracker/domain/entities/database/alarm_entity.dart';
 import 'package:asset_tracker/domain/entities/database/enttiy/user_data_entity.dart';
 import 'package:asset_tracker/domain/entities/database/enttiy/user_currency_entity_model.dart';
 import 'package:asset_tracker/domain/entities/database/enttiy/user_info_entity.dart';
@@ -75,6 +76,11 @@ class AppGlobalProvider extends ChangeNotifier {
     }
   }
 
+  updateUserAlarm(List<AlarmEntity>? entityList) {
+    _userData?.userAlarmList = entityList;
+    notifyListeners();
+  }
+
   updateUserData(UserDataEntity entity) {
     _userData = entity;
     _userBalance = entity.balance; // User balance'ı burada set et
@@ -96,6 +102,7 @@ class AppGlobalProvider extends ChangeNotifier {
   void _listenData() {
     _dataStream?.listen((event) {
       globalAssets = event;
+      notifyListeners();
       _updateAssetCodes();
       // Hem global assets hem de user data varsa hesaplama yap
       scheduleCalculation();

@@ -1,15 +1,14 @@
 import 'dart:async';
 import 'package:asset_tracker/core/config/theme/extension/currency_widget_title_extension.dart';
 import 'package:asset_tracker/core/routers/router.dart' show Routers;
+import 'package:asset_tracker/domain/entities/database/enttiy/user_uid_entity.dart';
 import 'package:asset_tracker/domain/entities/web/socket/currency_entity.dart';
+import 'package:asset_tracker/domain/usecase/database/database_use_case.dart';
+import 'package:asset_tracker/domain/usecase/messaging/messaging_use_case.dart';
 import 'package:asset_tracker/domain/usecase/web/web_use_case.dart';
 import 'package:asset_tracker/injection.dart';
-import 'package:dartz/dartz.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
-
-import '../../../data/model/web/response/socket_state_response_model.dart';
-import '../../../domain/entities/web/error/socket_error_entity.dart';
 
 class HomeViewModel extends ChangeNotifier {
   final GetSocketStreamUseCase getSocketStreamUseCase;
@@ -41,11 +40,36 @@ class HomeViewModel extends ChangeNotifier {
           .read(appGlobalProvider.notifier)
           .updateSocketCurrency(socketState.socketDataStream);
     }
-    
+
     // veya Singleton yaklaşımı:
     // if (SocketService().socketDataStream != null) {
     //   ref.read(appGlobalProvider.notifier).updateSocketCurrency(SocketService().socketDataStream);
-    // }
+    // } Alp98Vur.98
+  }
+
+  Future<void> syncNotificationSettings(WidgetRef ref) async {
+    final isPermitted =
+        await getIt<NotificationUseCase>().isPermissionAuthorized();
+    if (isPermitted) {
+      debugPrint("PERMISSION: $isPermitted");
+      String? token = await getIt<NotificationUseCase>().getUserToken();
+      debugPrint("PERMISSION: $token");
+      if (token != null) {
+        ref.read(authGlobalProvider).updateFcmToken(token);
+        await saveUserToken(ref, token);
+        return;
+      }
+    }
+    return;
+  }
+
+  Future<void> saveUserToken(WidgetRef ref, String fcmToken) async {
+    String? userId = ref.read(authGlobalProvider).getCurrentUserId;
+    if (userId != null) {
+      await getIt<DatabaseUseCase>()
+          .saveUserToken(UserUidEntity(userId: userId), fcmToken);
+    }
+    return;
   }
 
   // Future<void> getData(WidgetRef ref) async {

@@ -5,6 +5,8 @@
         "pleaseWait": "Lütfen bekleyin..."
     },
     "auth": {
+        "signInApple": "Apple ile Giriş Yap",
+        "signInGoogle": "Google ile Giriş Yap",
         "sentEmail": "E-posta Gönderildi",
         "ok": "Tamam",
         "resetEmail": "Şifre sıfırlama bağlantısı {} adresine gönderildi. E-posta kutunuzu kontrol edin.",

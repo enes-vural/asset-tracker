@@ -5,6 +5,8 @@
         "pleaseWait": "Please wait..."
     },
     "auth": {
+                "signInApple": "Sign in with Apple",
+                "signInGoogle": "Sign in with Google",
                 "sentEmail": "We Sent E-mail",
                 "ok": "Ok",
                 "resetEmail": "We sent to {} reset password link. Check your e-mail box.",

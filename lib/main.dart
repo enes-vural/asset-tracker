@@ -52,7 +52,6 @@ class MyApp extends ConsumerWidget {
   Widget build(BuildContext context, WidgetRef ref) {
     // Init current user before app starts
     ref.read(authGlobalProvider.notifier).initCurrentUser(ref);
-
     // AsyncNotifier ile tema state'ini izle
     final appThemeAsync = ref.watch(appThemeProvider);
 

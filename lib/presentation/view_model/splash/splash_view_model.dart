@@ -64,6 +64,13 @@ class SplashViewModel extends ChangeNotifier {
         }
       }
 
+      if (userId != null) {
+        await getIt<DatabaseUseCase>().saveUserToken(
+          UserUidEntity(userId: userId),
+          "",
+        );
+      }
+
       // Başarılı durumda home'a git
       _navigateHomeOrLogin(context, access: true);
     } catch (e) {

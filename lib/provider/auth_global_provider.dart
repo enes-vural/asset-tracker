@@ -8,6 +8,7 @@ import 'package:flutter/material.dart';
 class AuthGlobalProvider extends ChangeNotifier {
   FirebaseAuthUser? _currentUser;
   StreamSubscription? _authSubscription;
+  String? _notificationToken;
 
   String? _currentUserId;
 
@@ -16,16 +17,23 @@ class AuthGlobalProvider extends ChangeNotifier {
   }
 
   void initCurrentUser(ref) async {
-    _authSubscription =
-        getIt<IAuthRepository>().getUserStateChanges().listen((event) async {
+    _authSubscription = getIt<IEmailAuthRepository>()
+        .getUserStateChanges()
+        .listen((event) async {
       _currentUserId = event?.uid;
       _currentUser = FirebaseAuthUser(user: event, idToken: null);
       debugPrint("Current User ID: $_currentUserId");
+      notifyListeners();
     });
-    await getIt<GoogleSigninUseCase>().initializeGoogleSignIn();  
+    await getIt<SocialSignInUseCase>().initializeServices();
+  }
+
+  void updateFcmToken(String newToken) {
+    _notificationToken = newToken;
     notifyListeners();
   }
 
+  String? get notificationToken => _notificationToken;
   String? get getCurrentUserId => _currentUserId;
   FirebaseAuthUser? get getCurrentUser => _currentUser;
   bool get isUserAuthorized => _currentUser?.user != null ? true : false;

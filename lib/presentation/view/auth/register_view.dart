@@ -149,7 +149,7 @@ class _RegisterViewState extends ConsumerState<RegisterView>
                         hasTitle: true,
                         hasLabel: true,
                         focusNode: _lastNameFocusNode,
-                        isRequired: false,
+                        isRequiredTitle: false,
                       ),
                       const CustomSizedBox.hugeGap(),
                       AuthSubmitWidget(

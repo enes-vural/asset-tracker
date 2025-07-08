@@ -3,6 +3,7 @@
 import 'package:asset_tracker/core/constants/database/transaction_type_enum.dart';
 import 'package:asset_tracker/core/constants/firestore_constants.dart';
 import 'package:asset_tracker/core/config/localization/generated/locale_keys.g.dart';
+import 'package:asset_tracker/data/model/database/alarm_model.dart';
 import 'package:asset_tracker/data/model/database/error/database_error_model.dart';
 import 'package:asset_tracker/data/model/database/request/buy_currency_model.dart';
 import 'package:asset_tracker/data/model/database/request/save_user_model.dart';
@@ -13,14 +14,16 @@ import 'package:asset_tracker/data/model/database/user_info_model.dart';
 import 'package:asset_tracker/data/service/remote/database/firestore/ifirestore_service.dart';
 import 'package:asset_tracker/env/envied.dart';
 import 'package:cloud_firestore/cloud_firestore.dart';
+import 'package:cloud_functions/cloud_functions.dart';
 import 'package:dartz/dartz.dart';
 import 'package:easy_localization/easy_localization.dart';
 import 'package:flutter/material.dart';
 
 final class FirestoreService implements IFirestoreService {
   final FirebaseFirestore instance;
+  final FirebaseFunctions functions;
 
-  const FirestoreService({required this.instance});
+  const FirestoreService({required this.instance, required this.functions});
 
   @override
   //eğer işlem başarılıysa verdiğimiz modeli geri döndürsün istiyorum.
@@ -70,6 +73,24 @@ final class FirestoreService implements IFirestoreService {
     } catch (e) {
       return Left(DatabaseErrorModel(message: e.toString()));
     }
+  }
+
+  @override
+  Future<List<Map<String, dynamic>?>> getUserAlarms(UserUidModel model) async {
+    List<Map<String, dynamic>?> alarmList = [];
+
+    final alarmRef = instance
+        .collection(FirestoreConstants.usersCollection)
+        .doc(model.userId)
+        .collection("alarms");
+
+    QuerySnapshot<Map<String, dynamic>> alarms = await alarmRef.get();
+
+    for (var alarm in alarms.docs) {
+      debugPrint(alarm.toString());
+      alarmList.add(alarm.data());
+    }
+    return alarmList;
   }
 
   @override
@@ -155,6 +176,53 @@ final class FirestoreService implements IFirestoreService {
         .get();
 
     return userPath.data();
+  }
+
+  @override
+  Future<void> saveUserToken(UserUidModel model, String token) async {
+    final docRef = instance
+        .collection(FirestoreConstants.usersCollection)
+        .doc(model.userId)
+        .collection('tokens')
+        .doc(token);
+
+    final docSnapshot = await docRef.get();
+
+    if (!docSnapshot.exists) {
+      await docRef.set({"value": token});
+    }
+  }
+
+  @override
+  Future<Either<DatabaseErrorModel, bool>> saveUserAlarm(
+      AlarmModel model) async {
+    try {
+      // Firebase Cloud Function'ı çağır
+      final functions = FirebaseFunctions.instance;
+      final callable = functions.httpsCallable('save_user_alarm');
+
+      final result = await callable.call({
+        'currencyCode': model.currencyCode,
+        'direction': model.direction,
+        'isTriggered': model.isTriggered,
+        'mode': model.mode,
+        'targetValue': model.targetValue,
+        'type': model.type,
+        'userId': model.userID,
+        'createTime': model.createTime.millisecondsSinceEpoch,
+      });
+
+      final data = result.data;
+      if (data['success'] == true) {
+        debugPrint("Alarm saved successfully with docID: ${data['docID']}");
+        return const Right(true);
+      } else {
+        return Left(
+            DatabaseErrorModel(message: data['error'] ?? 'Unknown error'));
+      }
+    } catch (e) {
+      return Left(DatabaseErrorModel(message: e.toString()));
+    }
   }
 
   @override
@@ -245,6 +313,8 @@ final class FirestoreService implements IFirestoreService {
       return Left(DatabaseErrorModel(message: e.toString()));
     }
   }
+
+  Future<void> saveToken(UserUidModel model, String token) async {}
 
   @override
   Future<Either<DatabaseErrorModel, bool>> removeUser(

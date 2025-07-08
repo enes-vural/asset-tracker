@@ -16,7 +16,7 @@ class AuthFormWidget extends StatelessWidget {
     required this.label,
     required this.isObs,
     required this.formController,
-    required this.validaor,
+    required this.validator,
     this.hasTitle = false,
     this.hasLabel = true,
     this.type = TextInputType.text,
@@ -24,12 +24,13 @@ class AuthFormWidget extends StatelessWidget {
     this.focusNode,
     this.textInputAction,
     this.onFieldSubmitted,
-    this.isRequired = true,
+    //just changes label '*' key.
+    this.isRequiredTitle = true,
   });
 
   final String label;
   final TextEditingController? formController;
-  final FormFieldValidator<String>? validaor;
+  final FormFieldValidator<String>? validator;
   final bool isObs;
   final bool hasTitle;
   final bool hasLabel;
@@ -37,7 +38,7 @@ class AuthFormWidget extends StatelessWidget {
   final ValueChanged<String>? onChanged;
   final FocusNode? focusNode;
   final TextInputAction? textInputAction;
-  final bool isRequired;
+  final bool isRequiredTitle;
   final void Function(String)? onFieldSubmitted;
 
   AuthFormWidget.email({
@@ -55,7 +56,7 @@ class AuthFormWidget extends StatelessWidget {
           formController: emailController,
           isObs: false,
           label: LocaleKeys.auth_email.tr(),
-          validaor: emailValidator,
+          validator: emailValidator,
           hasTitle: hasTitle,
           hasLabel: hasLabel,
           focusNode: focusNode,
@@ -78,7 +79,7 @@ class AuthFormWidget extends StatelessWidget {
           formController: passwordController,
           isObs: true,
           label: LocaleKeys.auth_password.tr(),
-          validaor: passwordValidator,
+          validator: passwordValidator,
           hasTitle: hasTitle,
           hasLabel: hasLabel,
           focusNode: focusNode,
@@ -100,7 +101,7 @@ class AuthFormWidget extends StatelessWidget {
           formController: firstNameController,
           isObs: false,
           label: LocaleKeys.auth_firstName.tr(),
-          validaor: firstNameValidator,
+          validator: firstNameValidator,
           hasTitle: hasTitle,
           hasLabel: hasLabel,
           focusNode: focusNode,
@@ -117,14 +118,14 @@ class AuthFormWidget extends StatelessWidget {
     FocusNode? focusNode,
     TextInputAction? textInputAction,
     void Function(String)? onFieldSubmitted,
-    required bool isRequired,
+    required bool isRequiredTitle,
   }) : this(
           key: key,
           formController: lastNameController,
           isObs: false,
           label: LocaleKeys.auth_lastName.tr(),
-          validaor: lastNameValidator,
-          isRequired: false,
+          validator: lastNameValidator,
+          isRequiredTitle: false,
           hasTitle: hasTitle,
           hasLabel: hasLabel,
           focusNode: focusNode,
@@ -151,7 +152,7 @@ class AuthFormWidget extends StatelessWidget {
         children: [
           if (hasTitle)
             Text(
-              label + (isRequired ? "*" : ""),
+              label + (isRequiredTitle ? "*" : ""),
               style: TextStyle(
                 color: titleColor,
                 fontFamily: 'Manrope',
@@ -214,7 +215,7 @@ class AuthFormWidget extends StatelessWidget {
                 obscureText: isObs,
                 keyboardType: type,
                 controller: formController,
-                validator: validaor,
+                validator: validator,
                 style: TextStyle(
                   color: inputTextColor,
                   fontFamily: 'Manrope',

@@ -1,9 +1,10 @@
+import 'dart:async';
 import 'package:asset_tracker/core/config/localization/generated/locale_keys.g.dart';
 import 'package:asset_tracker/core/config/theme/extension/currency_widget_title_extension.dart';
 import 'package:asset_tracker/core/config/theme/app_size.dart';
 import 'package:asset_tracker/core/widgets/custom_padding.dart';
 import 'package:asset_tracker/core/widgets/custom_sized_box.dart';
-import 'package:asset_tracker/presentation/view_model/home/trade/trade_view_model.dart';
+import 'package:asset_tracker/injection.dart';
 import 'package:easy_localization/easy_localization.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
@@ -14,12 +15,10 @@ class CustomDropDownWidget<T> extends ConsumerStatefulWidget {
     super.key,
     required this.pageCurrency,
     required this.viewModel,
-    required this.onSelectedChanged,
   });
 
   final String? pageCurrency;
-  final TradeViewModel viewModel;
-  final VoidCallback? onSelectedChanged;
+  final dynamic viewModel;
 
   @override
   ConsumerState<CustomDropDownWidget<T>> createState() =>
@@ -35,24 +34,71 @@ class _CustomDropDownWidgetState<T>
   bool _showSuggestions = false;
   bool _isUserTyping = false;
 
+  // Periyodik kontrol için timer
+  Timer? _periodicTimer;
+  static const int _expectedCurrencyCount = 30;
+  static const Duration _checkInterval = Duration(seconds: 3);
+
+  _initCurrencies() {
+    _initializeCurrencies(ref);
+  }
+
   @override
   void initState() {
     super.initState();
     _controller = TextEditingController();
-    _initializeCurrencies();
+    _initCurrencies();
+    _startPeriodicCheck();
   }
 
-  void _initializeCurrencies() {
+  void _initializeCurrencies(WidgetRef ref) {
     // Currency listesini al ve çevir
-    final currencyLabels = widget.viewModel
-        .getCurrencyList(ref)
+    final currencyLabels = ref
+        .read(appGlobalProvider.notifier)
+        .assetCodes
         .map((e) => setCurrencyLabel(e.code))
         .toList();
-    
+
     // Tekrar eden değerleri temizle
     _allCurrencies = currencyLabels.toSet().toList();
     _filteredList = List.from(_allCurrencies);
     _updateSelectedValue(widget.pageCurrency);
+
+    // Eğer yeterli data geldiyse timer'ı durdur
+    if (_allCurrencies.length >= _expectedCurrencyCount) {
+      _stopPeriodicCheck();
+    }
+  }
+
+  void _startPeriodicCheck() {
+    _periodicTimer = Timer.periodic(_checkInterval, (timer) {
+      if (mounted) {
+        final List<String> currentCurrencies = ref
+            .read(appGlobalProvider.notifier)
+            .assetCodes
+            .map((e) => setCurrencyLabel(e.code))
+            .toSet()
+            .toList();
+
+        // Eğer currency sayısı değiştiyse listeyi güncelle
+        if (currentCurrencies.length != _allCurrencies.length) {
+          setState(() {
+            _allCurrencies = currentCurrencies;
+            _filteredList = List.from(_allCurrencies);
+          });
+
+          // Eğer beklenen sayıya ulaştıysa timer'ı durdur
+          if (_allCurrencies.length >= _expectedCurrencyCount) {
+            _stopPeriodicCheck();
+          }
+        }
+      }
+    });
+  }
+
+  void _stopPeriodicCheck() {
+    _periodicTimer?.cancel();
+    _periodicTimer = null;
   }
 
   void _updateSelectedValue(String? newValue) {
@@ -79,6 +125,7 @@ class _CustomDropDownWidgetState<T>
   @override
   void dispose() {
     _controller.dispose();
+    _stopPeriodicCheck(); // Timer'ı temizle
     super.dispose();
   }
 
@@ -154,7 +201,7 @@ class _CustomDropDownWidgetState<T>
     // Tema ve dark mode bilgilerini al
     final theme = Theme.of(context);
     final isDarkMode = theme.brightness == Brightness.dark;
-    
+
     // ViewModel'daki selectedCurrency değişikliklerini dinle
     final currentSelectedCurrency = widget.viewModel.selectedCurrency;
 
@@ -171,14 +218,34 @@ class _CustomDropDownWidgetState<T>
       widget: Column(
         crossAxisAlignment: CrossAxisAlignment.start,
         children: [
-          Text(
-            LocaleKeys.home_unit.tr(),
-            style: TextStyle(
-              fontFamily: 'Manrope',
-              fontSize: AppSize.smallText2,
-              fontWeight: FontWeight.normal,
-              height: 1.5,
-            ),
+          Row(
+            children: [
+              Text(
+                LocaleKeys.home_unit.tr(),
+                style: TextStyle(
+                  fontFamily: 'Manrope',
+                  fontSize: AppSize.smallText2,
+                  fontWeight: FontWeight.normal,
+                  height: 1.5,
+                ),
+              ),
+              // Loading indicator - data henüz tam gelmemişse göster
+              if (_allCurrencies.length < _expectedCurrencyCount &&
+                  _periodicTimer != null)
+                Padding(
+                  padding: const EdgeInsets.only(left: 8.0),
+                  child: SizedBox(
+                    width: 12,
+                    height: 12,
+                    child: CircularProgressIndicator(
+                      strokeWidth: 2,
+                      valueColor: AlwaysStoppedAnimation<Color>(
+                        theme.colorScheme.primary.withOpacity(0.6),
+                      ),
+                    ),
+                  ),
+                ),
+            ],
           ),
           const CustomSizedBox.smallGap(),
           Focus(

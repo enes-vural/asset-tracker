@@ -1,21 +1,21 @@
 import 'package:asset_tracker/data/model/auth/firebase_auth_user_model.dart';
 import 'package:asset_tracker/domain/entities/auth/base/error/base_error_entity.dart';
-import 'package:asset_tracker/domain/repository/auth/igoogle_sign_in_repository.dart';
+import 'package:asset_tracker/domain/repository/auth/iauth_repository.dart';
 import 'package:asset_tracker/domain/usecase/base/base_use_case.dart';
 import 'package:dartz/dartz.dart';
 
-class GoogleSigninUseCase implements BaseUseCase {
-  final IGoogleSignInRepository _authRepository;
+class SocialSignInUseCase implements BaseUseCase {
+  final ISocialAuthRepository _authRepository;
 
-  const GoogleSigninUseCase(this._authRepository);
+  const SocialSignInUseCase(this._authRepository);
 
   @override
   Future<Either<BaseErrorEntity, dynamic>> call(params) {
     throw UnimplementedError();
   }
 
-  Future<void> initializeGoogleSignIn() async {
-    await _authRepository.initialize();
+  Future<void> initializeServices() async {
+    await _authRepository.initializeServices();
   }
 
   Future<Either<BaseErrorEntity, FirebaseAuthUser?>> signInWithGoogle() async {
@@ -29,6 +29,10 @@ class GoogleSigninUseCase implements BaseUseCase {
     } catch (e) {
       return Left(BaseErrorEntity(message: e.toString()));
     }
+  }
+
+  Future<void> signInWithApple() async {
+    await _authRepository.signInWithApple();
   }
 
   Future<void> signOut() async {
