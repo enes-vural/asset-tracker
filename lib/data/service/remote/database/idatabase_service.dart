@@ -1,3 +1,4 @@
+import 'package:asset_tracker/data/model/database/alarm_model.dart';
 import 'package:asset_tracker/data/model/database/error/database_error_model.dart'
     show DatabaseErrorModel;
 import 'package:asset_tracker/data/model/database/request/buy_currency_model.dart';
@@ -27,7 +28,13 @@ abstract interface class IDatabaseService {
   Future<Either<DatabaseErrorModel, bool>> sellCurrency(
       SellCurrencyModel model);
 
+  Future<List<Map<String, dynamic>?>> getUserAlarms(UserUidModel model);
+
+  Future<Either<DatabaseErrorModel, bool>> saveUserAlarm(AlarmModel model);
+
   Future<Either<DatabaseErrorModel, bool>> removeUser(UserUidModel model);
+
+  Future<void> saveUserToken(UserUidModel model, String token);
 
   Future<Either<DatabaseErrorModel, bool>> changeUserInfo(
       UserInfoModel infoModel);

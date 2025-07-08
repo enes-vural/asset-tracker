@@ -14,14 +14,15 @@ import 'package:asset_tracker/domain/usecase/cache/cache_use_case.dart';
 import 'package:asset_tracker/domain/usecase/database/database_use_case.dart';
 import 'package:asset_tracker/injection.dart';
 import 'package:dartz/dartz.dart';
+import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 
 class AuthViewModel extends ChangeNotifier {
   final AuthUseCase authUseCase;
-  final GoogleSigninUseCase googleSigninUseCase;
+  final SocialSignInUseCase socialSignInUseCase;
 
-  AuthViewModel({required this.authUseCase, required this.googleSigninUseCase});
+  AuthViewModel({required this.authUseCase, required this.socialSignInUseCase});
 
   final TextEditingController emailController = TextEditingController();
   final TextEditingController passwordController = TextEditingController();
@@ -121,11 +122,24 @@ class AuthViewModel extends ChangeNotifier {
   }
 
   Future signInWithGoogle(BuildContext context) async {
-    final data = await googleSigninUseCase.signInWithGoogle();
+    final data = await socialSignInUseCase.signInWithGoogle();
     data.fold((failure) {}, (success) {
       if (success?.user?.uid != null) {
         Routers.instance.pushAndRemoveUntil(context, const SplashRoute());
       }
     });
+  }
+
+  Future signInWithApple(BuildContext context) async {
+    try {
+      final appleProvider =
+          AppleAuthProvider().addScope('email').addScope('name');
+
+      await FirebaseAuth.instance.signInWithProvider(appleProvider);
+
+      Routers.instance.pushAndRemoveUntil(context, const SplashRoute());
+    } catch (e) {
+      debugPrint(e.toString());
+    }
   }
 }

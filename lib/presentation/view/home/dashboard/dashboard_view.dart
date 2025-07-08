@@ -80,7 +80,9 @@ class _DashboardViewState extends ConsumerState<DashboardView>
       canPop: viewModel.canPop,
       child: authState.getCurrentUser?.user != null
           ? _modernScaffold(context)
-          : const UnAuthorizedWidget(page: UnAuthorizedPage.WALLET),
+          //const causes localization issue
+          // ignore: prefer_const_constructors
+          : UnAuthorizedWidget(page: UnAuthorizedPage.WALLET),
     );
   }
 
@@ -111,7 +113,8 @@ class _DashboardViewState extends ConsumerState<DashboardView>
                 const CustomSizedBox.hugeGap(),
 
                 // Enhanced Transaction Widget
-                const EnhancedUserAssetTransactionWidget(),
+                // ignore: prefer_const_constructors
+                EnhancedUserAssetTransactionWidget(),
 
                 const SizedBox(height: 100), // Space for FAB
               ],
@@ -441,7 +444,7 @@ class _EnhancedUserAssetTransactionWidgetState
           ),
 
           // Transaction List with enhanced cards
-          const UserAssetTransactionWidget(),
+          UserAssetTransactionWidget(),
         ],
       ),
     );

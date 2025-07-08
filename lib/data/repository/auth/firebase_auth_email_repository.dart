@@ -5,7 +5,7 @@ import 'package:asset_tracker/data/model/auth/iauth_user_model.dart';
 import 'package:asset_tracker/data/model/auth/request/user_login_model.dart';
 import 'package:asset_tracker/data/model/auth/request/user_register_model.dart';
 import 'package:asset_tracker/data/model/auth/response/user_login_response_model.dart';
-import 'package:asset_tracker/data/service/remote/auth/google_sign_in_service.dart';
+import 'package:asset_tracker/data/repository/auth/base/base_auth_repository.dart';
 import 'package:asset_tracker/data/service/remote/auth/iauth_service.dart';
 import 'package:asset_tracker/domain/entities/auth/error/auth_error_entity.dart';
 import 'package:asset_tracker/domain/entities/auth/request/user_login_entity.dart';
@@ -17,19 +17,14 @@ import 'package:asset_tracker/domain/repository/auth/iauth_repository.dart';
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:dartz/dartz.dart';
 
-/*class GoogleAuthRepository implements IAuthRepository{
-  @override
-  Future<Either<AuthErrorEntity, UserLoginResponseEntity>> signIn(UserLoginEntity entity) {
-    throw UnimplementedError();
-  }
-}*/
-
-class FirebaseAuthRepository implements IAuthRepository {
+class FirebaseAuthEmailRepository implements IEmailAuthRepository {
   final IAuthService authService;
-  final GoogleSignInService googleSignInService;
+  final BaseAuthRepository baseAuthRepository;
 
-  FirebaseAuthRepository(
-      {required this.authService, required this.googleSignInService});
+  FirebaseAuthEmailRepository({
+    required this.authService,
+    required this.baseAuthRepository,
+  });
 
   @override
   Future<Either<AuthErrorEntity, UserLoginResponseEntity>> signIn(
@@ -105,48 +100,31 @@ class FirebaseAuthRepository implements IAuthRepository {
 
   @override
   String? getUserId() {
-    return authService.getUserId();
+    return baseAuthRepository.getUserId();
   }
 
   @override
   Stream getUserStateChanges() {
-    return authService.getUserStateChanges();
+    return baseAuthRepository.getUserStateChanges();
   }
 
   @override
   Future<void> signOut() async {
-    return authService.signOutUser();
+    return await baseAuthRepository.signOut();
   }
 
   @override
   Future<void> sendResetPasswordLink(String email) async {
-    return authService.sendResetPasswordLink(email);
+    return await authService.sendResetPasswordLink(email);
   }
 
   @override
   Future<Either<AuthErrorEntity, bool>> deleteAccount() async {
-    final data = await authService.deleteAccount();
-    return data.fold(
-      (failure) {
-        return Left(AuthErrorEntity.fromModel(failure));
-      },
-      (success) {
-        return Right(success);
-      },
-    );
+    return await baseAuthRepository.deleteAccount();
   }
 
   @override
   Future<Either<DatabaseErrorEntity, bool>> sendEmailVerification() async {
-    final user = await authService.sendEmailVerification();
-
-    return user.fold(
-      (failure) {
-        return Left(DatabaseErrorEntity.fromModel(failure));
-      },
-      (success) {
-        return Right(success);
-      },
-    );
-  }  
+    return await baseAuthRepository.sendEmailVerification();
+  }
 }

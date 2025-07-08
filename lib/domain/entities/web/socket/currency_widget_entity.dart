@@ -53,7 +53,7 @@ class CurrencyWidgetEntity {
   static String _currencyType(String code) {
     //Buradaki eski conditionlar kaldırıldı. 
     //DÖviz fonu özelliğinde geri eklenecek
-    return "\t₺";
+    return "";
     
   }
 }

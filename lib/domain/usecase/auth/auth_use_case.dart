@@ -8,7 +8,7 @@ import 'package:dartz/dartz.dart';
 import '../../entities/auth/response/user_login_response_entity.dart';
 
 class AuthUseCase implements BaseUseCase {
-  final IAuthRepository _authRepository;
+  final IEmailAuthRepository _authRepository;
 
   const AuthUseCase(this._authRepository);
 

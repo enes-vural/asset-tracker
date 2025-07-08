@@ -1,7 +1,11 @@
-abstract interface class ISignInService<TSignInAccount> {
+import 'package:asset_tracker/data/model/auth/firebase_auth_user_model.dart';
+
+abstract interface class ISignInService {
   Future<void> initialize();
 
-  Future<TSignInAccount?> signIn();
+  Future<FirebaseAuthUser?> signIn();
 
   Future<void> signOut();
+
+  FirebaseAuthUser? get currentUser;
 }

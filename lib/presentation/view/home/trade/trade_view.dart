@@ -62,7 +62,9 @@ class _TradeViewState extends ConsumerState<TradeView> with ValidatorMixin {
       canPop: viewModel.canPop,
       child: authState.getCurrentUser?.user != null
           ? _buildTradeView(tradeFormKey, viewModel, context, isDark)
-          : const UnAuthorizedWidget(page: UnAuthorizedPage.TRADE),
+          //const causes localization issue
+          //ignore: prefer_const_constructors
+          : UnAuthorizedWidget(page: UnAuthorizedPage.TRADE),
     );
   }
 
@@ -255,9 +257,7 @@ class _TradeViewState extends ConsumerState<TradeView> with ValidatorMixin {
           CustomDropDownWidget(
             pageCurrency: widget.currencyCode,
             viewModel: viewModel,
-            onSelectedChanged: () {
-              viewModel.getPriceSelectedCurrency(ref);
-            },
+
           ),
 
           const SizedBox(height: 16),
@@ -267,9 +267,10 @@ class _TradeViewState extends ConsumerState<TradeView> with ValidatorMixin {
             label: LocaleKeys.trade_amount.tr(),
             isObs: false,
             formController: viewModel.amountController,
-            validaor: (value) => checkAmount(value, false),
+            validator: (value) => checkAmount(value, false),
             hasLabel: true,
-            hasTitle: false,
+            hasTitle: true,
+            isRequiredTitle: false,
             type: const TextInputType.numberWithOptions(decimal: true),
             onChanged: (value) {
               double amount = double.tryParse(value) ?? 0.0;
@@ -288,6 +289,9 @@ class _TradeViewState extends ConsumerState<TradeView> with ValidatorMixin {
 
           // Adet Fiyatı
           AuthFormWidget(
+            hasLabel: true,
+            isRequiredTitle: false,
+            hasTitle: true,
             label: LocaleKeys.trade_perPrice.tr(),
             isObs: false,
             formController: viewModel.priceUnitController,
@@ -303,9 +307,8 @@ class _TradeViewState extends ConsumerState<TradeView> with ValidatorMixin {
                     totalPrice.toStringAsFixed(2);
               }
             },
-            validaor: (value) => null,
-            hasLabel: true,
-            hasTitle: false,
+            validator: (value) => null,
+            
           ),
 
           const SizedBox(height: 16),
@@ -337,7 +340,7 @@ class _TradeViewState extends ConsumerState<TradeView> with ValidatorMixin {
                   isObs: false,
                   type: const TextInputType.numberWithOptions(decimal: true),
                   formController: viewModel.priceTotalController,
-                  validaor: (value) => checkAmount(value, true),
+                  validator: (value) => checkAmount(value, true),
                   onChanged: (value) {
                     double priceTotal = double.tryParse(value) ?? 0.0;
                     double amount =

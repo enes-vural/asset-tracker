@@ -5,9 +5,10 @@
 // ignore_for_file: no_leading_underscores_for_library_prefixes
 import 'dart:async' as _i6;
 
-import 'package:asset_tracker/data/repository/auth/auth_repository.dart' as _i5;
-import 'package:asset_tracker/data/service/remote/auth/google_sign_in_service.dart'
+import 'package:asset_tracker/data/repository/auth/base/base_auth_repository.dart'
     as _i3;
+import 'package:asset_tracker/data/repository/auth/firebase_auth_email_repository.dart'
+    as _i5;
 import 'package:asset_tracker/data/service/remote/auth/iauth_service.dart'
     as _i2;
 import 'package:asset_tracker/domain/entities/auth/error/auth_error_entity.dart'
@@ -50,9 +51,9 @@ class _FakeIAuthService_0<L, R, E> extends _i1.SmartFake
         );
 }
 
-class _FakeGoogleSignInService_1 extends _i1.SmartFake
-    implements _i3.GoogleSignInService {
-  _FakeGoogleSignInService_1(
+class _FakeBaseAuthRepository_1 extends _i1.SmartFake
+    implements _i3.BaseAuthRepository {
+  _FakeBaseAuthRepository_1(
     Object parent,
     Invocation parentInvocation,
   ) : super(
@@ -71,12 +72,12 @@ class _FakeEither_2<L, R> extends _i1.SmartFake implements _i4.Either<L, R> {
         );
 }
 
-/// A class which mocks [FirebaseAuthRepository].
+/// A class which mocks [FirebaseAuthEmailRepository].
 ///
 /// See the documentation for Mockito's code generation for more information.
-class MockFirebaseAuthRepository extends _i1.Mock
-    implements _i5.FirebaseAuthRepository {
-  MockFirebaseAuthRepository() {
+class MockFirebaseAuthEmailRepository extends _i1.Mock
+    implements _i5.FirebaseAuthEmailRepository {
+  MockFirebaseAuthEmailRepository() {
     _i1.throwOnMissingStub(this);
   }
 
@@ -91,13 +92,13 @@ class MockFirebaseAuthRepository extends _i1.Mock
       ) as _i2.IAuthService<dynamic, dynamic, dynamic>);
 
   @override
-  _i3.GoogleSignInService get googleSignInService => (super.noSuchMethod(
-        Invocation.getter(#googleSignInService),
-        returnValue: _FakeGoogleSignInService_1(
+  _i3.BaseAuthRepository get baseAuthRepository => (super.noSuchMethod(
+        Invocation.getter(#baseAuthRepository),
+        returnValue: _FakeBaseAuthRepository_1(
           this,
-          Invocation.getter(#googleSignInService),
+          Invocation.getter(#baseAuthRepository),
         ),
-      ) as _i3.GoogleSignInService);
+      ) as _i3.BaseAuthRepository);
 
   @override
   _i6.Future<_i4.Either<_i7.AuthErrorEntity, _i8.UserLoginResponseEntity>>

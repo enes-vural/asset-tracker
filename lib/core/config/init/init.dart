@@ -1,6 +1,7 @@
 import 'package:asset_tracker/data/service/cache/hive_cache_service.dart';
 import 'package:asset_tracker/injection.dart';
 import 'package:easy_localization/easy_localization.dart';
+import 'package:firebase_app_check/firebase_app_check.dart';
 import 'package:firebase_core/firebase_core.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
@@ -24,6 +25,15 @@ final class AppInit {
     await EasyLocalization.ensureInitialized();
     await Firebase.initializeApp(
       options: DefaultFirebaseOptions.currentPlatform,
+    );
+    await FirebaseAppCheck.instance.activate(
+      webProvider: ReCaptchaV3Provider('recaptcha-v3-site-key'),
+      //for release
+      // androidProvider: AndroidProvider.playIntegrity,
+      // appleProvider: AppleProvider.deviceCheck,
+      //for debug
+      androidProvider: AndroidProvider.debug,
+      appleProvider: AppleProvider.debug,
     );
     debugPrint("All services initialized");
   }

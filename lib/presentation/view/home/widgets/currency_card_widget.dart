@@ -577,7 +577,7 @@ class _CurrencyListWidgetState extends ConsumerState<CurrencyListWidget>
         case SortType.type:
           break;
         case SortType.custom:
-          // Custom sorting is handled above
+          // Custom sorting is handled UP
           break;
       }
 
@@ -691,7 +691,7 @@ class _CurrencyListWidgetState extends ConsumerState<CurrencyListWidget>
                       currency.alis.toString(),
                       style: CustomTextStyle.blackColorBoldPoppins(
                         context,
-                        AppSize.smallText,
+                        AppSize.smallText - 1,
                       ),
                       textAlign: TextAlign.center,
                     ),
@@ -727,7 +727,7 @@ class _CurrencyListWidgetState extends ConsumerState<CurrencyListWidget>
                       currency.satis.toString(),
                       style: CustomTextStyle.blackColorBoldPoppins(
                         context,
-                        AppSize.small2Text,
+                        AppSize.smallText - 1,
                       ),
                       textAlign: TextAlign.center,
                     ),

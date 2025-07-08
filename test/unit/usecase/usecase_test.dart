@@ -1,7 +1,8 @@
 import 'package:asset_tracker/core/constants/enums/auth/auth_error_state_enums.dart';
-import 'package:asset_tracker/data/repository/auth/auth_repository.dart';
+import 'package:asset_tracker/data/repository/auth/firebase_auth_email_repository.dart';
 import 'package:asset_tracker/domain/entities/auth/error/auth_error_entity.dart';
 import 'package:asset_tracker/domain/entities/auth/response/user_login_response_entity.dart';
+import 'package:asset_tracker/domain/repository/auth/iauth_repository.dart';
 import 'package:asset_tracker/domain/usecase/auth/auth_use_case.dart';
 import 'package:dartz/dartz.dart';
 import 'package:mockito/annotations.dart';
@@ -11,13 +12,13 @@ import 'package:test/test.dart';
 import '../shared/constants/test_constants.dart';
 import 'usecase_test.mocks.dart';
 
-@GenerateMocks([FirebaseAuthRepository])
+@GenerateMocks([FirebaseAuthEmailRepository])
 void main() {
-  late MockFirebaseAuthRepository firebaseAuthRepository;
+  late IEmailAuthRepository firebaseAuthRepository;
 
   late AuthUseCase authUseCase;
   setUp(() {
-    firebaseAuthRepository = MockFirebaseAuthRepository();
+    firebaseAuthRepository = MockFirebaseAuthEmailRepository();
     authUseCase = AuthUseCase(firebaseAuthRepository);
   });
   group("Authentication Use Case Group", () {

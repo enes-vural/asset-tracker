@@ -1,4 +1,5 @@
-import 'package:asset_tracker/data/repository/auth/auth_repository.dart';
+import 'package:asset_tracker/data/repository/auth/base/base_auth_repository.dart';
+import 'package:asset_tracker/data/repository/auth/firebase_auth_email_repository.dart';
 import 'package:asset_tracker/data/service/remote/auth/firebase_auth_service.dart';
 import 'package:asset_tracker/data/service/remote/auth/google_sign_in_service.dart';
 import 'package:asset_tracker/data/service/remote/auth/ifirebase_auth_service.dart';
@@ -16,7 +17,7 @@ import '../../shared/constants/test_constants.dart';
 void main() {
   late MockAuthHelper mockAuthHelper;
   late IFirebaseAuthService firebaseAuthService;
-  late IAuthRepository authRepo;
+  late IEmailAuthRepository authRepo;
 
   setUpAll(() {
     //   FlutterError.onError = (details) {
@@ -35,11 +36,13 @@ void main() {
     mockAuthHelper = MockAuthHelper();
     firebaseAuthService =
         FirebaseAuthService(authService: mockAuthHelper.mockFirebaseAuth);
+    BaseAuthRepository baseAuthRepository =
+        BaseAuthRepository(authService: firebaseAuthService);
 
-    authRepo = FirebaseAuthRepository(
-        authService: firebaseAuthService,
-        //TOOD: Mock
-        googleSignInService: GoogleSignInService());
+    authRepo = FirebaseAuthEmailRepository(
+      baseAuthRepository: baseAuthRepository,
+      authService: firebaseAuthService,
+    );
   });
 
   group("Authentication Repository (Data)", () {

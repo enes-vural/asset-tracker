@@ -1,4 +1,5 @@
 import 'package:asset_tracker/core/constants/database/transaction_type_enum.dart';
+import 'package:asset_tracker/data/model/database/alarm_model.dart';
 import 'package:asset_tracker/data/model/database/error/database_error_model.dart';
 import 'package:asset_tracker/data/model/database/request/buy_currency_model.dart';
 import 'package:asset_tracker/data/model/database/request/save_user_model.dart';
@@ -7,6 +8,7 @@ import 'package:asset_tracker/data/model/database/response/user_data_model.dart'
 import 'package:asset_tracker/data/model/database/response/user_currency_data_model.dart';
 import 'package:asset_tracker/data/model/database/user_info_model.dart';
 import 'package:asset_tracker/data/service/remote/database/firestore/ifirestore_service.dart';
+import 'package:asset_tracker/domain/entities/database/alarm_entity.dart';
 import 'package:asset_tracker/domain/entities/database/enttiy/buy_currency_entity.dart';
 import 'package:asset_tracker/domain/entities/database/enttiy/sell_currency_entity.dart';
 import 'package:asset_tracker/domain/entities/database/enttiy/user_data_entity.dart';
@@ -42,28 +44,31 @@ class FirestoreRepository implements IFirestoreRepository {
       UserUidEntity model) async {
     double totalBalance = 0.00;
     UserDataModel userDataModel = UserDataModel(
-        currencyList: [], uid: model.userId, balance: totalBalance);
+        userAlarmList: [],
+        currencyList: [],
+        uid: model.userId,
+        balance: totalBalance);
     final uidEntity = UserUidModel.fromEnttiy(model);
 
     try {
       final userInfoData = await firestoreService.getUserInfo(uidEntity);
-      final userAssetsData = await firestoreService.getUserAssets(uidEntity);
+      final userAssetsData =
+          await firestoreService.getUserAssets(uidEntity) ?? [];
+      //use case de çağırmak yerine burada çağırmayı tercih ettim tüm get datalar tek bi fonksiyonda dursun şimdilik
+      final userAlarmData = await firestoreService.getUserAlarms(uidEntity);
 
       if (userInfoData != null) {
         userDataModel.userInfoModel = UserInfoModel.fromJson(userInfoData);
       } else {
         debugPrint("User data came null ??");
       }
-
-      if (userAssetsData == null || userAssetsData.isEmpty) {
-        //If user has no assets, we will return empty list
-        debugPrint("User assets data is empty");
-        return Right(UserDataEntity(
-          currencyList: [],
-          userId: model.userId,
-          balance: totalBalance,
-          userInfoEntity: userDataModel.userInfoModel?.toEntity(),
-        ));
+      if (userAlarmData.isNotEmpty) {
+        for (var json in userAlarmData) {
+          if (json != null) {
+            final model = AlarmModel.fromJson(json);
+            userDataModel.userAlarmList?.add(model);
+          }
+        }
       }
 
       for (Map<String, dynamic>? dataIndex in userAssetsData) {
@@ -86,6 +91,26 @@ class FirestoreRepository implements IFirestoreRepository {
       userDataModel.balance = totalBalance;
 
       return Right(UserDataEntity.fromModel(userDataModel));
+    } catch (e) {
+      return Left(DatabaseErrorEntity(message: e.toString()));
+    }
+  }
+
+  @override
+  Future<Either<DatabaseErrorEntity, bool>> saveUserAlarm(
+      AlarmEntity entity) async {
+    try {
+      final model = entity.toModel();
+      final result = await firestoreService.saveUserAlarm(model);
+      return result.fold(
+        (DatabaseErrorModel failure) {
+          debugPrint(failure.message);
+          return Left(DatabaseErrorEntity.fromModel(failure));
+        },
+        (success) {
+          return const Right(true);
+        },
+      );
     } catch (e) {
       return Left(DatabaseErrorEntity(message: e.toString()));
     }
@@ -178,5 +203,32 @@ class FirestoreRepository implements IFirestoreRepository {
         return Right(success);
       },
     );
+  }
+
+  @override
+  Future<void> saveUserToken(UserUidEntity entity, String token) async {
+    UserUidModel model = UserUidModel.fromEnttiy(entity);
+    if (token.length > 80) {
+      return await firestoreService.saveUserToken(model, token);
+    }
+    return;
+  }
+
+  @override
+  Future<List<AlarmEntity>?> getUserAlarms(UserUidEntity entity) async {
+    List<AlarmEntity> alarmList = [];
+    final List<Map<String, dynamic>?> dataList =
+        await firestoreService.getUserAlarms(UserUidModel.fromEnttiy(entity));
+    if (dataList.isEmpty || dataList == null) {
+      return null;
+    }
+    for (var json in dataList) {
+      if (json != null) {
+        final model = AlarmModel.fromJson(json);
+        AlarmEntity entity = model.toEntity();
+        alarmList.add(entity);
+      }
+    }
+    return alarmList;
   }
 }

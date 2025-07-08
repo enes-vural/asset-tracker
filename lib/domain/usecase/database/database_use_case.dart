@@ -1,4 +1,5 @@
 import 'package:asset_tracker/domain/entities/auth/base/error/base_error_entity.dart';
+import 'package:asset_tracker/domain/entities/database/alarm_entity.dart';
 import 'package:asset_tracker/domain/entities/database/enttiy/buy_currency_entity.dart';
 import 'package:asset_tracker/domain/entities/database/enttiy/sell_currency_entity.dart';
 import 'package:asset_tracker/domain/entities/database/enttiy/user_currency_entity_model.dart';
@@ -33,8 +34,6 @@ class DatabaseUseCase
     return await firestoreRepository.sellCurrency(entity);
   }
 
-
-
   Future<Either<DatabaseErrorEntity, UserDataEntity>> getUserData(
       UserUidEntity params) async {
     return await firestoreRepository.getUserData(params);
@@ -53,5 +52,18 @@ class DatabaseUseCase
   Future<Either<DatabaseErrorEntity, bool>> changeUserInfo(
       UserInfoEntity entity) async {
     return await firestoreRepository.changeUserInfo(entity);
+  }
+
+  Future<void> saveUserToken(UserUidEntity entity, String token) async {
+    return await firestoreRepository.saveUserToken(entity, token);
+  }
+
+  Future<Either<DatabaseErrorEntity, bool>> saveUserAlarm(
+      AlarmEntity entity) async {
+    return await firestoreRepository.saveUserAlarm(entity);
+  }
+
+  Future<List<AlarmEntity>?> getUserAlarms(UserUidEntity entity) async {
+    return await firestoreRepository.getUserAlarms(entity);
   }
 }

@@ -67,7 +67,7 @@ class _HomeViewState extends ConsumerState<HomeView>
         });
       }
     });
-    _skeletonTimer = Timer(const Duration(seconds: 1), () {
+    _skeletonTimer = Timer(const Duration(seconds: 2), () {
       if (mounted) {
         setState(() {
           _showSkeleton = false;
@@ -83,6 +83,7 @@ class _HomeViewState extends ConsumerState<HomeView>
     _scrollController.dispose();
     _searchAnimationController.dispose();
     _searchFocusNode.dispose();
+    _skeletonTimer?.cancel();
     super.dispose();
   }
 
@@ -100,9 +101,9 @@ class _HomeViewState extends ConsumerState<HomeView>
       ref.read(homeViewModelProvider).clearText();
     }
   }
-
   @override
-  Widget build(BuildContext context) {
+  Widget build(BuildContext context) {   
+
     final authState = ref.watch(authGlobalProvider);
     final viewModel = ref.read(homeViewModelProvider);
 
