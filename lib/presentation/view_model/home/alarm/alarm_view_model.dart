@@ -120,11 +120,11 @@ class AlarmViewModel extends ChangeNotifier {
 
     final alarmEntity = AlarmEntity(
       currencyCode: currencyCode,
-      direction: AlarmCondition.UP.name,
+      direction: AlarmCondition.UP,
       isTriggered: false,
-      mode: selectedAlarmType.name,
+      mode: selectedAlarmType,
       targetValue: targetValue,
-      type: selectedOrderType.name,
+      type: selectedOrderType,
       userID: userId,
       createTime: DateTime.now(),
     );

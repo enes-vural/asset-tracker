@@ -215,6 +215,23 @@ class FirestoreRepository implements IFirestoreRepository {
   }
 
   @override
+  Future<Either<DatabaseErrorEntity, bool>> toggleAlarmStatus(
+      AlarmEntity entity) async {
+    AlarmModel model = entity.toModel();
+
+    final response = await firestoreService.toggleAlarmStatus(model);
+
+    return response.fold(
+      (failure) {
+        return Left(DatabaseErrorEntity(message: failure.message.toString()));
+      },
+      (success) {
+        return const Right(true);
+      },
+    );
+  }
+
+  @override
   Future<List<AlarmEntity>?> getUserAlarms(UserUidEntity entity) async {
     List<AlarmEntity> alarmList = [];
     final List<Map<String, dynamic>?> dataList =

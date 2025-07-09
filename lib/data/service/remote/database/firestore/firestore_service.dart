@@ -1,5 +1,4 @@
 // ignore_for_file: avoid_function_literals_in_foreach_calls
-
 import 'package:asset_tracker/core/constants/database/transaction_type_enum.dart';
 import 'package:asset_tracker/core/constants/firestore_constants.dart';
 import 'package:asset_tracker/core/config/localization/generated/locale_keys.g.dart';
@@ -190,6 +189,25 @@ final class FirestoreService implements IFirestoreService {
 
     if (!docSnapshot.exists) {
       await docRef.set({"value": token});
+    }
+  }
+
+  Future<Either<DatabaseErrorModel, bool>> toggleAlarmStatus(
+      AlarmModel model) async {
+    try {
+      final callable = functions.httpsCallable('toggle_alarm_status');
+      final result = await callable.call({
+        'docId': model.docID,
+        'userId': model.userID,
+      });
+
+      if (result.data['success'] == true) {
+        return const Right(true);
+      } else {
+        return Left(DatabaseErrorModel(message: result.data['error']));
+      }
+    } catch (e) {
+      return Left(DatabaseErrorModel(message: e.toString()));
     }
   }
 

@@ -1,5 +1,6 @@
 import 'package:asset_tracker/data/model/base/base_model.dart';
 import 'package:asset_tracker/domain/entities/database/alarm_entity.dart';
+import 'package:asset_tracker/presentation/view_model/home/alarm/alarm_view_model.dart';
 import 'package:cloud_firestore/cloud_firestore.dart';
 
 final class AlarmModel implements BaseModel {
@@ -87,14 +88,15 @@ final class AlarmModel implements BaseModel {
   }
 
   @override
-  toEntity() => AlarmEntity(
+  AlarmEntity toEntity() => AlarmEntity(
         currencyCode: currencyCode,
-        direction: direction,
+        direction: AlarmCondition.values.firstWhere((e) => e.name == direction),
         isTriggered: isTriggered,
-        mode: mode,
+        mode: AlarmType.values.firstWhere((e) => e.name == mode),
         targetValue: targetValue,
-        type: type,
+        type: AlarmOrderType.values.firstWhere((e) => e.name == type),
         userID: userID,
+        docID: docID,
         createTime: createTime.toDate(),
       );
 }
