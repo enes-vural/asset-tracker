@@ -26,8 +26,11 @@ abstract interface class IDatabaseService {
       UserCurrencyDataModel model);
 
   Future<Either<DatabaseErrorModel, bool>> toggleAlarmStatus(AlarmModel model);
+
   Future<Either<DatabaseErrorModel, bool>> sellCurrency(
       SellCurrencyModel model);
+
+  Future<Either<DatabaseErrorModel, bool>> updateAlarm(AlarmModel model);
 
   Future<List<Map<String, dynamic>?>> getUserAlarms(UserUidModel model);
 
@@ -39,4 +42,9 @@ abstract interface class IDatabaseService {
 
   Future<Either<DatabaseErrorModel, bool>> changeUserInfo(
       UserInfoModel infoModel);
+
+  Future<Either<DatabaseErrorModel, bool>> deleteAlarm(AlarmModel model);
+
+
+
 }

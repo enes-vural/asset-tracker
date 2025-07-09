@@ -5,6 +5,7 @@ import 'package:cloud_firestore/cloud_firestore.dart';
 
 final class AlarmModel implements BaseModel {
   final String currencyCode;
+  final double priceWhenCreated;
   final String direction;
   final bool isTriggered;
   final String mode;
@@ -17,6 +18,7 @@ final class AlarmModel implements BaseModel {
   AlarmModel({
     required this.currencyCode,
     required this.direction,
+    required this.priceWhenCreated,
     required this.isTriggered,
     required this.mode,
     required this.targetValue,
@@ -43,6 +45,7 @@ final class AlarmModel implements BaseModel {
   // fromJson method
   factory AlarmModel.fromJson(Map<String, dynamic> json) {
     return AlarmModel(
+      priceWhenCreated: json['priceWhenCreated'] as double? ?? 0.0,
       currencyCode: json['currencyCode'] as String,
       direction: json['direction'] as String,
       isTriggered: json['isTriggered'] as bool,
@@ -64,11 +67,13 @@ final class AlarmModel implements BaseModel {
     String? mode,
     double? targetValue,
     String? type,
+    double? priceWhenCreated,
     String? userID,
     Timestamp? createTime,
     String? docID,
   }) {
     return AlarmModel(
+      priceWhenCreated: priceWhenCreated ?? this.priceWhenCreated,
       currencyCode: currencyCode ?? this.currencyCode,
       direction: direction ?? this.direction,
       isTriggered: isTriggered ?? this.isTriggered,
@@ -89,6 +94,7 @@ final class AlarmModel implements BaseModel {
 
   @override
   AlarmEntity toEntity() => AlarmEntity(
+        priceWhenCreated: priceWhenCreated,
         currencyCode: currencyCode,
         direction: AlarmCondition.values.firstWhere((e) => e.name == direction),
         isTriggered: isTriggered,

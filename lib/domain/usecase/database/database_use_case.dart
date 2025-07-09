@@ -71,4 +71,14 @@ class DatabaseUseCase
       AlarmEntity entity) async {
     return await firestoreRepository.toggleAlarmStatus(entity);
   }
+
+  Future<Either<DatabaseErrorEntity, bool>> updateAlarm(
+      AlarmEntity entity) async {
+    return await firestoreRepository.updateAlarm(entity);
+  }
+
+  Future<Either<DatabaseErrorEntity, bool>> deleteAlarm(
+      AlarmEntity entity) async {
+    return await firestoreRepository.deleteAlarm(entity);
+  }
 }

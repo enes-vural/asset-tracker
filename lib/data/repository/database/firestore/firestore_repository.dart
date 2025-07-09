@@ -232,6 +232,36 @@ class FirestoreRepository implements IFirestoreRepository {
   }
 
   @override
+  Future<Either<DatabaseErrorEntity, bool>> updateAlarm(
+      AlarmEntity entity) async {
+    final model = entity.toModel();
+    final response = await firestoreService.updateAlarm(model);
+    return response.fold(
+      (failure) {
+        return Left(DatabaseErrorEntity(message: failure.message.toString()));
+      },
+      (success) {
+        return const Right(true);
+      },
+    );
+  }
+
+  @override
+  Future<Either<DatabaseErrorEntity, bool>> deleteAlarm(
+      AlarmEntity entity) async {
+    final model = entity.toModel();
+    final response = await firestoreService.deleteAlarm(model);
+    return response.fold(
+      (failure) {
+        return Left(DatabaseErrorEntity(message: failure.message.toString()));
+      },
+      (success) {
+        return const Right(true);
+      },
+    );
+  }
+
+  @override
   Future<List<AlarmEntity>?> getUserAlarms(UserUidEntity entity) async {
     List<AlarmEntity> alarmList = [];
     final List<Map<String, dynamic>?> dataList =

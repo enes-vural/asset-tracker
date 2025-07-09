@@ -5,6 +5,7 @@ import 'package:cloud_firestore/cloud_firestore.dart';
 
 final class AlarmEntity implements BaseEntity {
   final String currencyCode;
+  final double priceWhenCreated;
   final AlarmCondition direction;
   final bool isTriggered;
   final AlarmType mode;
@@ -17,6 +18,7 @@ final class AlarmEntity implements BaseEntity {
   AlarmEntity({
     required this.currencyCode,
     required this.direction,
+    required this.priceWhenCreated,
     required this.isTriggered,
     required this.mode,
     required this.targetValue,
@@ -31,6 +33,7 @@ final class AlarmEntity implements BaseEntity {
     AlarmCondition? direction,
     bool? isTriggered,
     AlarmType? mode,
+    double? priceWhenCreated,
     double? targetValue,
     AlarmOrderType? type,
     String? userID,
@@ -38,6 +41,7 @@ final class AlarmEntity implements BaseEntity {
     DateTime? createTime,
   }) {
     return AlarmEntity(
+      priceWhenCreated: priceWhenCreated ?? this.priceWhenCreated,
       currencyCode: currencyCode ?? this.currencyCode,
       direction: direction ?? this.direction,
       isTriggered: isTriggered ?? this.isTriggered,
@@ -59,6 +63,7 @@ final class AlarmEntity implements BaseEntity {
   @override
   AlarmModel toModel() {
     return AlarmModel(
+      priceWhenCreated: priceWhenCreated,
       currencyCode: currencyCode,
       direction: direction.name.toString(),
       isTriggered: isTriggered,

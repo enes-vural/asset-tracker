@@ -95,6 +95,14 @@ class AppGlobalProvider extends ChangeNotifier {
     }
   }
 
+  removeSingleAlarm(AlarmEntity singleAlarm) {
+    if (_userData?.userAlarmList != null) {
+      _userData?.userAlarmList!
+          .removeWhere((item) => item.docID == singleAlarm.docID);
+      notifyListeners();
+    }
+  }
+
   updateUserData(UserDataEntity entity) {
     _userData = entity;
     _userBalance = entity.balance; // User balance'ı burada set et

@@ -10,10 +10,10 @@ class EditAlarmPopup extends StatefulWidget {
   final Function(AlarmEntity) onSave;
 
   const EditAlarmPopup({
-    Key? key,
+    super.key,
     required this.alarm,
     required this.onSave,
-  }) : super(key: key);
+  });
 
   @override
   State<EditAlarmPopup> createState() => _EditAlarmPopupState();
@@ -64,9 +64,6 @@ class _EditAlarmPopupState extends State<EditAlarmPopup> {
 
     final newTargetValue = double.tryParse(_targetValueController.text) ?? 0.0;
     if (newTargetValue <= 0) {
-      ScaffoldMessenger.of(context).showSnackBar(
-        const SnackBar(content: Text('Lütfen geçerli bir hedef değer girin')),
-      );
       return;
     }
 
@@ -370,7 +367,7 @@ class _EditAlarmPopupState extends State<EditAlarmPopup> {
 
   Widget _buildConditionButton(
       String text, AlarmCondition type, IconData icon, Color color) {
-    final isSelected = _selectedConditionType == type;
+    final isSelected = (_selectedConditionType.name == type.name);
     return GestureDetector(
       onTap: () {
         setState(() {
