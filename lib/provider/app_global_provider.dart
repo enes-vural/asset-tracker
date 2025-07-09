@@ -81,6 +81,20 @@ class AppGlobalProvider extends ChangeNotifier {
     notifyListeners();
   }
 
+  updateSingleUserAlarm(AlarmEntity singleAlarm) {
+    if (_userData?.userAlarmList != null) {
+      final updatedList = _userData!.userAlarmList!.map((alarm) {
+        if (alarm.docID == singleAlarm.docID) {
+          return singleAlarm;
+        }
+        return alarm;
+      }).toList();
+
+      _userData?.userAlarmList = updatedList;
+      notifyListeners();
+    }
+  }
+
   updateUserData(UserDataEntity entity) {
     _userData = entity;
     _userBalance = entity.balance; // User balance'ı burada set et
@@ -221,6 +235,44 @@ class AppGlobalProvider extends ChangeNotifier {
       purchasePriceTotal: totalPurchasePrice,
       latestPriceTotal: totalCurrentValue,
     );
+  }
+
+  Map<String, double>? _getSelectedCurrencyPrice(String currencyCode) {
+    if (globalAssets == null || globalAssets!.isEmpty) {
+      debugPrint("Global assets is null or empty");
+      return null;
+    }
+
+    try {
+      final currency = globalAssets?.firstWhere(
+        (element) => element.code.toLowerCase() == currencyCode.toLowerCase(),
+      );
+
+      if (currency == null) {
+        debugPrint("Currency not found: $currencyCode");
+        return null;
+      }
+
+      return {
+        'alis': double.parse(currency.alis),
+        'satis': double.parse(currency.satis),
+      };
+    } catch (e) {
+      debugPrint("Error getting currency price for $currencyCode: $e");
+      return null;
+    }
+  }
+
+// Alternatif olarak sadece alış fiyatını döndüren fonksiyon
+  double? getSelectedCurrencyBuyPrice(String currencyCode) {
+    final prices = _getSelectedCurrencyPrice(currencyCode);
+    return prices?['alis'];
+  }
+
+// Alternatif olarak sadece satış fiyatını döndüren fonksiyon
+  double? getSelectedCurrencySellPrice(String currencyCode) {
+    final prices = _getSelectedCurrencyPrice(currencyCode);
+    return prices?['satis'];
   }
 
   void _calculateProfitBalanceInternal() {

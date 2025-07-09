@@ -1,7 +1,12 @@
 import 'package:asset_tracker/core/config/theme/default_theme.dart';
+import 'package:asset_tracker/core/config/theme/extension/currency_widget_title_extension.dart';
+import 'package:asset_tracker/core/constants/global/general_constants.dart';
+import 'package:asset_tracker/core/helpers/snackbar.dart';
 import 'package:asset_tracker/domain/entities/database/alarm_entity.dart';
+import 'package:asset_tracker/domain/usecase/database/database_use_case.dart';
 import 'package:asset_tracker/injection.dart';
 import 'package:asset_tracker/presentation/common/custom_dropdown_widget.dart';
+import 'package:asset_tracker/presentation/view/home/widgets/edit_alarm_popup_widget.dart';
 import 'package:asset_tracker/presentation/view_model/home/alarm/alarm_view_model.dart';
 import 'package:auto_route/auto_route.dart';
 import 'package:flutter/material.dart';
@@ -69,34 +74,7 @@ class _AlarmViewState extends ConsumerState<AlarmView>
   Widget _buildInactiveAlarms() {
     List<AlarmEntity>? alarms = [];
     alarms = ref.watch(appGlobalProvider).getUserData?.userAlarmList;
-    // final inactiveAlarms = [
-    //   {
-    //     'asset': 'Bitcoin',
-    //     'symbol': 'BTC',
-    //     'type': 'price',
-    //     'condition': 'UP',
-    //     'value': '75,000',
-    //     'orderType': 'sell',
-    //     'currentPrice': '67,234.50',
-    //     'targetPrice': '75,000.00',
-    //     'createdAt': '1 hafta önce',
-    //     'isActive': false,
-    //   },
-    //   {
-    //     'asset': 'Altın',
-    //     'symbol': 'GOLD',
-    //     'type': 'percentage',
-    //     'condition': 'below',
-    //     'value': '2.5',
-    //     'orderType': 'buy',
-    //     'currentPrice': '2,345.67',
-    //     'targetPrice': '2,287.03',
-    //     'createdAt': '2 gün önce',
-    //     'isActive': false,
-    //   },
-    // ];
-
-    return _buildAlarmsList(alarms, false);
+    return _buildAlarmsList(alarms);
   }
 
   Widget _buildNewAlarmForm(AlarmViewModel viewModel) {
@@ -150,19 +128,45 @@ class _AlarmViewState extends ConsumerState<AlarmView>
     );
   }
 
-  Widget _buildAlarmsList(List<AlarmEntity>? alarms, bool isActive) {
+  Widget _buildAlarmsList(List<AlarmEntity>? alarms) {
     if (alarms == null || alarms.isEmpty) {
       return _buildEmptyState('Alarm bulunmuyor');
     }
 
+    // Alarmları sırala
+    final sortedAlarms = _sortAlarmsDetailed();
+
     return ListView.builder(
       padding: const EdgeInsets.all(16),
-      itemCount: alarms.length,
+      itemCount: sortedAlarms.length,
       itemBuilder: (context, index) {
-        final alarm = alarms[index];
-        return _buildAlarmCard(alarm, isActive);
+        final alarm = sortedAlarms[index];
+        return _buildAlarmCard(alarm);
       },
     );
+  }
+
+  List<AlarmEntity> _sortAlarmsDetailed() {
+    final List<AlarmEntity>? sortedAlarms =
+        ref.watch(appGlobalProvider).getUserData?.userAlarmList;
+
+    sortedAlarms?.sort((a, b) {
+      // 1. Önce aktif/deaktif durumuna göre sırala
+      if (a.isTriggered != b.isTriggered) {
+        return a.isTriggered ? 1 : -1; // Aktif olanlar önce
+      }
+
+      // 2. Aynı durumda olanları tarihlerine göre sırala
+      if (!a.isTriggered) {
+        // Aktif alarmlar: en yakın tarih önce
+        return a.createTime.compareTo(b.createTime);
+      } else {
+        // Deaktif alarmlar: en yeni tarih önce
+        return b.createTime.compareTo(a.createTime);
+      }
+    });
+
+    return sortedAlarms ?? [];
   }
 
   Widget _buildEmptyState(String message) {
@@ -188,7 +192,9 @@ class _AlarmViewState extends ConsumerState<AlarmView>
     );
   }
 
-  Widget _buildAlarmCard(AlarmEntity alarm, bool isActive) {
+  Widget _buildAlarmCard(AlarmEntity alarm) {
+    final String title = alarm.currencyCode.getCurrencyTitle();
+    bool isActive = !alarm.isTriggered;
     return Container(
       margin: const EdgeInsets.only(bottom: 12),
       padding: const EdgeInsets.all(16),
@@ -211,7 +217,7 @@ class _AlarmViewState extends ConsumerState<AlarmView>
                 ),
                 child: Center(
                   child: Text(
-                    alarm.currencyCode.substring(0, 2),
+                    title.substring(0, 2),
                     style: const TextStyle(
                       color: Colors.white,
                       fontSize: 11,
@@ -226,7 +232,7 @@ class _AlarmViewState extends ConsumerState<AlarmView>
                   crossAxisAlignment: CrossAxisAlignment.start,
                   children: [
                     Text(
-                      alarm.currencyCode,
+                      title,
                       style: const TextStyle(
                         color: Color(0xFF2C3E50),
                         fontSize: 15,
@@ -234,7 +240,15 @@ class _AlarmViewState extends ConsumerState<AlarmView>
                       ),
                     ),
                     Text(
-                      'Güncel: ₺${'alarm[' ']'}',
+                      alarm.type == AlarmOrderType.BUY
+                          ? ref
+                              .read(appGlobalProvider)
+                              .getSelectedCurrencySellPrice(alarm.currencyCode)
+                              .toString()
+                          : ref
+                              .read(appGlobalProvider)
+                              .getSelectedCurrencyBuyPrice(alarm.currencyCode)
+                              .toString(),
                       style: const TextStyle(
                         color: Color(0xFF7F8C8D),
                         fontSize: 13,
@@ -245,10 +259,18 @@ class _AlarmViewState extends ConsumerState<AlarmView>
               ),
               Switch(
                 value: isActive,
-                onChanged: (value) {
-                  setState(() {
-                    // Alarm aktif/pasif durumunu değiştir
-                  });
+                onChanged: (value) async {
+                  ref.read(appGlobalProvider).updateSingleUserAlarm(
+                      alarm.copyWith(isTriggered: !alarm.isTriggered));
+                  final a =
+                      await getIt<DatabaseUseCase>().toggleAlarmStatus(alarm);
+                  a.fold(
+                      (failure) => debugPrint("FAIL FAIL${failure.message}"),
+                      (success) => EasySnackBar.show(
+                          context,
+                          alarm.isTriggered
+                              ? "Alarmınız aktif edildi"
+                              : "Alarmınız deaktif edildi"));
                 },
                 activeColor: DefaultColorPalette.mainBlue,
                 inactiveThumbColor: Colors.grey[400],
@@ -349,7 +371,7 @@ class _AlarmViewState extends ConsumerState<AlarmView>
             mainAxisAlignment: MainAxisAlignment.spaceBetween,
             children: [
               Text(
-                alarm.createTime.toString(),
+                GeneralConstants.dateFormat.format(alarm.createTime),
                 style: TextStyle(
                   color: Colors.grey[500],
                   fontSize: 12,
@@ -359,7 +381,7 @@ class _AlarmViewState extends ConsumerState<AlarmView>
                 children: [
                   TextButton(
                     onPressed: () {
-                      // Alarm düzenleme
+                      _showEditAlarmPopup(context, alarm);
                     },
                     style: TextButton.styleFrom(
                       padding: const EdgeInsets.symmetric(
@@ -396,6 +418,31 @@ class _AlarmViewState extends ConsumerState<AlarmView>
             ],
           ),
         ],
+      ),
+    );
+  }
+
+  void _showEditAlarmPopup(BuildContext context, AlarmEntity alarm) {
+    showDialog(
+      context: context,
+      barrierDismissible: false,
+      builder: (context) => EditAlarmPopup(
+        alarm: alarm,
+        onSave: (updatedAlarm) {
+          // Alarmı güncelle
+          ref.read(appGlobalProvider).updateSingleUserAlarm(updatedAlarm);
+
+          // Veritabanında güncelle
+          // getIt<DatabaseUseCase>().updateAlarm(updatedAlarm).then((result) {
+          //   result.fold(
+          //     (failure) => debugPrint("Update failed: ${failure.message}"),
+          //     (success) => EasySnackBar.show(
+          //       context,
+          //       "Alarm başarıyla güncellendi",
+          //     ),
+          //   );
+          // });
+        },
       ),
     );
   }

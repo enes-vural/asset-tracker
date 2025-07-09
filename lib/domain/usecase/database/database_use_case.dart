@@ -66,4 +66,9 @@ class DatabaseUseCase
   Future<List<AlarmEntity>?> getUserAlarms(UserUidEntity entity) async {
     return await firestoreRepository.getUserAlarms(entity);
   }
+
+  Future<Either<DatabaseErrorEntity, bool>> toggleAlarmStatus(
+      AlarmEntity entity) async {
+    return await firestoreRepository.toggleAlarmStatus(entity);
+  }
 }

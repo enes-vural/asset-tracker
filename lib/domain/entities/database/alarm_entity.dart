@@ -1,14 +1,15 @@
 import 'package:asset_tracker/data/model/base/base_model.dart';
 import 'package:asset_tracker/data/model/database/alarm_model.dart';
+import 'package:asset_tracker/presentation/view_model/home/alarm/alarm_view_model.dart';
 import 'package:cloud_firestore/cloud_firestore.dart';
 
 final class AlarmEntity implements BaseEntity {
   final String currencyCode;
-  final String direction;
+  final AlarmCondition direction;
   final bool isTriggered;
-  final String mode;
+  final AlarmType mode;
   final double targetValue;
-  final String type;
+  final AlarmOrderType type;
   final String userID;
   final String? docID;
   final DateTime createTime;
@@ -27,11 +28,11 @@ final class AlarmEntity implements BaseEntity {
 
   AlarmEntity copyWith({
     String? currencyCode,
-    String? direction,
+    AlarmCondition? direction,
     bool? isTriggered,
-    String? mode,
+    AlarmType? mode,
     double? targetValue,
-    String? type,
+    AlarmOrderType? type,
     String? userID,
     String? docID,
     DateTime? createTime,
@@ -59,11 +60,11 @@ final class AlarmEntity implements BaseEntity {
   AlarmModel toModel() {
     return AlarmModel(
       currencyCode: currencyCode,
-      direction: direction,
+      direction: direction.name.toString(),
       isTriggered: isTriggered,
-      mode: mode,
+      mode: mode.name.toString(),
       targetValue: targetValue,
-      type: type,
+      type: type.name.toString(),
       userID: userID,
       createTime: Timestamp.fromDate(createTime),
       docID: docID,

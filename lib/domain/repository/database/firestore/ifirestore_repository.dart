@@ -22,6 +22,9 @@ abstract interface class IFirestoreRepository {
   Future<Either<DatabaseErrorEntity, bool>> sellCurrency(
       SellCurrencyEntity entity);
 
+  Future<Either<DatabaseErrorEntity, bool>> toggleAlarmStatus(
+      AlarmEntity entity);
+
   Future<List<AlarmEntity>?> getUserAlarms(UserUidEntity entity);
 
   Future<Either<DatabaseErrorEntity, bool>> saveUserAlarm(AlarmEntity entity);
