@@ -118,14 +118,26 @@ class AlarmViewModel extends ChangeNotifier {
 
     if (userId == null) return;
 
+    final priceWhenCreated = selectedOrderType == AlarmOrderType.BUY
+        ? ref.read(appGlobalProvider).getSelectedCurrencySellPrice(currencyCode)
+        : ref.read(appGlobalProvider).getSelectedCurrencyBuyPrice(currencyCode);
+
+    if (priceWhenCreated == null) {
+      if (context.mounted) {
+        EasySnackBar.show(context, "Bir hata oluştu");
+      }
+      return;
+    }
+
     final alarmEntity = AlarmEntity(
       currencyCode: currencyCode,
-      direction: AlarmCondition.UP,
+      direction: selectedCondition,
       isTriggered: false,
       mode: selectedAlarmType,
       targetValue: targetValue,
       type: selectedOrderType,
       userID: userId,
+      priceWhenCreated: priceWhenCreated,
       createTime: DateTime.now(),
     );
 

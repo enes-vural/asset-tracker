@@ -192,6 +192,33 @@ final class FirestoreService implements IFirestoreService {
     }
   }
 
+  @override
+  Future<Either<DatabaseErrorModel, bool>> updateAlarm(AlarmModel model) async {
+    try {
+      final callable = functions.httpsCallable('update_alarm');
+      final result = await callable.call({
+        'docId': model.docID,
+        'userId': model.userID,
+        'currencyCode': model.currencyCode,
+        'direction': model.direction,
+        'isTriggered': model.isTriggered,
+        'mode': model.mode,
+        'targetValue': model.targetValue,
+        'type': model.type,
+        'createTime': model.createTime.millisecondsSinceEpoch,
+      });
+
+      if (result.data['success'] == true) {
+        return const Right(true);
+      } else {
+        return Left(DatabaseErrorModel(message: result.data['error']));
+      }
+    } catch (e) {
+      return Left(DatabaseErrorModel(message: e.toString()));
+    }
+  }
+
+  @override
   Future<Either<DatabaseErrorModel, bool>> toggleAlarmStatus(
       AlarmModel model) async {
     try {
@@ -345,6 +372,25 @@ final class FirestoreService implements IFirestoreService {
       return const Right(true);
     } catch (e) {
       debugPrint(e.toString());
+      return Left(DatabaseErrorModel(message: e.toString()));
+    }
+  }
+  
+  @override
+  Future<Either<DatabaseErrorModel, bool>> deleteAlarm(AlarmModel model) async {
+    try {
+      final callable = functions.httpsCallable('delete_alarm');
+      final result = await callable.call({
+        'docId': model.docID,
+        'userId': model.userID,
+      });
+
+      if (result.data['success'] == true) {
+        return const Right(true);
+      } else {
+        return Left(DatabaseErrorModel(message: result.data['error']));
+      }
+    } catch (e) {
       return Left(DatabaseErrorModel(message: e.toString()));
     }
   }

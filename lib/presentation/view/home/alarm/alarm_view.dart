@@ -343,17 +343,15 @@ class _AlarmViewState extends ConsumerState<AlarmView>
                       padding: const EdgeInsets.symmetric(
                           horizontal: 8, vertical: 2),
                       decoration: BoxDecoration(
-                        color: alarm.type == AlarmOrderType.BUY.name
+                        color: alarm.type == AlarmOrderType.BUY
                             ? Colors.green[100]
                             : Colors.red[100],
                         borderRadius: BorderRadius.circular(4),
                       ),
                       child: Text(
-                        alarm.type == AlarmOrderType.BUY.name
-                            ? 'Alış'
-                            : 'Satış',
+                        alarm.type == AlarmOrderType.BUY ? 'Alış' : 'Satış',
                         style: TextStyle(
-                          color: alarm.type == AlarmOrderType.BUY.name
+                          color: alarm.type == AlarmOrderType.BUY
                               ? Colors.green[700]
                               : Colors.red[700],
                           fontSize: 12,
@@ -397,8 +395,21 @@ class _AlarmViewState extends ConsumerState<AlarmView>
                     ),
                   ),
                   TextButton(
-                    onPressed: () {
-                      // Alarm silme
+                    onPressed: () async {
+                      ref.read(appGlobalProvider).removeSingleAlarm(alarm);
+                      final data =
+                          await getIt<DatabaseUseCase>().deleteAlarm(alarm);
+                      data.fold(
+                        (failure) {
+                          debugPrint(failure.message);
+                        },
+                        (succes) {
+                          if (context.mounted) {
+                            EasySnackBar.show(
+                                context, "Alarm Başarıyla Silindi");
+                          }
+                        },
+                      );
                     },
                     style: TextButton.styleFrom(
                       padding: const EdgeInsets.symmetric(
@@ -428,20 +439,25 @@ class _AlarmViewState extends ConsumerState<AlarmView>
       barrierDismissible: false,
       builder: (context) => EditAlarmPopup(
         alarm: alarm,
-        onSave: (updatedAlarm) {
+        onSave: (updatedAlarm) async {
           // Alarmı güncelle
-          ref.read(appGlobalProvider).updateSingleUserAlarm(updatedAlarm);
+          await ref.read(appGlobalProvider).updateSingleUserAlarm(updatedAlarm);
 
           // Veritabanında güncelle
-          // getIt<DatabaseUseCase>().updateAlarm(updatedAlarm).then((result) {
-          //   result.fold(
-          //     (failure) => debugPrint("Update failed: ${failure.message}"),
-          //     (success) => EasySnackBar.show(
-          //       context,
-          //       "Alarm başarıyla güncellendi",
-          //     ),
-          //   );
-          // });
+          await getIt<DatabaseUseCase>()
+              .updateAlarm(updatedAlarm)
+              .then((result) {
+            result.fold(
+                (failure) => debugPrint("Update failed: ${failure.message}"),
+                (success) {
+              if (context.mounted) {
+                EasySnackBar.show(
+                  context,
+                  "Alarm başarıyla güncellendi",
+                );
+              }
+            });
+          });
         },
       ),
     );
@@ -450,12 +466,12 @@ class _AlarmViewState extends ConsumerState<AlarmView>
   String _getConditionText(AlarmEntity alarm) {
     String conditionText = '';
 
-    if (alarm.mode == AlarmType.PERCENT.name) {
-      conditionText = alarm.direction == AlarmCondition.UP.name
+    if (alarm.mode == AlarmType.PERCENT) {
+      conditionText = alarm.direction == AlarmCondition.UP
           ? '%${alarm.targetValue} yükselse'
           : '%${alarm.targetValue} düşse';
     } else {
-      conditionText = alarm.direction == AlarmCondition.UP.name
+      conditionText = alarm.direction == AlarmCondition.UP
           ? '₺${alarm.targetValue} üstüne çıksa'
           : '₺${alarm.targetValue} altına inse';
     }
@@ -626,10 +642,10 @@ class _AlarmViewState extends ConsumerState<AlarmView>
         Container(
           padding: const EdgeInsets.all(16),
           decoration: BoxDecoration(
-            color: Color.fromRGBO(25, 127, 229, 0.05),
+            color: const Color.fromRGBO(25, 127, 229, 0.05),
             borderRadius: BorderRadius.circular(8),
-            border:
-                Border.all(color: Color.fromRGBO(25, 127, 229, 0.1), width: 1),
+            border: Border.all(
+                color: const Color.fromRGBO(25, 127, 229, 0.1), width: 1),
           ),
           child: Row(
             children: [
@@ -753,9 +769,10 @@ class CreateAlarmInfoWidget extends ConsumerWidget {
     return Container(
       padding: const EdgeInsets.all(16),
       decoration: BoxDecoration(
-        color: Color.fromRGBO(25, 127, 229, 0.05),
+        color: const Color.fromRGBO(25, 127, 229, 0.05),
         borderRadius: BorderRadius.circular(8),
-        border: Border.all(color: Color.fromRGBO(25, 127, 229, 0.1), width: 1),
+        border: Border.all(
+            color: const Color.fromRGBO(25, 127, 229, 0.1), width: 1),
       ),
       child: Row(
         children: [
