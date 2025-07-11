@@ -15,6 +15,8 @@ import 'package:asset_tracker/presentation/view_model/home/alarm/alarm_view_mode
 import 'package:auto_route/auto_route.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
+import 'dart:io';
+import 'package:permission_handler/permission_handler.dart';
 
 @RoutePage()
 class AlarmView extends ConsumerStatefulWidget {
@@ -31,7 +33,17 @@ class _AlarmViewState extends ConsumerState<AlarmView>
   void initTabController() {
     ref.read(alarmViewModelProvider).tabController =
         TabController(length: 2, vsync: this);
+
+    ref.read(alarmViewModelProvider).tabController.addListener(() {
+      FocusScope.of(context).unfocus();
+    });
   }
+
+//   @override
+//   void dispose() {
+//     ref.read(alarmViewModelProvider).tabController.dispose();
+//     super.dispose();
+// }
 
   @override
   void initState() {
@@ -41,104 +53,149 @@ class _AlarmViewState extends ConsumerState<AlarmView>
       ref.read(tradeViewModelProvider).getCurrencyList(ref);
     });
   }
-
-  @override
+@override
   Widget build(BuildContext context) {
     final viewModel = ref.read(alarmViewModelProvider);
     final isAuthorized =
         ref.watch(authGlobalProvider.select((value) => value.isUserAuthorized));
+    final theme = Theme.of(context);
+    final isDark = theme.brightness == Brightness.dark;
 
     return isAuthorized
-        ? Scaffold(
-            backgroundColor: DefaultColorPalette.darkBackground,
-            body: Column(
-              children: [
-                Container(
-                  color: DefaultColorPalette.darkSurface,
-                  height: 50,
-                  child: TabBar(
-                    controller: viewModel.tabController,
-                    dividerColor: DefaultColorPalette.darkBorder,
-                    labelColor: DefaultColorPalette.accentBlue,
-                    unselectedLabelColor: DefaultColorPalette.darkTextSecondary,
-                    indicatorColor: DefaultColorPalette.accentBlue,
-                    tabs: [
-                      Tab(text: LocaleKeys.alarm_tab_create.tr()),
-                      Tab(text: LocaleKeys.alarm_tab_list.tr()),
-                    ],
-                  ),
+        ? FutureBuilder(
+            future: viewModel.shouldShowNotificationCard(),
+            builder: (context, snapshot) {
+              final showNotificationCard = snapshot.data == true;
+              return Scaffold(
+                backgroundColor: theme.scaffoldBackgroundColor,
+                body: Column(
+                  children: [
+                    // Notification Card
+                    if (showNotificationCard) NotificationPermissionCard(),
+
+                    // TabBar
+                    Container(
+                      color: theme.scaffoldBackgroundColor,
+                      child: TabBar(
+                        onTap: (value) {
+                          FocusScope.of(context).unfocus();
+                        },
+                        controller: viewModel.tabController,
+                        dividerColor: Colors.transparent,
+                        unselectedLabelColor: theme.textTheme.bodySmall?.color
+                                ?.withOpacity(0.6) ??
+                            (isDark
+                                ? DefaultColorPalette.darkTextSecondary
+                                : DefaultColorPalette.customGrey),
+                        indicatorColor: theme.colorScheme.primary,
+                        tabs: [
+                          Tab(text: LocaleKeys.alarm_tab_create.tr()),
+                          Tab(text: LocaleKeys.alarm_tab_list.tr()),
+                        ],
+                      ),
+                    ),
+                  
+                    // TabBarView
+                    Expanded(
+                      child: TabBarView(
+                        controller: viewModel.tabController,
+                        children: [
+                          // Create Alarm Tab
+                          SingleChildScrollView(
+                            padding: const EdgeInsets.all(16),
+                            child: _buildNewAlarmForm(viewModel, theme, isDark),
+                          ),
+                          // Alarm List Tab
+                          _buildSavedAlarms(theme, isDark),
+                        ],
+                      ),
+                    ),
+                  ],
                 ),
-                Expanded(
-                  child: TabBarView(
-                    controller: viewModel.tabController,
-                    children: [
-                      _buildNewAlarmForm(viewModel),
-                      _buildSavedAlarms(),
-                    ],
-                  ),
-                ),
-              ],
-            ),
+              );
+            },
           )
-        : const UnAuthorizedWidget(page: UnAuthorizedPage.ALARM);
+        : UnAuthorizedWidget(page: UnAuthorizedPage.ALARM);
   }
 
-  Widget _buildSavedAlarms() {
+Widget _buildSavedAlarms(ThemeData theme, bool isDark) {
     List<AlarmEntity>? alarms = [];
     alarms = ref.watch(appGlobalProvider).getUserData?.userAlarmList;
-    return _buildAlarmsList(alarms);
+  
+    if (alarms == null || alarms.isEmpty) {
+      return Container(
+        color: theme.scaffoldBackgroundColor,
+        child:
+            _buildEmptyState(LocaleKeys.alarm_list_empty.tr(), theme, isDark),
+      );
   }
 
-  Widget _buildNewAlarmForm(AlarmViewModel viewModel) {
+    // Alarmları sırala
+    final sortedAlarms = _sortAlarmsDetailed();
+
     return Container(
-      color: DefaultColorPalette.darkBackground,
-      child: SingleChildScrollView(
-        padding: const EdgeInsets.all(20),
-        child: Column(
-          crossAxisAlignment: CrossAxisAlignment.start,
-          children: [
-            const SizedBox(height: 12),
-            _buildAssetSelector(ref),
-
-            const SizedBox(height: 24),
-
-            // Alarm Tipi
-            _buildSectionTitle(LocaleKeys.alarm_form_type.tr()),
-            const SizedBox(height: 12),
-            _buildAlarmTypeSelector(),
-
-            const SizedBox(height: 24),
-            // Alarm Nedeni
-            _buildSectionTitle(LocaleKeys.alarm_form_reason.tr()),
-            const SizedBox(height: 12),
-            _buildOrderTypeSelector(),
-
-            const SizedBox(height: 16),
-            _buildValueInput(viewModel),
-
-            const SizedBox(height: 24),
-
-            // Koşul
-            _buildSectionTitle(LocaleKeys.alarm_form_condition.tr()),
-            const SizedBox(height: 12),
-            _buildConditionSelector(),
-            const SizedBox(height: 12),
-            CreateAlarmInfoWidget(ref: ref),
-            const SizedBox(height: 32),
-
-            // Kurma Butonu
-            _buildCreateAlarmButton(),
-          ],
-        ),
+      color: theme.scaffoldBackgroundColor,
+      child: ListView.builder(
+        padding: const EdgeInsets.all(16),
+        itemCount: sortedAlarms.length,
+        itemBuilder: (context, index) {
+          final alarm = sortedAlarms[index];
+          return _buildAlarmCard(alarm, theme, isDark);
+        },
       ),
     );
   }
 
-  Widget _buildAlarmsList(List<AlarmEntity>? alarms) {
+  Widget _buildNewAlarmForm(
+      AlarmViewModel viewModel, ThemeData theme, bool isDark) {
+    return Container(
+      color: theme.scaffoldBackgroundColor,
+      child: Column(
+        crossAxisAlignment: CrossAxisAlignment.start,
+        children: [
+          const SizedBox(height: 12),
+          _buildAssetSelector(ref),
+
+          const SizedBox(height: 24),
+
+          // Alarm Tipi
+          _buildSectionTitle(LocaleKeys.alarm_form_type.tr(), theme),
+          const SizedBox(height: 12),
+          _buildAlarmTypeSelector(theme, isDark),
+
+          const SizedBox(height: 24),
+          // Alarm Nedeni
+          _buildSectionTitle(LocaleKeys.alarm_form_reason.tr(), theme),
+          const SizedBox(height: 12),
+          _buildOrderTypeSelector(theme, isDark),
+
+          const SizedBox(height: 16),
+          _buildValueInput(viewModel, theme, isDark),
+
+          const SizedBox(height: 24),
+
+          // Koşul
+          _buildSectionTitle(LocaleKeys.alarm_form_condition.tr(), theme),
+          const SizedBox(height: 12),
+          _buildConditionSelector(theme, isDark),
+          const SizedBox(height: 12),
+          CreateAlarmInfoWidget(ref: ref),
+          const SizedBox(height: 32),
+
+          // Kurma Butonu
+          _buildCreateAlarmButton(theme),
+        ],
+      ),
+    );
+  }
+
+  Widget _buildAlarmsList(
+      List<AlarmEntity>? alarms, ThemeData theme, bool isDark) {
     if (alarms == null || alarms.isEmpty) {
       return Container(
-        color: DefaultColorPalette.darkBackground,
-        child: _buildEmptyState(LocaleKeys.alarm_list_empty.tr()),
+        color: theme.scaffoldBackgroundColor,
+        child:
+            _buildEmptyState(LocaleKeys.alarm_list_empty.tr(), theme, isDark),
       );
     }
 
@@ -146,13 +203,13 @@ class _AlarmViewState extends ConsumerState<AlarmView>
     final sortedAlarms = _sortAlarmsDetailed();
 
     return Container(
-      color: DefaultColorPalette.darkBackground,
+      color: theme.scaffoldBackgroundColor,
       child: ListView.builder(
         padding: const EdgeInsets.all(16),
         itemCount: sortedAlarms.length,
         itemBuilder: (context, index) {
           final alarm = sortedAlarms[index];
-          return _buildAlarmCard(alarm);
+          return _buildAlarmCard(alarm, theme, isDark);
         },
       ),
     );
@@ -181,21 +238,25 @@ class _AlarmViewState extends ConsumerState<AlarmView>
     return sortedAlarms ?? [];
   }
 
-  Widget _buildEmptyState(String message) {
+  Widget _buildEmptyState(String message, ThemeData theme, bool isDark) {
     return Center(
       child: Column(
         mainAxisAlignment: MainAxisAlignment.center,
         children: [
-          const Icon(
+          Icon(
             Icons.notifications_off_outlined,
             size: 64,
-            color: DefaultColorPalette.darkTextTertiary,
+            color: isDark
+                ? DefaultColorPalette.darkTextTertiary
+                : DefaultColorPalette.customGrey,
           ),
           const SizedBox(height: 16),
           Text(
             message,
-            style: const TextStyle(
-              color: DefaultColorPalette.darkTextSecondary,
+            style: TextStyle(
+              color: isDark
+                  ? DefaultColorPalette.darkTextSecondary
+                  : DefaultColorPalette.customGrey,
               fontSize: 16,
             ),
           ),
@@ -204,16 +265,15 @@ class _AlarmViewState extends ConsumerState<AlarmView>
     );
   }
 
-  Widget _buildAlarmCard(AlarmEntity alarm) {
+  Widget _buildAlarmCard(AlarmEntity alarm, ThemeData theme, bool isDark) {
     final String title = alarm.currencyCode.getCurrencyTitle();
     bool isActive = !alarm.isTriggered;
     return Container(
       margin: const EdgeInsets.only(bottom: 12),
       padding: const EdgeInsets.all(16),
       decoration: BoxDecoration(
-        color: DefaultColorPalette.darkCard,
+        color: theme.cardColor,
         borderRadius: BorderRadius.circular(8),
-        border: Border.all(color: DefaultColorPalette.darkBorder, width: 1),
       ),
       child: Column(
         crossAxisAlignment: CrossAxisAlignment.start,
@@ -224,7 +284,7 @@ class _AlarmViewState extends ConsumerState<AlarmView>
                 width: 36,
                 height: 36,
                 decoration: BoxDecoration(
-                  color: DefaultColorPalette.accentBlue,
+                  color: theme.colorScheme.primary,
                   borderRadius: BorderRadius.circular(6),
                 ),
                 child: Center(
@@ -245,8 +305,8 @@ class _AlarmViewState extends ConsumerState<AlarmView>
                   children: [
                     Text(
                       title,
-                      style: const TextStyle(
-                        color: DefaultColorPalette.darkText,
+                      style: TextStyle(
+                        color: theme.textTheme.bodyLarge?.color,
                         fontSize: 15,
                         fontWeight: FontWeight.w600,
                       ),
@@ -261,33 +321,56 @@ class _AlarmViewState extends ConsumerState<AlarmView>
                               .read(appGlobalProvider)
                               .getSelectedCurrencyBuyPrice(alarm.currencyCode)
                               .toString(),
-                      style: const TextStyle(
-                        color: DefaultColorPalette.darkTextSecondary,
+                      style: TextStyle(
+                        color:
+                            theme.textTheme.bodySmall?.color?.withOpacity(0.7),
                         fontSize: 13,
                       ),
                     ),
                   ],
                 ),
               ),
-              Switch(
-                value: isActive,
-                onChanged: (value) async {
-                  ref.read(appGlobalProvider).updateSingleUserAlarm(
-                      alarm.copyWith(isTriggered: !alarm.isTriggered));
-                  EasySnackBar.show(
-                      context,
-                      alarm.isTriggered
-                          ? LocaleKeys.alarm_list_activated.tr()
-                          : LocaleKeys.alarm_list_deactivated.tr());
-                  final alarmState =
-                      await getIt<DatabaseUseCase>().toggleAlarmStatus(alarm);
-                  alarmState.fold(
-                      (failure) => debugPrint("FAIL FAIL${failure.message}"),
-                      (success) => null);
-                },
-                activeColor: DefaultColorPalette.accentBlue,
-                inactiveThumbColor: DefaultColorPalette.darkTextTertiary,
-                inactiveTrackColor: DefaultColorPalette.darkBorder,
+              Padding(
+                padding: EdgeInsets.zero,
+                child: Switch(
+                  value: isActive,
+                  onChanged: (value) async {
+                    ref.read(appGlobalProvider).updateSingleUserAlarm(
+                        alarm.copyWith(isTriggered: !alarm.isTriggered));
+                    EasySnackBar.show(
+                        context,
+                        alarm.isTriggered
+                            ? LocaleKeys.alarm_list_activated.tr()
+                            : LocaleKeys.alarm_list_deactivated.tr());
+                    final alarmState =
+                        await getIt<DatabaseUseCase>().toggleAlarmStatus(alarm);
+                    alarmState.fold(
+                        (failure) => debugPrint("FAIL FAIL"), (success) {});
+                  },
+                  thumbColor:
+                      MaterialStateProperty.resolveWith<Color>((states) {
+                    if (states.contains(MaterialState.selected)) {
+                      return theme.colorScheme.primary;
+                    }
+                    // Seçili değilse tema rengine göre beyaz veya siyah
+                    return theme.brightness == Brightness.light
+                        ? Colors.white
+                        : Colors.black;
+                  }),
+                  trackColor:
+                      MaterialStateProperty.resolveWith<Color>((states) {
+                    if (states.contains(MaterialState.selected)) {
+                      return theme.colorScheme.primary.withOpacity(0.5);
+                    }
+                    // Seçili değilse tema rengine göre açık gri veya koyu gri
+                    return theme.brightness == Brightness.light
+                        ? Colors.grey.shade300
+                        : Colors.grey.shade700;
+                  }),
+                  trackOutlineColor:
+                      MaterialStateProperty.all(Colors.transparent),
+                  materialTapTargetSize: MaterialTapTargetSize.shrinkWrap,
+                ),
               ),
             ],
           ),
@@ -295,7 +378,7 @@ class _AlarmViewState extends ConsumerState<AlarmView>
           Container(
             padding: const EdgeInsets.all(12),
             decoration: BoxDecoration(
-              color: DefaultColorPalette.darkSurface,
+              color: isDark ? DefaultColorPalette.darkSurface : Colors.white,
               borderRadius: BorderRadius.circular(6),
             ),
             child: Column(
@@ -304,16 +387,17 @@ class _AlarmViewState extends ConsumerState<AlarmView>
                   mainAxisAlignment: MainAxisAlignment.spaceBetween,
                   children: [
                     Text(
-                      LocaleKeys.alarm_list_condition,
-                      style: const TextStyle(
-                        color: DefaultColorPalette.darkTextSecondary,
+                      LocaleKeys.alarm_list_condition.tr(),
+                      style: TextStyle(
+                        color:
+                            theme.textTheme.bodySmall?.color?.withOpacity(0.7),
                         fontSize: 13,
                       ),
                     ),
                     Text(
                       _getConditionText(alarm),
-                      style: const TextStyle(
-                        color: DefaultColorPalette.darkText,
+                      style: TextStyle(
+                        color: theme.textTheme.bodyLarge?.color,
                         fontSize: 13,
                         fontWeight: FontWeight.w500,
                       ),
@@ -325,16 +409,17 @@ class _AlarmViewState extends ConsumerState<AlarmView>
                   mainAxisAlignment: MainAxisAlignment.spaceBetween,
                   children: [
                     Text(
-                      LocaleKeys.alarm_list_target,
-                      style: const TextStyle(
-                        color: DefaultColorPalette.darkTextSecondary,
+                      LocaleKeys.alarm_list_target.tr(),
+                      style: TextStyle(
+                        color:
+                            theme.textTheme.bodySmall?.color?.withOpacity(0.7),
                         fontSize: 13,
                       ),
                     ),
                     Text(
                       '₺${alarm.targetValue}',
-                      style: const TextStyle(
-                        color: DefaultColorPalette.darkText,
+                      style: TextStyle(
+                        color: theme.textTheme.bodyLarge?.color,
                         fontSize: 13,
                         fontWeight: FontWeight.w500,
                       ),
@@ -346,9 +431,10 @@ class _AlarmViewState extends ConsumerState<AlarmView>
                   mainAxisAlignment: MainAxisAlignment.spaceBetween,
                   children: [
                     Text(
-                      LocaleKeys.alarm_list_orderType,
-                      style: const TextStyle(
-                        color: DefaultColorPalette.darkTextSecondary,
+                      LocaleKeys.alarm_list_orderType.tr(),
+                      style: TextStyle(
+                        color:
+                            theme.textTheme.bodySmall?.color?.withOpacity(0.7),
                         fontSize: 13,
                       ),
                     ),
@@ -357,8 +443,13 @@ class _AlarmViewState extends ConsumerState<AlarmView>
                           horizontal: 8, vertical: 2),
                       decoration: BoxDecoration(
                         color: alarm.type == AlarmOrderType.BUY
-                            ? DefaultColorPalette.accentGreen.withOpacity(0.2)
-                            : DefaultColorPalette.accentRed.withOpacity(0.2),
+                            ? (isDark
+                                ? DefaultColorPalette.accentGreen
+                                    .withOpacity(0.2)
+                                : Colors.green.withOpacity(0.1))
+                            : (isDark
+                                ? DefaultColorPalette.accentRed.withOpacity(0.2)
+                                : Colors.red.withOpacity(0.1)),
                         borderRadius: BorderRadius.circular(4),
                       ),
                       child: Text(
@@ -367,8 +458,12 @@ class _AlarmViewState extends ConsumerState<AlarmView>
                             : LocaleKeys.alarm_list_sell.tr(),
                         style: TextStyle(
                           color: alarm.type == AlarmOrderType.BUY
-                              ? DefaultColorPalette.accentGreen
-                              : DefaultColorPalette.accentRed,
+                              ? (isDark
+                                  ? DefaultColorPalette.accentGreen
+                                  : Colors.green[800])
+                              : (isDark
+                                  ? DefaultColorPalette.accentRed
+                                  : Colors.red[800]),
                           fontSize: 12,
                           fontWeight: FontWeight.w500,
                         ),
@@ -385,8 +480,8 @@ class _AlarmViewState extends ConsumerState<AlarmView>
             children: [
               Text(
                 GeneralConstants.dateFormat.format(alarm.createTime),
-                style: const TextStyle(
-                  color: DefaultColorPalette.darkTextTertiary,
+                style: TextStyle(
+                  color: theme.textTheme.bodySmall?.color?.withOpacity(0.5),
                   fontSize: 12,
                 ),
               ),
@@ -403,8 +498,8 @@ class _AlarmViewState extends ConsumerState<AlarmView>
                     ),
                     child: Text(
                       LocaleKeys.alarm_list_edit.tr(),
-                      style: const TextStyle(
-                        color: DefaultColorPalette.accentBlue,
+                      style: TextStyle(
+                        color: theme.colorScheme.primary,
                         fontSize: 12,
                       ),
                     ),
@@ -434,8 +529,10 @@ class _AlarmViewState extends ConsumerState<AlarmView>
                     ),
                     child: Text(
                       LocaleKeys.alarm_list_delete.tr(),
-                      style: const TextStyle(
-                        color: DefaultColorPalette.accentRed,
+                      style: TextStyle(
+                        color: isDark
+                            ? DefaultColorPalette.accentRed
+                            : Colors.red[800],
                         fontSize: 12,
                       ),
                     ),
@@ -500,11 +597,11 @@ class _AlarmViewState extends ConsumerState<AlarmView>
   }
 
   // Alarm kurma form widget'ları
-  Widget _buildSectionTitle(String title) {
+  Widget _buildSectionTitle(String title, ThemeData theme) {
     return Text(
       title,
-      style: const TextStyle(
-        color: DefaultColorPalette.darkText,
+      style: TextStyle(
+        color: theme.textTheme.bodyLarge?.color,
         fontSize: 16,
         fontWeight: FontWeight.w600,
       ),
@@ -518,14 +615,13 @@ class _AlarmViewState extends ConsumerState<AlarmView>
     );
   }
 
-  Widget _buildAlarmTypeSelector() {
+  Widget _buildAlarmTypeSelector(ThemeData theme, bool isDark) {
     final selectedAlarmType =
         ref.watch(alarmViewModelProvider.select((vm) => vm.selectedAlarmType));
     return Container(
       decoration: BoxDecoration(
-        color: DefaultColorPalette.darkSurface,
+        color: theme.cardColor,
         borderRadius: BorderRadius.circular(8),
-        border: Border.all(color: DefaultColorPalette.darkBorder, width: 1),
       ),
       child: Row(
         children: [
@@ -552,16 +648,15 @@ class _AlarmViewState extends ConsumerState<AlarmView>
     );
   }
 
-  Widget _buildConditionSelector() {
+  Widget _buildConditionSelector(ThemeData theme, bool isDark) {
     final selectedAlarmType =
         ref.watch(alarmViewModelProvider.select((vm) => vm.selectedAlarmType));
     final selectedCondition =
         ref.watch(alarmViewModelProvider.select((vm) => vm.selectedCondition));
     return Container(
       decoration: BoxDecoration(
-        color: DefaultColorPalette.darkSurface,
+        color: theme.cardColor,
         borderRadius: BorderRadius.circular(8),
-        border: Border.all(color: DefaultColorPalette.darkBorder, width: 1),
       ),
       child: Row(
         children: [
@@ -595,20 +690,20 @@ class _AlarmViewState extends ConsumerState<AlarmView>
     );
   }
 
-  Widget _buildValueInput(AlarmViewModel viewModel) {
+  Widget _buildValueInput(
+      AlarmViewModel viewModel, ThemeData theme, bool isDark) {
     return Container(
       decoration: BoxDecoration(
-        color: DefaultColorPalette.darkCard,
+        color: theme.cardColor,
         borderRadius: BorderRadius.circular(8),
-        border: Border.all(color: DefaultColorPalette.darkBorder, width: 1),
       ),
       child: Form(
         key: formKey,
         child: TextFormField(
           validator: (value) => checkAmount(value, true),
           controller: viewModel.valueController,
-          style: const TextStyle(
-              color: DefaultColorPalette.darkText, fontSize: 15),
+          style:
+              TextStyle(color: theme.textTheme.bodyLarge?.color, fontSize: 15),
           keyboardType: const TextInputType.numberWithOptions(decimal: true),
           onChanged: (value) {
             viewModel.changeFormText(value);
@@ -618,12 +713,13 @@ class _AlarmViewState extends ConsumerState<AlarmView>
                 ? LocaleKeys.alarm_form_valueHintPercent.tr()
                 : LocaleKeys.alarm_form_valueHintPrice.tr(),
             hintStyle:
-                const TextStyle(color: DefaultColorPalette.darkTextSecondary),
+                TextStyle(
+                color: theme.textTheme.bodySmall?.color?.withOpacity(0.7)),
             prefixIcon: Icon(
               viewModel.selectedAlarmType == AlarmType.PERCENT
                   ? Icons.percent
                   : Icons.currency_lira,
-              color: DefaultColorPalette.accentBlue,
+              color: theme.colorScheme.primary,
               size: 20,
             ),
             border: InputBorder.none,
@@ -635,16 +731,15 @@ class _AlarmViewState extends ConsumerState<AlarmView>
     );
   }
 
-  Widget _buildOrderTypeSelector() {
+  Widget _buildOrderTypeSelector(ThemeData theme, bool isDark) {
     final selectedOrderType =
         ref.read(alarmViewModelProvider.select((vm) => vm.selectedOrderType));
     return Column(
       children: [
         Container(
           decoration: BoxDecoration(
-            color: DefaultColorPalette.darkSurface,
+            color: theme.cardColor,
             borderRadius: BorderRadius.circular(8),
-            border: Border.all(color: DefaultColorPalette.darkBorder, width: 1),
           ),
           child: Row(
             children: [
@@ -672,17 +767,17 @@ class _AlarmViewState extends ConsumerState<AlarmView>
         Container(
           padding: const EdgeInsets.all(16),
           decoration: BoxDecoration(
-            color: DefaultColorPalette.accentBlue.withOpacity(0.1),
+            color: theme.colorScheme.primary.withOpacity(0.1),
             borderRadius: BorderRadius.circular(8),
             border: Border.all(
-                color: DefaultColorPalette.accentBlue.withOpacity(0.2),
+                color: theme.colorScheme.primary.withOpacity(0.2),
                 width: 1),
           ),
           child: Row(
             children: [
-              const Icon(
+              Icon(
                 Icons.info_outline,
-                color: DefaultColorPalette.accentBlue,
+                color: theme.colorScheme.primary,
                 size: 20,
               ),
               const SizedBox(width: 12),
@@ -691,10 +786,10 @@ class _AlarmViewState extends ConsumerState<AlarmView>
                   ref.watch(alarmViewModelProvider
                               .select((vm) => vm.selectedOrderType)) ==
                           AlarmOrderType.BUY
-                      ? LocaleKeys.alarm_form_buyOrderInfo.tr()
-                      : LocaleKeys.alarm_form_sellOrderInfo.tr(),
-                  style: const TextStyle(
-                    color: DefaultColorPalette.darkText,
+                      ? LocaleKeys.alarm_form_sellOrderInfo.tr()
+                      : LocaleKeys.alarm_form_buyOrderInfo.tr(),
+                  style: TextStyle(
+                    color: theme.textTheme.bodyLarge?.color,
                     fontSize: 14,
                   ),
                 ),
@@ -733,7 +828,7 @@ class _AlarmViewState extends ConsumerState<AlarmView>
     );
   }
 
-  Widget _buildCreateAlarmButton() {
+  Widget _buildCreateAlarmButton(ThemeData theme) {
     return SizedBox(
       width: double.infinity,
       child: ElevatedButton(
@@ -822,15 +917,16 @@ class CreateAlarmInfoWidget extends ConsumerWidget {
     return Container(
       padding: const EdgeInsets.all(16),
       decoration: BoxDecoration(
-        color: accentBlue.withOpacity(0.1),
+        color: DefaultColorPalette.accentBlue.withOpacity(0.1),
         borderRadius: BorderRadius.circular(8),
-        border: Border.all(color: accentBlue.withOpacity(0.2), width: 1),
+        border: Border.all(
+            color: DefaultColorPalette.accentBlue.withOpacity(0.2), width: 1),
       ),
       child: Row(
         children: [
-          const Icon(
+          Icon(
             Icons.info_outline,
-            color: accentBlue,
+            color: DefaultColorPalette.accentBlue,
             size: 20,
           ),
           const SizedBox(width: 12),
@@ -838,10 +934,51 @@ class CreateAlarmInfoWidget extends ConsumerWidget {
             child: Text(
               getAlarmText(),
               style: const TextStyle(
-                color: darkText,
+                // color: darkText,
                 fontSize: 14,
               ),
             ),
+          ),
+        ],
+      ),
+    );
+  }
+}
+
+class NotificationPermissionCard extends StatelessWidget {
+  const NotificationPermissionCard({super.key});
+
+  Future<void> _openSettings() async {
+    await openAppSettings();
+  }
+
+  @override
+  Widget build(BuildContext context) {
+    return Container(
+      margin: const EdgeInsets.all(16),
+      padding: const EdgeInsets.all(12),
+      decoration: BoxDecoration(
+        color: Colors.orange.withOpacity(0.15),
+        borderRadius: BorderRadius.circular(8),
+        border: Border.all(color: Colors.orange.withOpacity(0.3)),
+      ),
+      child: Row(
+        children: [
+          const Icon(Icons.notifications_off, color: Colors.orange, size: 28),
+          const SizedBox(width: 12),
+          Expanded(
+            child: Text(
+              LocaleKeys.alarm_alarm_snackbar_enable_notifications.tr(),
+              style: const TextStyle(
+                  color: Colors.orange,
+                  fontSize: 14,
+                  fontWeight: FontWeight.w600),
+            ),
+          ),
+          TextButton(
+            onPressed: _openSettings,
+            child: Text(LocaleKeys.alarm_alarm_snackbar_open_settings.tr()),
+            style: TextButton.styleFrom(foregroundColor: Colors.orange),
           ),
         ],
       ),

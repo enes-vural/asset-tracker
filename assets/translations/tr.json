@@ -75,15 +75,15 @@
         },
         "form": {
             "type": "Alarm Tipi",
-            "reason": "Alarm Nedeni",
+            "reason": "Alış mı Satış mı ?",
             "condition": "Koşul",
             "price": "Fiyat",
             "percent": "Yüzdesel Fark",
             "orderType": "Emir Tipi",
-            "buyOrder": "Alış Emri",
-            "sellOrder": "Satış Emri",
-            "buyOrderInfo": "Alış emri: Satış fiyatından hesaplanır",
-            "sellOrderInfo": "Satış emri: Alış fiyatından hesaplanır",
+            "buyOrder": "Alış Fiyatı",
+            "sellOrder": "Satış Fiyatı",
+            "buyOrderInfo": "Satış fiyatından hesaplanır",
+            "sellOrderInfo": "Alış fiyatından hesaplanır",
             "valueHintPercent": "%5.0",
             "valueHintPrice": "₺35,000",
             "conditionUpPercent": "%{value} yükselse",
@@ -126,7 +126,9 @@
             "alarm_target_lower_than_current": "Hedef fiyat şu anki fiyattan düşük olmalıdır.",
             "alarm_created_success": "Alarm başarıyla kuruldu.",
             "alarm_created_error": "Alarm oluşturulurken bir hata oluştu. Lütfen tekrar deneyin."
-        }
+        },
+        "alarm_snackbar_enable_notifications": "Bildirimleri almak için bildirim izni vermelisiniz.",
+        "alarm_snackbar_open_settings": "Ayarları Aç"
     },
     "dashboard": {
         "portfolio": "Portföy Dağılımı",

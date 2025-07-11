@@ -74,7 +74,7 @@ class _DashboardViewState extends ConsumerState<DashboardView>
   Widget build(BuildContext context) {
     final viewModel = ref.read(dashboardViewModelProvider);
     final isAuthorized =
-        ref.watch(authGlobalProvider.select((value) => value.isUserAuthorized));
+        ref.watch(authGlobalProvider.select((vm) => vm.isUserAuthorized));
 
     EasyDialog.showDialogOnProcess(context, ref, dashboardViewModelProvider);
 
@@ -83,8 +83,13 @@ class _DashboardViewState extends ConsumerState<DashboardView>
       child: isAuthorized
           ? _modernScaffold(context)
           //const causes localization issue
-          // ignore: prefer_const_constructors
-          : UnAuthorizedWidget(page: UnAuthorizedPage.WALLET),
+          //force rebuild because localization changes doesnt update this widget.
+          //TODO: fix here
+          : UnAuthorizedWidget(
+              key:
+                  ValueKey('${UnAuthorizedPage.WALLET.name}_${context.locale}'),
+              page: UnAuthorizedPage.WALLET,
+            ),
     );
   }
 
@@ -351,13 +356,14 @@ class _EnhancedUserAssetTransactionWidgetState
           ),
         ],
       ),
+      // ignore: prefer_const_constructors
       child: Column(
         crossAxisAlignment: CrossAxisAlignment.start,
         children: [
-          // Header with filters - Bu kısım optimize edildi
           const FilterSection(),
 
           // Transaction List with enhanced cards
+          // ignore: prefer_const_constructors
           UserAssetTransactionWidget(),
         ],
       ),

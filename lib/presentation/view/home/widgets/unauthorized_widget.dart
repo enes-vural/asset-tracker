@@ -4,6 +4,7 @@ import 'package:asset_tracker/core/constants/string_constant.dart';
 import 'package:asset_tracker/core/routers/router.dart';
 import 'package:easy_localization/easy_localization.dart';
 import 'package:flutter/material.dart';
+import 'package:flutter_riverpod/flutter_riverpod.dart';
 
 enum UnAuthorizedPage {
   WALLET,
@@ -11,13 +12,14 @@ enum UnAuthorizedPage {
   ALARM,
 }
 
-class UnAuthorizedWidget extends StatelessWidget {
+class UnAuthorizedWidget extends ConsumerWidget {
   const UnAuthorizedWidget({super.key, required this.page});
 
   final UnAuthorizedPage page;
 
   @override
-  Widget build(BuildContext context) {
+  Widget build(BuildContext context, WidgetRef ref) {
+    // Dil değişikliği için context'i dinle
     return Scaffold(
       body: SafeArea(
         child: Padding(
@@ -39,7 +41,9 @@ class UnAuthorizedWidget extends StatelessWidget {
                       child: Icon(
                         page == UnAuthorizedPage.WALLET
                             ? Icons.account_balance_wallet_outlined
-                            : Icons.sell_outlined,
+                            : page == UnAuthorizedPage.ALARM
+                                ? Icons.alarm_outlined
+                                : Icons.sell_outlined,
                         size: 40,
                         color: DefaultColorPalette.mainBlue,
                       ),
@@ -47,10 +51,9 @@ class UnAuthorizedWidget extends StatelessWidget {
 
                     const SizedBox(height: 40),
 
-                    // Başlık
+                    // Başlık - context'i kullan
                     Text(
-                      returnTitle(page).tr(),
-                      // LocaleKeys.auth_signIn.tr(),
+                      _getTitle(context),
                       style: const TextStyle(
                         fontSize: 32,
                         fontWeight: FontWeight.w700,
@@ -60,10 +63,10 @@ class UnAuthorizedWidget extends StatelessWidget {
 
                     const SizedBox(height: 16),
 
-                    // Açıklama
+                    // Açıklama - context'i kullan
                     Text(
                       '\t${LocaleKeys.unAuthPage_unAuthText.tr(args: [
-                            returnArguments(page).tr()
+                            _getArguments(context)
                           ])}',
                       style: TextStyle(
                         fontSize: 16,
@@ -147,25 +150,27 @@ class UnAuthorizedWidget extends StatelessWidget {
     );
   }
 
-  String returnArguments(UnAuthorizedPage pageType) {
-    switch (pageType) {
+  // Context'i parametre olarak al
+  String _getArguments(BuildContext context) {
+    switch (page) {
       case UnAuthorizedPage.WALLET:
-        return LocaleKeys.dashboard_wallet;
+        return LocaleKeys.dashboard_wallet.tr();
       case UnAuthorizedPage.TRADE:
-        return LocaleKeys.unAuthPage_trade;
+        return LocaleKeys.unAuthPage_trade.tr();
       case UnAuthorizedPage.ALARM:
-        return LocaleKeys.unAuthPage_alarm;
+        return LocaleKeys.unAuthPage_alarm.tr();
     }
   }
 
-  String returnTitle(UnAuthorizedPage pageType) {
-    switch (pageType) {
+  // Context'i parametre olarak al
+  String _getTitle(BuildContext context) {
+    switch (page) {
       case UnAuthorizedPage.WALLET:
-        return LocaleKeys.dashboard_wallet;
+        return LocaleKeys.dashboard_wallet.tr();
       case UnAuthorizedPage.TRADE:
-        return LocaleKeys.unAuthPage_trade;
+        return LocaleKeys.unAuthPage_trade.tr();
       case UnAuthorizedPage.ALARM:
-        return LocaleKeys.unAuthPage_alarm;
+        return LocaleKeys.unAuthPage_alarm.tr();
     }
   }
 }

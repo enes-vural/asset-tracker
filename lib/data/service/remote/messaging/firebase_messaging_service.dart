@@ -32,7 +32,7 @@ final class FirebaseMessagingService implements IMessagingService {
             await Permission.notification.request();
         return (settings.authorizationStatus ==
                 AuthorizationStatus.authorized &&
-            isAndroidVerify == PermissionStatus.denied);
+            isAndroidVerify == PermissionStatus.granted);
       }
       return settings.authorizationStatus == AuthorizationStatus.authorized;
     } catch (e) {
