@@ -359,7 +359,9 @@ final class FirestoreService implements IFirestoreService {
     }
   }
 
-  Future<void> saveToken(UserUidModel model, String token) async {}
+  Future<void> saveToken(UserUidModel model, String token) async {
+    debugPrint("HERE");
+  }
 
   @override
   Future<Either<DatabaseErrorModel, bool>> removeUser(
@@ -375,7 +377,7 @@ final class FirestoreService implements IFirestoreService {
       return Left(DatabaseErrorModel(message: e.toString()));
     }
   }
-  
+
   @override
   Future<Either<DatabaseErrorModel, bool>> deleteAlarm(AlarmModel model) async {
     try {

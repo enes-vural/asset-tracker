@@ -9,6 +9,8 @@ import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:asset_tracker/core/config/localization/generated/locale_keys.g.dart';
 import 'package:easy_localization/easy_localization.dart';
+import 'dart:io';
+import 'package:permission_handler/permission_handler.dart';
 
 enum AlarmType { PRICE, PERCENT }
 
@@ -266,4 +268,20 @@ class AlarmViewModel extends ChangeNotifier {
   double get selectedCurrencyPrice => _selectedCurrencyPrice ?? 0.0;
 
   double get selectedCurrencyPercent => _selectedCurrencyPercent ?? 0.0;
+
+  Future<bool> shouldShowNotificationCard() async {
+    if (!Platform.isIOS && !Platform.isAndroid) {
+      return false;
+    }
+    var status = await Permission.notification.status;
+    // If permanently denied (Android) or denied (iOS), show card and do not request again
+    if (status.isPermanentlyDenied || (Platform.isIOS && status.isDenied)) {
+      return true;
+    }
+    // If denied but not permanently, request permission
+    if (status.isDenied) {
+      status = await Permission.notification.request();
+    }
+    return !status.isGranted;
+  }
 }

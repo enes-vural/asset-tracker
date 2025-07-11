@@ -75,15 +75,15 @@
         },
         "form": {
             "type": "Alarm Type",
-            "reason": "Alarm Reason",
+            "reason": "Buy or Sell Price ?",
             "condition": "Condition",
             "price": "Price",
             "percent": "Percentage Difference",
             "orderType": "Order Type",
-            "buyOrder": "Buy Order",
-            "sellOrder": "Sell Order",
-            "buyOrderInfo": "Buy order: Calculated from sell price",
-            "sellOrderInfo": "Sell order: Calculated from buy price",
+            "buyOrder": "Buy Price",
+            "sellOrder": "Sell Price",
+            "buyOrderInfo": "Calculated from sell price",
+            "sellOrderInfo": "Calculated from buy price",
             "valueHintPercent": "%5.0",
             "valueHintPrice": "₺35,000",
             "conditionUpPercent": "If increases by %{value}",
@@ -125,8 +125,12 @@
             "alarm_target_higher_than_current": "Target price must be higher than the current price.",
             "alarm_target_lower_than_current": "Target price must be lower than the current price.",
             "alarm_created_success": "Alarm created successfully.",
-            "alarm_created_error": "An error occurred while creating the alarm. Please try again later."
-        }
+            "alarm_created_error": "An error occurred while creating the alarm. Please try again later.",
+            "alarm_snackbar_enable_notifications": "You need to enable notifications to receive alerts.",
+            "alarm_snackbar_open_settings": "Open Settings"
+        },
+        "alarm_snackbar_enable_notifications": "You need to enable notifications to receive alerts.",
+        "alarm_snackbar_open_settings": "Open Settings"
     },
     "dashboard": {
 "portfolio": "Portfolio Distribution",

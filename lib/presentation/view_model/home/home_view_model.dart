@@ -51,7 +51,7 @@ class HomeViewModel extends ChangeNotifier {
     final isPermitted =
         await getIt<NotificationUseCase>().isPermissionAuthorized();
     if (isPermitted) {
-      debugPrint("PERMISSION: $isPermitted");
+      debugPrint("PERMISSION: $isPermitted"); 
       String? token = await getIt<NotificationUseCase>().getUserToken();
       debugPrint("PERMISSION: $token");
       if (token != null) {
