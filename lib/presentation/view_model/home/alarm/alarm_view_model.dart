@@ -2,12 +2,13 @@ import 'package:asset_tracker/core/config/theme/extension/currency_widget_title_
 import 'package:asset_tracker/core/helpers/snackbar.dart';
 import 'package:asset_tracker/data/model/database/response/asset_code_model.dart';
 import 'package:asset_tracker/domain/entities/database/alarm_entity.dart';
-import 'package:asset_tracker/domain/entities/database/enttiy/user_uid_entity.dart';
 import 'package:asset_tracker/domain/entities/web/socket/currency_widget_entity.dart';
 import 'package:asset_tracker/domain/usecase/database/database_use_case.dart';
 import 'package:asset_tracker/injection.dart';
-import 'package:flutter/cupertino.dart';
+import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
+import 'package:asset_tracker/core/config/localization/generated/locale_keys.g.dart';
+import 'package:easy_localization/easy_localization.dart';
 
 enum AlarmType { PRICE, PERCENT }
 
@@ -17,7 +18,7 @@ enum AlarmOrderType { BUY, SELL }
 
 class AlarmViewModel extends ChangeNotifier {
   TextEditingController valueController = TextEditingController();
-
+  late TabController tabController;
   AlarmType selectedAlarmType = AlarmType.PRICE;
   AlarmCondition selectedCondition = AlarmCondition.UP;
   AlarmOrderType selectedOrderType = AlarmOrderType.BUY;
@@ -44,6 +45,8 @@ class AlarmViewModel extends ChangeNotifier {
     changePriceValue(ref);
     notifyListeners();
   }
+
+  
 
   void changePriceValue(WidgetRef ref) {
     if (selectedAlarmType == AlarmType.PRICE) {
@@ -94,10 +97,14 @@ class AlarmViewModel extends ChangeNotifier {
 
   Future<void> saveAlarm(BuildContext context, WidgetRef ref) async {
     if (selectedCurrency == null || selectedCurrency == "") {
+      EasySnackBar.show(
+          context, LocaleKeys.alarm_snackbar_alarm_select_asset.tr());
       return;
     }
     if (valueController.text == "" ||
         double.tryParse(valueController.text) == null) {
+      EasySnackBar.show(
+          context, LocaleKeys.alarm_snackbar_alarm_enter_target_price.tr());
       return;
     }
     final String? currencyCode = getCurrencyCodeFromLabel(selectedCurrency);
@@ -124,8 +131,23 @@ class AlarmViewModel extends ChangeNotifier {
 
     if (priceWhenCreated == null) {
       if (context.mounted) {
-        EasySnackBar.show(context, "Bir hata oluştu");
+        EasySnackBar.show(
+            context, LocaleKeys.alarm_snackbar_alarm_error_occurred.tr());
       }
+      return;
+    }
+
+    if (selectedCondition == AlarmCondition.UP &&
+        priceWhenCreated > targetValue) {
+      EasySnackBar.show(context,
+          LocaleKeys.alarm_snackbar_alarm_target_higher_than_current.tr(),
+          isError: true);
+      return;
+    } else if (selectedCondition == AlarmCondition.DOWN &&
+        priceWhenCreated < targetValue) {
+      EasySnackBar.show(context,
+          LocaleKeys.alarm_snackbar_alarm_target_lower_than_current.tr(),
+          isError: true);
       return;
     }
 
@@ -141,20 +163,27 @@ class AlarmViewModel extends ChangeNotifier {
       createTime: DateTime.now(),
     );
 
+    ref.read(appGlobalProvider).addSingleUserAlamr(alarmEntity);
+    // EasySnackBar.show(context, "Alarm başarıyla kuruldu");
+    tabController.index = 1;
+
     final result = await getIt<DatabaseUseCase>().saveUserAlarm(alarmEntity);
 
     result.fold(
       (failure) {
         debugPrint(failure.message);
         EasySnackBar.show(
-            context, "Bir hata oluştu lütfen daha sonra tekrar deneyin.");
+            context, LocaleKeys.alarm_snackbar_alarm_created_error.tr());
+        ref.read(appGlobalProvider).removeSingleAlarm(alarmEntity);
       },
       (success) async {
-        final data = await getIt<DatabaseUseCase>()
-            .getUserAlarms(UserUidEntity(userId: userId));
-        ref.read(appGlobalProvider).updateUserAlarm(data);
+        // final data = await getIt<DatabaseUseCase>()
+        // .getUserAlarms(UserUidEntity(userId: userId));
+        // ref.read(appGlobalProvider).updateUserAlarm(data);
+        // ref.read(appGlobalProvider).updateSingleUserAlarm(alarmEntity);
         if (context.mounted) {
-          EasySnackBar.show(context, "Alarm başarıyla kuruldu.");
+          EasySnackBar.show(
+              context, LocaleKeys.alarm_snackbar_alarm_created_success.tr());
         }
       },
     );

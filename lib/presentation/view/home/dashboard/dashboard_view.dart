@@ -2,6 +2,7 @@ import 'package:asset_tracker/core/config/theme/extension/number_format_extensio
 import 'package:asset_tracker/core/constants/enums/widgets/app_pages_enum.dart';
 import 'package:asset_tracker/core/helpers/dialog_helper.dart';
 import 'package:asset_tracker/injection.dart';
+import 'package:asset_tracker/presentation/view/home/widgets/dashboard_filter_widget.dart';
 import 'package:asset_tracker/presentation/view/home/widgets/unauthorized_widget.dart';
 import 'package:auto_route/auto_route.dart';
 import 'package:easy_localization/easy_localization.dart';
@@ -71,14 +72,15 @@ class _DashboardViewState extends ConsumerState<DashboardView>
 
   @override
   Widget build(BuildContext context) {
-    final viewModel = ref.watch(dashboardViewModelProvider);
-    final authState = ref.watch(authGlobalProvider);
+    final viewModel = ref.read(dashboardViewModelProvider);
+    final isAuthorized =
+        ref.watch(authGlobalProvider.select((value) => value.isUserAuthorized));
 
     EasyDialog.showDialogOnProcess(context, ref, dashboardViewModelProvider);
 
     return PopScope(
       canPop: viewModel.canPop,
-      child: authState.getCurrentUser?.user != null
+      child: isAuthorized
           ? _modernScaffold(context)
           //const causes localization issue
           // ignore: prefer_const_constructors
@@ -149,7 +151,7 @@ class _DashboardViewState extends ConsumerState<DashboardView>
             child: _buildQuickStatCard(
               title: LocaleKeys.dashboard_totalBalance.tr(),
               value:
-                  "₺${ref.read(appGlobalProvider).getUserBalance.toNumberWithTurkishFormat()}",
+                  "₺${ref.watch(appGlobalProvider).getUserBalance.toNumberWithTurkishFormat()}",
               icon: Icons.account_balance_wallet,
               color: Colors.blue,
               percentage: "",
@@ -160,7 +162,7 @@ class _DashboardViewState extends ConsumerState<DashboardView>
     );
   }
 
-Widget _buildQuickStatCard({
+  Widget _buildQuickStatCard({
     required String title,
     required String value,
     required IconData icon,
@@ -173,7 +175,7 @@ Widget _buildQuickStatCard({
     // Negatifse renkleri ve ikonu değiştir
     Color finalColor = isNegative ? Colors.red : color;
     IconData finalIcon = isNegative ? Icons.trending_down : icon;
-  
+
     return Container(
       padding: const EdgeInsets.all(16),
       decoration: BoxDecoration(
@@ -334,7 +336,6 @@ class _EnhancedUserAssetTransactionWidgetState
     extends ConsumerState<EnhancedUserAssetTransactionWidget> {
   @override
   Widget build(BuildContext context) {
-    final viewModel = ref.watch(dashboardViewModelProvider);
     return Container(
       margin: const EdgeInsets.symmetric(horizontal: 16),
       decoration: BoxDecoration(
@@ -353,95 +354,8 @@ class _EnhancedUserAssetTransactionWidgetState
       child: Column(
         crossAxisAlignment: CrossAxisAlignment.start,
         children: [
-          // Header with filters
-          Padding(
-            padding: const EdgeInsets.all(16),
-            child: Column(
-              crossAxisAlignment: CrossAxisAlignment.start,
-              children: [
-                Row(
-                  mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                  children: [
-                    Text(
-                      LocaleKeys.dashboard_myAssets.tr(),
-                      style: const TextStyle(
-                        fontSize: 20,
-                        fontWeight: FontWeight.bold,
-                      ),
-                    ),
-                  ],
-                ),
-                const SizedBox(height: 12),
-                // Filter chips
-                SizedBox(
-                  height: 40,
-                  child: ListView.builder(
-                    scrollDirection: Axis.horizontal,
-                    itemCount: viewModel.filters.length,
-                    itemBuilder: (context, index) {
-                      final filter = viewModel.filters[index];
-                      final isSelected = (filter == viewModel.selectedFilter);
-                      final isDark =
-                          Theme.of(context).brightness == Brightness.dark;
-
-                      return Padding(
-                        padding: const EdgeInsets.only(right: 8),
-                        child: FilterChip(
-                          label: Text(filter.name.tr()),
-                          selected: isSelected,
-                          onSelected: (selected) {
-                            viewModel.changeSelectedFilter(filter);
-                          },
-                          // Background color for unselected state
-                          backgroundColor:
-                              isDark ? Colors.grey[800] : Colors.grey[100],
-
-                          // Selected color
-                          selectedColor: isDark
-                              ? Theme.of(context).primaryColor.withOpacity(0.3)
-                              : Colors.white,
-
-                          // Checkmark color when selected
-                          checkmarkColor: isDark
-                              ? Theme.of(context).primaryColor
-                              : Theme.of(context).primaryColor,
-
-                          // Border styling
-                          side: BorderSide(
-                            color: isSelected
-                                ? Theme.of(context).primaryColor
-                                : (isDark
-                                    ? Colors.grey[600]!
-                                    : Colors.grey[300]!),
-                            width: isSelected ? 2 : 1,
-                          ),
-
-                          // Label text styling
-                          labelStyle: TextStyle(
-                            color: isSelected
-                                ? (isDark
-                                    ? Colors.white
-                                    : Theme.of(context).primaryColor)
-                                : (isDark
-                                    ? Colors.grey[300]
-                                    : Colors.grey[700]),
-                            fontWeight: isSelected
-                                ? FontWeight.bold
-                                : FontWeight.normal,
-                          ),
-                          // Shadow and elevation
-                          elevation: isDark ? 2 : 1,
-                          shadowColor: isDark
-                              ? Colors.black.withOpacity(0.3)
-                              : Colors.black.withOpacity(0.1),
-                        ),
-                      );
-                    },
-                  ),
-                ),
-              ],
-            ),
-          ),
+          // Header with filters - Bu kısım optimize edildi
+          const FilterSection(),
 
           // Transaction List with enhanced cards
           UserAssetTransactionWidget(),

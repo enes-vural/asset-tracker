@@ -72,7 +72,8 @@ class _MenuViewState extends ConsumerState<MenuView>
   @override
   Widget build(BuildContext context) {
     final HomeViewModel viewModel = ref.watch(homeViewModelProvider);
-    final authState = ref.watch(authGlobalProvider);
+    final isAuthorized =
+        ref.watch(authGlobalProvider.select((value) => value.isUserAuthorized));
     int currentIndex = ref.watch(appGlobalProvider).menuNavigationIndex;
     return PopScope(
       canPop: false, // Varsayılan pop davranışını engelle
@@ -96,7 +97,7 @@ class _MenuViewState extends ConsumerState<MenuView>
           centerTitle: true,
           title: const PaRotaLogoWidget(),
           actions: [
-            authState.getCurrentUser?.user != null
+            isAuthorized
                 ? const CustomSizedBox.empty()
                 : TextButton(
                     onPressed: () => viewModel.routeSignInPage(context),

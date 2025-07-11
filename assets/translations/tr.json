@@ -61,10 +61,72 @@
         "settings": "Ayarlar"
     },
     "unAuthPage": {
+        "alarm": "Alarm",
         "trade": "Al-Sat",
         "unAuthText": "{} özelliklerine erişmek için hesabınıza giriş yapmanız gerekiyor.",
         "signIn": "Giriş Yap",
         "createAccount": "Hesap Oluştur"
+    },
+    "alarm": {
+        "alarm": "Alarm",
+        "tab": {
+            "create": "Alarm Kur",
+            "list": "Alarmlarım"
+        },
+        "form": {
+            "type": "Alarm Tipi",
+            "reason": "Alarm Nedeni",
+            "condition": "Koşul",
+            "price": "Fiyat",
+            "percent": "Yüzdesel Fark",
+            "orderType": "Emir Tipi",
+            "buyOrder": "Alış Emri",
+            "sellOrder": "Satış Emri",
+            "buyOrderInfo": "Alış emri: Satış fiyatından hesaplanır",
+            "sellOrderInfo": "Satış emri: Alış fiyatından hesaplanır",
+            "valueHintPercent": "%5.0",
+            "valueHintPrice": "₺35,000",
+            "conditionUpPercent": "%{value} yükselse",
+            "conditionDownPercent": "%{value} düşse",
+            "conditionUpPrice": "₺{value} üstüne çıksa",
+            "conditionDownPrice": "₺{value} altına inse",
+            "createButton": "Alarm Kur"
+        },
+        "list": {
+            "empty": "Alarm bulunmuyor",
+            "edit": "Düzenle",
+            "delete": "Sil",
+            "deleteSuccess": "Alarm başarıyla silindi",
+            "editSuccess": "Alarm başarıyla güncellendi",
+            "activated": "Alarmınız aktif edildi",
+            "deactivated": "Alarmınız deaktif edildi",
+            "condition": "Koşul:",
+            "target": "Hedef:",
+            "orderType": "Emir Tipi:",
+            "buy": "Alış",
+            "sell": "Satış"
+        },
+        "dynamic": {
+            "price": "{currency} {orderType} fiyatı {price} {condition} anda bildirim gönderilecek",
+            "percent": "{currency} {orderType} fiyatı yüzde {percent} {condition} anda bildirim gönderilecek",
+            "orderType_buy": "alış",
+            "orderType_sell": "satış",
+            "priceType_buy": "satış",
+            "priceType_sell": "alış",
+            "conditionDownPrice": "altına düştüğü",
+            "conditionUpPrice": "üstüne çıktığı",
+            "conditionDownPercent": "düştüğü",
+            "conditionUpPercent": "yükseldiği"
+        },
+        "snackbar": {
+            "alarm_select_asset": "Lütfen bir varlık seçiniz.",
+            "alarm_enter_target_price": "Bir hedef fiyat giriniz.",
+            "alarm_error_occurred": "Bir hata oluştu, lütfen daha sonra tekrar deneyin.",
+            "alarm_target_higher_than_current": "Hedef fiyat şu anki fiyattan yüksek olmalıdır.",
+            "alarm_target_lower_than_current": "Hedef fiyat şu anki fiyattan düşük olmalıdır.",
+            "alarm_created_success": "Alarm başarıyla kuruldu.",
+            "alarm_created_error": "Alarm oluşturulurken bir hata oluştu. Lütfen tekrar deneyin."
+        }
     },
     "dashboard": {
         "portfolio": "Portföy Dağılımı",
@@ -139,7 +201,7 @@
         "startEdit": "Düzenlemeyi bitir",
         "moving": "Taşınıyor...",
         "searchText": "Döviz ve altın ara...",
-        "homeDesc": "PaRota ile altın ve dözlerinizi kolayca takip etmek için girşi yapın.",
+        "homeDesc": "PaRota ile altın ve dözlerinizi kolayca takip etmek için giriş yapın.",
         "startTradingText": "Kolayca ticarete başlayın!",
         "secureAssetText": "Güvenli bir şekilde ticaret yapın",
         "welcomeAssetText": "Hoşgeldiniz",

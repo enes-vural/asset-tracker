@@ -89,6 +89,7 @@ flutter:
     - assets/image/
     - assets/image/currency/
     - assets/translations/
+    - assets/image/buttons/
 
   fonts:
     - family: Manrope

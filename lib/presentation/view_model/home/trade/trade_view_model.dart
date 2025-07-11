@@ -211,17 +211,25 @@ class TradeViewModel extends ChangeNotifier {
     final currentUserId = ref.read(authGlobalProvider).getCurrentUserId;
 
     if (currency == null) {
-      EasySnackBar.show(context, LocaleKeys.trade_invalidType.tr());
+      EasySnackBar.show(context, LocaleKeys.trade_invalidType.tr(),
+          isError: true);
+      return;
+    }
+
+    if (amount == 0.0 || price == 0.0) {
+      EasySnackBar.show(context, LocaleKeys.trade_fillAllFields.tr(),
+          isError: true);
       return;
     }
 
     if (date == null) {
-      EasySnackBar.show(context, LocaleKeys.trade_invalidDate.tr());
+      EasySnackBar.show(context, LocaleKeys.trade_invalidDate.tr(),
+          isError: true);
       return;
     }
 
     if (currentUserId == null) {
-      EasySnackBar.show(context, LocaleKeys.trade_relogin.tr());
+      EasySnackBar.show(context, LocaleKeys.trade_relogin.tr(), isError: true);
       return;
     }
     changePopState(false);

@@ -106,7 +106,7 @@ final class DefaultColorPalette {
   static const Color primaryDarkBlue = Color.fromARGB(161, 5, 34, 48);
 
   ///dark red
-  static const Color errorRed = Color.fromARGB(130, 244, 67, 54);
+  static const Color errorRed = Color.fromARGB(200, 244, 67, 54);
 
   static Color randomColor() => Color.fromARGB(
       255, Random().nextInt(255), Random().nextInt(255), Random().nextInt(255));
@@ -139,6 +139,18 @@ final class DefaultColorPalette {
   static const Color vanillaBlack = Colors.black;
   static const Color vanillaGreen = Colors.green;
   static const Color vanillaTranparent = Colors.transparent;
+
+
+  static const Color darkBackground = Color(0xFF121212);
+  static const Color darkSurface = Color(0xFF1E1E1E);
+  static const Color darkCard = Color(0xFF2D2D2D);
+  static const Color darkBorder = Color(0xFF404040);
+  static const Color darkText = Color(0xFFE0E0E0);
+  static const Color darkTextSecondary = Color(0xFFB0B0B0);
+  static const Color darkTextTertiary = Color(0xFF808080);
+  static const Color accentBlue = Color(0xFF2196F3);
+  static const Color accentGreen = Color(0xFF4CAF50);
+  static const Color accentRed = Color(0xFFE53935);
 }
 
 ///Color Palette for Dark Theme
