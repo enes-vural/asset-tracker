@@ -104,7 +104,8 @@ class _HomeViewState extends ConsumerState<HomeView>
   @override
   Widget build(BuildContext context) {   
 
-    final authState = ref.watch(authGlobalProvider);
+    final isAuthorized =
+        ref.watch(authGlobalProvider.select((value) => value.isUserAuthorized));
     final viewModel = ref.read(homeViewModelProvider);
 
     bool isDataLoaded = ref.read(appGlobalProvider).globalAssets != null &&
@@ -212,7 +213,7 @@ class _HomeViewState extends ConsumerState<HomeView>
                         BalanceProfitTextWidget(),
                         //if user is not authorized show _signInText Widget
                         //else return sizedbox with no volume.
-                        authState.getCurrentUser?.user == null
+                        !isAuthorized
                             ? _signInText()
                             : const CustomSizedBox.empty(),
                         const CustomSizedBox.mediumGap(),

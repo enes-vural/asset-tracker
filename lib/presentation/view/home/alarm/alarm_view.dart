@@ -2,11 +2,15 @@ import 'package:asset_tracker/core/config/theme/default_theme.dart';
 import 'package:asset_tracker/core/config/theme/extension/currency_widget_title_extension.dart';
 import 'package:asset_tracker/core/constants/global/general_constants.dart';
 import 'package:asset_tracker/core/helpers/snackbar.dart';
+import 'package:asset_tracker/core/mixins/validation_mixin.dart';
+import 'package:asset_tracker/core/config/localization/generated/locale_keys.g.dart';
+import 'package:easy_localization/easy_localization.dart';
 import 'package:asset_tracker/domain/entities/database/alarm_entity.dart';
 import 'package:asset_tracker/domain/usecase/database/database_use_case.dart';
 import 'package:asset_tracker/injection.dart';
 import 'package:asset_tracker/presentation/common/custom_dropdown_widget.dart';
 import 'package:asset_tracker/presentation/view/home/widgets/edit_alarm_popup_widget.dart';
+import 'package:asset_tracker/presentation/view/home/widgets/unauthorized_widget.dart';
 import 'package:asset_tracker/presentation/view_model/home/alarm/alarm_view_model.dart';
 import 'package:auto_route/auto_route.dart';
 import 'package:flutter/material.dart';
@@ -21,128 +25,136 @@ class AlarmView extends ConsumerStatefulWidget {
 }
 
 class _AlarmViewState extends ConsumerState<AlarmView>
-    with TickerProviderStateMixin {
-  late TabController _tabController;
+    with TickerProviderStateMixin, ValidatorMixin {
+  GlobalKey<FormState> formKey = GlobalKey<FormState>();
+
+  void initTabController() {
+    ref.read(alarmViewModelProvider).tabController =
+        TabController(length: 2, vsync: this);
+  }
 
   @override
   void initState() {
     super.initState();
-    _tabController = TabController(length: 2, vsync: this);
+    initTabController();
     WidgetsBinding.instance.addPostFrameCallback((timeStamp) {
       ref.read(tradeViewModelProvider).getCurrencyList(ref);
-      // Sadece currency code boş değilse set et
-      // ref.read(tradeViewModelProvider).getPriceSelectedCurrency(ref);
     });
   }
 
   @override
   Widget build(BuildContext context) {
     final viewModel = ref.read(alarmViewModelProvider);
+    final isAuthorized =
+        ref.watch(authGlobalProvider.select((value) => value.isUserAuthorized));
 
-    return Scaffold(
-      body: Column(
-        children: [
-          Container(
-            color: Theme.of(context).scaffoldBackgroundColor,
-            height: 50,
-            child: TabBar(
-              controller: _tabController,
-              dividerColor: Colors.grey.shade300,
-              labelColor: DefaultColorPalette.mainBlue,
-              unselectedLabelColor: Colors.grey.shade600,
-              indicatorColor: DefaultColorPalette.mainBlue,
-              tabs: const [
-                Tab(text: 'Alarm Kur'),
-                Tab(text: 'Alarmlarım'),
-              ],
-            ),
-          ),
-          Expanded(
-            child: TabBarView(
-              controller: _tabController,
+    return isAuthorized
+        ? Scaffold(
+            backgroundColor: DefaultColorPalette.darkBackground,
+            body: Column(
               children: [
-                _buildNewAlarmForm(viewModel),
-                _buildInactiveAlarms(),
+                Container(
+                  color: DefaultColorPalette.darkSurface,
+                  height: 50,
+                  child: TabBar(
+                    controller: viewModel.tabController,
+                    dividerColor: DefaultColorPalette.darkBorder,
+                    labelColor: DefaultColorPalette.accentBlue,
+                    unselectedLabelColor: DefaultColorPalette.darkTextSecondary,
+                    indicatorColor: DefaultColorPalette.accentBlue,
+                    tabs: [
+                      Tab(text: LocaleKeys.alarm_tab_create.tr()),
+                      Tab(text: LocaleKeys.alarm_tab_list.tr()),
+                    ],
+                  ),
+                ),
+                Expanded(
+                  child: TabBarView(
+                    controller: viewModel.tabController,
+                    children: [
+                      _buildNewAlarmForm(viewModel),
+                      _buildSavedAlarms(),
+                    ],
+                  ),
+                ),
               ],
             ),
-          ),
-        ],
-      ),
-    );
+          )
+        : const UnAuthorizedWidget(page: UnAuthorizedPage.ALARM);
   }
 
-  Widget _buildInactiveAlarms() {
+  Widget _buildSavedAlarms() {
     List<AlarmEntity>? alarms = [];
     alarms = ref.watch(appGlobalProvider).getUserData?.userAlarmList;
     return _buildAlarmsList(alarms);
   }
 
   Widget _buildNewAlarmForm(AlarmViewModel viewModel) {
-    return SingleChildScrollView(
-      padding: const EdgeInsets.all(20),
-      child: Column(
-        crossAxisAlignment: CrossAxisAlignment.start,
-        children: [
-          const SizedBox(height: 12),
-          _buildAssetSelector(ref),
+    return Container(
+      color: DefaultColorPalette.darkBackground,
+      child: SingleChildScrollView(
+        padding: const EdgeInsets.all(20),
+        child: Column(
+          crossAxisAlignment: CrossAxisAlignment.start,
+          children: [
+            const SizedBox(height: 12),
+            _buildAssetSelector(ref),
 
-          const SizedBox(height: 24),
+            const SizedBox(height: 24),
 
-          // Alarm Tipi
-          _buildSectionTitle('Alarm Tipi'),
-          const SizedBox(height: 12),
-          _buildAlarmTypeSelector(),
+            // Alarm Tipi
+            _buildSectionTitle(LocaleKeys.alarm_form_type.tr()),
+            const SizedBox(height: 12),
+            _buildAlarmTypeSelector(),
 
-          const SizedBox(height: 24),
-          // // Alarm Nedeni
-          _buildSectionTitle('Alarm Nedeni'),
-          const SizedBox(height: 12),
-          _buildOrderTypeSelector(),
-          // // Koşul ve Değer
-          // _buildSectionTitle('Koşul'),
-          // const SizedBox(height: 12),
-          // _buildConditionSelector(),
+            const SizedBox(height: 24),
+            // Alarm Nedeni
+            _buildSectionTitle(LocaleKeys.alarm_form_reason.tr()),
+            const SizedBox(height: 12),
+            _buildOrderTypeSelector(),
 
-          const SizedBox(height: 16),
-          _buildValueInput(viewModel),
+            const SizedBox(height: 16),
+            _buildValueInput(viewModel),
 
-          const SizedBox(height: 24),
+            const SizedBox(height: 24),
 
-          // // Alarm Nedeni
-          // _buildSectionTitle('Alarm Nedeni'),
-          // const SizedBox(height: 12),
-          // _buildOrderTypeSelector(),
+            // Koşul
+            _buildSectionTitle(LocaleKeys.alarm_form_condition.tr()),
+            const SizedBox(height: 12),
+            _buildConditionSelector(),
+            const SizedBox(height: 12),
+            CreateAlarmInfoWidget(ref: ref),
+            const SizedBox(height: 32),
 
-          // // Koşul ve Değer
-          _buildSectionTitle('Koşul'),
-          const SizedBox(height: 12),
-          _buildConditionSelector(),
-          const SizedBox(height: 12),
-          CreateAlarmInfoWidget(ref: ref),
-          const SizedBox(height: 32),
-
-          // Kurma Butonu
-          _buildCreateAlarmButton(),
-        ],
+            // Kurma Butonu
+            _buildCreateAlarmButton(),
+          ],
+        ),
       ),
     );
   }
 
   Widget _buildAlarmsList(List<AlarmEntity>? alarms) {
     if (alarms == null || alarms.isEmpty) {
-      return _buildEmptyState('Alarm bulunmuyor');
+      return Container(
+        color: DefaultColorPalette.darkBackground,
+        child: _buildEmptyState(LocaleKeys.alarm_list_empty.tr()),
+      );
     }
 
     // Alarmları sırala
     final sortedAlarms = _sortAlarmsDetailed();
 
-    return ListView.builder(
-      padding: const EdgeInsets.all(16),
-      itemCount: sortedAlarms.length,
-      itemBuilder: (context, index) {
-        final alarm = sortedAlarms[index];
-        return _buildAlarmCard(alarm);
-      },
+    return Container(
+      color: DefaultColorPalette.darkBackground,
+      child: ListView.builder(
+        padding: const EdgeInsets.all(16),
+        itemCount: sortedAlarms.length,
+        itemBuilder: (context, index) {
+          final alarm = sortedAlarms[index];
+          return _buildAlarmCard(alarm);
+        },
+      ),
     );
   }
 
@@ -174,16 +186,16 @@ class _AlarmViewState extends ConsumerState<AlarmView>
       child: Column(
         mainAxisAlignment: MainAxisAlignment.center,
         children: [
-          Icon(
+          const Icon(
             Icons.notifications_off_outlined,
             size: 64,
-            color: Colors.grey[400],
+            color: DefaultColorPalette.darkTextTertiary,
           ),
           const SizedBox(height: 16),
           Text(
             message,
-            style: TextStyle(
-              color: Colors.grey[600],
+            style: const TextStyle(
+              color: DefaultColorPalette.darkTextSecondary,
               fontSize: 16,
             ),
           ),
@@ -199,9 +211,9 @@ class _AlarmViewState extends ConsumerState<AlarmView>
       margin: const EdgeInsets.only(bottom: 12),
       padding: const EdgeInsets.all(16),
       decoration: BoxDecoration(
-        color: Colors.white,
+        color: DefaultColorPalette.darkCard,
         borderRadius: BorderRadius.circular(8),
-        border: Border.all(color: Colors.grey[200]!, width: 1),
+        border: Border.all(color: DefaultColorPalette.darkBorder, width: 1),
       ),
       child: Column(
         crossAxisAlignment: CrossAxisAlignment.start,
@@ -212,7 +224,7 @@ class _AlarmViewState extends ConsumerState<AlarmView>
                 width: 36,
                 height: 36,
                 decoration: BoxDecoration(
-                  color: DefaultColorPalette.mainBlue,
+                  color: DefaultColorPalette.accentBlue,
                   borderRadius: BorderRadius.circular(6),
                 ),
                 child: Center(
@@ -234,7 +246,7 @@ class _AlarmViewState extends ConsumerState<AlarmView>
                     Text(
                       title,
                       style: const TextStyle(
-                        color: Color(0xFF2C3E50),
+                        color: DefaultColorPalette.darkText,
                         fontSize: 15,
                         fontWeight: FontWeight.w600,
                       ),
@@ -250,7 +262,7 @@ class _AlarmViewState extends ConsumerState<AlarmView>
                               .getSelectedCurrencyBuyPrice(alarm.currencyCode)
                               .toString(),
                       style: const TextStyle(
-                        color: Color(0xFF7F8C8D),
+                        color: DefaultColorPalette.darkTextSecondary,
                         fontSize: 13,
                       ),
                     ),
@@ -262,19 +274,20 @@ class _AlarmViewState extends ConsumerState<AlarmView>
                 onChanged: (value) async {
                   ref.read(appGlobalProvider).updateSingleUserAlarm(
                       alarm.copyWith(isTriggered: !alarm.isTriggered));
-                  final a =
+                  EasySnackBar.show(
+                      context,
+                      alarm.isTriggered
+                          ? LocaleKeys.alarm_list_activated.tr()
+                          : LocaleKeys.alarm_list_deactivated.tr());
+                  final alarmState =
                       await getIt<DatabaseUseCase>().toggleAlarmStatus(alarm);
-                  a.fold(
+                  alarmState.fold(
                       (failure) => debugPrint("FAIL FAIL${failure.message}"),
-                      (success) => EasySnackBar.show(
-                          context,
-                          alarm.isTriggered
-                              ? "Alarmınız aktif edildi"
-                              : "Alarmınız deaktif edildi"));
+                      (success) => null);
                 },
-                activeColor: DefaultColorPalette.mainBlue,
-                inactiveThumbColor: Colors.grey[400],
-                inactiveTrackColor: Colors.grey[200],
+                activeColor: DefaultColorPalette.accentBlue,
+                inactiveThumbColor: DefaultColorPalette.darkTextTertiary,
+                inactiveTrackColor: DefaultColorPalette.darkBorder,
               ),
             ],
           ),
@@ -282,7 +295,7 @@ class _AlarmViewState extends ConsumerState<AlarmView>
           Container(
             padding: const EdgeInsets.all(12),
             decoration: BoxDecoration(
-              color: Colors.grey[50],
+              color: DefaultColorPalette.darkSurface,
               borderRadius: BorderRadius.circular(6),
             ),
             child: Column(
@@ -291,16 +304,16 @@ class _AlarmViewState extends ConsumerState<AlarmView>
                   mainAxisAlignment: MainAxisAlignment.spaceBetween,
                   children: [
                     Text(
-                      'Koşul:',
-                      style: TextStyle(
-                        color: Colors.grey[600],
+                      LocaleKeys.alarm_list_condition,
+                      style: const TextStyle(
+                        color: DefaultColorPalette.darkTextSecondary,
                         fontSize: 13,
                       ),
                     ),
                     Text(
                       _getConditionText(alarm),
                       style: const TextStyle(
-                        color: Color(0xFF2C3E50),
+                        color: DefaultColorPalette.darkText,
                         fontSize: 13,
                         fontWeight: FontWeight.w500,
                       ),
@@ -312,16 +325,16 @@ class _AlarmViewState extends ConsumerState<AlarmView>
                   mainAxisAlignment: MainAxisAlignment.spaceBetween,
                   children: [
                     Text(
-                      'Hedef:',
-                      style: TextStyle(
-                        color: Colors.grey[600],
+                      LocaleKeys.alarm_list_target,
+                      style: const TextStyle(
+                        color: DefaultColorPalette.darkTextSecondary,
                         fontSize: 13,
                       ),
                     ),
                     Text(
                       '₺${alarm.targetValue}',
                       style: const TextStyle(
-                        color: Color(0xFF2C3E50),
+                        color: DefaultColorPalette.darkText,
                         fontSize: 13,
                         fontWeight: FontWeight.w500,
                       ),
@@ -333,9 +346,9 @@ class _AlarmViewState extends ConsumerState<AlarmView>
                   mainAxisAlignment: MainAxisAlignment.spaceBetween,
                   children: [
                     Text(
-                      'Emir Tipi:',
-                      style: TextStyle(
-                        color: Colors.grey[600],
+                      LocaleKeys.alarm_list_orderType,
+                      style: const TextStyle(
+                        color: DefaultColorPalette.darkTextSecondary,
                         fontSize: 13,
                       ),
                     ),
@@ -344,16 +357,18 @@ class _AlarmViewState extends ConsumerState<AlarmView>
                           horizontal: 8, vertical: 2),
                       decoration: BoxDecoration(
                         color: alarm.type == AlarmOrderType.BUY
-                            ? Colors.green[100]
-                            : Colors.red[100],
+                            ? DefaultColorPalette.accentGreen.withOpacity(0.2)
+                            : DefaultColorPalette.accentRed.withOpacity(0.2),
                         borderRadius: BorderRadius.circular(4),
                       ),
                       child: Text(
-                        alarm.type == AlarmOrderType.BUY ? 'Alış' : 'Satış',
+                        alarm.type == AlarmOrderType.BUY
+                            ? LocaleKeys.alarm_list_buy.tr()
+                            : LocaleKeys.alarm_list_sell.tr(),
                         style: TextStyle(
                           color: alarm.type == AlarmOrderType.BUY
-                              ? Colors.green[700]
-                              : Colors.red[700],
+                              ? DefaultColorPalette.accentGreen
+                              : DefaultColorPalette.accentRed,
                           fontSize: 12,
                           fontWeight: FontWeight.w500,
                         ),
@@ -370,8 +385,8 @@ class _AlarmViewState extends ConsumerState<AlarmView>
             children: [
               Text(
                 GeneralConstants.dateFormat.format(alarm.createTime),
-                style: TextStyle(
-                  color: Colors.grey[500],
+                style: const TextStyle(
+                  color: DefaultColorPalette.darkTextTertiary,
                   fontSize: 12,
                 ),
               ),
@@ -387,9 +402,9 @@ class _AlarmViewState extends ConsumerState<AlarmView>
                       minimumSize: Size.zero,
                     ),
                     child: Text(
-                      'Düzenle',
-                      style: TextStyle(
-                        color: DefaultColorPalette.mainBlue,
+                      LocaleKeys.alarm_list_edit.tr(),
+                      style: const TextStyle(
+                        color: DefaultColorPalette.accentBlue,
                         fontSize: 12,
                       ),
                     ),
@@ -406,7 +421,8 @@ class _AlarmViewState extends ConsumerState<AlarmView>
                         (succes) {
                           if (context.mounted) {
                             EasySnackBar.show(
-                                context, "Alarm Başarıyla Silindi");
+                                context,
+                                LocaleKeys.alarm_list_deleteSuccess.tr());
                           }
                         },
                       );
@@ -417,9 +433,9 @@ class _AlarmViewState extends ConsumerState<AlarmView>
                       minimumSize: Size.zero,
                     ),
                     child: Text(
-                      'Sil',
-                      style: TextStyle(
-                        color: Colors.red[600],
+                      LocaleKeys.alarm_list_delete.tr(),
+                      style: const TextStyle(
+                        color: DefaultColorPalette.accentRed,
                         fontSize: 12,
                       ),
                     ),
@@ -453,7 +469,7 @@ class _AlarmViewState extends ConsumerState<AlarmView>
               if (context.mounted) {
                 EasySnackBar.show(
                   context,
-                  "Alarm başarıyla güncellendi",
+                  LocaleKeys.alarm_list_editSuccess.tr(),
                 );
               }
             });
@@ -468,12 +484,16 @@ class _AlarmViewState extends ConsumerState<AlarmView>
 
     if (alarm.mode == AlarmType.PERCENT) {
       conditionText = alarm.direction == AlarmCondition.UP
-          ? '%${alarm.targetValue} yükselse'
-          : '%${alarm.targetValue} düşse';
+          ? LocaleKeys.alarm_form_conditionUpPercent
+              .tr(namedArgs: {'value': alarm.targetValue.toString()})
+          : LocaleKeys.alarm_form_conditionDownPercent
+              .tr(namedArgs: {'value': alarm.targetValue.toString()});
     } else {
       conditionText = alarm.direction == AlarmCondition.UP
-          ? '₺${alarm.targetValue} üstüne çıksa'
-          : '₺${alarm.targetValue} altına inse';
+          ? LocaleKeys.alarm_form_conditionUpPrice
+              .tr(namedArgs: {'value': alarm.targetValue.toString()})
+          : LocaleKeys.alarm_form_conditionDownPrice
+              .tr(namedArgs: {'value': alarm.targetValue.toString()});
     }
 
     return conditionText;
@@ -484,7 +504,7 @@ class _AlarmViewState extends ConsumerState<AlarmView>
     return Text(
       title,
       style: const TextStyle(
-        color: Color(0xFF2C3E50),
+        color: DefaultColorPalette.darkText,
         fontSize: 16,
         fontWeight: FontWeight.w600,
       ),
@@ -499,19 +519,20 @@ class _AlarmViewState extends ConsumerState<AlarmView>
   }
 
   Widget _buildAlarmTypeSelector() {
+    final selectedAlarmType =
+        ref.watch(alarmViewModelProvider.select((vm) => vm.selectedAlarmType));
     return Container(
       decoration: BoxDecoration(
-        color: Colors.grey[100],
+        color: DefaultColorPalette.darkSurface,
         borderRadius: BorderRadius.circular(8),
-        border: Border.all(color: Colors.grey[200]!, width: 1),
+        border: Border.all(color: DefaultColorPalette.darkBorder, width: 1),
       ),
       child: Row(
         children: [
           Expanded(
             child: _buildToggleButton(
-                'Fiyat',
-                ref.watch(alarmViewModelProvider).selectedAlarmType ==
-                    AlarmType.PRICE,
+                LocaleKeys.alarm_form_price.tr(),
+                selectedAlarmType == AlarmType.PRICE,
                 () => ref
                     .read(alarmViewModelProvider)
                     .toggleTypes(AlarmType.PRICE, ref)),
@@ -519,11 +540,10 @@ class _AlarmViewState extends ConsumerState<AlarmView>
           const SizedBox(width: 12),
           Expanded(
             child: _buildToggleButton(
-              'Yüzdesel Fark',
-              ref.watch(alarmViewModelProvider).selectedAlarmType ==
-                  AlarmType.PERCENT,
+              LocaleKeys.alarm_form_percent.tr(),
+              selectedAlarmType == AlarmType.PERCENT,
               () => ref
-                  .watch(alarmViewModelProvider)
+                  .read(alarmViewModelProvider)
                   .toggleTypes(AlarmType.PERCENT, ref),
             ),
           ),
@@ -533,22 +553,26 @@ class _AlarmViewState extends ConsumerState<AlarmView>
   }
 
   Widget _buildConditionSelector() {
+    final selectedAlarmType =
+        ref.watch(alarmViewModelProvider.select((vm) => vm.selectedAlarmType));
+    final selectedCondition =
+        ref.watch(alarmViewModelProvider.select((vm) => vm.selectedCondition));
     return Container(
       decoration: BoxDecoration(
-        color: Colors.grey[100],
+        color: DefaultColorPalette.darkSurface,
         borderRadius: BorderRadius.circular(8),
-        border: Border.all(color: Colors.grey[200]!, width: 1),
+        border: Border.all(color: DefaultColorPalette.darkBorder, width: 1),
       ),
       child: Row(
         children: [
           Expanded(
             child: _buildToggleButton(
-                ref.watch(alarmViewModelProvider).selectedAlarmType ==
-                        AlarmType.PERCENT
-                    ? 'Yükselse'
-                    : 'Üstüne Çıksa',
-                ref.watch(alarmViewModelProvider).selectedCondition ==
-                    AlarmCondition.UP,
+                selectedAlarmType == AlarmType.PERCENT
+                    ? LocaleKeys.alarm_form_conditionUpPercent
+                        .tr(namedArgs: {'value': ''})
+                    : LocaleKeys.alarm_form_conditionUpPrice
+                        .tr(namedArgs: {'value': ''}),
+                selectedCondition == AlarmCondition.UP,
                 () => ref
                     .read(alarmViewModelProvider)
                     .toggleTypes(AlarmCondition.UP, ref)),
@@ -556,12 +580,12 @@ class _AlarmViewState extends ConsumerState<AlarmView>
           const SizedBox(width: 12),
           Expanded(
             child: _buildToggleButton(
-                ref.watch(alarmViewModelProvider).selectedAlarmType ==
-                        AlarmType.PERCENT
-                    ? 'Düşse'
-                    : 'Altına İnse',
-                ref.read(alarmViewModelProvider).selectedCondition ==
-                    AlarmCondition.DOWN,
+                selectedAlarmType == AlarmType.PERCENT
+                    ? LocaleKeys.alarm_form_conditionDownPercent
+                        .tr(namedArgs: {'value': ''})
+                    : LocaleKeys.alarm_form_conditionDownPrice
+                        .tr(namedArgs: {'value': ''}),
+                selectedCondition == AlarmCondition.DOWN,
                 () => ref
                     .read(alarmViewModelProvider)
                     .toggleTypes(AlarmCondition.DOWN, ref)),
@@ -574,65 +598,71 @@ class _AlarmViewState extends ConsumerState<AlarmView>
   Widget _buildValueInput(AlarmViewModel viewModel) {
     return Container(
       decoration: BoxDecoration(
-        color: Colors.white,
+        color: DefaultColorPalette.darkCard,
         borderRadius: BorderRadius.circular(8),
-        border: Border.all(color: Colors.grey[300]!, width: 1),
+        border: Border.all(color: DefaultColorPalette.darkBorder, width: 1),
       ),
-      child: TextField(
-        controller: viewModel.valueController,
-        style: const TextStyle(color: Color(0xFF2C3E50), fontSize: 15),
-        keyboardType: const TextInputType.numberWithOptions(decimal: true),
-        onChanged: (value) {
-          viewModel.changeFormText(value);
-        },
-        decoration: InputDecoration(
-          hintText: viewModel.selectedAlarmType == AlarmType.PERCENT
-              ? '%5.0'
-              : '₺35,000',
-          hintStyle: const TextStyle(color: Color(0xFF7F8C8D)),
-          prefixIcon: Icon(
-            viewModel.selectedAlarmType == AlarmType.PERCENT
-                ? Icons.percent
-                : Icons.currency_lira,
-            color: DefaultColorPalette.mainBlue,
-            size: 20,
+      child: Form(
+        key: formKey,
+        child: TextFormField(
+          validator: (value) => checkAmount(value, true),
+          controller: viewModel.valueController,
+          style: const TextStyle(
+              color: DefaultColorPalette.darkText, fontSize: 15),
+          keyboardType: const TextInputType.numberWithOptions(decimal: true),
+          onChanged: (value) {
+            viewModel.changeFormText(value);
+          },
+          decoration: InputDecoration(
+            hintText: viewModel.selectedAlarmType == AlarmType.PERCENT
+                ? LocaleKeys.alarm_form_valueHintPercent.tr()
+                : LocaleKeys.alarm_form_valueHintPrice.tr(),
+            hintStyle:
+                const TextStyle(color: DefaultColorPalette.darkTextSecondary),
+            prefixIcon: Icon(
+              viewModel.selectedAlarmType == AlarmType.PERCENT
+                  ? Icons.percent
+                  : Icons.currency_lira,
+              color: DefaultColorPalette.accentBlue,
+              size: 20,
+            ),
+            border: InputBorder.none,
+            contentPadding:
+                const EdgeInsets.symmetric(horizontal: 16, vertical: 16),
           ),
-          border: InputBorder.none,
-          contentPadding:
-              const EdgeInsets.symmetric(horizontal: 16, vertical: 16),
         ),
       ),
     );
   }
 
   Widget _buildOrderTypeSelector() {
+    final selectedOrderType =
+        ref.read(alarmViewModelProvider.select((vm) => vm.selectedOrderType));
     return Column(
       children: [
         Container(
           decoration: BoxDecoration(
-            color: Colors.grey[100],
+            color: DefaultColorPalette.darkSurface,
             borderRadius: BorderRadius.circular(8),
-            border: Border.all(color: Colors.grey[200]!, width: 1),
+            border: Border.all(color: DefaultColorPalette.darkBorder, width: 1),
           ),
           child: Row(
             children: [
               Expanded(
                 child: _buildToggleButton(
-                    'Alış Emri',
-                    ref.watch(alarmViewModelProvider).selectedOrderType ==
-                        AlarmOrderType.BUY,
+                    LocaleKeys.alarm_form_buyOrder.tr(),
+                    selectedOrderType == AlarmOrderType.BUY,
                     () => ref
-                        .watch(alarmViewModelProvider)
+                        .read(alarmViewModelProvider)
                         .toggleTypes(AlarmOrderType.BUY, ref)),
               ),
               const SizedBox(width: 12),
               Expanded(
                 child: _buildToggleButton(
-                    'Satış Emri',
-                    ref.watch(alarmViewModelProvider).selectedOrderType ==
-                        AlarmOrderType.SELL,
+                    LocaleKeys.alarm_form_sellOrder.tr(),
+                    selectedOrderType == AlarmOrderType.SELL,
                     () => ref
-                        .watch(alarmViewModelProvider)
+                        .read(alarmViewModelProvider)
                         .toggleTypes(AlarmOrderType.SELL, ref)),
               ),
             ],
@@ -642,27 +672,29 @@ class _AlarmViewState extends ConsumerState<AlarmView>
         Container(
           padding: const EdgeInsets.all(16),
           decoration: BoxDecoration(
-            color: const Color.fromRGBO(25, 127, 229, 0.05),
+            color: DefaultColorPalette.accentBlue.withOpacity(0.1),
             borderRadius: BorderRadius.circular(8),
             border: Border.all(
-                color: const Color.fromRGBO(25, 127, 229, 0.1), width: 1),
+                color: DefaultColorPalette.accentBlue.withOpacity(0.2),
+                width: 1),
           ),
           child: Row(
             children: [
-              Icon(
+              const Icon(
                 Icons.info_outline,
-                color: DefaultColorPalette.mainBlue,
+                color: DefaultColorPalette.accentBlue,
                 size: 20,
               ),
               const SizedBox(width: 12),
               Expanded(
                 child: Text(
-                  ref.watch(alarmViewModelProvider).selectedOrderType ==
+                  ref.watch(alarmViewModelProvider
+                              .select((vm) => vm.selectedOrderType)) ==
                           AlarmOrderType.BUY
-                      ? 'Alış emri: Satış fiyatından hesaplanır'
-                      : 'Satış emri: Alış fiyatından hesaplanır',
+                      ? LocaleKeys.alarm_form_buyOrderInfo.tr()
+                      : LocaleKeys.alarm_form_sellOrderInfo.tr(),
                   style: const TextStyle(
-                    color: Color(0xFF2C3E50),
+                    color: DefaultColorPalette.darkText,
                     fontSize: 14,
                   ),
                 ),
@@ -681,16 +713,17 @@ class _AlarmViewState extends ConsumerState<AlarmView>
         margin: const EdgeInsets.all(2),
         padding: const EdgeInsets.symmetric(vertical: 14),
         decoration: BoxDecoration(
-          color: isSelected
-              ? const Color.fromRGBO(25, 127, 229, 1)
-              : Colors.transparent,
+          color:
+              isSelected ? DefaultColorPalette.accentBlue : Colors.transparent,
           borderRadius: BorderRadius.circular(6),
         ),
         child: Center(
           child: Text(
             text,
             style: TextStyle(
-              color: isSelected ? Colors.white : const Color(0xFF7F8C8D),
+              color: isSelected
+                  ? Colors.white
+                  : DefaultColorPalette.darkTextSecondary,
               fontSize: 14,
               fontWeight: FontWeight.w500,
             ),
@@ -708,7 +741,7 @@ class _AlarmViewState extends ConsumerState<AlarmView>
           await ref.read(alarmViewModelProvider).saveAlarm(context, ref);
         },
         style: ElevatedButton.styleFrom(
-          backgroundColor: DefaultColorPalette.mainBlue,
+          backgroundColor: DefaultColorPalette.accentBlue,
           foregroundColor: Colors.white,
           padding: const EdgeInsets.symmetric(vertical: 16),
           shape: RoundedRectangleBorder(
@@ -716,9 +749,9 @@ class _AlarmViewState extends ConsumerState<AlarmView>
           ),
           elevation: 0,
         ),
-        child: const Text(
-          'Alarm Kur',
-          style: TextStyle(
+        child: Text(
+          LocaleKeys.alarm_form_createButton.tr(),
+          style: const TextStyle(
             fontSize: 16,
             fontWeight: FontWeight.w600,
           ),
@@ -736,49 +769,68 @@ class CreateAlarmInfoWidget extends ConsumerWidget {
 
   final WidgetRef ref;
 
+  // Dark theme colors
+  static const Color darkText = Color(0xFFE0E0E0);
+  static const Color accentBlue = Color(0xFF2196F3);
+
   @override
   Widget build(BuildContext context, WidgetRef ref) {
-    final viewModel = ref.watch(alarmViewModelProvider);
+    final viewModel = ref.read(alarmViewModelProvider);
     final orderType = viewModel.selectedOrderType;
     final alarmType = viewModel.selectedAlarmType;
     final alarmCondition = viewModel.selectedCondition;
 
     // Dinamik metin oluşturma
     String getAlarmText() {
-      String currencyPair =
-          viewModel.selectedCurrency; // Bu değer viewModel'den alınabilir
+      String currencyPair = viewModel.selectedCurrency;
       String priceValue = viewModel.selectedCurrencyPrice.toString();
       String percentValue = viewModel.selectedCurrencyPercent.toString();
 
-      String orderTypeText = orderType == AlarmOrderType.BUY ? "alış" : "satış";
-      String priceTypeText = orderType == AlarmOrderType.BUY ? "satış" : "alış";
+      String orderTypeText = orderType == AlarmOrderType.BUY
+          ? LocaleKeys.alarm_dynamic_orderType_buy.tr()
+          : LocaleKeys.alarm_dynamic_orderType_sell.tr();
+
+      String conditionText;
+      String templateKey;
 
       if (alarmType == AlarmType.PRICE) {
-        String conditionText = alarmCondition == AlarmCondition.DOWN
-            ? "altına düştüğü"
-            : "üstüne çıktığı";
-        return "$currencyPair $orderTypeText fiyatı $priceValue $conditionText anda bildirim gönderilecek";
+        conditionText = alarmCondition == AlarmCondition.DOWN
+            ? LocaleKeys.alarm_dynamic_conditionDownPrice.tr()
+            : LocaleKeys.alarm_dynamic_conditionUpPrice.tr();
+        templateKey = LocaleKeys.alarm_dynamic_price;
+        return templateKey.tr(namedArgs: {
+          'currency': currencyPair,
+          'orderType': orderTypeText,
+          'price': priceValue,
+          'condition': conditionText,
+        });
       } else {
         // PERCENT
-        String conditionText =
-            alarmCondition == AlarmCondition.DOWN ? "düştüğü" : "yükseldiği";
-        return "$currencyPair $orderTypeText fiyatı yüzde $percentValue $conditionText anda bildirim gönderilecek";
+        conditionText = alarmCondition == AlarmCondition.DOWN
+            ? LocaleKeys.alarm_dynamic_conditionDownPercent.tr()
+            : LocaleKeys.alarm_dynamic_conditionUpPercent.tr();
+        templateKey = LocaleKeys.alarm_dynamic_percent;
+        return templateKey.tr(namedArgs: {
+          'currency': currencyPair,
+          'orderType': orderTypeText,
+          'percent': percentValue,
+          'condition': conditionText,
+        });
       }
     }
 
     return Container(
       padding: const EdgeInsets.all(16),
       decoration: BoxDecoration(
-        color: const Color.fromRGBO(25, 127, 229, 0.05),
+        color: accentBlue.withOpacity(0.1),
         borderRadius: BorderRadius.circular(8),
-        border: Border.all(
-            color: const Color.fromRGBO(25, 127, 229, 0.1), width: 1),
+        border: Border.all(color: accentBlue.withOpacity(0.2), width: 1),
       ),
       child: Row(
         children: [
-          Icon(
+          const Icon(
             Icons.info_outline,
-            color: DefaultColorPalette.mainBlue,
+            color: accentBlue,
             size: 20,
           ),
           const SizedBox(width: 12),
@@ -786,7 +838,7 @@ class CreateAlarmInfoWidget extends ConsumerWidget {
             child: Text(
               getAlarmText(),
               style: const TextStyle(
-                color: Color(0xFF2C3E50),
+                color: darkText,
                 fontSize: 14,
               ),
             ),

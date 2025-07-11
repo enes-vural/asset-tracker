@@ -1,5 +1,5 @@
 extension AssetExtension on String {
-  String toPng() => "assets/image/$this.png";
+  String toPng() => "$this.png";
   String toCurrencyPng() => "assets/image/currency/$this.png";
   String toSvg() => "assets/image/$this.svg";
   String toJpeg() => "assets/image$this.jpeg";

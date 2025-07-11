@@ -78,8 +78,16 @@ class _UserAssetTransactionWidgetState
   @override
   Widget build(BuildContext context) {
     final isDark = Theme.of(context).brightness == Brightness.dark;
-    UserDataEntity? entity = ref.watch(appGlobalProvider.notifier).getUserData;
-    final viewModel = ref.watch(dashboardViewModelProvider);
+
+    UserDataEntity? entity =
+        ref.watch(appGlobalProvider.select((provider) => provider.getUserData));
+
+    final selectedFilter =
+        ref.watch(dashboardViewModelProvider.select((vm) => vm.selectedFilter));
+
+    final viewModel = ref.read(dashboardViewModelProvider);
+
+    //final viewModel = ref.read(dashboardViewModelProvider);
 
     List<UserCurrencyEntity>? allTransactions =
         (entity?.currencyList ?? []) + (entity?.soldCurrencyList ?? []);
@@ -90,9 +98,8 @@ class _UserAssetTransactionWidgetState
     allTransactions.forEach((UserCurrencyEntity transaction) {
       if (!groupedData.containsKey(transaction.currencyCode) &&
           //filtreleme işlemleri
-          ((currencyTypes[transaction.currencyCode] ==
-                  viewModel.selectedFilter) ||
-              viewModel.selectedFilter == DashboardFilterEnum.ALL)) {
+          ((currencyTypes[transaction.currencyCode] == selectedFilter) ||
+              selectedFilter == DashboardFilterEnum.ALL)) {
         groupedData[transaction.currencyCode] = [];
       }
       groupedData[transaction.currencyCode]?.add(transaction);
@@ -316,40 +323,40 @@ class _UserAssetTransactionWidgetState
                   // Profit indicator
                   (!isSold)
                       ? Column(
-                    crossAxisAlignment: CrossAxisAlignment.end,
-                    children: [
-                      Container(
-                        padding: const EdgeInsets.symmetric(
-                          horizontal: 12,
-                          vertical: 6,
-                        ),
-                        decoration: BoxDecoration(
-                          color: profitColor,
-                          borderRadius: BorderRadius.circular(20),
-                        ),
-                              child: Row(
-                          mainAxisSize: MainAxisSize.min,
+                          crossAxisAlignment: CrossAxisAlignment.end,
                           children: [
-                            Icon(
-                              isProfit
-                                  ? Icons.trending_up
-                                  : Icons.trending_down,
-                              color: Colors.white,
-                              size: 16,
-                            ),
-                            const SizedBox(width: 4),
-                            Text(
-                              "${isProfit ? '+' : ''}${((stats?.profit ?? 0) / (stats?.purchasePriceTotal ?? 1) * 100).toStringAsFixed(1)}%",
-                              style: const TextStyle(
-                                color: Colors.white,
-                                fontWeight: FontWeight.bold,
-                                fontSize: 12,
+                            Container(
+                              padding: const EdgeInsets.symmetric(
+                                horizontal: 12,
+                                vertical: 6,
+                              ),
+                              decoration: BoxDecoration(
+                                color: profitColor,
+                                borderRadius: BorderRadius.circular(20),
+                              ),
+                              child: Row(
+                                mainAxisSize: MainAxisSize.min,
+                                children: [
+                                  Icon(
+                                    isProfit
+                                        ? Icons.trending_up
+                                        : Icons.trending_down,
+                                    color: Colors.white,
+                                    size: 16,
+                                  ),
+                                  const SizedBox(width: 4),
+                                  Text(
+                                    "${isProfit ? '+' : ''}${((stats?.profit ?? 0) / (stats?.purchasePriceTotal ?? 1) * 100).toStringAsFixed(1)}%",
+                                    style: const TextStyle(
+                                      color: Colors.white,
+                                      fontWeight: FontWeight.bold,
+                                      fontSize: 12,
+                                    ),
+                                  ),
+                                ],
                               ),
                             ),
                           ],
-                        ),
-                      ),
-                    ],
                         )
                       : const CustomSizedBox(),
                 ],

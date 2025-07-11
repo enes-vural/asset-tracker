@@ -8,6 +8,7 @@ import 'package:flutter/material.dart';
 enum UnAuthorizedPage {
   WALLET,
   TRADE,
+  ALARM,
 }
 
 class UnAuthorizedWidget extends StatelessWidget {
@@ -48,7 +49,8 @@ class UnAuthorizedWidget extends StatelessWidget {
 
                     // Başlık
                     Text(
-                      LocaleKeys.auth_signIn.tr(),
+                      returnTitle(page).tr(),
+                      // LocaleKeys.auth_signIn.tr(),
                       style: const TextStyle(
                         fontSize: 32,
                         fontWeight: FontWeight.w700,
@@ -61,9 +63,7 @@ class UnAuthorizedWidget extends StatelessWidget {
                     // Açıklama
                     Text(
                       '\t${LocaleKeys.unAuthPage_unAuthText.tr(args: [
-                            page == UnAuthorizedPage.WALLET
-                                ? LocaleKeys.dashboard_wallet.tr()
-                                : LocaleKeys.unAuthPage_trade.tr()
+                            returnArguments(page).tr()
                           ])}',
                       style: TextStyle(
                         fontSize: 16,
@@ -145,5 +145,27 @@ class UnAuthorizedWidget extends StatelessWidget {
         ),
       ),
     );
+  }
+
+  String returnArguments(UnAuthorizedPage pageType) {
+    switch (pageType) {
+      case UnAuthorizedPage.WALLET:
+        return LocaleKeys.dashboard_wallet;
+      case UnAuthorizedPage.TRADE:
+        return LocaleKeys.unAuthPage_trade;
+      case UnAuthorizedPage.ALARM:
+        return LocaleKeys.unAuthPage_alarm;
+    }
+  }
+
+  String returnTitle(UnAuthorizedPage pageType) {
+    switch (pageType) {
+      case UnAuthorizedPage.WALLET:
+        return LocaleKeys.dashboard_wallet;
+      case UnAuthorizedPage.TRADE:
+        return LocaleKeys.unAuthPage_trade;
+      case UnAuthorizedPage.ALARM:
+        return LocaleKeys.unAuthPage_alarm;
+    }
   }
 }

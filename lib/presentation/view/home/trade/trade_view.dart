@@ -50,7 +50,8 @@ class _TradeViewState extends ConsumerState<TradeView> with ValidatorMixin {
   Widget build(BuildContext context) {
     final GlobalKey<FormState> tradeFormKey = GlobalKey<FormState>();
     final viewModel = ref.watch(tradeViewModelProvider);
-    final authState = ref.watch(authGlobalProvider);
+    final isAuthorized =
+        ref.watch(authGlobalProvider.select((value) => value.isUserAuthorized));
     final isDark = Theme.of(context).brightness == Brightness.dark;
     EasyDialog.showDialogOnProcess(context, ref, tradeViewModelProvider);
 
@@ -60,7 +61,7 @@ class _TradeViewState extends ConsumerState<TradeView> with ValidatorMixin {
 
     return PopScope(
       canPop: viewModel.canPop,
-      child: authState.getCurrentUser?.user != null
+      child: isAuthorized
           ? _buildTradeView(tradeFormKey, viewModel, context, isDark)
           //const causes localization issue
           //ignore: prefer_const_constructors
@@ -257,7 +258,6 @@ class _TradeViewState extends ConsumerState<TradeView> with ValidatorMixin {
           CustomDropDownWidget(
             pageCurrency: widget.currencyCode,
             viewModel: viewModel,
-
           ),
 
           const SizedBox(height: 16),
@@ -275,12 +275,19 @@ class _TradeViewState extends ConsumerState<TradeView> with ValidatorMixin {
             onChanged: (value) {
               double amount = double.tryParse(value) ?? 0.0;
               if (double.tryParse(viewModel.priceUnitController.text) != null) {
+                double priceTotal =
+                    double.tryParse(viewModel.priceTotalController.text) ?? 0.0;
                 double priceUnit =
                     double.tryParse(viewModel.priceUnitController.text) ?? 0.0;
-                if (priceUnit == 0.0) return;
-                double priceTotal = amount * priceUnit;
-                viewModel.priceTotalController.text =
-                    priceTotal.toStringAsFixed(2);
+                if (priceUnit != 0.0) {
+                  double priceTotal = amount * priceUnit;
+                  viewModel.priceTotalController.text =
+                      priceTotal.toStringAsFixed(2);
+                }
+                else if (priceTotal != 0.0 && amount != 0.0) {
+                  double priceUnit = priceTotal / amount;
+                  viewModel.priceUnitController.text = priceUnit.toString();
+                }
               }
             },
           ),
@@ -307,8 +314,7 @@ class _TradeViewState extends ConsumerState<TradeView> with ValidatorMixin {
                     totalPrice.toStringAsFixed(2);
               }
             },
-            validator: (value) => null,
-            
+            validator: (value) => checkAmount(value, true),
           ),
 
           const SizedBox(height: 16),
@@ -342,13 +348,19 @@ class _TradeViewState extends ConsumerState<TradeView> with ValidatorMixin {
                   formController: viewModel.priceTotalController,
                   validator: (value) => checkAmount(value, true),
                   onChanged: (value) {
+                    double priceUnit =
+                        double.tryParse(viewModel.priceUnitController.text) ??
+                            0.0;
                     double priceTotal = double.tryParse(value) ?? 0.0;
                     double amount =
                         double.tryParse(viewModel.amountController.text) ?? 0.0;
-                    if (amount != 0.0) {
+                    if (amount != 0.0 && priceUnit == 0.0) {
                       double pricePerUnit = priceTotal / amount;
                       viewModel.priceUnitController.text =
                           pricePerUnit.toStringAsFixed(2);
+                    } else if (priceUnit != 0.0) {
+                      double amount = priceTotal / priceUnit;
+                      viewModel.amountController.text = amount.toString();
                     }
                   },
                   hasLabel: false,
@@ -379,7 +391,8 @@ class _TradeViewState extends ConsumerState<TradeView> with ValidatorMixin {
       child: ElevatedButton.icon(
         onPressed: () async {
           if (!tradeFormKey.currentState!.validate()) {
-            EasySnackBar.show(context, LocaleKeys.trade_fillAllFields.tr());
+            EasySnackBar.show(context, LocaleKeys.trade_fillAllFields.tr(),
+                isError: true);
             return;
           }
           if (currentTradeType == TradeType.buy) {

@@ -81,6 +81,13 @@ class AppGlobalProvider extends ChangeNotifier {
     notifyListeners();
   }
 
+  addSingleUserAlamr(AlarmEntity entity) {
+    if (_userData?.userAlarmList != null) {
+      _userData?.userAlarmList?.add(entity);
+    }
+    notifyListeners();
+  }
+
   updateSingleUserAlarm(AlarmEntity singleAlarm) {
     if (_userData?.userAlarmList != null) {
       final updatedList = _userData!.userAlarmList!.map((alarm) {

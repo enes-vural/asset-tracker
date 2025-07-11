@@ -3,7 +3,9 @@ import 'dart:io';
 import 'package:asset_tracker/core/config/localization/generated/locale_keys.g.dart';
 import 'package:asset_tracker/core/config/theme/default_theme.dart';
 import 'package:asset_tracker/core/config/theme/app_size.dart';
+import 'package:asset_tracker/core/config/theme/extension/asset_extension.dart';
 import 'package:asset_tracker/core/config/theme/style_theme.dart';
+import 'package:asset_tracker/core/constants/asset_constant.dart';
 import 'package:asset_tracker/core/constants/global/key/widget_keys.dart';
 import 'package:asset_tracker/core/mixins/validation_mixin.dart';
 import 'package:asset_tracker/core/widgets/custom_align.dart';
@@ -205,38 +207,6 @@ class _TrialViewState extends ConsumerState<LoginView> with ValidatorMixin {
                   ),
                 ),
                 const CustomSizedBox.mediumGap(),
-                // Google Sign-In Button
-                CustomPadding.hugeHorizontal(
-                  widget: SizedBox(
-                    width: double.infinity,
-                    height: 48.h,
-                    child: OutlinedButton.icon(
-                      onPressed: () => _signInWithGoogle(viewModel, context),
-                      icon: Image.network(
-                        'https://developers.google.com/identity/images/g-logo.png',
-                        height: 20,
-                        width: 20,
-                      ),
-                      label: Text(
-                        LocaleKeys.auth_signInGoogle.tr(),
-                        style: TextStyle(
-                          fontFamily: 'Manrope',
-                          fontSize: AppSize.mediumText,
-                          fontWeight: FontWeight.w500,
-                          color: DefaultColorPalette.mainTextBlack,
-                        ),
-                      ),
-                      style: OutlinedButton.styleFrom(
-                        backgroundColor: Colors.grey.shade100,
-                        side: BorderSide(color: Colors.grey.shade300, width: 1),
-                        shape: RoundedRectangleBorder(
-                          borderRadius: BorderRadius.circular(8),
-                        ),
-                      ),
-                    ),
-                  ),
-                ),
-                const CustomSizedBox.mediumGap(),
                 if (Platform.isIOS)
                   CustomPadding.hugeHorizontal(
                     widget: SizedBox(
@@ -269,6 +239,39 @@ class _TrialViewState extends ConsumerState<LoginView> with ValidatorMixin {
                       ),
                     ),
                   ),
+                const CustomSizedBox.mediumGap(),
+                // Google Sign-In Button
+                CustomPadding.hugeHorizontal(
+                  widget: SizedBox(
+                    width: double.infinity,
+                    height: 48.h,
+                    child: OutlinedButton.icon(
+                      onPressed: () => _signInWithGoogle(viewModel, context),
+                      icon: Image.asset(
+                        AssetConstant.googleLogo.toPng(),
+                        width: 20,
+                        height: 20,
+                      ),
+                      label: Text(
+                        LocaleKeys.auth_signInGoogle.tr(),
+                        style: TextStyle(
+                          fontFamily: 'Manrope',
+                          fontSize: AppSize.mediumText,
+                          fontWeight: FontWeight.w500,
+                          color: DefaultColorPalette.mainTextBlack,
+                        ),
+                      ),
+                      style: OutlinedButton.styleFrom(
+                        backgroundColor: Colors.grey.shade100,
+                        side: BorderSide(color: Colors.grey.shade300, width: 1),
+                        shape: RoundedRectangleBorder(
+                          borderRadius: BorderRadius.circular(8),
+                        ),
+                      ),
+                    ),
+                  ),
+                ),
+                const CustomSizedBox.mediumGap(),
                 CustomAlign.centerRight(
                   child: CustomPadding.hugeHorizontal(
                       widget: TextButton(
