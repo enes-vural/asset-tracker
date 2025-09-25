@@ -102,9 +102,9 @@
             "deactivated": "Alarmınız deaktif edildi",
             "condition": "Koşul:",
             "target": "Hedef:",
-            "orderType": "Emir Tipi:",
-            "buy": "Alış",
-            "sell": "Satış"
+            "orderType": "Alış mı Satış mı ?",
+            "buy": "Alış Fiyatı",
+            "sell": "Satış Fiyatı"
         },
         "dynamic": {
             "price": "{currency} {orderType} fiyatı {price} {condition} anda bildirim gönderilecek",
@@ -195,6 +195,10 @@
         "nullAssetCodes": "Beklenmeyen bir hata oluştu lütfen daha sonra tekrar deneyiniz."
     },
     "home": {
+        "err_title": "Hop! Bir şeyler ters gitti 🤔",
+        "err_message": "Veriler yüklenirken bir sorun yaşadık.\nİnternet bağlantınızı kontrol edip\ntekrar deneyebilirsiniz 🌐",
+        "err_button": "Tekrar Dene",
+        "err_tip": "Sorun devam ederse, uygulamayı yeniden başlatmayı deneyin",
         "diff": "Fark",
         "notFoundErr": "Hiçbir para birimi bulunamadı",
         "notFoundSearch": "Arama sonucu bulunamadı",

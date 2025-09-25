@@ -102,9 +102,9 @@
             "deactivated": "Your alarm has been deactivated",
             "condition": "Condition:",
             "target": "Target:",
-            "orderType": "Order Type:",
-            "buy": "Buy",
-            "sell": "Sell"
+            "orderType": "Buy or Sell ?",
+            "buy": "Buy Price",
+            "sell": "Sell Price"
         },
         "dynamic": {
             "price": "{currency} {orderType} price {price} {condition} will trigger a notification",
@@ -197,6 +197,10 @@
         "nullAssetCodes": "Unexpected error has been occurred please try again later."
     },
     "home": {
+        "err_title": "Hop! Bir şeyler ters gitti 🤔",
+        "err_message": "Veriler yüklenirken bir sorun yaşadık.\nİnternet bağlantınızı kontrol edip\ntekrar deneyebilirsiniz 🌐",
+        "err_button": "Tekrar Dene",
+        "err_tip": "Sorun devam ederse, uygulamayı yeniden başlatmayı deneyin",
         "diff": "Diff",
         "notFoundErr": "No Currency Found",
         "notFoundSearch": "No Search Results Found",

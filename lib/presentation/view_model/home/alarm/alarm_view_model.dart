@@ -2,8 +2,10 @@ import 'package:asset_tracker/core/config/theme/extension/currency_widget_title_
 import 'package:asset_tracker/core/helpers/snackbar.dart';
 import 'package:asset_tracker/data/model/database/response/asset_code_model.dart';
 import 'package:asset_tracker/domain/entities/database/alarm_entity.dart';
+import 'package:asset_tracker/domain/entities/database/enttiy/user_uid_entity.dart';
 import 'package:asset_tracker/domain/entities/web/socket/currency_widget_entity.dart';
 import 'package:asset_tracker/domain/usecase/database/database_use_case.dart';
+import 'package:asset_tracker/domain/usecase/messaging/messaging_use_case.dart';
 import 'package:asset_tracker/injection.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
@@ -47,8 +49,6 @@ class AlarmViewModel extends ChangeNotifier {
     changePriceValue(ref);
     notifyListeners();
   }
-
-  
 
   void changePriceValue(WidgetRef ref) {
     if (selectedAlarmType == AlarmType.PRICE) {
@@ -128,8 +128,10 @@ class AlarmViewModel extends ChangeNotifier {
     if (userId == null) return;
 
     final priceWhenCreated = selectedOrderType == AlarmOrderType.BUY
-        ? ref.read(appGlobalProvider).getSelectedCurrencySellPrice(currencyCode)
-        : ref.read(appGlobalProvider).getSelectedCurrencyBuyPrice(currencyCode);
+        ? ref.read(appGlobalProvider).getSelectedCurrencyBuyPrice(currencyCode)
+        : ref
+            .read(appGlobalProvider)
+            .getSelectedCurrencySellPrice(currencyCode);
 
     if (priceWhenCreated == null) {
       if (context.mounted) {
@@ -153,6 +155,13 @@ class AlarmViewModel extends ChangeNotifier {
       return;
     }
 
+    final bool isPermitted =
+        await _handleNotificationToken(context, ref, userId);
+
+    if (!isPermitted) return;
+
+    changePopState(false);
+
     final alarmEntity = AlarmEntity(
       currencyCode: currencyCode,
       direction: selectedCondition,
@@ -165,30 +174,84 @@ class AlarmViewModel extends ChangeNotifier {
       createTime: DateTime.now(),
     );
 
-    ref.read(appGlobalProvider).addSingleUserAlamr(alarmEntity);
-    // EasySnackBar.show(context, "Alarm başarıyla kuruldu");
-    tabController.index = 1;
-
     final result = await getIt<DatabaseUseCase>().saveUserAlarm(alarmEntity);
 
     result.fold(
       (failure) {
+        changePopState(true);
         debugPrint(failure.message);
         EasySnackBar.show(
             context, LocaleKeys.alarm_snackbar_alarm_created_error.tr());
         ref.read(appGlobalProvider).removeSingleAlarm(alarmEntity);
       },
       (success) async {
+        changePopState(true);
         // final data = await getIt<DatabaseUseCase>()
         // .getUserAlarms(UserUidEntity(userId: userId));
         // ref.read(appGlobalProvider).updateUserAlarm(data);
         // ref.read(appGlobalProvider).updateSingleUserAlarm(alarmEntity);
+        ref.read(appGlobalProvider).addSingleUserAlamr(alarmEntity);
+        // EasySnackBar.show(context, "Alarm başarıyla kuruldu");
         if (context.mounted) {
           EasySnackBar.show(
               context, LocaleKeys.alarm_snackbar_alarm_created_success.tr());
         }
+        tabController.index = 1;
       },
     );
+  }
+
+  Future<bool> _handleNotificationToken(
+      BuildContext context, WidgetRef ref, String userId) async {
+    // 1. Permission kontrolü
+    final isAuthorized =
+        await getIt<NotificationUseCase>().isPermissionAuthorized();
+    if (!isAuthorized) {
+      if (context.mounted) {
+        EasySnackBar.show(context,
+            "Alarm özelliğini kullanmak için bildirimlere izin vermeniz gerekiyor.",
+            // LocaleKeys.notification_permission_required
+            //     .tr(), // "Bildirimleri görmek için notification izni verin"
+            isError: true);
+      }
+      return false;
+    }
+
+    // 2. Mevcut token kontrolü
+    String? currentToken = ref.read(authGlobalProvider).notificationToken;
+
+    // 3. Token yoksa yeni token al
+    if (currentToken == null) {
+      currentToken = await getIt<NotificationUseCase>().getUserToken();
+      if (currentToken == null) {
+        if (context.mounted) {
+          EasySnackBar.show(context, "Bildirimlere İzin vermeniz gerekiyor",
+              //LocaleKeys.notification_token_error
+              //    .tr(), // "Bildirim token'ı alınamadı"
+              isError: true);
+        }
+        return false;
+      }
+
+      // 4. Token'ı provider'da güncelle
+      ref.read(authGlobalProvider).updateFcmToken(currentToken);
+    }
+
+    // 5. Token'ı database'e kaydet
+    try {
+      await getIt<DatabaseUseCase>()
+          .saveUserToken(UserUidEntity(userId: userId), currentToken);
+      return true;
+    } catch (e) {
+      debugPrint('Token save error: $e');
+      if (context.mounted) {
+        EasySnackBar.show(context, "HATA ",
+            //LocaleKeys.notification_token_save_error
+            //.tr(), // "Bildirim ayarları kaydedilemedi"
+            isError: true);
+      }
+      return false;
+    }
   }
 
   double? getPriceSelectedCurrency(WidgetRef ref) {
@@ -221,17 +284,17 @@ class AlarmViewModel extends ChangeNotifier {
 
       if (selectedAlarmType == AlarmType.PRICE) {
         if (selectedOrderType == AlarmOrderType.BUY) {
-          valueController.text = selectedAssetCode.entity.satis;
-          _selectedCurrencyPrice =
-              double.tryParse(selectedAssetCode.entity.satis);
-          notifyListeners();
-          return double.tryParse(selectedAssetCode.entity.satis);
-        } else {
           valueController.text = selectedAssetCode.entity.alis;
           _selectedCurrencyPrice =
               double.tryParse(selectedAssetCode.entity.alis);
           notifyListeners();
           return double.tryParse(selectedAssetCode.entity.alis);
+        } else {
+          valueController.text = selectedAssetCode.entity.satis;
+          _selectedCurrencyPrice =
+              double.tryParse(selectedAssetCode.entity.satis);
+          notifyListeners();
+          return double.tryParse(selectedAssetCode.entity.satis);
         }
       }
       // debugPrint(
@@ -273,15 +336,9 @@ class AlarmViewModel extends ChangeNotifier {
     if (!Platform.isIOS && !Platform.isAndroid) {
       return false;
     }
-    var status = await Permission.notification.status;
-    // If permanently denied (Android) or denied (iOS), show card and do not request again
-    if (status.isPermanentlyDenied || (Platform.isIOS && status.isDenied)) {
-      return true;
-    }
-    // If denied but not permanently, request permission
-    if (status.isDenied) {
-      status = await Permission.notification.request();
-    }
-    return !status.isGranted;
+    final isAuthroized =
+        await getIt<NotificationUseCase>().isPermissionAuthorized();
+
+    return !isAuthroized;
   }
 }

@@ -1,9 +1,11 @@
 import 'package:asset_tracker/core/config/theme/default_theme.dart';
 import 'package:asset_tracker/core/config/theme/extension/currency_widget_title_extension.dart';
 import 'package:asset_tracker/core/constants/global/general_constants.dart';
+import 'package:asset_tracker/core/helpers/dialog_helper.dart';
 import 'package:asset_tracker/core/helpers/snackbar.dart';
 import 'package:asset_tracker/core/mixins/validation_mixin.dart';
 import 'package:asset_tracker/core/config/localization/generated/locale_keys.g.dart';
+import 'package:asset_tracker/core/widgets/custom_sized_box.dart';
 import 'package:easy_localization/easy_localization.dart';
 import 'package:asset_tracker/domain/entities/database/alarm_entity.dart';
 import 'package:asset_tracker/domain/usecase/database/database_use_case.dart';
@@ -15,7 +17,6 @@ import 'package:asset_tracker/presentation/view_model/home/alarm/alarm_view_mode
 import 'package:auto_route/auto_route.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
-import 'dart:io';
 import 'package:permission_handler/permission_handler.dart';
 
 @RoutePage()
@@ -53,64 +54,71 @@ class _AlarmViewState extends ConsumerState<AlarmView>
       ref.read(tradeViewModelProvider).getCurrencyList(ref);
     });
   }
-@override
+
+  @override
   Widget build(BuildContext context) {
     final viewModel = ref.read(alarmViewModelProvider);
     final isAuthorized =
         ref.watch(authGlobalProvider.select((value) => value.isUserAuthorized));
     final theme = Theme.of(context);
     final isDark = theme.brightness == Brightness.dark;
-
+    EasyDialog.showDialogOnProcess(context, ref, alarmViewModelProvider);
+    bool canPop = ref.watch(alarmViewModelProvider.select((vm) => vm.canPop));
     return isAuthorized
         ? FutureBuilder(
             future: viewModel.shouldShowNotificationCard(),
             builder: (context, snapshot) {
               final showNotificationCard = snapshot.data == true;
-              return Scaffold(
-                backgroundColor: theme.scaffoldBackgroundColor,
-                body: Column(
-                  children: [
-                    // Notification Card
-                    if (showNotificationCard) NotificationPermissionCard(),
+              return PopScope(
+                canPop: canPop,
+                child: Scaffold(
+                  backgroundColor: theme.scaffoldBackgroundColor,
+                  body: Column(
+                    children: [
+                      // Notification Card
+                      if (showNotificationCard) NotificationPermissionCard(),
 
-                    // TabBar
-                    Container(
-                      color: theme.scaffoldBackgroundColor,
-                      child: TabBar(
-                        onTap: (value) {
-                          FocusScope.of(context).unfocus();
-                        },
-                        controller: viewModel.tabController,
-                        dividerColor: Colors.transparent,
-                        unselectedLabelColor: theme.textTheme.bodySmall?.color
-                                ?.withOpacity(0.6) ??
-                            (isDark
-                                ? DefaultColorPalette.darkTextSecondary
-                                : DefaultColorPalette.customGrey),
-                        indicatorColor: theme.colorScheme.primary,
-                        tabs: [
-                          Tab(text: LocaleKeys.alarm_tab_create.tr()),
-                          Tab(text: LocaleKeys.alarm_tab_list.tr()),
-                        ],
+                      // TabBar
+                      Container(
+                        color: theme.scaffoldBackgroundColor,
+                        child: TabBar(
+                          onTap: (value) {
+                            //FocusScope.of(context).unfocus();
+                            FocusManager.instance.primaryFocus?.unfocus();
+                          },
+                          controller: viewModel.tabController,
+                          dividerColor: Colors.transparent,
+                          unselectedLabelColor: theme.textTheme.bodySmall?.color
+                                  ?.withOpacity(0.6) ??
+                              (isDark
+                                  ? DefaultColorPalette.darkTextSecondary
+                                  : DefaultColorPalette.customGrey),
+                          indicatorColor: theme.colorScheme.primary,
+                          tabs: [
+                            Tab(text: LocaleKeys.alarm_tab_create.tr()),
+                            Tab(text: LocaleKeys.alarm_tab_list.tr()),
+                          ],
+                        ),
                       ),
-                    ),
-                  
-                    // TabBarView
-                    Expanded(
-                      child: TabBarView(
-                        controller: viewModel.tabController,
-                        children: [
-                          // Create Alarm Tab
-                          SingleChildScrollView(
-                            padding: const EdgeInsets.all(16),
-                            child: _buildNewAlarmForm(viewModel, theme, isDark),
-                          ),
-                          // Alarm List Tab
-                          _buildSavedAlarms(theme, isDark),
-                        ],
+
+                      // TabBarView
+                      Expanded(
+                        child: TabBarView(
+                          controller: viewModel.tabController,
+                          children: [
+                            // Create Alarm Tab
+                            SingleChildScrollView(
+                              padding: const EdgeInsets.all(16),
+                              child:
+                                  _buildNewAlarmForm(viewModel, theme, isDark),
+                            ),
+                            // Alarm List Tab
+                            _buildSavedAlarms(theme, isDark),
+                          ],
+                        ),
                       ),
-                    ),
-                  ],
+                    ],
+                  ),
                 ),
               );
             },
@@ -118,17 +126,17 @@ class _AlarmViewState extends ConsumerState<AlarmView>
         : UnAuthorizedWidget(page: UnAuthorizedPage.ALARM);
   }
 
-Widget _buildSavedAlarms(ThemeData theme, bool isDark) {
+  Widget _buildSavedAlarms(ThemeData theme, bool isDark) {
     List<AlarmEntity>? alarms = [];
     alarms = ref.watch(appGlobalProvider).getUserData?.userAlarmList;
-  
+
     if (alarms == null || alarms.isEmpty) {
       return Container(
         color: theme.scaffoldBackgroundColor,
         child:
             _buildEmptyState(LocaleKeys.alarm_list_empty.tr(), theme, isDark),
       );
-  }
+    }
 
     // Alarmları sırala
     final sortedAlarms = _sortAlarmsDetailed();
@@ -315,11 +323,11 @@ Widget _buildSavedAlarms(ThemeData theme, bool isDark) {
                       alarm.type == AlarmOrderType.BUY
                           ? ref
                               .read(appGlobalProvider)
-                              .getSelectedCurrencySellPrice(alarm.currencyCode)
+                              .getSelectedCurrencyBuyPrice(alarm.currencyCode)
                               .toString()
                           : ref
                               .read(appGlobalProvider)
-                              .getSelectedCurrencyBuyPrice(alarm.currencyCode)
+                              .getSelectedCurrencySellPrice(alarm.currencyCode)
                               .toString(),
                       style: TextStyle(
                         color:
@@ -387,50 +395,6 @@ Widget _buildSavedAlarms(ThemeData theme, bool isDark) {
                   mainAxisAlignment: MainAxisAlignment.spaceBetween,
                   children: [
                     Text(
-                      LocaleKeys.alarm_list_condition.tr(),
-                      style: TextStyle(
-                        color:
-                            theme.textTheme.bodySmall?.color?.withOpacity(0.7),
-                        fontSize: 13,
-                      ),
-                    ),
-                    Text(
-                      _getConditionText(alarm),
-                      style: TextStyle(
-                        color: theme.textTheme.bodyLarge?.color,
-                        fontSize: 13,
-                        fontWeight: FontWeight.w500,
-                      ),
-                    ),
-                  ],
-                ),
-                const SizedBox(height: 8),
-                Row(
-                  mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                  children: [
-                    Text(
-                      LocaleKeys.alarm_list_target.tr(),
-                      style: TextStyle(
-                        color:
-                            theme.textTheme.bodySmall?.color?.withOpacity(0.7),
-                        fontSize: 13,
-                      ),
-                    ),
-                    Text(
-                      '₺${alarm.targetValue}',
-                      style: TextStyle(
-                        color: theme.textTheme.bodyLarge?.color,
-                        fontSize: 13,
-                        fontWeight: FontWeight.w500,
-                      ),
-                    ),
-                  ],
-                ),
-                const SizedBox(height: 8),
-                Row(
-                  mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                  children: [
-                    Text(
                       LocaleKeys.alarm_list_orderType.tr(),
                       style: TextStyle(
                         color:
@@ -471,6 +435,52 @@ Widget _buildSavedAlarms(ThemeData theme, bool isDark) {
                     ),
                   ],
                 ),
+                const CustomSizedBox.smallGap(),
+                Row(
+                  mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                  children: [
+                    Text(
+                      LocaleKeys.alarm_list_condition.tr(),
+                      style: TextStyle(
+                        color:
+                            theme.textTheme.bodySmall?.color?.withOpacity(0.7),
+                        fontSize: 13,
+                      ),
+                    ),
+                    Text(
+                      _getConditionText(alarm),
+                      style: TextStyle(
+                        color: theme.textTheme.bodyLarge?.color,
+                        fontSize: 13,
+                        fontWeight: FontWeight.w500,
+                      ),
+                    ),
+                  ],
+                ),
+                const SizedBox(height: 8),
+                Row(
+                  mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                  children: [
+                    Text(
+                      LocaleKeys.alarm_list_target.tr(),
+                      style: TextStyle(
+                        color:
+                            theme.textTheme.bodySmall?.color?.withOpacity(0.7),
+                        fontSize: 13,
+                      ),
+                    ),
+                    Text(
+                      '₺${alarm.targetValue}',
+                      style: TextStyle(
+                        color: theme.textTheme.bodyLarge?.color,
+                        fontSize: 13,
+                        fontWeight: FontWeight.w500,
+                      ),
+                    ),
+                  ],
+                ),
+                const SizedBox(height: 8),
+               
               ],
             ),
           ),
@@ -515,8 +525,7 @@ Widget _buildSavedAlarms(ThemeData theme, bool isDark) {
                         },
                         (succes) {
                           if (context.mounted) {
-                            EasySnackBar.show(
-                                context,
+                            EasySnackBar.show(context,
                                 LocaleKeys.alarm_list_deleteSuccess.tr());
                           }
                         },
@@ -712,8 +721,7 @@ Widget _buildSavedAlarms(ThemeData theme, bool isDark) {
             hintText: viewModel.selectedAlarmType == AlarmType.PERCENT
                 ? LocaleKeys.alarm_form_valueHintPercent.tr()
                 : LocaleKeys.alarm_form_valueHintPrice.tr(),
-            hintStyle:
-                TextStyle(
+            hintStyle: TextStyle(
                 color: theme.textTheme.bodySmall?.color?.withOpacity(0.7)),
             prefixIcon: Icon(
               viewModel.selectedAlarmType == AlarmType.PERCENT
@@ -770,8 +778,7 @@ Widget _buildSavedAlarms(ThemeData theme, bool isDark) {
             color: theme.colorScheme.primary.withOpacity(0.1),
             borderRadius: BorderRadius.circular(8),
             border: Border.all(
-                color: theme.colorScheme.primary.withOpacity(0.2),
-                width: 1),
+                color: theme.colorScheme.primary.withOpacity(0.2), width: 1),
           ),
           child: Row(
             children: [
@@ -870,16 +877,22 @@ class CreateAlarmInfoWidget extends ConsumerWidget {
 
   @override
   Widget build(BuildContext context, WidgetRef ref) {
-    final viewModel = ref.read(alarmViewModelProvider);
-    final orderType = viewModel.selectedOrderType;
-    final alarmType = viewModel.selectedAlarmType;
-    final alarmCondition = viewModel.selectedCondition;
+    final viewModel = ref.watch(alarmViewModelProvider);
+    final orderType = ref.watch(alarmViewModelProvider
+        .select((viewModel) => viewModel.selectedOrderType));
+    final alarmType = ref.watch(alarmViewModelProvider
+        .select((viewModel) => viewModel.selectedAlarmType));
+    final alarmCondition = ref.watch(alarmViewModelProvider
+        .select((viewModel) => viewModel.selectedCondition));
 
     // Dinamik metin oluşturma
     String getAlarmText() {
-      String currencyPair = viewModel.selectedCurrency;
-      String priceValue = viewModel.selectedCurrencyPrice.toString();
-      String percentValue = viewModel.selectedCurrencyPercent.toString();
+      String currencyPair = ref.watch(alarmViewModelProvider
+          .select((viewModel) => viewModel.selectedCurrency));
+      String priceValue = ref.watch(alarmViewModelProvider
+          .select((viewModel) => viewModel.selectedCurrencyPrice.toString()));
+      String percentValue = ref.watch(alarmViewModelProvider
+          .select((viewModel) => viewModel.selectedCurrencyPercent.toString()));
 
       String orderTypeText = orderType == AlarmOrderType.BUY
           ? LocaleKeys.alarm_dynamic_orderType_buy.tr()
