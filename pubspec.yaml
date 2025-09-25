@@ -4,7 +4,7 @@ description: "PaRota mobil uygulaması ile varlıklarınızı takip edin, yönet
 # Remove this line if you wish to publish to pub.dev
 publish_to: 'none' 
 
-version: 1.0.6+23
+version: 1.0.8+33
 
 environment:
   sdk: ^3.5.4
@@ -37,7 +37,7 @@ dependencies:
   web_socket: ^0.1.6
   test: ^1.25.8
   mockito: ^5.4.5
-  dart_style: ^2.3.7
+  dart_style: ^3.1.1
   cloud_firestore: ^5.6.4
 
   #Multiple Stream Builder
@@ -61,7 +61,7 @@ dependencies:
   #url launcher
   url_launcher: ^6.3.1
   #auth
-  google_sign_in: ^7.0.0
+  google_sign_in: ^7.1.0
   firebase_app_check: ^0.3.2+8
   firebase_messaging: ^15.2.8
   cloud_functions: ^5.6.0

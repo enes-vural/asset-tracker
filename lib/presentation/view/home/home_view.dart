@@ -33,7 +33,10 @@ class _HomeViewState extends ConsumerState<HomeView>
   late FocusNode _searchFocusNode;
 
   Timer? _skeletonTimer;
+  Timer? _dataWaitTimer;
   bool _showSkeleton = true;
+  bool _skeletonCompleted = false;
+  bool _showError = false;
 
   bool _isSearchOpen = false;
 
@@ -67,15 +70,37 @@ class _HomeViewState extends ConsumerState<HomeView>
         });
       }
     });
-    _skeletonTimer = Timer(const Duration(seconds: 2), () {
+
+    // İlk skeleton timer - 3 saniye
+    _skeletonTimer = Timer(const Duration(seconds: 1), () {
       if (mounted) {
         setState(() {
           _showSkeleton = false;
+          _skeletonCompleted = true;
         });
+        
+        // Skeleton bittikten sonra veri kontrolü için timer başlat
+        _startDataWaitTimer();
       }
     });
 
     super.initState();
+  }
+
+  void _startDataWaitTimer() {
+    _dataWaitTimer = Timer(const Duration(seconds: 10), () {
+      if (mounted) {
+        // Veri hala yüklenmemişse hata göster
+        bool isDataLoaded = ref.read(appGlobalProvider).globalAssets != null &&
+            (ref.read(appGlobalProvider).globalAssets?.isNotEmpty ?? false);
+
+        if (!isDataLoaded) {
+          setState(() {
+            _showError = true;
+          });
+        }
+      }
+    });
   }
 
   @override
@@ -84,6 +109,7 @@ class _HomeViewState extends ConsumerState<HomeView>
     _searchAnimationController.dispose();
     _searchFocusNode.dispose();
     _skeletonTimer?.cancel();
+    _dataWaitTimer?.cancel();
     super.dispose();
   }
 
@@ -101,16 +127,72 @@ class _HomeViewState extends ConsumerState<HomeView>
       ref.read(homeViewModelProvider).clearText();
     }
   }
+
+  void _retryDataLoading() {
+    setState(() {
+      _showSkeleton = true;
+      _skeletonCompleted = false;
+      _showError = false;
+    });
+
+    // Timer'ları iptal et
+    _skeletonTimer?.cancel();
+    _dataWaitTimer?.cancel();
+
+    // Yeniden başlat
+    _skeletonTimer = Timer(const Duration(seconds: 3), () {
+      if (mounted) {
+        setState(() {
+          _showSkeleton = false;
+          _skeletonCompleted = true;
+        });
+        _startDataWaitTimer();
+      }
+    });
+
+    // ViewModel'i yeniden başlat
+    initalizeVM();
+  }
+
   @override
   Widget build(BuildContext context) {   
-
     final isAuthorized =
         ref.watch(authGlobalProvider.select((value) => value.isUserAuthorized));
     final viewModel = ref.read(homeViewModelProvider);
 
     bool isDataLoaded = ref.read(appGlobalProvider).globalAssets != null &&
         ref.read(appGlobalProvider).globalAssets!.isNotEmpty;
-    bool isLoading = !isDataLoaded || _showSkeleton;
+
+    // Veri geldi mi kontrol et ve timer'ları iptal et
+    if (isDataLoaded && _skeletonCompleted) {
+      _dataWaitTimer?.cancel();
+      if (_showError) {
+        WidgetsBinding.instance.addPostFrameCallback((_) {
+          setState(() {
+            _showError = false;
+          });
+        });
+      }
+    }
+
+    // Hata durumu
+    if (_showError && !isDataLoaded) {
+      return Scaffold(
+        body: _buildErrorState(),
+        floatingActionButton: FloatingActionButton(
+          onPressed: _retryDataLoading,
+          backgroundColor: Theme.of(context).colorScheme.primary,
+          child: Icon(
+            Icons.refresh,
+            color: Theme.of(context).colorScheme.onPrimary,
+          ),
+        ),
+      );
+    }
+
+    // Loading durumu (skeleton gösterilirken veya skeleton bitti ama veri henüz gelmediyse)
+    bool isLoading =
+        _showSkeleton || (!isDataLoaded && _skeletonCompleted && !_showError);
 
     return Skeletonizer(
       enabled: isLoading,
@@ -291,6 +373,123 @@ class _HomeViewState extends ConsumerState<HomeView>
     return Text(
       LocaleKeys.home_homeDesc.tr(),
       style: CustomTextStyle.greyColorManrope(context, AppSize.small2Text),
+    );
+  }
+
+Widget _buildErrorState() {
+    return Container(
+      padding: EdgeInsets.all(24),
+      child: Column(
+        mainAxisAlignment: MainAxisAlignment.center,
+        children: [
+          // Sevimli emoji ve animasyonlu ikon
+          TweenAnimationBuilder<double>(
+            duration: Duration(seconds: 2),
+            tween: Tween(begin: 0.0, end: 1.0),
+            builder: (context, value, child) {
+              return Transform.scale(
+                scale: 0.8 + (0.2 * value),
+                child: Container(
+                  width: 120,
+                  height: 120,
+                  decoration: BoxDecoration(
+                    color:
+                        Theme.of(context).colorScheme.primary.withOpacity(0.1),
+                    shape: BoxShape.circle,
+                  ),
+                  child: Icon(
+                    Icons.cloud_off_rounded,
+                    size: 60,
+                    color:
+                        Theme.of(context).colorScheme.primary.withOpacity(0.7),
+                  ),
+                ),
+              );
+            },
+          ),
+
+          SizedBox(height: 32),
+
+          // Ana mesaj
+          Text(
+            LocaleKeys.home_err_title.tr(),
+            style: TextStyle(
+              fontSize: 24,
+              fontWeight: FontWeight.bold,
+              color: Theme.of(context).colorScheme.onSurface,
+            ),
+            textAlign: TextAlign.center,
+          ),
+
+          SizedBox(height: 16),
+
+          // Alt mesaj
+          Text(
+            LocaleKeys.home_err_message.tr(),
+            style: TextStyle(
+              fontSize: 16,
+              color: Theme.of(context).colorScheme.onSurface.withOpacity(0.7),
+              height: 1.5,
+            ),
+            textAlign: TextAlign.center,
+          ),
+
+          SizedBox(height: 48),
+
+          // Tekrar dene butonu
+          ElevatedButton.icon(
+            onPressed: _retryDataLoading,
+            icon: Icon(Icons.refresh_rounded),
+            label: Text(LocaleKeys.home_err_button.tr()),
+            style: ElevatedButton.styleFrom(
+              backgroundColor: Theme.of(context).colorScheme.primary,
+              foregroundColor: Theme.of(context).colorScheme.onPrimary,
+              padding: EdgeInsets.symmetric(horizontal: 32, vertical: 16),
+              shape: RoundedRectangleBorder(
+                borderRadius: BorderRadius.circular(25),
+              ),
+              elevation: 2,
+            ),
+          ),
+
+          SizedBox(height: 24),
+
+          // Alternatif mesaj
+          Container(
+            padding: EdgeInsets.all(16),
+            decoration: BoxDecoration(
+              color:
+                  Theme.of(context).colorScheme.surfaceVariant.withOpacity(0.3),
+              borderRadius: BorderRadius.circular(12),
+              border: Border.all(
+                color: Theme.of(context).colorScheme.outline.withOpacity(0.2),
+              ),
+            ),
+            child: Row(
+              children: [
+                Icon(
+                  Icons.lightbulb_outline,
+                  color: Theme.of(context).colorScheme.primary,
+                  size: 20,
+                ),
+                SizedBox(width: 12),
+                Expanded(
+                  child: Text(
+                    LocaleKeys.home_err_tip.tr(),
+                    style: TextStyle(
+                      fontSize: 14,
+                      color: Theme.of(context)
+                          .colorScheme
+                          .onSurface
+                          .withOpacity(0.8),
+                    ),
+                  ),
+                ),
+              ],
+            ),
+          ),
+        ],
+      ),
     );
   }
 }

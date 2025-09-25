@@ -44,7 +44,7 @@ class HomeViewModel extends ChangeNotifier {
     // veya Singleton yaklaşımı:
     // if (SocketService().socketDataStream != null) {
     //   ref.read(appGlobalProvider.notifier).updateSocketCurrency(SocketService().socketDataStream);
-    // } Alp98Vur.98
+    // } 
   }
 
   Future<void> syncNotificationSettings(WidgetRef ref) async {

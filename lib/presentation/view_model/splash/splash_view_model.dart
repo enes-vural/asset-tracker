@@ -15,7 +15,7 @@ class SplashViewModel extends ChangeNotifier {
   Future<void> init(WidgetRef ref, BuildContext context) async {
     try {
       await ref.read(webSocketProvider.notifier).initializeSocket();
-      final authGlobal = ref.read(authGlobalProvider.notifier);
+      final authGlobal = ref.watch(authGlobalProvider.notifier);
       final syncUser = ref.read(syncManagerProvider);
       // Önce hızlı kontrolleri yap
       final currentUser = authGlobal.getCurrentUser;
@@ -48,13 +48,23 @@ class SplashViewModel extends ChangeNotifier {
             await _getUserDataWithTimeout(ref, UserUidEntity(userId: userId));
 
         if (ref.read(appGlobalProvider).getUserData?.userInfoEntity == null) {
-          await getIt<DatabaseUseCase>().saveUserData(
+          final saveState = await getIt<DatabaseUseCase>().saveUserData(
             SaveUserEntity(
               uid: userId,
               userName: currentUser.email.toString(),
               firstName: currentUser.displayName.toString(),
               lastName: currentUser.displayName.toString(),
             ),
+          );
+          saveState.fold(
+            (failure) {
+              debugPrint(failure.message);
+              _navigateHomeOrLogin(context, access: false);
+              return;
+            },
+            (success) {
+              debugPrint("Use data has been saved in splash view model");
+            },
           );
         }
 
@@ -84,7 +94,7 @@ class SplashViewModel extends ChangeNotifier {
   Future<void> _syncWithThrottle(SyncManager syncUser) async {
     try {
       await syncUser.syncOfflineActions().timeout(
-        const Duration(seconds: 10), // 10 saniye timeout
+        const Duration(seconds: 5), // 10 saniye timeout
         onTimeout: () {
           debugPrint('Sync timeout, continuing without sync');
         },

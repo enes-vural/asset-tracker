@@ -359,10 +359,6 @@ final class FirestoreService implements IFirestoreService {
     }
   }
 
-  Future<void> saveToken(UserUidModel model, String token) async {
-    debugPrint("HERE");
-  }
-
   @override
   Future<Either<DatabaseErrorModel, bool>> removeUser(
       UserUidModel model) async {

@@ -80,18 +80,22 @@ class MyApp extends ConsumerWidget {
     );
   }
 
-  MaterialApp _buildMaterialApp(
+  MediaQuery _buildMaterialApp(
       BuildContext context, AppThemeState appThemeState) {
-    return MaterialApp.router(
-      localizationsDelegates: LocalizationManager().delegates(context),
-      supportedLocales: LocalizationManager().supportedLocales(context),
-      locale: LocalizationManager().locale(context),
-      debugShowCheckedModeBanner: false,
-      routerConfig: appRouter.config(),
-      title: LocaleKeys.app_title.tr(),
-      theme: defaultTheme,
-      darkTheme: darkTheme,
-      themeMode: appThemeState.currentTheme, // Yüklenen tema
+    return MediaQuery(
+      data: MediaQuery.of(context)
+          .copyWith(textScaler: const TextScaler.linear(1.0)),
+      child: MaterialApp.router(
+        localizationsDelegates: LocalizationManager().delegates(context),
+        supportedLocales: LocalizationManager().supportedLocales(context),
+        locale: LocalizationManager().locale(context),
+        debugShowCheckedModeBanner: false,
+        routerConfig: appRouter.config(),
+        title: LocaleKeys.app_title.tr(),
+        theme: defaultTheme,
+        darkTheme: darkTheme,
+        themeMode: appThemeState.currentTheme, // Yüklenen tema
+      ),
     );
   }
 

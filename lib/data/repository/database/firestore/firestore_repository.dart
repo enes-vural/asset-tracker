@@ -162,7 +162,11 @@ class FirestoreRepository implements IFirestoreRepository {
       SaveUserEntity entity) async {
     final SaveUserModel model = SaveUserModel.fromEntity(entity);
     try {
-      final response = await firestoreService.saveUser(model);
+      final response = await firestoreService
+          .saveUser(model)
+          .timeout(const Duration(seconds: 7), onTimeout: () {
+        return const Left(DatabaseErrorModel(message: "Timeout"));
+      });
       return response.fold(
         (failure) {
           return Left(DatabaseErrorEntity.fromModel(failure));

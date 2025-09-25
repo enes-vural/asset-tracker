@@ -61,7 +61,7 @@ class WebSocketService implements IWebSocketService {
           //ilk data geldiği zaman
           if (data.startsWith(SocketActionEnum.INIT_DATA.value)) {
             debugPrint("Inital Call");
-            socket!.add(SocketActionEnum.REQUEST.value);
+            socket?.add(SocketActionEnum.REQUEST.value);
             debugPrint(data);
           }
           //refresh durumu gerektiği zaman
