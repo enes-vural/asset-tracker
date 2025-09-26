@@ -6,10 +6,10 @@
     <description>Asset Tracker güncelleme bilgileri</description>
 
     <item>
-      <title>Version 1.0.9</title>
-      <sparkle:shortVersionString>1.0.9</sparkle:shortVersionString>
+      <title>Version 1.1.0</title>
+      <sparkle:shortVersionString>1.1.0</sparkle:shortVersionString>
       <description>Küçük hata düzeltmeleri.</description>
-      <sparkle:version>1.0.9</sparkle:version>
+      <sparkle:version>1.1.0</sparkle:version>
       <pubDate>Fri, 26 Sep 2025 12:00:00 +0000</pubDate>
       <sparkle:releaseNotesLink>https://raw.githubusercontent.com/enes-vural/asset-tracker/main/updates/release-notes/1.0.9.md</sparkle:releaseNotesLink>
       <sparkle:criticalUpdate>true</sparkle:criticalUpdate>
