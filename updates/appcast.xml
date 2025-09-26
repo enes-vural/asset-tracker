@@ -1,16 +1,16 @@
 <?xml version="1.0" encoding="utf-8"?>
 <rss version="2.0" xmlns:sparkle="http://www.andymatuschak.org/xml-namespaces/sparkle">
   <channel>
-    <title>PaRota Updates</title>
+    <title>Asset Tracker Updates</title>
     <link>https://raw.githubusercontent.com/enes-vural/asset-tracker/main/updates/appcast.xml</link>
-    <description>PaRota güncelleme bilgileri</description>
+    <description>Asset Tracker güncelleme bilgileri</description>
 
     <item>
       <title>Version 1.0.9</title>
       <sparkle:version>1.0.9</sparkle:version>
       <pubDate>Fri, 26 Sep 2025 12:00:00 +0000</pubDate>
-      <sparkle:releaseNotesLink>https://raw.githubusercontent.com/enes-vural/asset-tracker/main/updates/release-notes/1.0.8.md</sparkle:releaseNotesLink>
-      <sparkle:criticalUpdate>true</sparkle:criticalUpdate> <!-- Force update için -->
+      <sparkle:releaseNotesLink>https://raw.githubusercontent.com/enes-vural/asset-tracker/main/updates/release-notes/1.0.9.md</sparkle:releaseNotesLink>
+      <sparkle:criticalUpdate>true</sparkle:criticalUpdate>
     </item>
   </channel>
 </rss>
