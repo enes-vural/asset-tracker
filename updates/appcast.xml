@@ -1,16 +1,16 @@
 <?xml version="1.0" encoding="utf-8"?>
 <rss version="2.0" xmlns:sparkle="http://www.andymatuschak.org/xml-namespaces/sparkle">
   <channel>
-    <title>MyApp Updates</title>
-    <link>https://seninsite.com/appcast.xml</link>
-    <description>MyApp güncelleme bilgileri</description>
+    <title>PaRota Updates</title>
+    <link>https://raw.githubusercontent.com/enes-vural/asset-tracker/main/updates/appcast.xml</link>
+    <description>PaRota güncelleme bilgileri</description>
 
     <item>
       <title>Version 1.0.8</title>
       <sparkle:version>1.0.8</sparkle:version>
-      <sparkle:minimumSystemVersion>16.0</sparkle:minimumSystemVersion>
       <pubDate>Fri, 26 Sep 2025 12:00:00 +0000</pubDate>
-      <sparkle:releaseNotesLink>https://seninsite.com/release-notes/1.0.8</sparkle:releaseNotesLink>
+      <sparkle:releaseNotesLink>https://raw.githubusercontent.com/enes-vural/asset-tracker/main/updates/release-notes/1.0.8.md</sparkle:releaseNotesLink>
+      <sparkle:criticalUpdate>true</sparkle:criticalUpdate> <!-- Force update için -->
     </item>
   </channel>
 </rss>
