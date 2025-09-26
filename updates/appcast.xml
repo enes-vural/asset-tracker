@@ -6,8 +6,8 @@
     <description>PaRota güncelleme bilgileri</description>
 
     <item>
-      <title>Version 1.0.8</title>
-      <sparkle:version>1.0.8</sparkle:version>
+      <title>Version 1.0.9</title>
+      <sparkle:version>1.0.9</sparkle:version>
       <pubDate>Fri, 26 Sep 2025 12:00:00 +0000</pubDate>
       <sparkle:releaseNotesLink>https://raw.githubusercontent.com/enes-vural/asset-tracker/main/updates/release-notes/1.0.8.md</sparkle:releaseNotesLink>
       <sparkle:criticalUpdate>true</sparkle:criticalUpdate> <!-- Force update için -->
