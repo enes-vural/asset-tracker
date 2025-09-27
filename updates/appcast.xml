@@ -1,23 +1,21 @@
 <?xml version="1.0" encoding="utf-8"?>
 <rss version="2.0" xmlns:sparkle="http://www.andymatuschak.org/xml-namespaces/sparkle">
   <channel>
-    <title>Asset Tracker Updates</title>
+      <title>Asset Tracker Updates</title>
     <link>https://raw.githubusercontent.com/enes-vural/asset-tracker/main/updates/appcast.xml</link>
     <description>Asset Tracker güncelleme bilgileri</description>
 
-    <item>
-      <title>Version 1.1.0</title>
-      <sparkle:minimumSystemVersion>16.0</sparkle:minimumSystemVersion>
-      <sparkle:shortVersionString>1.1.0</sparkle:shortVersionString>
-      <sparkle:minimumVersion>1.1.0</sparkle:minimumVersion>
-      <sparkle:minimumAppVersion>1.1.0</sparkle:minimumAppVersion>
-      <description>Küçük hata düzeltmeleri ve iyileştirmeler.</description>
-      <sparkle:version>1.1.0</sparkle:version>
-      <pubDate>Fri, 26 Sep 2025 12:00:00 +0000</pubDate>
-      <sparkle:releaseNotesLink>
-        https://raw.githubusercontent.com/enes-vural/asset-tracker/main/updates/release-notes/1.1.0.md
-      </sparkle:releaseNotesLink>
-      <sparkle:criticalUpdate>1</sparkle:criticalUpdate>
-    </item>
+   <item>
+    <title>Version 2.0.24</title>
+    <shortVersionString>2.0.24</shortVersionString>
+    <version>2.0.24</version>
+    <minimumVersion>2.0.24</minimumVersion>
+    <criticalUpdate>1</criticalUpdate>
+    <description>Küçük hata düzeltmeleri.</description>
+    <pubDate>Mon, 23 Jun 2025 12:00:00 +0000</pubDate>
+    <enclosure url="https://play.google.com/store/apps/details?id=com.sakasstudio.parota"
+               sparkle:version="2.0.24" sparkle:os="android"/>
+</item>
+
   </channel>
 </rss>
