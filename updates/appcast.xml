@@ -9,15 +9,10 @@
       <title>Version 1.1.0</title>
       <shortVersionString>1.1.0</shortVersionString>
       <version>1.1.0</version>
-      <minimumVersion>1.0.0</minimumVersion>
-      <minimumAppVersion>1.1.0</minimumAppVersion>
+      <minimumVersion>1.1.0</minimumVersion>
       <description>Küçük hata düzeltmeleri.</description>
       <pubDate>Fri, 26 Sep 2025 12:00:00 +0000</pubDate>
-      <enclosure url="https://play.google.com/store/apps/details?id=com.sakasstudio.parota"
-                 version="1.1.0" os="android"/>
-      <tags>
-        <criticalUpdate/>
-      </tags>
+      <enclosure url="https://play.google.com/store/apps/details?id=com.sakasstudio.parota"/>
     </item>
 
   </channel>
