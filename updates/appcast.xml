@@ -1,19 +1,12 @@
 <?xml version="1.0" encoding="utf-8"?>
-<rss version="2.0">
-  <channel>
-    <title>Asset Tracker Updates</title>
-    <link>https://raw.githubusercontent.com/enes-vural/asset-tracker/main/updates/appcast.xml</link>
-    <description>Asset Tracker güncelleme bilgileri</description>
-
-    <item>
-      <title>Version 1.1.0</title>
-      <shortVersionString>1.1.0</shortVersionString>
-      <version>1.1.0</version>
-      <minimumVersion>1.1.0</minimumVersion>
-      <description>Küçük hata düzeltmeleri.</description>
-      <pubDate>Fri, 26 Sep 2025 12:00:00 +0000</pubDate>
-      <enclosure url="https://play.google.com/store/apps/details?id=com.sakasstudio.parota"/>
-    </item>
-
-  </channel>
+<rss version="2.0" xmlns:sparkle="http://www.andymatuschak.org/xml-namespaces/sparkle">
+    <channel>
+        <title>Debt Now App - Appcast</title>
+        <item>
+            <title>Version 1.15.0</title>
+            <description>Minor updates and improvements.</description>
+            <pubDate>Sun, 30 Dec 2018 12:00:00 +0000</pubDate>
+            <enclosure url="https://play.google.com/store/apps/details?id=com.moonwink.treasury" sparkle:version="1.15.0" sparkle:os="android" />
+        </item>
+    </channel>
 </rss>
