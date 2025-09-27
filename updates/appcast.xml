@@ -17,7 +17,7 @@
       <sparkle:releaseNotesLink>
         https://raw.githubusercontent.com/enes-vural/asset-tracker/main/updates/release-notes/1.1.0.md
       </sparkle:releaseNotesLink>
-      <sparkle:criticalUpdate>true</sparkle:criticalUpdate>
+      <sparkle:criticalUpdate>1</sparkle:criticalUpdate>
     </item>
   </channel>
 </rss>
