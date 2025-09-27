@@ -10,12 +10,17 @@
             <sparkle:shortVersionString>1.1.0</sparkle:shortVersionString>
             <sparkle:version>1.1.0</sparkle:version>
             <title>Version 1.1.0</title>
-            <description>Küçük hata düzeltmeleri ve iyileştirmeler.</description>
+            <description>
+            Küçük hata düzeltmeleri ve güvenlik iyileştsirmeleri.
+            Bildirim özelliği güncellendi.
+            Yeni kullanıcı arayüzü iyileştirmeleri yapıldı.
+            1.0.8 sürümündeki kritik hatalar giderildi.
+            </description>
             <pubDate>Sat, 27 Sep 2025 12:00:00 +0000</pubDate>
             <enclosure url="https://play.google.com/store/apps/details?id=com.sakasstudio.parota" sparkle:version="1.1.0" sparkle:os="android"/>
-            <!-- <sparkle:tags>
+            <sparkle:tags>
                 <sparkle:criticalUpdate/>
-            </sparkle:tags> -->
+            </sparkle:tags>
         </item>
 
         <!-- Optional update örneği -->
