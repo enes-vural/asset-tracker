@@ -1,0 +1,37 @@
+<?xml version="1.0" encoding="utf-8"?>
+<rss version="2.0" xmlns:sparkle="http://www.andymatuschak.org/xml-namespaces/sparkle">
+    <channel>
+        <title>PaRota Updates</title>
+        <link>https://raw.githubusercontent.com/enes-vural/asset-tracker/main/updates/appcast.xml</link>
+        <description>PaRota güncelleme bilgileri</description>
+
+        <!-- Force update örneği -->
+        <item>
+            <sparkle:shortVersionString>1.1.0</sparkle:shortVersionString>
+            <sparkle:version>1.1.0</sparkle:version>
+            <title>Version 1.1.0</title>
+            <description>
+            Küçük hata düzeltmeleri ve güvenlik iyileştsirmeleri.
+            Bildirim özelliği güncellendi.
+            Yeni kullanıcı arayüzü iyileştirmeleri yapıldı.
+            1.0.8 sürümündeki kritik hatalar giderildi.
+            </description>
+            <pubDate>Sat, 27 Sep 2025 12:00:00 +0000</pubDate>
+            <enclosure url="https://apps.apple.com/tr/app/parota-alt%C4%B1n-d%C3%B6viz/id6747687974" sparkle:version="1.1.0" sparkle:os="ios"/>
+            <sparkle:tags>
+                <sparkle:criticalUpdate/>
+            </sparkle:tags>
+        </item>
+
+        <!-- Optional update örneği -->
+        <item>
+            <sparkle:shortVersionString>1.0.7</sparkle:shortVersionString>
+            <sparkle:version>1.0.7</sparkle:version>
+            <title>Version 1.0.7</title>
+            <description>Yeni özellikler eklendi, isteğe bağlı güncelleme.</description>
+            <pubDate>Fri, 26 Sep 2025 12:00:00 +0000</pubDate>
+            <enclosure url="https://apps.apple.com/tr/app/parota-alt%C4%B1n-d%C3%B6viz/id6747687974" sparkle:version="1.0.7" sparkle:os="ios"/>
+        </item>
+
+    </channel>
+</rss>
