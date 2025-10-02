@@ -4,6 +4,20 @@
         "process": "İşleniyor",
         "pleaseWait": "Lütfen bekleyin..."
     },
+        "update": {
+            "title": "Yeni Sürüm Mevcut",
+            "desc": "PaRota'nın en son sürümü hazır",
+            "loading_text": "Güncelleme bilgileri yükleniyor...",
+            "inside_text": "Bu güncellemeye neler dahil:",
+            "release_notes_fake": "Yeni özellikler ve iyileştirmeler.",
+            "current_version": "Mevcut Sürüm:",
+            "new_version": "Yeni Sürüm:",
+            "update_play_store": "Play Store'dan Güncelle",
+            "update_app_store": "App Store'dan Güncelle",
+            "error_launch_store": "Uygulama mağazası açılamadı. Lütfen manuel olarak güncelleyin.",
+            "force_update": "Güncelleme zorunludur",
+            "force_desc": "Uygulamayı kullanmaya devam etmek için\nlütfen güncellemeyi tamamlayın"
+        },
     "auth": {
         "signInApple": "Apple ile Giriş Yap",
         "signInGoogle": "Google ile Giriş Yap",

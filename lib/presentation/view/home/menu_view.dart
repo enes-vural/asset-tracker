@@ -25,6 +25,7 @@ import 'package:asset_tracker/core/widgets/custom_icon.dart';
 import 'package:asset_tracker/injection.dart';
 import 'package:asset_tracker/presentation/view_model/home/home_view_model.dart';
 import 'package:permission_handler/permission_handler.dart';
+import 'package:upgrader/upgrader.dart';
 
 @RoutePage()
 class MenuView extends ConsumerStatefulWidget {
@@ -68,6 +69,8 @@ class _MenuViewState extends ConsumerState<MenuView>
     });
     super.initState();
   }
+  String versionUrl =
+      "https://raw.githubusercontent.com/enes-vural/asset-tracker/main/updates/appcast.xml";
 
   @override
   Widget build(BuildContext context) {
@@ -75,6 +78,7 @@ class _MenuViewState extends ConsumerState<MenuView>
     final isAuthorized =
         ref.watch(authGlobalProvider.select((value) => value.isUserAuthorized));
     int currentIndex = ref.watch(appGlobalProvider).menuNavigationIndex;
+
     return PopScope(
       canPop: false, // Varsayılan pop davranışını engelle
       onPopInvoked: (didPop) async {

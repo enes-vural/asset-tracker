@@ -44,14 +44,14 @@ class HomeViewModel extends ChangeNotifier {
     // veya Singleton yaklaşımı:
     // if (SocketService().socketDataStream != null) {
     //   ref.read(appGlobalProvider.notifier).updateSocketCurrency(SocketService().socketDataStream);
-    // } 
+    // }
   }
 
   Future<void> syncNotificationSettings(WidgetRef ref) async {
     final isPermitted =
         await getIt<NotificationUseCase>().isPermissionAuthorized();
     if (isPermitted) {
-      debugPrint("PERMISSION: $isPermitted"); 
+      debugPrint("PERMISSION: $isPermitted");
       String? token = await getIt<NotificationUseCase>().getUserToken();
       debugPrint("PERMISSION: $token");
       if (token != null) {

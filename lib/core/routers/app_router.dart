@@ -17,6 +17,11 @@ class AppRouter extends RootStackRouter {
           path: DefaultLocalStrings.forgotPasswordRoute,
           transitionsBuilder: TransitionsBuilders.slideLeft,
         ),
+
+        CustomRoute(
+          page: UpdateRoute.page,
+          path: DefaultLocalStrings.updateRoute,
+        ),
         CustomRoute(
           path: DefaultLocalStrings.trialRoute,
           page: TrialRoute.page,
