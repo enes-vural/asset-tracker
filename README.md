@@ -180,7 +180,7 @@ Bu proje telif hakları ile korunmaktadır.
 
 - [ ] Daha fazla finansal araç desteği
 - [ ] Gelişmiş analiz araçları
-- [ ] Push notification özellikleri
+- [X] Push notification özellikleri
 - [X] Dark mode desteği
 - [X] Multi-language support
 - [ ] Widget desteği (iOS/Android)
