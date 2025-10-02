@@ -4,6 +4,20 @@
         "process": "Processing",
         "pleaseWait": "Please wait..."
     },
+    "update": {
+        "title": "New Version Available",
+        "desc": "A new version of the app is available. Please update to the latest version for the best experience.",
+        "loading_text": "Checking for updates...",
+        "inside_text": "What are the new features?",
+        "release_notes_fake": "- Improved performance and stability.\n- Bug fixes and minor improvements.\n- New user-friendly interface.",
+        "current_version": "Current Version",
+        "new_version": "New Version",
+        "update_play_store": "Update on Play Store",
+        "update_app_store": "Update on App Store",
+        "error_launch_store": "Could not open the store. Please try again later.",
+        "force_update": "Update Required",
+        "force_desc": "This version of the app is no longer supported. Please update to the latest version to continue using the app."
+    },
     "auth": {
                 "signInApple": "Sign in with Apple",
                 "signInGoogle": "Sign in with Google",

@@ -16,6 +16,7 @@ class Routers {
   static const String registerPath = DefaultLocalStrings.registerRoute;
   static const String forgotPasswordPath =
       DefaultLocalStrings.forgotPasswordRoute;
+  static const String updatePath = DefaultLocalStrings.updateRoute;
 
   void pushNamed(BuildContext context, String routePath) {
     AutoRouter.of(context).pushNamed(routePath);

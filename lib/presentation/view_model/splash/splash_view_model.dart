@@ -1,4 +1,5 @@
 import 'dart:async';
+import 'dart:io';
 import 'package:asset_tracker/application/sync/sync_manager.dart';
 import 'package:asset_tracker/core/routers/app_router.gr.dart';
 import 'package:asset_tracker/core/routers/router.dart';
@@ -8,12 +9,112 @@ import 'package:asset_tracker/domain/usecase/database/database_use_case.dart';
 import 'package:asset_tracker/injection.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
+import 'package:upgrader/upgrader.dart';
+import 'package:device_info_plus/device_info_plus.dart';
+import 'package:version/version.dart';
+import 'package:package_info_plus/package_info_plus.dart';
 
 class SplashViewModel extends ChangeNotifier {
   static DateTime? _lastSyncTime;
 
+  Future<Version> getOsVersion() async {
+    if (Platform.isAndroid) {
+      final deviceInfo = DeviceInfoPlugin();
+      final androidInfo = await deviceInfo.androidInfo;
+      return Version(androidInfo.version.sdkInt, 0, 0); // major = sdkInt
+    } else if (Platform.isIOS) {
+      final deviceInfo = DeviceInfoPlugin();
+      final iosInfo = await deviceInfo.iosInfo;
+      final major = int.parse(iosInfo.systemVersion.split(".")[0]);
+      final minor = iosInfo.systemVersion.split(".").length > 1
+          ? int.parse(iosInfo.systemVersion.split(".")[1])
+          : 0;
+      final patch = iosInfo.systemVersion.split(".").length > 2
+          ? int.parse(iosInfo.systemVersion.split(".")[2])
+          : 0;
+      return Version(major, minor, patch);
+    } else {
+      return Version(0, 0, 0);
+    }
+  }
+
+  String versionURL(bool isAndroid) {
+    if (isAndroid) {
+      return "https://raw.githubusercontent.com/enes-vural/asset-tracker/main/updates/android_appcast.xml";
+    } else {
+      return "https://raw.githubusercontent.com/enes-vural/asset-tracker/main/updates/ios_appcast.xml";
+    }
+  }
+
+  Future<dynamic> checkAppVersion(BuildContext context) async {
+    await Upgrader.clearSavedSettings();
+    String versionUrl =
+        versionURL(Platform.isAndroid); // Platform'a göre URL seçimi
+
+    try {
+      final packageInfo = await PackageInfo.fromPlatform();
+      debugPrint("=== PACKAGE INFO DEBUG ===");
+      debugPrint("Package name: ${packageInfo.packageName}");
+      debugPrint("Version: ${packageInfo.version}");
+      debugPrint("Build number: ${packageInfo.buildNumber}");
+      debugPrint("App name: ${packageInfo.appName}");
+    } catch (e) {
+      debugPrint("PackageInfo error: $e");
+    }
+
+    final upgrader = Upgrader(
+      debugDisplayAlways: false, // Debug için true yapın
+      debugDisplayOnce: false,
+      debugLogging: true,
+      storeController: UpgraderStoreController(
+        onAndroid: () => UpgraderAppcastStore(appcastURL: versionUrl),
+        oniOS: () => UpgraderAppcastStore(appcastURL: versionUrl),
+      ),
+    );
+
+    try {
+      // ÖNEMLİ: Önce initialize etmek gerekiyor
+      await upgrader.initialize();
+
+      // Version bilgilerini al
+      final versionInfo = await upgrader.versionInfo;
+      debugPrint("=== VERSION INFO DEBUG ===");
+      debugPrint("Version info: $versionInfo");
+      debugPrint("App store version: ${versionInfo?.appStoreVersion}");
+      debugPrint("Installed version: ${versionInfo?.installedVersion}");
+
+      // Şimdi kontrol et
+      final shouldUpdate = upgrader.shouldDisplayUpgrade();
+      debugPrint("Should update: $shouldUpdate");
+
+      if (shouldUpdate) {
+        if (upgrader.blocked()) {
+          debugPrint("Update required, navigating to update page...");
+          if (context.mounted) {
+            Routers.instance.pushAndRemoveUntil(context, const UpdateRoute());
+          }
+          return true;
+        } else {
+          debugPrint("Optional update");
+          return false;
+        }
+      } else {
+        debugPrint("No need to update.");
+        return false;
+      }
+    } catch (e) {
+      debugPrint("Upgrade check error: $e");
+      // Hata durumunda false döndür (normal flow devam etsin)
+      return false;
+    }
+  }
+
   Future<void> init(WidgetRef ref, BuildContext context) async {
     try {
+      final updateStatus = await checkAppVersion(context);
+      if (updateStatus) {
+        return;
+      }
       await ref.read(webSocketProvider.notifier).initializeSocket();
       final authGlobal = ref.watch(authGlobalProvider.notifier);
       final syncUser = ref.read(syncManagerProvider);
