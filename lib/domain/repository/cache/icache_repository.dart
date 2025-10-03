@@ -1,7 +1,9 @@
 import 'package:asset_tracker/core/constants/enums/cache/offline_action_enums.dart';
 import 'package:asset_tracker/data/model/base/base_model.dart';
 import 'package:asset_tracker/data/model/cache/offline_actions_model.dart';
+import 'package:asset_tracker/data/model/web/currency_model.dart';
 import 'package:asset_tracker/domain/entities/database/cache/app_theme_entity.dart';
+import 'package:asset_tracker/domain/entities/web/socket/currency_entity.dart';
 
 abstract interface class ICacheRepository {
   Future<String?> saveOfflineAction<T extends BaseEntity>(
@@ -12,6 +14,10 @@ abstract interface class ICacheRepository {
   List<OfflineActionsModel> getOfflineActions();
 
   Future<void> removeOfflineAction(String? id);
+
+  Future<void> saveCurrencyList(List<CurrencyModel> assetList);
+
+  Future<List<CurrencyEntity>?> getCachedCurrencyList();
 
   Future<void> clearAllOfflineActions();
 

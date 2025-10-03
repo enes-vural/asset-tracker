@@ -17,8 +17,6 @@ import 'package:flutter_native_splash/flutter_native_splash.dart'
     show FlutterNativeSplash;
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
-import 'package:upgrader/upgrader.dart';
-import 'package:version/version.dart';
 
 void main() async {
   // Application Init here !
@@ -48,7 +46,6 @@ void main() async {
 final appRouter = AppRouter();
 String versionUrl =
     "https://raw.githubusercontent.com/enes-vural/asset-tracker/main/updates/appcast.xml";
-final Version osVersion = Version(999, 0, 0);
 
 class MyApp extends ConsumerWidget {
   const MyApp({super.key});

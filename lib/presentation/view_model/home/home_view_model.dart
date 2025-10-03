@@ -3,6 +3,7 @@ import 'package:asset_tracker/core/config/theme/extension/currency_widget_title_
 import 'package:asset_tracker/core/routers/router.dart' show Routers;
 import 'package:asset_tracker/domain/entities/database/enttiy/user_uid_entity.dart';
 import 'package:asset_tracker/domain/entities/web/socket/currency_entity.dart';
+import 'package:asset_tracker/domain/usecase/cache/cache_use_case.dart';
 import 'package:asset_tracker/domain/usecase/database/database_use_case.dart';
 import 'package:asset_tracker/domain/usecase/messaging/messaging_use_case.dart';
 import 'package:asset_tracker/domain/usecase/web/web_use_case.dart';
@@ -30,6 +31,11 @@ class HomeViewModel extends ChangeNotifier {
     searchBarController.addListener(() {
       _searchBarStreamController.add(searchBarController.text);
     });
+  }
+
+
+  Future<List<CurrencyEntity>?> getCachedCurrencyList() async {
+    return await getIt<CacheUseCase>().getCachedCurrencyList();
   }
 
   void listenToSocketData(WidgetRef ref) {

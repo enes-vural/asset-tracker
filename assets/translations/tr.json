@@ -209,6 +209,7 @@
         "nullAssetCodes": "Beklenmeyen bir hata oluştu lütfen daha sonra tekrar deneyiniz."
     },
     "home": {
+        "delayInfo": "Altın ve Döviz verileri şu anda {value} dakika gecikmeli sağlanmaktadır.",
         "err_title": "Hop! Bir şeyler ters gitti 🤔",
         "err_message": "Veriler yüklenirken bir sorun yaşadık.\nİnternet bağlantınızı kontrol edip\ntekrar deneyebilirsiniz 🌐",
         "err_button": "Tekrar Dene",

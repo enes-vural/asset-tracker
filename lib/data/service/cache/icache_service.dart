@@ -1,5 +1,6 @@
 import 'package:asset_tracker/data/model/cache/app_theme_model.dart';
 import 'package:asset_tracker/data/model/cache/offline_actions_model.dart';
+import 'package:asset_tracker/data/model/web/currency_model.dart';
 
 abstract interface class ICacheService {
   Future<String?> saveOfflineAction<T>(
@@ -8,6 +9,10 @@ abstract interface class ICacheService {
   );
 
   List<OfflineActionsModel> getOfflineActions();
+
+  Future<void> saveCurrencyList(List<CurrencyModel> assetList);
+
+  Future<List<CurrencyModel>?> getCurrencyList();
 
   Future<void> removeOfflineAction(String? key);
 
