@@ -211,6 +211,7 @@
         "nullAssetCodes": "Unexpected error has been occurred please try again later."
     },
     "home": {
+        "delayInfo": " Gold and Foreign Exchange data is currently provided with a delay of {value} minutes.",
         "err_title": "Hop! Bir şeyler ters gitti 🤔",
         "err_message": "Veriler yüklenirken bir sorun yaşadık.\nİnternet bağlantınızı kontrol edip\ntekrar deneyebilirsiniz 🌐",
         "err_button": "Tekrar Dene",

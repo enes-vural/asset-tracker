@@ -4,6 +4,7 @@ import 'package:asset_tracker/core/constants/enums/cache/offline_action_enums.da
 import 'package:asset_tracker/core/constants/string_constant.dart';
 import 'package:asset_tracker/data/model/cache/app_theme_model.dart';
 import 'package:asset_tracker/data/model/cache/offline_actions_model.dart';
+import 'package:asset_tracker/data/model/web/currency_model.dart';
 import 'package:asset_tracker/data/service/cache/icache_service.dart';
 import 'package:flutter/material.dart';
 import 'package:hive/hive.dart';
@@ -182,12 +183,36 @@ final class HiveCacheService implements ICacheService {
   }
 
   @override
+  Future<void> saveCurrencyList(List<CurrencyModel> assetList) async {
+    final box = await Hive.openBox("currency_list_box");
+    final List<Map<String, dynamic>> jsonList =
+        assetList.map((asset) => asset.toJson()).toList();
+    await box.put("currency_list_key", jsonList);
+    debugPrint("Saved Currency List with ${jsonList.length} items");
+    return;
+  }
+
+  @override
+  Future<List<CurrencyModel>?> getCurrencyList() async {
+    final box = await Hive.openBox("currency_list_box");
+    final List<dynamic>? jsonData = await box.get("currency_list_key");
+    if (jsonData == null) {
+      return null;
+    }
+    final List<CurrencyModel> assetList = jsonData
+        .map((item) => CurrencyModel.fromJson(Map<String, dynamic>.from(item)))
+        .toList();
+    return assetList;
+  }
+
+  @override
   Future<void> saveTheme(AppThemeModel model) async {
     final box = await Hive.openBox(_themeName);
     await box.put("app_theme_key", model.toJson());
     debugPrint("Saved Theme Mode : ${model.themeMode.toString()}");
     return;
   }
+
   @override
   Future<void> saveCustomOrder(List<String> order) async {
     await _customOrderBox.put("currency_custom_order", order);

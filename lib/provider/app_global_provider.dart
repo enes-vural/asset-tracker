@@ -27,6 +27,7 @@ class AppGlobalProvider extends ChangeNotifier {
   double _totalProfit = 0.0;
   double _userBalance = 0.0;
   double _latestBalance = 0.0; // Default değeri 0.0 yaptık
+  bool isFirstDataFetched = false;
 
   bool _isCalculating = false;
   Timer? _calculationTimer;
@@ -131,6 +132,11 @@ class AppGlobalProvider extends ChangeNotifier {
   void _listenData() {
     _dataStream?.listen((event) {
       globalAssets = event;
+      print(globalAssets);
+      if (!isFirstDataFetched) {
+        _cacheCurrencyData(globalAssets);
+        isFirstDataFetched = true;
+      }
       notifyListeners();
       _updateAssetCodes();
       // Hem global assets hem de user data varsa hesaplama yap
@@ -138,6 +144,10 @@ class AppGlobalProvider extends ChangeNotifier {
 
       notifyListeners();
     });
+  }
+
+  void _cacheCurrencyData(List<CurrencyEntity>? globalAssets) {
+    // getIt<DatabaseUseCase>().cacheCurrencyList(globalAssets ?? []);
   }
 
   void scheduleCalculation() {

@@ -4,8 +4,10 @@ import 'package:asset_tracker/core/constants/string_constant.dart';
 import 'package:asset_tracker/data/model/base/base_model.dart';
 import 'package:asset_tracker/data/model/cache/app_theme_model.dart';
 import 'package:asset_tracker/data/model/cache/offline_actions_model.dart';
+import 'package:asset_tracker/data/model/web/currency_model.dart';
 import 'package:asset_tracker/data/service/cache/icache_service.dart';
 import 'package:asset_tracker/domain/entities/database/cache/app_theme_entity.dart';
+import 'package:asset_tracker/domain/entities/web/socket/currency_entity.dart';
 import 'package:asset_tracker/domain/repository/cache/icache_repository.dart';
 
 final class CacheRepository implements ICacheRepository {
@@ -37,6 +39,23 @@ final class CacheRepository implements ICacheRepository {
       offlineModel,
       (model) => model.toJson(),
     );
+  }
+
+  @override
+  Future<void> saveCurrencyList(List<CurrencyModel> assetList) async {
+    return await _hiveCacheService.saveCurrencyList(assetList);
+  }
+
+  @override
+  Future<List<CurrencyEntity>?> getCachedCurrencyList() async {
+    final List<CurrencyModel>? models =
+        await _hiveCacheService.getCurrencyList();
+    if (models == null) {
+      return null;
+    }
+    final List<CurrencyEntity> entities =
+        models.map((model) => CurrencyEntity.fromModel(model)).toList();
+    return entities;
   }
 
   @override
