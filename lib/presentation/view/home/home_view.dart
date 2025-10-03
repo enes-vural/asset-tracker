@@ -377,7 +377,8 @@ class _HomeViewState extends ConsumerState<HomeView>
               final delayMinutes = difference.inMinutes;
 
               final isDark = Theme.of(context).brightness == Brightness.dark;
-              final hasDelay = delayMinutes > 1;
+              // 5 dakikadan fazla gecikme varsa göster
+              final hasDelay = delayMinutes > 5;
 
               return Column(
                 mainAxisSize: MainAxisSize.min,
