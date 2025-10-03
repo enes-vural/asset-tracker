@@ -16,26 +16,12 @@ import 'package:package_info_plus/package_info_plus.dart';
 
 class SplashViewModel extends ChangeNotifier {
   static DateTime? _lastSyncTime;
+  bool _isDisposed = false;
 
-  Future<Version> getOsVersion() async {
-    if (Platform.isAndroid) {
-      final deviceInfo = DeviceInfoPlugin();
-      final androidInfo = await deviceInfo.androidInfo;
-      return Version(androidInfo.version.sdkInt, 0, 0); // major = sdkInt
-    } else if (Platform.isIOS) {
-      final deviceInfo = DeviceInfoPlugin();
-      final iosInfo = await deviceInfo.iosInfo;
-      final major = int.parse(iosInfo.systemVersion.split(".")[0]);
-      final minor = iosInfo.systemVersion.split(".").length > 1
-          ? int.parse(iosInfo.systemVersion.split(".")[1])
-          : 0;
-      final patch = iosInfo.systemVersion.split(".").length > 2
-          ? int.parse(iosInfo.systemVersion.split(".")[2])
-          : 0;
-      return Version(major, minor, patch);
-    } else {
-      return Version(0, 0, 0);
-    }
+  @override
+  void dispose() {
+    _isDisposed = true;
+    super.dispose();
   }
 
   String versionURL(bool isAndroid) {
@@ -77,7 +63,7 @@ class SplashViewModel extends ChangeNotifier {
       await upgrader.initialize();
 
       // Version bilgilerini al
-      final versionInfo = await upgrader.versionInfo;
+      final versionInfo = upgrader.versionInfo;
       debugPrint("=== VERSION INFO DEBUG ===");
       debugPrint("Version info: $versionInfo");
       debugPrint("App store version: ${versionInfo?.appStoreVersion}");
@@ -109,13 +95,22 @@ class SplashViewModel extends ChangeNotifier {
     }
   }
 
+  Future<void> _initializeWebSocket(WidgetRef ref) async {
+    try {
+      await ref.read(webSocketProvider.notifier).initializeSocket();
+      debugPrint('WebSocket initialized');
+    } catch (e) {
+      debugPrint('WebSocket initialization error: $e');
+    }
+  }
+
   Future<void> init(WidgetRef ref, BuildContext context) async {
     try {
       final updateStatus = await checkAppVersion(context);
-      if (updateStatus) {
-        return;
-      }
-      await ref.read(webSocketProvider.notifier).initializeSocket();
+      if (updateStatus) return;
+
+      await _initializeWebSocket(ref);
+
       final authGlobal = ref.watch(authGlobalProvider.notifier);
       final syncUser = ref.read(syncManagerProvider);
       // Önce hızlı kontrolleri yap
@@ -130,64 +125,75 @@ class SplashViewModel extends ChangeNotifier {
         return;
       }
 
-      // Paralel işlemler için Future listesi
-      List<Future> parallelTasks = [];
+      // 5. NON-KRİTİK: Arka plan işlemleri (dispose kontrolü ile)
+      _executeBackgroundTasks(ref, userId, currentUser);
 
-      // Sync işlemi (throttle ile)
-      if (_shouldSync()) {
-        parallelTasks.add(_syncWithThrottle(syncUser));
-      }
-
-      // Paralel işlemleri başlat
-      if (parallelTasks.isNotEmpty) {
-        await Future.wait(parallelTasks, eagerError: false);
-      }
-
-      // User data kontrolü (sadece gerekirse)
-      if (userId != null && currentUser != null) {
-        final userDataStatus =
-            await _getUserDataWithTimeout(ref, UserUidEntity(userId: userId));
-
-        if (ref.read(appGlobalProvider).getUserData?.userInfoEntity == null) {
-          final saveState = await getIt<DatabaseUseCase>().saveUserData(
-            SaveUserEntity(
-              uid: userId,
-              userName: currentUser.email.toString(),
-              firstName: currentUser.displayName.toString(),
-              lastName: currentUser.displayName.toString(),
-            ),
-          );
-          saveState.fold(
-            (failure) {
-              debugPrint(failure.message);
-              _navigateHomeOrLogin(context, access: false);
-              return;
-            },
-            (success) {
-              debugPrint("Use data has been saved in splash view model");
-            },
-          );
-        }
-
-        if (!userDataStatus) {
-          _navigateHomeOrLogin(context, access: false);
-          return;
-        }
-      }
-
-      if (userId != null) {
-        await getIt<DatabaseUseCase>().saveUserToken(
-          UserUidEntity(userId: userId),
-          "",
-        );
-      }
-
-      // Başarılı durumda home'a git
       _navigateHomeOrLogin(context, access: true);
+
+      // Paralel işlemler için Future listesi
     } catch (e) {
       debugPrint('Splash init error: $e');
       // Hata durumunda login'e yönlendir
       _navigateHomeOrLogin(context, access: false);
+    }
+  }
+
+  void _executeBackgroundTasks(
+    WidgetRef ref,
+    String? userId,
+    dynamic currentUser,
+  ) {
+    // Future.microtask ile sonraki frame'de çalıştır
+    Future.microtask(() async {
+      try {
+        // Sync işlemi
+        if (_shouldSync()) {
+          await _syncInBackground(ref);
+        }
+
+        // User data işlemleri
+        if (userId != null && currentUser != null && !_isDisposed) {
+          await _handleUserDataInBackground(ref, userId, currentUser);
+        }
+
+        // Token kaydetme
+        if (userId != null && !_isDisposed) {
+          await _saveUserTokenInBackground(userId);
+        }
+      } catch (e) {
+        debugPrint('Background tasks error: $e');
+      }
+    });
+  }
+
+  // Arka planda sync (dispose kontrolü ile)
+  Future<void> _syncInBackground(WidgetRef ref) async {
+    try {
+      final syncUser = ref.read(syncManagerProvider);
+      await syncUser.syncOfflineActions().timeout(
+        const Duration(seconds: 10),
+        onTimeout: () {
+          debugPrint('Sync timeout in background');
+        },
+      );
+      _lastSyncTime = DateTime.now();
+      debugPrint('Background sync completed');
+    } catch (e) {
+      debugPrint('Background sync error: $e');
+    }
+  }
+
+  Future<void> _saveUserTokenInBackground(String userId) async {
+    try {
+      if (_isDisposed) return;
+
+      await getIt<DatabaseUseCase>().saveUserToken(
+        UserUidEntity(userId: userId),
+        "",
+      );
+      debugPrint('User token saved in background');
+    } catch (e) {
+      debugPrint('Background token save error: $e');
     }
   }
 
@@ -231,6 +237,50 @@ class SplashViewModel extends ChangeNotifier {
     } catch (e) {
       debugPrint('GetLatestUserData error: $e');
       return false;
+    }
+  }
+
+  Future<void> _handleUserDataInBackground(
+    WidgetRef ref,
+    String userId,
+    dynamic currentUser,
+  ) async {
+    try {
+      if (_isDisposed) return;
+
+      final userDataStatus = await ref
+          .read(appGlobalProvider)
+          .getLatestUserData(ref, UserUidEntity(userId: userId))
+          .timeout(
+        const Duration(seconds: 10),
+        onTimeout: () {
+          debugPrint('GetLatestUserData timeout in background');
+          return false;
+        },
+      );
+
+      if (_isDisposed) return;
+
+      // User data yoksa kaydet
+      if (ref.read(appGlobalProvider).getUserData?.userInfoEntity == null) {
+        final saveState = await getIt<DatabaseUseCase>().saveUserData(
+          SaveUserEntity(
+            uid: userId,
+            userName: currentUser.email.toString(),
+            firstName: currentUser.displayName.toString(),
+            lastName: currentUser.displayName.toString(),
+          ),
+        );
+
+        saveState.fold(
+          (failure) => debugPrint('Save user data failed: ${failure.message}'),
+          (success) => debugPrint('User data saved in background'),
+        );
+      }
+
+      debugPrint('Background user data handling completed');
+    } catch (e) {
+      debugPrint('Background user data error: $e');
     }
   }
 

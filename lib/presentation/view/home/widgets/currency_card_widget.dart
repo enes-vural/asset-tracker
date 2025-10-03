@@ -10,6 +10,7 @@ import 'package:asset_tracker/core/constants/string_constant.dart';
 import 'package:asset_tracker/core/helpers/snackbar.dart';
 import 'package:asset_tracker/core/mixins/get_currency_icon_mixin.dart';
 import 'package:asset_tracker/core/widgets/custom_sized_box.dart';
+import 'package:asset_tracker/data/model/database/response/asset_code_model.dart';
 import 'package:asset_tracker/domain/entities/web/socket/currency_entity.dart';
 import 'package:asset_tracker/domain/entities/web/socket/currency_widget_entity.dart';
 import 'package:asset_tracker/domain/usecase/cache/cache_use_case.dart';
@@ -33,10 +34,11 @@ enum SortType {
 enum SortOrder { ascending, descending }
 
 class CurrencyListWidget extends ConsumerStatefulWidget {
-  const CurrencyListWidget({super.key});
+  const CurrencyListWidget({super.key, required this.isErrored});
 
   @override
   ConsumerState<CurrencyListWidget> createState() => _CurrencyListWidgetState();
+  final bool isErrored;
 }
 
 class _CurrencyListWidgetState extends ConsumerState<CurrencyListWidget>
@@ -160,6 +162,33 @@ class _CurrencyListWidgetState extends ConsumerState<CurrencyListWidget>
     final appGlobal = ref.watch(appGlobalProvider);
 
     List<CurrencyEntity>? globalAssets = appGlobal.globalAssets;
+
+    if (globalAssets == null || globalAssets.isEmpty) {
+      if (!widget.isErrored) {
+        // Use addPostFrameCallback to avoid modifying state during build
+        WidgetsBinding.instance.addPostFrameCallback((_) {
+          // Check if widget is still mounted
+          if (mounted) {
+            viewModel.getCachedCurrencyList().then((cachedData) {
+              // Check mounted again after async operation
+              if (mounted && cachedData != null && cachedData.isNotEmpty) {
+                ref.read(appGlobalProvider).globalAssets = cachedData;
+                ref.read(appGlobalProvider).assetCodes = cachedData
+                    .map((e) => AssetCodeModel(code: e.code))
+                    .toList();
+              }
+            }).catchError((error) {
+              // Handle any errors silently
+              if (mounted) {
+                debugPrint('Error loading cached data: $error');
+              }
+            });
+          }
+        });
+      }
+    }
+
+
     final isDark = Theme.of(context).brightness == Brightness.dark;
     final searchStream = viewModel.searchBarStreamController;
 

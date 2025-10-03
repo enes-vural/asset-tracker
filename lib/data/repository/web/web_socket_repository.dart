@@ -4,9 +4,11 @@ import 'dart:async';
 import 'package:asset_tracker/core/constants/enums/socket/socket_state_enums.dart';
 import 'package:asset_tracker/core/constants/filtered_codes_constants.dart';
 import 'package:asset_tracker/core/constants/string_constant.dart';
+import 'package:asset_tracker/data/model/web/currency_model.dart';
 import 'package:asset_tracker/data/model/web/error/socket_error_model.dart';
 import 'package:asset_tracker/data/model/web/price_changed_model.dart';
 import 'package:asset_tracker/data/model/web/response/socket_state_response_model.dart';
+import 'package:asset_tracker/data/service/cache/icache_service.dart';
 import 'package:asset_tracker/data/service/remote/web/iweb_socket_service.dart';
 import 'package:asset_tracker/domain/entities/web/error/socket_error_entity.dart';
 import 'package:asset_tracker/domain/entities/web/socket/currency_entity.dart';
@@ -16,21 +18,28 @@ import '../../../domain/repository/web/iweb_socket_repository.dart';
 
 class WebSocketRepository implements IWebSocketRepository {
   final IWebSocketService socketService;
+  final ICacheService _cacheService;
 
   final List<CurrencyEntity> _currencyEntities = []; // CurrencyEntity listesi
+  final List<CurrencyModel> rawCurrencyList = []; // CurrencyModel listesi
 
   StreamController<List<CurrencyEntity>>? _controller;
   StreamController<Either<SocketErrorEntity, SocketStateResponseModel>>?
       _errorController;
 
-  WebSocketRepository({required this.socketService});
+  WebSocketRepository(
+      {required this.socketService, required ICacheService cacheService})
+      : _cacheService = cacheService;
 
   @override
   startConnection() async {
+    bool isFirstConnection = true;
     final Set<String> filter = FilteredCodesConstants.filteredCodes;
+
     try {
       _controller = StreamController.broadcast();
       _errorController = StreamController.broadcast();
+
       socketService.errorStream.listen(
         (SocketErrorModel model) {
           model.state == SocketStateEnum.ERROR
@@ -47,17 +56,38 @@ class WebSocketRepository implements IWebSocketRepository {
         // debugPrint("DATA CAME !!!");
         final priceChangedModel = PriceChangedDataModel.fromJson(jsonData);
 
-
-        priceChangedModel.data.forEach((element) {
-          final CurrencyEntity currencyEntity =
-              CurrencyEntity.fromModel(element);
-
-          if (filter.contains(currencyEntity.code.toUpperCase())) {
+        // İlk bağlantıda: rawCurrencyList'i doldur ve cache'e kaydet
+        if (isFirstConnection) {
+          priceChangedModel.data.forEach((element) {
+            if (!filter.contains(element.code.toUpperCase())) {
+              rawCurrencyList.add(element);
+            }
+          });
+          //eğer data yanlış geldiyse 29 dan azsa cache e atma ve tekrar bekle
+          if (rawCurrencyList.length < 29) {
+            isFirstConnection = true;
             return;
           }
 
+          // Bir kerelik cache işlemi
+          _cacheService.saveCurrencyList(rawCurrencyList);
+
+          isFirstConnection = false;
+          debugPrint(
+              "✅ FIRST CONNECTION: ${rawCurrencyList.length} items cached to HIVE");
+        }
+
+        priceChangedModel.data.forEach((element) {
+          if (filter.contains(element.code.toUpperCase())) {
+            return;
+          }
+
+          final CurrencyEntity currencyEntity =
+              CurrencyEntity.fromModel(element);
+
           final index = _currencyEntities
               .indexWhere((entity) => entity.code == currencyEntity.code);
+
           if (index == int.parse(SocketActionEnum.NOT_IN_LIST.value)) {
             _currencyEntities.add(currencyEntity);
           } else {
@@ -67,7 +97,6 @@ class WebSocketRepository implements IWebSocketRepository {
             }
           }
         });
-
 
 //değişmez liste olarak veriyi stream e ekle
         _controller?.add(List.unmodifiable(_currencyEntities));
@@ -102,4 +131,3 @@ class WebSocketRepository implements IWebSocketRepository {
   Stream<Either<SocketErrorEntity, SocketStateResponseModel>>?
       get errorStream => _errorController?.stream.asBroadcastStream();
 }
-

@@ -71,14 +71,14 @@ class _HomeViewState extends ConsumerState<HomeView>
       }
     });
 
-    // İlk skeleton timer - 3 saniye
+    // İlk skeleton timer - 1 saniye
     _skeletonTimer = Timer(const Duration(seconds: 1), () {
       if (mounted) {
         setState(() {
           _showSkeleton = false;
           _skeletonCompleted = true;
         });
-        
+
         // Skeleton bittikten sonra veri kontrolü için timer başlat
         _startDataWaitTimer();
       }
@@ -87,8 +87,8 @@ class _HomeViewState extends ConsumerState<HomeView>
     super.initState();
   }
 
-  void _startDataWaitTimer() {
-    _dataWaitTimer = Timer(const Duration(seconds: 10), () {
+  void _startDataWaitTimer() async {
+    _dataWaitTimer = Timer(const Duration(seconds: 3), () {
       if (mounted) {
         // Veri hala yüklenmemişse hata göster
         bool isDataLoaded = ref.read(appGlobalProvider).globalAssets != null &&
@@ -155,7 +155,7 @@ class _HomeViewState extends ConsumerState<HomeView>
   }
 
   @override
-  Widget build(BuildContext context) {   
+  Widget build(BuildContext context) {
     final isAuthorized =
         ref.watch(authGlobalProvider.select((value) => value.isUserAuthorized));
     final viewModel = ref.read(homeViewModelProvider);
@@ -301,7 +301,9 @@ class _HomeViewState extends ConsumerState<HomeView>
                         const CustomSizedBox.mediumGap(),
                         _dateTimeTextWidget(),
                         const CustomSizedBox.smallGap(),
-                        const CurrencyListWidget(),
+                        CurrencyListWidget(
+                          isErrored: _showError,
+                        ),
                         const CustomSizedBox.hugeGap(),
                         // Bottom navigation için ekstra boşluk
                         const CustomSizedBox.hugeGap(),
@@ -347,18 +349,71 @@ class _HomeViewState extends ConsumerState<HomeView>
             }
 
             try {
-              final tarihParts = globalAssets[0].tarih.split(' ');
-              final saat = tarihParts != null && tarihParts.length > 1
-                  ? tarihParts[1]
-                  : null;
-              if (saat == null || saat.isEmpty) {
+              final dateTimeStr =
+                  globalAssets[0].tarih; // "03-10-2025 12:38:03"
+              final parts = dateTimeStr.split(' ');
+
+              if (parts.length < 2) {
                 return CustomSizedBox.empty();
               }
 
-              return Text(
-                "🕙︎$saat",
-                style: CustomTextStyle.greyColorManrope(
-                    context, AppSize.smallText),
+              final timeStr = parts[1]; // "12:38:03"
+
+              // Convert "03-10-2025 12:38:03" to DateTime
+              final dateParts = parts[0].split('-'); // ["03", "10", "2025"]
+              final timeParts = parts[1].split(':'); // ["12", "38", "03"]
+
+              final dataDateTime = DateTime(
+                int.parse(dateParts[2]), // year: 2025
+                int.parse(dateParts[1]), // month: 10
+                int.parse(dateParts[0]), // day: 03
+                int.parse(timeParts[0]), // hour: 12
+                int.parse(timeParts[1]), // minute: 38
+                int.parse(timeParts[2]), // second: 03
+              );
+
+              final now = DateTime.now();
+              final difference = now.difference(dataDateTime);
+              final delayMinutes = difference.inMinutes;
+
+              final isDark = Theme.of(context).brightness == Brightness.dark;
+              // 5 dakikadan fazla gecikme varsa göster
+              final hasDelay = delayMinutes > 5;
+
+              return Column(
+                mainAxisSize: MainAxisSize.min,
+                mainAxisAlignment: MainAxisAlignment.end,
+                crossAxisAlignment: CrossAxisAlignment.end,
+                children: [
+                  Text(
+                    "🕙 $timeStr",
+                    style: CustomTextStyle.greyColorManrope(
+                      context,
+                      AppSize.smallText,
+                    ),
+                  ),
+                  if (hasDelay) ...[
+                    SizedBox(width: 6),
+                    Container(
+                      padding: EdgeInsets.symmetric(horizontal: 4, vertical: 1),
+                      decoration: BoxDecoration(
+                        color: isDark
+                            ? Color(0xFFFFA726).withOpacity(0.15)
+                            : Color(0xFFFFF3E0),
+                        borderRadius: BorderRadius.circular(3),
+                      ),
+                      child: Text(
+                        LocaleKeys.home_delayInfo
+                            .tr(namedArgs: {'value': delayMinutes.toString()}),
+                        style: TextStyle(
+                          color: Color(0xFFF57C00),
+                          fontSize: AppSize.smallText - 1,
+                          fontWeight: FontWeight.w600,
+                        ),
+                      ),
+                    ),
+                  ],
+                ],
               );
             } catch (e) {
               return CustomSizedBox.empty();
@@ -376,7 +431,7 @@ class _HomeViewState extends ConsumerState<HomeView>
     );
   }
 
-Widget _buildErrorState() {
+  Widget _buildErrorState() {
     return Container(
       padding: EdgeInsets.all(24),
       child: Column(

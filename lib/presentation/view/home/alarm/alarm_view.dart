@@ -36,7 +36,9 @@ class _AlarmViewState extends ConsumerState<AlarmView>
         TabController(length: 2, vsync: this);
 
     ref.read(alarmViewModelProvider).tabController.addListener(() {
-      FocusScope.of(context).unfocus();
+      FocusManager.instance.primaryFocus
+          ?.unfocus(); // FocusScope yerine bunu kullanın
+
     });
   }
 
@@ -709,6 +711,9 @@ class _AlarmViewState extends ConsumerState<AlarmView>
       child: Form(
         key: formKey,
         child: TextFormField(
+          onEditingComplete: () {
+            FocusManager.instance.primaryFocus?.unfocus();
+          },
           validator: (value) => checkAmount(value, true),
           controller: viewModel.valueController,
           style:
@@ -840,6 +845,9 @@ class _AlarmViewState extends ConsumerState<AlarmView>
       width: double.infinity,
       child: ElevatedButton(
         onPressed: () async {
+          FocusManager.instance.primaryFocus?.unfocus(); // Klavyeyi kapat
+          await Future.delayed(
+              const Duration(milliseconds: 100)); // Kısa bir bekleme
           await ref.read(alarmViewModelProvider).saveAlarm(context, ref);
         },
         style: ElevatedButton.styleFrom(
