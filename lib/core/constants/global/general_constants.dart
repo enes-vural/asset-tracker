@@ -7,4 +7,9 @@ final class GeneralConstants {
   static const int delayBetweenReconnect = 3;
 
   static DateFormat dateFormat = DateFormat("dd MMMM");
+
+  static String appGroupId = "group.parota";
+  static String iosWidgetId = "parotawidget";
+  static String androidWidgetId = "PaRotaWidgetReceiver";
+
 }

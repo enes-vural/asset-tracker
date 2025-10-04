@@ -35,6 +35,18 @@ class CurrencyEntity {
         kapanis: model.kapanis);
   }
 
+  factory CurrencyEntity.empty() {
+    return CurrencyEntity(
+        code: '',
+        alis: '0',
+        tarih: '',
+        dir: Direction(alisDir: 'none', satisDir: 'none'),
+        satis: '0',
+        dusuk: '0',
+        yuksek: '0',
+        kapanis: '0');
+  }
+
   CurrencyEntity copyWith({
     String? code,
     String? alis,

@@ -1,11 +1,10 @@
 import 'dart:io';
 
 import 'package:asset_tracker/core/config/localization/generated/locale_keys.g.dart';
+import 'package:asset_tracker/core/constants/global/general_constants.dart';
 import 'package:asset_tracker/core/constants/string_constant.dart';
 import 'package:asset_tracker/core/widgets/custom_padding.dart';
 import 'package:asset_tracker/core/widgets/custom_sized_box.dart';
-import 'package:asset_tracker/data/model/database/request/user_uid_model.dart';
-import 'package:asset_tracker/data/service/remote/database/firestore/ifirestore_service.dart';
 import 'package:asset_tracker/presentation/view/home/alarm/alarm_view.dart';
 import 'package:asset_tracker/presentation/view/home/dashboard/dashboard_view.dart';
 import 'package:asset_tracker/presentation/view/home/home_view.dart';
@@ -13,19 +12,15 @@ import 'package:asset_tracker/presentation/view/home/settings/settings_view.dart
 import 'package:asset_tracker/presentation/view/home/trade/trade_view.dart';
 import 'package:asset_tracker/presentation/view/home/widgets/parota_logo_widget.dart';
 import 'package:asset_tracker/presentation/view/home/widgets/menu_bottom_navigation_bar_widget.dart';
-import 'package:asset_tracker/presentation/view/trial.dart';
 import 'package:auto_route/annotations.dart';
-import 'package:cloud_functions/cloud_functions.dart';
 import 'package:easy_localization/easy_localization.dart';
-import 'package:firebase_messaging/firebase_messaging.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:asset_tracker/core/config/theme/default_theme.dart';
 import 'package:asset_tracker/core/widgets/custom_icon.dart';
 import 'package:asset_tracker/injection.dart';
 import 'package:asset_tracker/presentation/view_model/home/home_view_model.dart';
-import 'package:permission_handler/permission_handler.dart';
-import 'package:upgrader/upgrader.dart';
+import 'package:home_widget/home_widget.dart';
 
 @RoutePage()
 class MenuView extends ConsumerStatefulWidget {
@@ -63,12 +58,16 @@ class _MenuViewState extends ConsumerState<MenuView>
   void initState() {
     // callData();
     // getErrorStream();
+    if (Platform.isIOS) {
+      HomeWidget.setAppGroupId(GeneralConstants.appGroupId);
+    }
     WidgetsBinding.instance.addPostFrameCallback((_) {
       listenSocketData();
       syncNotification();
     });
     super.initState();
   }
+
   String versionUrl =
       "https://raw.githubusercontent.com/enes-vural/asset-tracker/main/updates/appcast.xml";
 

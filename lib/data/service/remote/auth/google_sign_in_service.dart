@@ -2,6 +2,7 @@ import 'dart:async';
 import 'dart:io' show Platform;
 import 'package:asset_tracker/data/model/auth/firebase_auth_user_model.dart';
 import 'package:asset_tracker/data/service/remote/auth/isign_in_service.dart';
+import 'package:asset_tracker/env/envied.dart';
 import 'package:flutter/material.dart';
 import 'package:google_sign_in/google_sign_in.dart';
 
@@ -15,9 +16,10 @@ final class GoogleSignInService implements ISignInService {
   // Initialize metodunu constructor veya initState'te çağır
   @override
   Future<void> initialize() async {
+    //TODO: ANDROID KEY EKLE
     unawaited(googleSignIn.initialize(
       clientId: Platform.isAndroid
-          ? 'REMOVED_KEY'
+          ? Env().googleAuthKey
           : null,
     ));
   }

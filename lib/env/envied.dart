@@ -27,6 +27,9 @@ class Env implements IEnviedConfig {
   @EnviedField(varName: 'aesIv', obfuscate: true)
   static final String _aesIv = _Env._aesIv;
 
+  @EnviedField(varName: 'googleAuthKey', obfuscate: true)
+  static final String _googleAuthKey = _Env._googleAuthKey;
+
   String encryptText(String text) {
     final encrypted = _encrypter.encrypt(text, iv: IV.fromBase16(_aesIv));
     return encrypted.base64;
@@ -65,4 +68,8 @@ class Env implements IEnviedConfig {
   }
   @override
   String get socketApi => _socketApi;
+
+
+  @override
+  String get googleAuthKey => _googleAuthKey;
 }

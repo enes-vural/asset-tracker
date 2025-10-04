@@ -31,6 +31,8 @@ linux/
 /windows/
 ios/
 android/
+
+/ios/parotawidget/WebSocketService.swift
 #Secure API content ignore
 /android/app/google-services.json
 firebase.json

@@ -1,10 +1,13 @@
 // ignore_for_file: prefer_const_constructors, unnecessary_null_comparison
 import 'dart:async';
+import 'dart:io';
 
 import 'package:asset_tracker/core/config/localization/generated/locale_keys.g.dart';
 import 'package:asset_tracker/core/config/theme/app_size.dart';
 import 'package:asset_tracker/core/config/theme/style_theme.dart';
+import 'package:asset_tracker/core/constants/global/general_constants.dart';
 import 'package:asset_tracker/core/widgets/custom_align.dart';
+import 'package:asset_tracker/domain/entities/web/socket/currency_entity.dart';
 import 'package:auto_route/annotations.dart';
 import 'package:easy_localization/easy_localization.dart';
 import 'package:flutter/material.dart';
@@ -15,6 +18,8 @@ import 'package:asset_tracker/injection.dart';
 import 'package:asset_tracker/presentation/view/home/widgets/balance_profit_text_widget.dart';
 import 'package:asset_tracker/presentation/view/home/widgets/balance_text_widget.dart';
 import 'package:asset_tracker/presentation/view/home/widgets/currency_card_widget.dart';
+import 'package:home_widget/home_widget.dart';
+import 'package:shared_preferences/shared_preferences.dart';
 import 'package:skeletonizer/skeletonizer.dart';
 
 @RoutePage()
@@ -39,6 +44,8 @@ class _HomeViewState extends ConsumerState<HomeView>
   bool _showError = false;
 
   bool _isSearchOpen = false;
+
+  bool _isHomeWidgetSynced = false;
 
   Future<void> initalizeVM() async =>
       await ref.read(homeViewModelProvider).initHomeView();
@@ -85,6 +92,100 @@ class _HomeViewState extends ConsumerState<HomeView>
     });
 
     super.initState();
+  }
+
+  void updateHomeWidget(WidgetRef ref) async {
+    final List<CurrencyEntity>? assets =
+        ref.read(appGlobalProvider).globalAssets;
+
+    if (assets == null) {
+      debugPrint("Assets verisi null, widget güncellenemiyor.");
+      return;
+    }
+
+    debugPrint("Home Widget Güncelleniyor...");
+
+    final CurrencyEntity gramGold = assets.firstWhere(
+      (asset) => asset.code == 'KULCEALTIN',
+      orElse: () => CurrencyEntity.empty(),
+    );
+    final CurrencyEntity usd = assets.firstWhere(
+      (asset) => asset.code == 'USDTRY',
+      orElse: () => CurrencyEntity.empty(),
+    );
+    final CurrencyEntity euro = assets.firstWhere(
+      (asset) => asset.code == 'EURTRY',
+      orElse: () => CurrencyEntity.empty(),
+    );
+    final CurrencyEntity silver = assets.firstWhere(
+      (asset) => asset.code == 'GUMUSTRY',
+      orElse: () => CurrencyEntity.empty(),
+    );
+
+    if (Platform.isIOS) {
+      // GRAM ALTIN
+      await HomeWidget.saveWidgetData(
+          'gramAltin_buy', gramGold.alis.toString());
+      await HomeWidget.saveWidgetData(
+          'gramAltin_sell', gramGold.satis.toString());
+      await HomeWidget.saveWidgetData(
+          'gramAltin_change', gramGold.fark.toString());
+
+      // DOLAR
+      await HomeWidget.saveWidgetData('dolar_buy', usd.alis.toString());
+      await HomeWidget.saveWidgetData('dolar_sell', usd.satis.toString());
+      await HomeWidget.saveWidgetData('dolar_change', usd.fark.toString());
+
+      // EURO
+      await HomeWidget.saveWidgetData('euro_buy', euro.alis.toString());
+      await HomeWidget.saveWidgetData('euro_sell', euro.satis.toString());
+      await HomeWidget.saveWidgetData('euro_change', euro.fark.toString());
+
+      // GÜMÜŞ
+      await HomeWidget.saveWidgetData('gumus_buy', silver.alis.toString());
+      await HomeWidget.saveWidgetData('gumus_sell', silver.satis.toString());
+      await HomeWidget.saveWidgetData('gumus_change', silver.fark.toString());
+
+      // Son güncelleme saati
+      DateTime parsedDate =
+          DateFormat('dd-MM-yyyy HH:mm:ss').parse(gramGold.tarih);
+      String formattedTime = DateFormat('HH:mm').format(parsedDate);
+
+      await HomeWidget.saveWidgetData('lastUpdate', formattedTime);
+
+      await HomeWidget.updateWidget(
+        name: GeneralConstants.iosWidgetId,
+        iOSName: GeneralConstants.iosWidgetId,
+        androidName: GeneralConstants.androidWidgetId,
+      );
+    } else if (Platform.isAndroid) {
+      final prefs = await SharedPreferences.getInstance();
+      await prefs.setString('gramAltin_buy', gramGold.alis.toString());
+      await prefs.setString('gramAltin_sell', gramGold.satis.toString());
+      await prefs.setString('gramAltin_change', gramGold.fark.toString());
+
+      await prefs.setString('dolar_buy', usd.alis.toString());
+      await prefs.setString('dolar_sell', usd.satis.toString());
+      await prefs.setString('dolar_change', usd.fark.toString());
+
+      await prefs.setString('euro_buy', euro.alis.toString());
+      await prefs.setString('euro_sell', euro.satis.toString());
+      await prefs.setString('euro_change', euro.fark.toString());
+
+      await prefs.setString('gumus_buy', silver.alis.toString());
+      await prefs.setString('gumus_sell', silver.satis.toString());
+      await prefs.setString('gumus_change', silver.fark.toString());
+
+      DateTime parsedDate =
+          DateFormat('dd-MM-yyyy HH:mm:ss').parse(gramGold.tarih);
+      String formattedTime = DateFormat('HH:mm').format(parsedDate);
+      await prefs.setString('lastUpdate', formattedTime);
+
+      HomeWidget.updateWidget(
+          androidName: GeneralConstants.androidWidgetId,
+          iOSName: GeneralConstants.iosWidgetId,
+          name: GeneralConstants.iosWidgetId);
+    }
   }
 
   void _startDataWaitTimer() async {
@@ -165,6 +266,12 @@ class _HomeViewState extends ConsumerState<HomeView>
 
     // Veri geldi mi kontrol et ve timer'ları iptal et
     if (isDataLoaded && _skeletonCompleted) {
+      if (!_isHomeWidgetSynced) {
+        updateHomeWidget(ref);
+        setState(() {
+          _isHomeWidgetSynced = true;
+        });
+      }
       _dataWaitTimer?.cancel();
       if (_showError) {
         WidgetsBinding.instance.addPostFrameCallback((_) {
