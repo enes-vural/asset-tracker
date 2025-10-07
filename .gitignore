@@ -57,6 +57,9 @@ parota_key.jks
 /build/
 **/*.g.dart
 
+!lib/core/config/localization/generated/codegen_loader.g.dart
+!lib/core/config/localization/generated/locale_keys.g.dart
+
 # Symbolication related
 app.*.symbols
 
