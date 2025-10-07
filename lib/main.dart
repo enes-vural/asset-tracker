@@ -22,6 +22,14 @@ void main() async {
   // Application Init here !
   await AppInit.initialize();
 
+  // Background fetch setup
+  if (!(Platform.isIOS && kDebugMode)) {
+    await BackgroundService.instance.init();
+    BackgroundFetch.registerHeadlessTask(backgroundFetchHeadlessTask);
+    BackgroundService.instance
+        .addNewHeadlessTask('com.transistorsoft.customtask');
+  }
+
   runApp(EasyLocalization(
     // Localization setup in runApp
     supportedLocales: LocalizationManager.supportedTranslations,
@@ -31,14 +39,6 @@ void main() async {
       child: MyApp(),
     ),
   ));
-
-  // Background fetch setup
-  if (!(Platform.isIOS && kDebugMode)) {
-    await BackgroundService.instance.init();
-    BackgroundFetch.registerHeadlessTask(backgroundFetchHeadlessTask);
-    BackgroundService.instance
-        .addNewHeadlessTask('com.transistorsoft.customtask');
-  }
 
   FlutterNativeSplash.remove();
 }

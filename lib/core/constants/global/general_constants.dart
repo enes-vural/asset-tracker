@@ -11,5 +11,6 @@ final class GeneralConstants {
   static String appGroupId = "group.parota";
   static String iosWidgetId = "parotawidget";
   static String androidWidgetId = "PaRotaWidgetReceiver";
-
+  static String androidWidgetPath =
+      "com.sakasstudio.parota.PaRotaWidgetReceiver";
 }
