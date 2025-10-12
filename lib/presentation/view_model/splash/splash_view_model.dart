@@ -186,10 +186,11 @@ class SplashViewModel extends ChangeNotifier {
   Future<void> _saveUserTokenInBackground(String userId) async {
     try {
       if (_isDisposed) return;
+      //TODO:
 
       await getIt<DatabaseUseCase>().saveUserToken(
         UserUidEntity(userId: userId),
-        "",
+        "", ""
       );
       debugPrint('User token saved in background');
     } catch (e) {
@@ -280,6 +281,7 @@ class SplashViewModel extends ChangeNotifier {
 
       debugPrint('Background user data handling completed');
     } catch (e) {
+      //TODO: error
       debugPrint('Background user data error: $e');
     }
   }

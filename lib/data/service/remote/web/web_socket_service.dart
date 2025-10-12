@@ -23,7 +23,6 @@ class WebSocketService implements IWebSocketService {
   @override
   Future<void> connectSocket() async {
     try {
-
       errorController.add(SocketErrorModel(
           message: LocaleKeys.home_socketConnectionInit.tr(),
           state: SocketStateEnum.INIT));
@@ -62,7 +61,7 @@ class WebSocketService implements IWebSocketService {
           if (data.startsWith(SocketActionEnum.INIT_DATA.value)) {
             debugPrint("Inital Call");
             socket?.add(SocketActionEnum.REQUEST.value);
-            debugPrint(data);
+            // debugPrint(data);
           }
           //refresh durumu gerektiği zaman
           else if (data == SocketActionEnum.REFRESH.value) {

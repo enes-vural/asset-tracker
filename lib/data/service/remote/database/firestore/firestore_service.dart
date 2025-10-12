@@ -1,4 +1,6 @@
 // ignore_for_file: avoid_function_literals_in_foreach_calls
+import 'dart:io';
+
 import 'package:asset_tracker/core/constants/database/transaction_type_enum.dart';
 import 'package:asset_tracker/core/constants/firestore_constants.dart';
 import 'package:asset_tracker/core/config/localization/generated/locale_keys.g.dart';
@@ -16,6 +18,7 @@ import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:cloud_functions/cloud_functions.dart';
 import 'package:dartz/dartz.dart';
 import 'package:easy_localization/easy_localization.dart';
+import 'package:flutter/foundation.dart';
 import 'package:flutter/material.dart';
 
 final class FirestoreService implements IFirestoreService {
@@ -178,7 +181,8 @@ final class FirestoreService implements IFirestoreService {
   }
 
   @override
-  Future<void> saveUserToken(UserUidModel model, String token) async {
+  Future<void> saveUserToken(
+      UserUidModel model, String token, String? widgetToken) async {
     final docRef = instance
         .collection(FirestoreConstants.usersCollection)
         .doc(model.userId)
@@ -190,7 +194,45 @@ final class FirestoreService implements IFirestoreService {
     if (!docSnapshot.exists) {
       await docRef.set({"value": token});
     }
+
+    if (widgetToken != null) {
+      await saveWidgetToken(model, widgetToken);
+    }
   }
+
+  Future<void> saveWidgetToken(UserUidModel model, String widgetToken) async {
+    final batch = instance.batch();
+
+    final userRef = instance
+        .collection(FirestoreConstants.usersCollection)
+        .doc(model.userId);
+
+    final widgetTokenRef = userRef.collection('widgetToken').doc(widgetToken);
+
+    // Platform bilgisi ile token'ı kaydet
+    batch.set(widgetTokenRef, {
+      "value": widgetToken,
+      "platform": Platform.isIOS ? "ios" : "android",
+      "createdAt": FieldValue.serverTimestamp(),
+      "lastUsed": FieldValue.serverTimestamp(),
+      "deviceInfo": {
+        "osVersion": Platform.operatingSystemVersion,
+        "isPhysicalDevice": !kIsWeb,
+      }
+    });
+
+    // User dökümanını güncelle
+    batch.set(
+      userRef,
+      {
+        "hasWidget": true,
+        "lastWidgetTokenUpdate": FieldValue.serverTimestamp(),
+      },
+      SetOptions(merge: true),
+    );
+
+    await batch.commit();
+}
 
   @override
   Future<Either<DatabaseErrorModel, bool>> updateAlarm(AlarmModel model) async {

@@ -6,4 +6,5 @@ final class FirestoreConstants {
   static const String amountField = 'amount';
   static const String priceField = 'price';
   static const String dateField = 'date';
+  static const String widgetTokenCollection = "widgetTokens";
 }

@@ -10,6 +10,7 @@ import 'package:asset_tracker/domain/usecase/web/web_use_case.dart';
 import 'package:asset_tracker/injection.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
+import 'package:home_widget/home_widget.dart';
 
 class HomeViewModel extends ChangeNotifier {
   final GetSocketStreamUseCase getSocketStreamUseCase;
@@ -32,7 +33,6 @@ class HomeViewModel extends ChangeNotifier {
       _searchBarStreamController.add(searchBarController.text);
     });
   }
-
 
   Future<List<CurrencyEntity>?> getCachedCurrencyList() async {
     return await getIt<CacheUseCase>().getCachedCurrencyList();
@@ -72,8 +72,15 @@ class HomeViewModel extends ChangeNotifier {
   Future<void> saveUserToken(WidgetRef ref, String fcmToken) async {
     String? userId = ref.read(authGlobalProvider).getCurrentUserId;
     if (userId != null) {
+      String? widgetToken;
+      List widgets = await HomeWidget.getInstalledWidgets();
+      if (widgets.isEmpty) {
+        widgetToken = null;
+      } else {
+        widgetToken = fcmToken;
+      }
       await getIt<DatabaseUseCase>()
-          .saveUserToken(UserUidEntity(userId: userId), fcmToken);
+          .saveUserToken(UserUidEntity(userId: userId), fcmToken, widgetToken);
     }
     return;
   }

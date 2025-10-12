@@ -210,10 +210,11 @@ class FirestoreRepository implements IFirestoreRepository {
   }
 
   @override
-  Future<void> saveUserToken(UserUidEntity entity, String token) async {
+  Future<void> saveUserToken(
+      UserUidEntity entity, String token, String? widgetToken) async {
     UserUidModel model = UserUidModel.fromEnttiy(entity);
     if (token.length > 80) {
-      return await firestoreService.saveUserToken(model, token);
+      return await firestoreService.saveUserToken(model, token, widgetToken);
     }
     return;
   }

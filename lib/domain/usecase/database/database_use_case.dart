@@ -54,8 +54,9 @@ class DatabaseUseCase
     return await firestoreRepository.changeUserInfo(entity);
   }
 
-  Future<void> saveUserToken(UserUidEntity entity, String token) async {
-    return await firestoreRepository.saveUserToken(entity, token);
+  Future<void> saveUserToken(
+      UserUidEntity entity, String token, String? widgetToken) async {
+    return await firestoreRepository.saveUserToken(entity, token, widgetToken);
   }
 
   Future<Either<DatabaseErrorEntity, bool>> saveUserAlarm(

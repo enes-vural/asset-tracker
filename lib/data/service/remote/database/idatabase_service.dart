@@ -38,7 +38,8 @@ abstract interface class IDatabaseService {
 
   Future<Either<DatabaseErrorModel, bool>> removeUser(UserUidModel model);
 
-  Future<void> saveUserToken(UserUidModel model, String token);
+  Future<void> saveUserToken(
+      UserUidModel model, String toke, String? widgetToken);
 
   Future<Either<DatabaseErrorModel, bool>> changeUserInfo(
       UserInfoModel infoModel);

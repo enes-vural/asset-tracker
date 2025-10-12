@@ -32,7 +32,8 @@ abstract interface class IFirestoreRepository {
 
   Future<Either<DatabaseErrorEntity, bool>> saveUserAlarm(AlarmEntity entity);
 
-  Future<void> saveUserToken(UserUidEntity entity, String token);
+  Future<void> saveUserToken(
+      UserUidEntity entity, String token, String? widgetToken);
 
   Future<Either<DatabaseErrorEntity, bool>> saveUser(SaveUserEntity entity);
 

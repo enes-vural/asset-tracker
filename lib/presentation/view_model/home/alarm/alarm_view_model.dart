@@ -240,7 +240,7 @@ class AlarmViewModel extends ChangeNotifier {
     // 5. Token'ı database'e kaydet
     try {
       await getIt<DatabaseUseCase>()
-          .saveUserToken(UserUidEntity(userId: userId), currentToken);
+          .saveUserToken(UserUidEntity(userId: userId), currentToken, null);
       return true;
     } catch (e) {
       debugPrint('Token save error: $e');

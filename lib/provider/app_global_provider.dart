@@ -1,7 +1,9 @@
 import 'dart:async';
+import 'dart:io';
 
 import 'package:asset_tracker/core/constants/database/transaction_type_enum.dart';
 import 'package:asset_tracker/core/constants/enums/socket/socket_state_enums.dart';
+import 'package:asset_tracker/core/constants/global/general_constants.dart';
 import 'package:asset_tracker/data/model/database/response/asset_code_model.dart';
 import 'package:asset_tracker/domain/entities/database/alarm_entity.dart';
 import 'package:asset_tracker/domain/entities/database/enttiy/user_data_entity.dart';
@@ -13,8 +15,11 @@ import 'package:asset_tracker/domain/entities/web/socket/currency_entity.dart'
     show CurrencyEntity;
 import 'package:asset_tracker/domain/usecase/database/database_use_case.dart';
 import 'package:asset_tracker/injection.dart';
+import 'package:easy_localization/easy_localization.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
+import 'package:home_widget/home_widget.dart';
+import 'package:shared_preferences/shared_preferences.dart';
 
 class AppGlobalProvider extends ChangeNotifier {
   //default index equals zero.
@@ -129,12 +134,106 @@ class AppGlobalProvider extends ChangeNotifier {
     notifyListeners();
   }
 
+  void updateHomeWidget() async {
+    final List<CurrencyEntity>? assets = globalAssets;
+
+    if (assets == null) {
+      debugPrint("Assets verisi null, widget güncellenemiyor.");
+      return;
+    }
+
+    debugPrint("Home Widget Güncelleniyor...");
+
+    final CurrencyEntity gramGold = assets.firstWhere(
+      (asset) => asset.code == 'KULCEALTIN',
+      orElse: () => CurrencyEntity.empty(),
+    );
+    final CurrencyEntity usd = assets.firstWhere(
+      (asset) => asset.code == 'USDTRY',
+      orElse: () => CurrencyEntity.empty(),
+    );
+    final CurrencyEntity euro = assets.firstWhere(
+      (asset) => asset.code == 'EURTRY',
+      orElse: () => CurrencyEntity.empty(),
+    );
+    final CurrencyEntity silver = assets.firstWhere(
+      (asset) => asset.code == 'GUMUSTRY',
+      orElse: () => CurrencyEntity.empty(),
+    );
+
+    if (Platform.isIOS) {
+      // GRAM ALTIN
+      await HomeWidget.saveWidgetData(
+          'gramAltin_buy', gramGold.alis.toString());
+      await HomeWidget.saveWidgetData(
+          'gramAltin_sell', gramGold.satis.toString());
+      await HomeWidget.saveWidgetData(
+          'gramAltin_change', gramGold.fark.toString());
+
+      // DOLAR
+      await HomeWidget.saveWidgetData('dolar_buy', usd.alis.toString());
+      await HomeWidget.saveWidgetData('dolar_sell', usd.satis.toString());
+      await HomeWidget.saveWidgetData('dolar_change', usd.fark.toString());
+
+      // EURO
+      await HomeWidget.saveWidgetData('euro_buy', euro.alis.toString());
+      await HomeWidget.saveWidgetData('euro_sell', euro.satis.toString());
+      await HomeWidget.saveWidgetData('euro_change', euro.fark.toString());
+
+      // GÜMÜŞ
+      await HomeWidget.saveWidgetData('gumus_buy', silver.alis.toString());
+      await HomeWidget.saveWidgetData('gumus_sell', silver.satis.toString());
+      await HomeWidget.saveWidgetData('gumus_change', silver.fark.toString());
+
+      // Son güncelleme saati
+      DateTime parsedDate =
+          DateFormat('dd-MM-yyyy HH:mm:ss').parse(gramGold.tarih);
+      String formattedTime = DateFormat('HH:mm').format(parsedDate);
+
+      await HomeWidget.saveWidgetData('lastUpdate', formattedTime);
+
+      await HomeWidget.updateWidget(
+        name: GeneralConstants.iosWidgetId,
+        iOSName: GeneralConstants.iosWidgetId,
+        androidName: GeneralConstants.androidWidgetId,
+      );
+    } else if (Platform.isAndroid) {
+      final prefs = await SharedPreferences.getInstance();
+      await prefs.setString('gramAltin_buy', gramGold.alis.toString());
+      await prefs.setString('gramAltin_sell', gramGold.satis.toString());
+      await prefs.setString('gramAltin_change', gramGold.fark.toString());
+
+      await prefs.setString('dolar_buy', usd.alis.toString());
+      await prefs.setString('dolar_sell', usd.satis.toString());
+      await prefs.setString('dolar_change', usd.fark.toString());
+
+      await prefs.setString('euro_buy', euro.alis.toString());
+      await prefs.setString('euro_sell', euro.satis.toString());
+      await prefs.setString('euro_change', euro.fark.toString());
+
+      await prefs.setString('gumus_buy', silver.alis.toString());
+      await prefs.setString('gumus_sell', silver.satis.toString());
+      await prefs.setString('gumus_change', silver.fark.toString());
+
+      DateTime parsedDate =
+          DateFormat('dd-MM-yyyy HH:mm:ss').parse(gramGold.tarih);
+      String formattedTime = DateFormat('HH:mm').format(parsedDate);
+      await prefs.setString('lastUpdate', formattedTime);
+
+      HomeWidget.updateWidget(
+          androidName: GeneralConstants.androidWidgetId,
+          iOSName: GeneralConstants.iosWidgetId,
+          name: GeneralConstants.iosWidgetId);
+    }
+  }
+
   void _listenData() {
     _dataStream?.listen((event) {
       globalAssets = event;
-      print(globalAssets);
+      //print(globalAssets);
       if (!isFirstDataFetched) {
         _cacheCurrencyData(globalAssets);
+        updateHomeWidget();
         isFirstDataFetched = true;
       }
       notifyListeners();
@@ -348,10 +447,10 @@ class AppGlobalProvider extends ChangeNotifier {
       _latestBalance = newBalance;
       _userBalance = userBalance;
 
-      debugPrint(_userBalance.toString());
-      debugPrint(_latestBalance.toString());
-      debugPrint(_totalProfitPercent.toString());
-      debugPrint(_totalProfit.toString());
+      // debugPrint(_userBalance.toString());
+      // debugPrint(_latestBalance.toString());
+      // debugPrint(_totalProfitPercent.toString());
+      // debugPrint(_totalProfit.toString());
 
       final updatedUserData = userData.copyWith(
           profit: _totalProfitPercent, latestBalance: _latestBalance);
